@@ -180,3 +180,50 @@ h.YLabel = 'Posizione del Baricentro (CG) [cm dal centro ala]';
 h.CellLabelFormat = '%.0f';
 
 fprintf('\nAnalisi completata.\n');
+
+
+%%
+% 1. Definizione dello Scenario (L'Obiettivo):
+% 
+% All'inizio, impostiamo i "casi di studio" che vogliamo analizzare. 
+% Definiamo un insieme di possibili posizioni per il baricentro (da molto arretrato a leggermente avanzato) e un insieme di angoli
+% di inclinazione per i motori.
+% 
+% Definiamo anche tutti i parametri fissi del drone: massa, dimensioni, inerzie, coefficienti aerodinamici, ecc.
+% 
+% 2. Creazione del Modello Matematico "Universale" (Gli Strumenti):
+% 
+% Usando la matematica simbolica, scriviamo le equazioni complete del moto del drone (forze e momenti).
+% 
+% Questo crea un modello matematico flessibile che non dipende da nessun valore numerico specifico, 
+% ma contiene i parametri (come la posizione del CG) come variabili.
+% 
+% Il risultato principale di questa fase è una "matrice di stabilità A" generica, 
+% che descrive la stabilità del drone in termini puramente simbolici.
+% 
+% 3. Ciclo di Simulazione "Cosa Succede Se...?" (L'Esperimento):
+% 
+% Lo script esegue un ciclo automatico che testa ogni singola combinazione possibile dei parametri definiti nella Fase 1 
+% (es. CG a -5cm con motori a 15°, poi CG a -5cm con motori a 20°, ecc.).
+% 
+% Per ogni combinazione, esegue tre passi cruciali:
+% 
+%   a) Trova l'Equilibrio: Calcola come il drone deve volare per mantenersi stabile a 25 m/s in quella specifica configurazione 
+% (trova l'assetto di beccheggio e le spinte dei motori necessarie).
+% 
+%   b) Linearizza e Analizza: Inserisce i valori numerici di quella configurazione 
+% (inclusi i valori di equilibrio appena trovati) nella matrice A "universale" per ottenere una matrice A numerica, specifica per quel caso.
+% 
+%   c) Controlla la Stabilità: Calcola gli autovalori (poli) di questa matrice A numerica e conta quanti di essi sono instabili 
+% (hanno una parte reale positiva).
+% 
+% 4. Visualizzazione dei Risultati (La Conclusione):
+% 
+% Alla fine del ciclo, lo script ha raccolto i dati di stabilità per tutte le configurazioni.
+% 
+% Presenta questi dati in due modi chiari:
+% 
+% Una tabella che mostra il numero di poli instabili per ogni caso.
+% 
+% Una mappa di calore (heatmap) che fornisce una visualizzazione immediata delle "zone" di stabilità e instabilità, 
+% permettendoci di capire a colpo d'occhio quali scelte di progettazione portano a un drone più robusto e sicuro.
