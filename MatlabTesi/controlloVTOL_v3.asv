@@ -33,8 +33,6 @@ switch test_id
         z = x(3);
         phi = x(7); theta = x(8); psi = x(9);
         r = x(12);
-        p = x(10); q = x(11);
-        
         
         R = matriceRotazione(phi,theta,psi);
         V_body = [x(4);x(5);x(6)];
@@ -87,7 +85,7 @@ switch test_id
             phi_des = 0; theta_des = 0;
             Kp_phi = 20; Kd_phi = 5;     % Guadagni Roll
             Kp_theta = 20; Kd_theta = 5;  % Guadagni Pitch
-            
+            p = x(10); q = x(11);
             
             % Questi sono i momenti correttivi che vogliamo applicare
             roll_input  = Kp_phi * (phi_des - phi)   + Kd_phi * (0 - p);
@@ -142,57 +140,23 @@ switch test_id
 
 
         else % flight_phase == 2
-            % per poter considerare azione derivativa devo considerare le velocità nel
-            % frame inerziale e non body frame
-    
-            % angoli di roll ,pitch, yaw
-            phi = x(7);
-            theta = x(8);
-            psi = x(9);
-    
-            R = matriceRotazione(phi,theta,psi); % matrice di rotazione
-            V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-            V_global = R*V_body ;
-            vx_global = V_global(1);
-            %vy_global = V_global(2);
-            vz_global = V_global(3);
-    
-            % controllo 
-    
-            u = zeros(7,1);
-            
-            vx_des = 25;
+            % --- FASE 2: VOLO ORIZZONTALE ---
+            % (Logica invariata)
             kp_x = 5;
-            F_x_des = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
-            F_x_des = F_x_des +kp_x*(vx_des-x(4));
-    
-            kp_z = -3;
-            kd_z = -5;
-            z_des = -10; % asse z positivo verso il basso
-            vz_des = 0; % hovering
-    
-            F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;      
-            F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
-    
-    
-    
-            % theta_bar = atan2(F_z_des,F_x_des);
-            % 
-            % u(4) = theta_bar;
-            % u(5) =u(4);
-            % u(1) = sqrt((F_z_des/(2*sin(u(4))))/params.k);
-            % u(2)=u(1);
-    
+            F_x_des = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2 + kp_x*(vx_des_avanti - x(4));
+
+            kp_z = -3; kd_z = -5;
+            z_des = z_des_decollo;
+            F_z_des = -params.C_l*params.rho*params.s*x(4)^2 + params.m*params.g*cos(theta)*cos(phi) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;      
+            F_z_des = F_z_des + kp_z*(z_des - x(3)) + kd_z*(0 - vz_global);
+
             T_tot = sqrt(F_x_des^2 + F_z_des^2);
-            theta_bar = atan2(F_z_des,F_x_des);
-    
-            % Assegna ai due rotori anteriori
-            T_i = T_tot/2;
-    
-            u(1) = sqrt(T_i/params.k);   % omega1
-            u(2) = u(1);                 % omega2
-            u(4) = theta_bar;             % tilt rotore 1
-            u(5) = theta_bar;             % tilt rotore 2
+            theta_bar = atan2(F_z_des, F_x_des);
+
+            T_i = T_tot / 2;
+            u(1) = sqrt(T_i / params.k); u(2) = u(1);
+            u(4) = theta_bar; u(5) = theta_bar;
+            u(3) = 0; u(6) = 0; u(7) = 0;
         end
 
     otherwise

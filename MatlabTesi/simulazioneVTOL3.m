@@ -177,8 +177,8 @@ M_stab_pinna = [-x(10)*alpha0x-alpha1x*x(5)^2;0;-x(12)*(alpha0z+alpha1z*x(5)^2)]
 %[-x(10)*alpha0x-alpha1x*(x(5)^2 +x(6)^2);-x(11)*(alpha0y+alpha1y*x(6)^2);-x(12)*(alpha0z+alpha1z*x(5)^2)];
 M_stab_pinna = [0;0;0];
 
-%M_tot1 = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
-M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
+M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
+% M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
 
 
 x123_dot = R*V_body;

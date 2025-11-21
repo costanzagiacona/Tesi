@@ -176,10 +176,11 @@ x0(17)= pi/2;        % theta_3 (rotore coda, asse principale)
 x0(19)= 0;           % theta_4 (rotore coda, per yaw)
 
 % Velocità angolari iniziali dei rotori (tutte a zero)
-x4eq = 0; % Velocità iniziale lungo x
+x0(4) = 0; 
+x4eq = x0(4);
 omega1_2 = (0.0) * ((parametri.rho * parametri.s * parametri.C_d * (x4eq)^2) / parametri.k);
 omega2_2 = (0.0) * ((parametri.rho * parametri.s * parametri.C_d * (x4eq)^2) / parametri.k);
-omega3_2 = 0;        % !!! CORREZIONE CRITICA: Questa variabile non era definita !!!
+omega3_2 = 0;        
 
 x0(21) = sqrt(omega1_2);
 x0(23) = sqrt(omega2_2);
