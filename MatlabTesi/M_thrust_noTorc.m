@@ -1,4 +1,4 @@
-function M_th = M_thrust_2 (u, r_dx,r_sx, r_tail,b,k,omega1_dot,omega2_dot,omega3_dot,Iz1,Iz2,Iz3)
+function M_th = M_thrust_noTorc (u, r_dx,r_sx, r_tail,b,k,omega1_dot,omega2_dot,omega3_dot,Iz1,Iz2,Iz3)
 
 theta_1 = u(4);
 theta_2 = u(5);
@@ -44,17 +44,14 @@ acc1 = omega1_dot*e1;
 acc2 = dir2*omega2_dot*e2;
 acc3 = omega3_dot*e3;
 
-M_torc_1 = b*omega_spin_1_2 ;%+ Iz1*acc1;
-M_torc_2 = b*omega_spin_2_2 ;%+ Iz2*acc2;
-M_torc_3 = b*omega_spin_3_2 ;%+ Iz3*acc3;
+% M_torc_1 = b*omega_spin_1_2 ;%+ Iz1*acc1;
+% M_torc_2 = b*omega_spin_2_2 ;%+ Iz2*acc2;
+% M_torc_3 = b*omega_spin_3_2 ;%+ Iz3*acc3;
 
 % per test senza momento torcente
-% M_torc_1 = 0;
-% M_torc_2 = 0;
-% M_torc_3 = 0;
-
-Mth = M1+M2+M3;
-Mtorc = M_torc_1+M_torc_2+M_torc_3;
+M_torc_1 = [0;0;0];
+M_torc_2 = [0;0;0];
+M_torc_3 = [0;0;0];
 
 % Momento totale nel body frame
 M_th = M1 + M2 + M3 + M_torc_1 + M_torc_2 + M_torc_3;

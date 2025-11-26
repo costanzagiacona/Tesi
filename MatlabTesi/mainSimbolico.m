@@ -13,24 +13,16 @@ paramFlag = 0;
 
 % PER PARAMETRI SIMBOLICI
 
-syms k m g Ixx Iyy Izz rho s I_rotor_xx I_rotor_yy I_rotor_zz C_d C_l C_d_z b ala_y ala_x d_mx d_my d_mz v_air d_tx d_ty d_tz l_w_dx_y l_w_dx_x l_w_dx_z l_w_sx_x l_w_sx_y l_w_sx_z
-syms dmx dmy dmz dtx dty dtz b m_rotor
-
-% d_mx = 0;%dmx;
-% d_my = dmy;
-% d_mz = 0;%dmz;
-% 
-% d_tx = dtx;
-% d_ty = 0;%dty;  % assumo il tail rotor posto sull'asse X_body
-% d_tz = 0;%dtz;
+syms k m g Ixx Iyy Izz rho s I_rotor_xx I_rotor_yy I_rotor_zz C_d C_l C_y C_d_x C_d_y C_d_z b ala_y ala_x d_mx d_my d_mz v_air d_tx d_ty d_tz l_w_dx_y l_w_dx_x l_w_dx_z l_w_sx_x l_w_sx_y l_w_sx_z
+syms dmx dmy dmz dtx dty dtz b m_rotor s_body_x s_body_y s_body_z
 
 d_mx = dmx;
 d_my = dmy;
-d_mz = dmz;
+d_mz = 0;%dmz;
 
 d_tx = dtx;
-d_ty = dty;  % assumo il tail rotor posto sull'asse X_body
-d_tz = dtz;
+d_ty = 0;%dty;  % assumo il tail rotor posto sull'asse X_body
+d_tz = 0;%dtz;
 
 I_rotor = [I_rotor_xx 0 0; 0 I_rotor_yy 0; 0 0 I_rotor_zz];   
 
@@ -40,6 +32,7 @@ I_rotor = [I_rotor_xx 0 0; 0 I_rotor_yy 0; 0 0 I_rotor_zz];
 parametri.m = m;
 parametri.g = g;
 parametri.k = k;
+parametri.b = b;
 
 % Inerzia corpo
 parametri.Ixx = Ixx;
@@ -59,9 +52,19 @@ parametri.I_rotor_zz = I_rotor_zz;
 % Parametri aerodinamici
 parametri.rho = rho;
 parametri.s = s;
+
+parametri.s_body_x = s_body_x;
+parametri.s_body_y = s_body_y;
+parametri.s_body_z = s_body_z;
+
 parametri.C_d = C_d;
-parametri.C_d_z = C_d_z;
+parametri.C_y = C_y;
 parametri.C_l = C_l;
+
+parametri.C_d_x = C_d_x;
+parametri.C_d_y = C_d_y;
+parametri.C_d_z = C_d_z;
+
 parametri.b = b;
 parametri.v_air = v_air;
 
@@ -94,16 +97,9 @@ parametri.l_w_sx_y = l_w_sx_y;
 parametri.l_w_sx_z =l_w_sx_z;
 parametri.b = b;
 
-% parametri.r_th_w_dx = [d_mx ;  d_my ;  d_mz];
-% parametri.r_th_w_sx = [d_mx ; -d_my ;  d_mz]; % considero rotore ala dx e sx in posizione simmetrica
-% parametri.r_th_tail = [d_tx ;  d_ty ;  d_tz];
-% 
-% parametri.l_w_dx = [l_w_dx_x; l_w_dx_y; l_w_dx_z];
-% parametri.l_w_sx = [l_w_sx_x; l_w_sx_y; l_w_sx_z];
 
-
-parametri.r_th_w_dx = [0 ;  d_my ;  0];
-parametri.r_th_w_sx = [0 ; -d_my ;  0]; % considero rotore ala dx e sx in posizione simmetrica
+parametri.r_th_w_dx = [d_mx ;  d_my ;  0];
+parametri.r_th_w_sx = [d_mx; -d_my ;  0]; % considero rotore ala dx e sx in posizione simmetrica
 parametri.r_th_tail = [d_tx ;  0 ;  0];
 
 parametri.l_w_dx = [0; l_w_dx_y; 0];
@@ -113,7 +109,6 @@ parametri.l_w_sx = [0; -l_w_dx_y; 0];
 parametri.r_aerodyn_w_dx = parametri.l_w_dx;
 parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
-%disp(parametri);
 
 printParametriVTOL(parametri,paramFlag);
 
@@ -122,10 +117,14 @@ printParametriVTOL(parametri,paramFlag);
 
 syms x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26
 
+x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;x13;x14;x15;x16;x17;x18;x19;x20;x21 ;x22 ;x23 ;x24; x25; x26];
+
+% variante volo verticale
+x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;pi/2;x14;pi/2;x16;x17;x18;-pi/2;x20;x21 ;x22 ;x23 ;x24; x25; x26];
 
 % variante in assenza di rotore di coda
-x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;x13;x14;x15;x16;0;0;0;0;x21 ;x22 ;x23 ;x24; 0; 0];
+%x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;x13;x14;x15;x16;0;0;0;0;x21 ;x22 ;x23 ;x24; 0; 0];
 
 
 x_dot=simulazioneVTOL2(x,parametri); % nel body frame
-disp(x_dot);
+disp(x_dot(1:12));

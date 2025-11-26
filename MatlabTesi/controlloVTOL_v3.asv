@@ -214,74 +214,72 @@ switch test_id
         u(7)=-pi/2;
 
     case 5
-        % 1. Estrazione Stato e Velocità Inerziali
+        % per poter considerare azione derivativa devo considerare le velocità nel
+        % frame inerziale e non body frame  
+
+        % angoli di roll ,pitch, yaw
         phi = x(7);
         theta = x(8);
         psi = x(9);
-        R = matriceRotazione(phi,theta,psi); 
-        V_body = [x(4);x(5);x(6)]; 
+
+        R = matriceRotazione(phi,theta,psi); % matrice di rotazione
+        V_body = [x(4);x(5);x(6)]; % velocità nel body frame
         V_global = R*V_body ;
+        %vx_global = V_global(1);
+        %vy_global = V_global(2);
         vz_global = V_global(3);
 
-        % 2. Inizializzazione Controllo
+        % controllo
+
         u = zeros(7,1);
-        z_des = -10;    % Target quota
-        vz_des = 0;     % Target velocità (hovering)
-        
-        % 3. Parametri SMC (Sliding Mode Control)
-        lambda_z = 2.5;  % Reattività convergenza errore
-        K_smc = 30;      % Guadagno Robusto (Newton). Aumenta se scende troppo.
-        Phi = 0.5;       % Strato limite (evita chattering)
 
-        % 4. Calcolo Errori e Superficie
-        e_z = z_des - x(3);           
-        de_z = vz_des - vz_global;    
-        s = de_z + lambda_z * e_z;    % Superficie di scorrimento
+        kp_z = -5;
+        kd_z = -10;
+        z_des = -10; % asse z positivo verso il basso
+        vz_des = 0; % hovering
 
-        % --- CALCOLO FORZE FISICHE (in NED) ---
-        % Gravità (Positiva verso il basso)
-        F_gravity = params.m * params.g * cos(x(8)) * cos(x(7));
-        
-        % Drag Aerodinamico (Se scende è opposto -> negativo. Se sale è opposto -> positivo)
-        % Questa formula restituisce la forza nel frame Body/Global allineata a Z
-        F_drag_aero = -params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
-        
-        % Lift Ali (se presente)
-        F_lift = -params.C_l*params.rho*params.s*x(4)^2;
+        % --- PARAMETRI CONTROLLO ROBUSTO (SMC) ---
+        lambda_z = 2.5;  % Determina la pendenza della "discesa" verso l'obiettivo
+        K_smc = 25;      % Guadagno robusto (forza extra per vincere i disturbi)
+        Phi = 0.5;       % Spessore strato limite (per evitare vibrazioni)
 
-        % --- LEGGE DI CONTROLLO (CALCOLO DIRETTO DEL THRUST) ---
-        % Equazione: T = mg + F_aero - (Termine_Controllo)
-        % Il segno meno davanti all'SMC è fondamentale:
-        % Se s è negativo (devo salire), tanh è -1. -(-1) diventa +1. AUMENTA IL THRUST.
-        
-        u_controllo = params.m * lambda_z * de_z + K_smc * tanh(s / Phi);
-        
-        Thrust_req = F_gravity + F_drag_aero + F_lift - u_controllo;
-        
-        % --- MIXING ---
-        theta3_ideal = atan2(((-params.d_tx*params.k)/params.b),1);
-        theta3_actual = x(17); 
+        % --- SUPERFICIE DI SCORRIMENTO (s) ---
+        % Questa variabile "s" riassume sia l'errore di posizione che di velocità
+        s = de_z + lambda_z * e_z;
 
-        denom_mix = params.d_mx*params.k*sin(theta3_actual) + params.b*cos(theta3_actual) - params.d_tx*params.k*sin(theta3_actual);
-        if abs(denom_mix) < 1e-6; denom_mix = 1e-6; end
-
-        % Qui Thrust_req è già positivo e corretto
-        omega3_sq = (params.d_mx * Thrust_req) / denom_mix;
-        omega2_sq = (Thrust_req - omega3_sq*params.k*sin(theta3_actual)) / (2*params.k);
+        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
         
-        % Saturazione sicurezza
-        if omega2_sq < 0; omega2_sq = 0; end
-        if omega3_sq < 0; omega3_sq = 0; end
-
-        % 8. Assegnazione Output
-        u(1) = sqrt(omega2_sq);      % Rotore Anteriore DX
-        u(2) = u(1);                 % Rotore Anteriore SX (simmetrico)
-        u(3) = sqrt(omega3_sq);      % Rotore Coda
+        % 2. Aggiunta Termine Robusto (SOSTITUISCE IL PD)
+        % Invece di +kp*(...) +kd*(...), aggiungiamo il termine SMC
+        % Se aggiungi anche m*lambda*de_z migliori ulteriormente la reattività, 
+        % ma la forma base robusta è questa:
+        F_z_des = F_z_des + params.m * lambda_z * de_z + K_smc * tanh(s / Phi);
         
-        u(4) = pi/2;                 % Servo Ant DX
-        u(5) = pi/2;                 % Servo Ant SX
-        u(6) = theta3_ideal;         % Servo Coda (Target ideale)
-        u(7) = -pi/2;
+        
+        theta3 = atan2(((-params.d_tx*params.k)/params.b),1);
+        omega3_2 = (params.d_mx*F_z_des)/(params.d_mx*params.k*sin(theta3)+params.b*cos(theta3)-params.d_tx*params.k*sin(theta3));
+        omega_2= (F_z_des-omega3_2*params.k*sin(theta3))/(2*params.k);
+
+        
+        %check
+        % term1 = -params.d_tx*params.k*omega3_2*cos(theta3);
+        % term2 = -params.b*omega3_2*sin(theta3);
+        % term = term1+term2;
+        % term3 = 2*params.d_mx*params.k*omega_2;
+        % term4 = params.d_tx*params.k*sin(theta3)*omega3_2;
+        % term5 = -params.b*cos(theta3)*omega3_2;
+        % term = term3+term4+term5;
+        % term6 = 2*params.k*omega_2;
+        % term7 = F_z_des-params.k*sin(theta3)*omega3_2;
+        % term = term6 -term7;
+
+        u(1)=sqrt(omega_2);
+        u(2)=u(1);
+        u(3)=sqrt(omega3_2);
+        u(4)=pi/2;
+        u(5)=pi/2;
+        u(6)=theta3;
+        u(7)=-pi/2;
 
     otherwise
         error('Controllo non valido');

@@ -50,9 +50,8 @@ r = x(12);
 V_body = [x(4);x(5);x(6)]; % velocità nel body frame
 Omega_body = [p;q;r]; % velocità angolare body
 
-% u = controlloVTOL_v2(params,x);
+u = controlloVTOL_v3(params,x);
 
-u = controlloVTOL_v3(t, params,x);
 
 
 %% dinamica tilt rotor
@@ -87,6 +86,21 @@ theta4_des = u(7);
 R = matriceRotazione(phi,theta,psi); % V_global = R*V_body 
 J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,r) -> Omega_global (phi_dot,theta_dot,psi_dot)
 
+%% wind frame e forze aerodinamiche
+
+Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
+alpha = atan2(x(6),x(4)); % angle of attack   
+%beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
+beta = 0;
+
+Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
+F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+if alpha >= pi/2-0.001
+    %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
+    F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
+end
+F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
+
 %% eq. forze BODY FRAME
 
 % GRAVITA'
@@ -98,16 +112,19 @@ F_g_body = F_grav(phi , theta , psi , params.m ,params.g); % body frame
 
 % THRUST 
 
-input_thrust = [params.k*u(1)^2;params.k*u(2)^2;params.k*u(3)^2;x(13);x(15);x(17);x(19)];
+input_thrust = [params.k*x(21)^2;params.k*x(23)^2;params.k*x(25)^2;x(13);x(15);x(17);x(19)];
+%input_thrust = [params.k*u(1)^2;params.k*u(2)^2;params.k*u(3)^2;x(13);x(15);x(17);x(19)];
 
 F_th_body = F_thrust(input_thrust); % body frame
 
 % disp("F_th_body = ");
 % disp(F_th_body);
 
-% forze aerodinamiche (DRAG+LIFT)
+% forze aerodinamiche nel body frame (DRAG+LIFT) (VECCHIO)
+%F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
 
-F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
+%F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+F_aero_body = F_aeroWing + F_aeroBody;
 
 % disp("F_aero_body = ");
 % disp(F_aero_body);
@@ -124,8 +141,19 @@ F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel
 
 F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor; % body frame
 
+
 % disp("F_tot_body = ");
 % disp(F_tot_body);
+
+% === 4. INIEZIONE DISTURBO (TEST ROBUSTEZZA) ===
+F_vento_global = [0;0;0];
+if t > 5
+    % A t=5s, raffica di 30N verso il basso (+Z)
+    F_vento_global = [0; 0; 30]; 
+end
+F_vento_body = R' * F_vento_global;
+
+F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_vento_body; % body frame
 
 
 %% eq. Momenti
@@ -144,11 +172,12 @@ Iz3 = params.I_rotor_tail(3,3);
 
 
 M_th = M_thrust_2(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
+%M_th = M_thrust_noTorc(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
 
 % disp("M_th = ");
 % disp(M_th);
 
-M_aero = MomentAero(params.r_aerodyn_w_dx,params.r_aerodyn_w_sx,params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
+M_aero = MomentAero(params.r_aerodyn_w_dx,params.r_aerodyn_w_sx,params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
 
 % disp("M_aero = ");
 % disp(M_aero);
@@ -172,15 +201,19 @@ alpha1y=1;
 alpha0z =1;
 alpha1z =1;
 
-M_stab_pinna = [-x(10)*alpha0x-alpha1x*x(5)^2;0;-x(12)*(alpha0z+alpha1z*x(5)^2)];
+M_stab_pinna = [-x(10)*(alpha0x+alpha1x*x(5)^2);0;-x(12)*(alpha0z+alpha1z*x(5)^2)];
 % con variante in assenza di rotore anteriore
 %[-x(10)*alpha0x-alpha1x*(x(5)^2 +x(6)^2);-x(11)*(alpha0y+alpha1y*x(6)^2);-x(12)*(alpha0z+alpha1z*x(5)^2)];
-M_stab_pinna = [0;0;0];
+%M_stab_pinna = [0;0;0];
 
-M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
-% M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
+%M_tot1 = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
+M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
 
+% if M_tot(3) ~= 0 || M_tot(2)~=0
+%     debug = 1;
+% end
 
+%%
 x123_dot = R*V_body;
 x1_dot = x123_dot(1);
 x2_dot = x123_dot(2);

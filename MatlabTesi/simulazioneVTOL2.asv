@@ -86,21 +86,6 @@ theta4_des = u(7);
 R = matriceRotazione(phi,theta,psi); % V_global = R*V_body 
 J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,r) -> Omega_global (phi_dot,theta_dot,psi_dot)
 
-%% wind frame e forze aerodinamiche
-
-Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
-alpha = atan2(x(6),x(4)); % angle of attack   
-%beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
-beta = 0;
-
-Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
-F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-if alpha >= pi/2-0.001
-    %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
-    F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
-end
-F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
-
 %% eq. forze BODY FRAME
 
 % GRAVITA'
@@ -120,11 +105,9 @@ F_th_body = F_thrust(input_thrust); % body frame
 % disp("F_th_body = ");
 % disp(F_th_body);
 
-% forze aerodinamiche nel body frame (DRAG+LIFT) (VECCHIO)
-%F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
+% forze aerodinamiche (DRAG+LIFT)
 
-%F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-F_aero_body = F_aeroWing + F_aeroBody;
+F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
 
 % disp("F_aero_body = ");
 % disp(F_aero_body);
@@ -141,6 +124,13 @@ F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel
 
 F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor; % body frame
 
+Cdy = 5;
+DragY = [0;-sign(x(5))*Cdy*x(5);0];
+
+
+
+% test per forza lungo Yb
+%F_tot_body = [0;0.4;0]; 
 
 % disp("F_tot_body = ");
 % disp(F_tot_body);
@@ -162,12 +152,11 @@ Iz3 = params.I_rotor_tail(3,3);
 
 
 M_th = M_thrust_2(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
-%M_th = M_thrust_noTorc(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
 
 % disp("M_th = ");
 % disp(M_th);
 
-M_aero = MomentAero(params.r_aerodyn_w_dx,params.r_aerodyn_w_sx,params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+M_aero = MomentAero(params.r_aerodyn_w_dx,params.r_aerodyn_w_sx,params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
 
 % disp("M_aero = ");
 % disp(M_aero);

@@ -5,7 +5,6 @@
 
 clear all
 clc
-close all
 
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
@@ -232,7 +231,7 @@ time = linspace(0,tspan(2),size(x,1));
 
 flagPlot = 1; % grafici + pallina
 flagVoloVerticale = 1; % grafici
-plotPallina = 0;% pallina
+plotPallina = ;% pallina
 flagPlot3D = 1; % tricottero 3D
 
 if flagPlot == 1
