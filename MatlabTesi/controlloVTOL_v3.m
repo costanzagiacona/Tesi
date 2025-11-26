@@ -3,7 +3,7 @@ function u = controlloVTOL_v3(params, x)
 % Preallocazione
 u = zeros(7,1);
 
-test_id = 5;
+test_id = 6;
 % TEST
 
 % -1 : Debug (tutto simbolico)
@@ -282,6 +282,99 @@ switch test_id
         u(5) = pi/2;                 % Servo Ant SX
         u(6) = theta3_ideal;         % Servo Coda (Target ideale)
         u(7) = -pi/2;
+
+    case 6
+        % --- CONTROLLO COMPLETO ROBUSTO (Z e Y) ---
+        
+        % 1. Estrazione Stato
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10);  % Rateo di rollio
+        
+        R = matriceRotazione(phi,theta,psi); 
+        V_body = [x(4);x(5);x(6)]; 
+        V_global = R*V_body ;
+        vy_global = V_global(2);
+        vz_global = V_global(3);
+
+        u = zeros(7,1);
+
+        % 2. Parametri Obiettivo
+        z_des = -10;    vz_des = 0;
+        y_des = 0;      vy_des = 0;
+
+        % 3. Parametri SMC Z (Quota)
+        lambda_z = 2.5; K_z_smc = 40; Phi_z = 0.5;
+
+        % 4. Parametri SMC Y (Laterale)
+        lambda_y = 1.5; K_y_smc = 15; Phi_y = 0.2;
+        
+        % 5. Parametri PD Rollio (Attitudine)
+        kp_phi = 400;   kd_phi = 80;
+
+        % --- LOOP Z (QUOTA) ---
+        e_z = z_des - x(3);           
+        de_z = vz_des - vz_global;    
+        s_z = de_z + lambda_z * e_z;    
+
+        F_grav = params.m * params.g * cos(theta) * cos(phi); 
+        F_drag_z = -params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
+        F_lift = -params.C_l*params.rho*params.s*x(4)^2;
+
+        u_smc_z = params.m * lambda_z * de_z + K_z_smc * tanh(s_z / Phi_z);
+        Thrust_req = F_grav + F_drag_z + F_lift - u_smc_z;
+        if Thrust_req < 1; Thrust_req = 1; end
+
+        % --- LOOP Y (LATERALE -> ROLLIO) ---
+        e_y = y_des - x(2);          
+        de_y = vy_des - vy_global;   
+        s_y = de_y + lambda_y * e_y; 
+        
+        % Forza laterale richiesta dall'SMC
+        F_y_req = params.m * lambda_y * de_y + K_y_smc * tanh(s_y / Phi_y);
+        
+        % Calcolo angolo di rollio desiderato
+        sin_phi_des = F_y_req / Thrust_req;
+        sin_phi_des = max(min(sin_phi_des, 0.5), -0.5); % Saturazione +/- 30 gradi
+        phi_des = asin(sin_phi_des);
+        
+        % Controllo PD Rollio per ottenere momento torcente
+        e_phi = phi_des - phi;
+        de_phi = 0 - p; 
+        Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
+
+        % --- MIXING E ALLOCAZIONE ---
+        theta3_ideal = atan2(((-params.d_tx*params.k)/params.b),1);
+        theta3_actual = x(17); 
+        
+        % 1. Spinta base (come nel caso 5)
+        denom_mix = params.d_mx*params.k*sin(theta3_actual) + params.b*cos(theta3_actual) - params.d_tx*params.k*sin(theta3_actual);
+        if abs(denom_mix) < 1e-6; denom_mix = 1e-6; end
+        
+        omega3_sq = (params.d_mx * Thrust_req) / denom_mix;
+        omega_front_sq_base = (Thrust_req - omega3_sq*params.k*sin(theta3_actual)) / (2*params.k);
+        
+        % 2. Differenziale per Rollio
+        % Assumiamo braccio laterale ala_y se presente, altrimenti stima 0.3m
+        if isfield(params, 'ala_y')
+            braccio_y = params.ala_y;
+        else
+            braccio_y = 0.3; 
+        end
+        
+        delta_omega_sq = Moment_roll_req / (params.k * braccio_y * 2);
+        
+        omega_dx_sq = omega_front_sq_base - delta_omega_sq; % Motore 1 (DX)
+        omega_sx_sq = omega_front_sq_base + delta_omega_sq; % Motore 2 (SX)
+        
+        % Saturazioni
+        if omega_dx_sq < 0; omega_dx_sq = 0; end
+        if omega_sx_sq < 0; omega_sx_sq = 0; end
+        if omega3_sq < 0; omega3_sq = 0; end
+
+        u(1) = sqrt(omega_dx_sq);    % DX
+        u(2) = sqrt(omega_sx_sq);    % SX
+        u(3) = sqrt(omega3_sq);      % Coda
+        u(4) = pi/2; u(5) = pi/2; u(6) = theta3_ideal; u(7) = -pi/2;
 
     otherwise
         error('Controllo non valido');

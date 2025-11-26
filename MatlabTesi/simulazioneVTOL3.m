@@ -3,6 +3,7 @@ function x_dot = simulazioneVTOL3(t, x,params)
 % check parametri
 
 paramFlag = 0;
+vento = 1;
 
 if paramFlag == 1
     % === Stampa dei parametri ===
@@ -145,15 +146,19 @@ F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor; % body frame
 % disp("F_tot_body = ");
 % disp(F_tot_body);
 
-% === 4. INIEZIONE DISTURBO (TEST ROBUSTEZZA) ===
-F_vento_global = [0;0;0];
-if t > 5
-    % A t=5s, raffica di 30N verso il basso (+Z)
-    F_vento_global = [0; 0; 30]; 
-end
-F_vento_body = R' * F_vento_global;
 
-F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_vento_body; % body frame
+if vento == 1
+    % === 4. INIEZIONE DISTURBO (TEST ROBUSTEZZA) ===
+    F_vento_global = [0;0;0];
+    if t > 5
+        % A t=5s, raffica di 30N verso il basso (+Z)
+        F_vento_global = [0; 0; 30]; 
+    end
+    F_vento_body = R' * F_vento_global;
+    
+    F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_vento_body; % body frame
+
+end
 
 
 %% eq. Momenti
