@@ -288,7 +288,7 @@ switch test_id
         
         % 1. Estrazione Stato
         phi = x(7); theta = x(8); psi = x(9);
-        p = x(10);  % Rateo di rollio
+        p = x(10);  
         
         R = matriceRotazione(phi,theta,psi); 
         V_body = [x(4);x(5);x(6)]; 
@@ -309,7 +309,7 @@ switch test_id
         lambda_y = 1.5; K_y_smc = 15; Phi_y = 0.2;
         
         % 5. Parametri PD Rollio (Attitudine)
-        kp_phi = 400;   kd_phi = 80;
+        kp_phi = 200;   kd_phi = 40;
 
         % --- LOOP Z (QUOTA) ---
         e_z = z_des - x(3);           
@@ -345,6 +345,7 @@ switch test_id
         % --- MIXING E ALLOCAZIONE ---
         theta3_ideal = atan2(((-params.d_tx*params.k)/params.b),1);
         theta3_actual = x(17); 
+        % theta3_actual = theta3_ideal;
         
         % 1. Spinta base (come nel caso 5)
         denom_mix = params.d_mx*params.k*sin(theta3_actual) + params.b*cos(theta3_actual) - params.d_tx*params.k*sin(theta3_actual);
@@ -353,15 +354,7 @@ switch test_id
         omega3_sq = (params.d_mx * Thrust_req) / denom_mix;
         omega_front_sq_base = (Thrust_req - omega3_sq*params.k*sin(theta3_actual)) / (2*params.k);
         
-        % 2. Differenziale per Rollio
-        % Assumiamo braccio laterale ala_y se presente, altrimenti stima 0.3m
-        if isfield(params, 'ala_y')
-            braccio_y = params.ala_y;
-        else
-            braccio_y = 0.3; 
-        end
-        
-        delta_omega_sq = Moment_roll_req / (params.k * braccio_y * 2);
+        delta_omega_sq = Moment_roll_req / (params.k * params.d_my * 2);
         
         omega_dx_sq = omega_front_sq_base - delta_omega_sq; % Motore 1 (DX)
         omega_sx_sq = omega_front_sq_base + delta_omega_sq; % Motore 2 (SX)

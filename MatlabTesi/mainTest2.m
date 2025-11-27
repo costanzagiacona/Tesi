@@ -177,7 +177,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 10];              % intervallo di simulazione
+tspan = [0 30];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 x0(4) = 0; % condizione iniziale della velocità lungo X
@@ -233,7 +233,7 @@ time = linspace(0,tspan(2),size(x,1));
 flagPlot = 1; % grafici + pallina
 flagVoloVerticale = 1; % grafici
 plotPallina = 0;% pallina
-flagPlot3D = 1; % tricottero 3D
+flagPlot3D = 0; % tricottero 3D
 
 if flagPlot == 1
 
@@ -269,7 +269,7 @@ if flagPlot == 1
     set(h3, 'LineWidth', 2)
     legend('\phi (roll,x)','\theta (pitch,y)','\psi (yaw,z)', ...
         'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    ylim([-100 100]);grid on
+    ylim([-1 1]);grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Angoli [grad]', 'FontSize', 14)
     set(gca, 'FontSize', 14)
@@ -278,7 +278,7 @@ if flagPlot == 1
     h4 = plot(time, p, 'r', time, q, 'b', time, r, 'g');
     set(h4, 'LineWidth', 2)
     legend('p','q','r', 'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    ylim([-10 10]);grid on
+    ylim([-1 1]);grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
     set(gca, 'FontSize', 14)
