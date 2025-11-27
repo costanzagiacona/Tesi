@@ -306,9 +306,9 @@ switch test_id
 
         % 3. Parametri Controllori
         % Z (Quota)
-        lambda_z = 2; K_z_smc = 30; Phi_z = 0.8;
+        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
         % Y (Laterale)
-        lambda_y = 1.5; K_y_smc = 15; Phi_y = 0.2;
+        lambda_y = 0.8; K_y_smc = 15; Phi_y = 1.0;
         % X (Longitudinale)
         lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
         
