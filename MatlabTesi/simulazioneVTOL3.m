@@ -3,7 +3,7 @@ function x_dot = simulazioneVTOL3(t, x,params)
 % check parametri
 
 paramFlag = 0;
-vento = 1;
+vento = 0;
 
 if paramFlag == 1
     % === Stampa dei parametri ===
@@ -89,17 +89,17 @@ J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,
 
 %% wind frame e forze aerodinamiche
 
-Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
-alpha = atan2(x(6),x(4)); % angle of attack   
-%beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
-beta = 0;
-
-Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
+% Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
+% alpha = atan2(x(6),x(4)); % angle of attack   
+% %beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
+% beta = 0;
+% 
+% Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
 F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-if alpha >= pi/2-0.001
-    %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
-    F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
-end
+% if alpha >= pi/2-0.001
+%     %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
+%     F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
+% end
 F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 
 %% eq. forze BODY FRAME
@@ -122,9 +122,9 @@ F_th_body = F_thrust(input_thrust); % body frame
 % disp(F_th_body);
 
 % forze aerodinamiche nel body frame (DRAG+LIFT) (VECCHIO)
-%F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
+% F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
 
-%F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+% F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
 F_aero_body = F_aeroWing + F_aeroBody;
 
 % disp("F_aero_body = ");
@@ -142,23 +142,16 @@ F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel
 
 F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor; % body frame
 
+% DISTURBO VENTO (Opzionale)
+if vento == 1 && t > 5
+    F_vento_global = [0; 0; 30]; % Raffica in Giù
+    F_vento_body = R' * F_vento_global;
+    F_tot_body = F_tot_body + F_vento_body;
+end
+
 
 % disp("F_tot_body = ");
 % disp(F_tot_body);
-
-
-if vento == 1
-    % === 4. INIEZIONE DISTURBO (TEST ROBUSTEZZA) ===
-    F_vento_global = [0;0;0];
-    if t > 5
-        % A t=5s, raffica di 30N verso il basso (+Z)
-        F_vento_global = [0; 0; 30]; 
-    end
-    F_vento_body = R' * F_vento_global;
-    
-    F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_vento_body; % body frame
-
-end
 
 
 %% eq. Momenti
@@ -209,7 +202,7 @@ alpha1z =1;
 M_stab_pinna = [-x(10)*(alpha0x+alpha1x*x(5)^2);0;-x(12)*(alpha0z+alpha1z*x(5)^2)];
 % con variante in assenza di rotore anteriore
 %[-x(10)*alpha0x-alpha1x*(x(5)^2 +x(6)^2);-x(11)*(alpha0y+alpha1y*x(6)^2);-x(12)*(alpha0z+alpha1z*x(5)^2)];
-%M_stab_pinna = [0;0;0];
+% M_stab_pinna = [0;0;0];
 
 %M_tot1 = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
 M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
@@ -218,7 +211,7 @@ M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna;
 %     debug = 1;
 % end
 
-%%
+
 x123_dot = R*V_body;
 x1_dot = x123_dot(1);
 x2_dot = x123_dot(2);

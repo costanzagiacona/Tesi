@@ -11,8 +11,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-fase = 3;
-new_model = 1;
+fase = 1;
 
 % parametri VTOL 
 % (roll , pitch , yaw) = (phi , theta , psi)
@@ -21,26 +20,14 @@ m = 6.7;      % massa UAV VTOL (Kg)
 g = 9.8;    % costante gravitazionele (m/s^2)
 
 k = 7*(10^-5);      % coeff. thrust rotori
+b = 0.005*k; % rapporto tra momento torcente e forza del rotore
 
 
-rho = 1.225;    % densità dell'aria (kg/m^3)
-ala_y = 0.4;
-ala_x = 0.15;
-s = ala_x * ala_y;      % superficie alare (m^2) 
-v_air = 25;   % velocità relativa alla superficie alare (m/s) lungo x
-v_limite = 13.89; % -> 50km/h
-
-if new_model == 1
-    b = 0.005*k; % rapporto tra momento torcente e forza del rotore
-    Ixx = 0.237;
-    Iyy = 0.244;
-    Izz = 0.468;
-
-    %inerzie dei tre rotori : wing_dx , wing_sx , tail (kg*m^2)
-    
-    I_rotor_xx = 0.468;
-    I_rotor_yy = 0.244;
-    I_rotor_zz = 0.468;
+if new == 0
+    %matrice inerzia del corpo (UAV) rispetto al body frame (kg*m^2)
+    Ixx = 3;
+    Iyy = 0.5 * Ixx;
+    Izz = 1.4 * Ixx;
 
     % superfici del tricottero
     s_body_x = 0.1;
@@ -49,59 +36,25 @@ if new_model == 1
 
     % scelto in modo tale che sia raggiunta la velocità limite di 50 km/h
     % (13.89 m/s) in caduta libera
-    % C_d_z = (m*g)/(rho*s_body_z*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
-    C_d_z = 0;
+    C_d_z = (m*g)/(rho*s_body_z*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
     C_d_x = 3;
     C_d_y = 3;
 
-    parametri.s_body_x = s_body_x;
-    parametri.s_body_y = s_body_y;
-    parametri.s_body_z = s_body_z;
-
-    parametri.C_d_x = C_d_x;
-    parametri.C_d_y = C_d_y;
-    parametri.C_d_z = C_d_z;
-
-    %distanza (m) tra centro di massa e rotori (per il calcolo del momento dei thrust)
-    %lungo i vari assi (X_body , Y_body, Z_body)
-    
-    d_ty = 0;  % assumo il tail rotor posto sull'asse X_body
-    d_tz = 0;
-    
-    d_my = (1/2)*ala_y;
-    d_mz = 0;
-    
-    d_mx = 0.6;
-    d_tx = -1.2;
-
 else
-    b = 0.01;
-
-    %matrice inerzia del corpo (UAV) rispetto al body frame (kg*m^2)
-    Ixx = 3;
-    Iyy = 0.5 * Ixx;
-    Izz = 1.4 * Ixx;
-
+    Ixx = 0.237;
+    Iyy = 0.244;
+    Izz = 0.468;
     
     %inerzie dei tre rotori : wing_dx , wing_sx , tail (kg*m^2)
     
-    I_rotor_xx = 2.5;
-    I_rotor_yy = 0.5*I_rotor_xx;
-    I_rotor_zz = 1.4*I_rotor_xx;
+    I_rotor_xx = 0.468;
+    I_rotor_yy = 0.244;
+    I_rotor_zz = 0.468;
 
-    % scelto in modo tale che sia raggiunta la velocità limite di 50 km/h
-    % (13.89 m/s) in caduta libera
-    C_d_z = (m*g)/(rho*s*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
-    %C_d_z = 1.2;
-
-    d_mx = 0; % assumo il wing rotor posto sull'asse Y_body
-    d_my = (1/2)*ala_y;
-    d_mz = 0;
-
-    d_tx = -0.3;
-    d_ty = 0;  % assumo il tail rotor posto sull'asse X_body
-    d_tz = 0;
-
+% scelto in modo tale che sia raggiunta la velocità limite di 50 km/h
+% (13.89 m/s) in caduta libera
+C_d_z = (m*g)/(rho*s*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
+%C_d_z = 1.2;
 
 end
 
@@ -113,11 +66,34 @@ I_rotor_w_sx = I_rotor;
 I_rotor_tail = I_rotor;
 
 
+rho = 1.225;    % densità dell'aria (kg/m^3)
+ala_y = 0.4;
+ala_x = 0.15;
+s = ala_x * ala_y;      % superficie alare (m^2) 
+v_air = 25;   % velocità relativa alla superficie alare (m/s) lungo x
+v_limite = 13.89; % -> 50km/h
+
 C_d = ((m-1)*g)/(rho*s*(v_air)^2); %1.28;  %coeff. di resistenza (drag) aerodinamica lungo asse X
 C_y = 0; % trascurabile
 % scelto in modo tale che se v_x = 90 km/h (25 m/s) la portanza contrasti
 % la gravità
 C_l = (m*g)/(rho*s*(v_air)^2); %0.854; %coeff. di portanza (lift) aerodinamica 
+
+
+
+
+
+%distanza (m) tra centro di massa e rotori (per il calcolo del momento dei thrust)
+%lungo i vari assi (X_body , Y_body, Z_body)
+
+d_ty = 0;  % assumo il tail rotor posto sull'asse X_body
+d_tz = 0;
+
+d_my = (1/2)*ala_y;
+d_mz = 0;
+
+d_mx = 0.6;
+d_tx = -1.2;
 
 %parametri distanza (m) tra centro di massa e forze aerodinamiche (per il calcolo del momento delle forze aerodinamiche)
 
@@ -163,12 +139,17 @@ parametri.I_rotor_tail = I_rotor_tail;
 parametri.rho = rho;
 parametri.s = s;
 
-
+parametri.s_body_x = s_body_x;
+parametri.s_body_y = s_body_y;
+parametri.s_body_z = s_body_z;
 
 parametri.C_d = C_d;
 parametri.C_y = C_y;
 parametri.C_l = C_l;
 
+parametri.C_d_x = C_d_x;
+parametri.C_d_y = C_d_y;
+parametri.C_d_z = C_d_z;
 
 parametri.b = b;
 parametri.v_air = v_air;
@@ -212,7 +193,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 100];              % intervallo di simulazione
+tspan = [0 10];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 
@@ -239,12 +220,14 @@ elseif fase == 3
     x0(8) = deg2rad(2);
     
     %inclinazione iniziale dei rotori anterioiri (per il volo verticale)
-    x0(13) = 0;
-    x0(15) = 0;
+    x0(13)= 0;
+    x0(15)= 0;
     x0(17) = 0;
-    x0(19) = 0;
+    x0(19)= -pi/2;
 
 end
+
+
 
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
 

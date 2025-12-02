@@ -3,7 +3,7 @@ function u = controlloVTOL_v2(params, x)
 % Preallocazione
 u = zeros(7,1);
 
-test_id = 4;
+test_id = 2;
 % TEST
 
 % -1 : Debug (tutto simbolico)

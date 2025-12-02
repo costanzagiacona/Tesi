@@ -22,11 +22,7 @@ test_id = 6;
 
 % 4 : volo verticale (con momento torcente)  
 
-% angoli di roll ,pitch, yaw
-phi = x(7);
-theta = x(8);
-psi = x(9);
-R = matriceRotazione(phi,theta,psi);
+
 
 switch test_id
 
@@ -65,6 +61,11 @@ switch test_id
 
         % per poter considerare azione derivativa devo considerare le velocità nel
         % frame inerziale e non body frame
+
+        % angoli di roll ,pitch, yaw
+        phi = x(7);
+        theta = x(8);
+        psi = x(9);
 
         R = matriceRotazione(phi,theta,psi); % matrice di rotazione
         V_body = [x(4);x(5);x(6)]; % velocità nel body frame
@@ -221,7 +222,7 @@ switch test_id
         phi = x(7); theta = x(8); psi = x(9);
         p = x(10); q = x(11); r = x(12);
         
- 
+        R = matriceRotazione(phi,theta,psi); 
         V_body = [x(4);x(5);x(6)]; 
         V_global = R*V_body ;
         vx_global = V_global(1);
@@ -350,73 +351,54 @@ switch test_id
         u(4) = pi/2; u(5) = pi/2; u(6) = theta3_ideal; u(7) = -pi/2;
     
     case 6
-        % === STATI ===
-        u_body = x(4); % Velocità lungo l'asse x del drone
-        p = x(10);     % Rateo di rollio (per smorzamento)
-        r = x(12);     % Rateo di imbardata (per smorzamento)
-    
-        % === RIFERIMENTI ===
-        V_des = 25;    % Manteniamo questa velocità costante
-    
-        % === 1. CONTROLLO DI VELOCITA' (CRUISE CONTROL) ===
-        % Usiamo un PI (Proporzionale-Integrale) per annullare l'errore statico
-        Kp_v = 50;  % Guadagno proporzionale (regola la reattività)
-        Ki_v = 5;   % Guadagno integrale (elimina l'errore a regime dovuto al Drag)
+        phi = x(7);
+        theta = x(8);
+        psi = x(9);
+
+        R = matriceRotazione(phi,theta,psi); % matrice di rotazione
+        V_body = [x(4);x(5);x(6)]; % velocità nel body frame
+        V_global = R*V_body ;
+        vx_global = V_global(1);
+        %vy_global = V_global(2);
+        vz_global = V_global(3);
+
+        % controllo 
+
+        u = zeros(7,1);
         
-        % Variabile persistente per l'integratore
-        persistent err_v_int;
-        if isempty(err_v_int) || x(1) == 0 % Reset all'inizio
-            err_v_int = 0;
-        end
-        
-        % Calcolo errore
-        err_v = V_des - u_body;
-        
-        % Accumulo errore (integrale) - anti-windup semplice
-        err_v_int = err_v_int + err_v * 0.01; % Assumiamo dt approx
-        err_v_int = max(-50, min(50, err_v_int)); % Saturazione integrale
-        
-        % Feedforward: Calcoliamo la spinta necessaria per vincere il Drag a 25m/s
-        % F = 0.5 * rho * S * Cd * V^2
-        % (Stima approssimativa per aiutare il controllore)
-        F_drag_stimato = 0.5 * params.rho * params.s * params.C_d * V_des^2; 
-        
-        % Comando Totale di Spinta
-        Thrust_cmd = F_drag_stimato + Kp_v*err_v + Ki_v*err_v_int;
-        Thrust_cmd = max(0, Thrust_cmd); % Non possiamo avere spinta negativa
-    
-        % === 2. STABILIZZAZIONE LATERALE MINIMA (SAS) ===
-        % Anche se andiamo dritti, aggiungiamo un piccolissimo smorzamento 
-        % per evitare che il drone inizi a ruotare su se stesso (roll/yaw)
-        % usando una spinta differenziale.
-        Kd_roll = 20;
-        diff_thrust = -Kd_roll * p; 
-    
-        % === 3. ASSEGNAZIONE AI MOTORI ===
-        % Ripartiamo la spinta sui due motori anteriori
-        T_dx = 0.5 * Thrust_cmd - diff_thrust;
-        T_sx = 0.5 * Thrust_cmd + diff_thrust;
-        
-        % Saturazione fisica (minimo 0)
-        T_dx = max(0, T_dx);
-        T_sx = max(0, T_sx);
-    
-        % Convertiamo Forza in Velocità angolare (rad/s)
-        % T = k * omega^2 -> omega = sqrt(T/k)
-        omega_1 = sqrt(T_dx / params.k); % Motore DX
-        omega_2 = sqrt(T_sx / params.k); % Motore SX
-        omega_3 = 0;                     % Coda SPENTA
-    
-        % === 4. SERVOMOTORI (TILT) ===
-        % Tutto bloccato a 0 gradi (spinta orizzontale)
-        tilt_1 = 0; 
-        tilt_2 = 0;
-        
-        % Coda (ininfluente se spenta)
-        tilt_3 = 0;
-        tilt_4 = 0;
-    
-        u = [omega_1; omega_2; omega_3; tilt_1; tilt_2; tilt_3; tilt_4];
+        vx_des = 25;
+        kp_x = 5;
+        F_x_des = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
+        F_x_des = F_x_des -kp_x*(vx_des-x(4));
+
+        kp_z = -3;
+        kd_z = -5;
+        z_des = -10; % asse z positivo verso il basso
+        vz_des = 0; % hovering
+
+        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;      
+        F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
+
+
+        % theta_bar = atan2(F_z_des,F_x_des);
+        % 
+        % u(4) = theta_bar;
+        % u(5) =u(4);
+        % u(1) = sqrt((F_z_des/(2*sin(u(4))))/params.k);
+        % u(2)=u(1);
+
+        T_tot = sqrt(F_x_des^2 + F_z_des^2);
+        theta_bar = atan2(F_z_des,F_x_des);
+
+        % Assegna ai due rotori anteriori
+        T_i = T_tot/2;
+
+        u(1) = sqrt(T_i/params.k);   % omega1
+        u(2) = u(1);                 % omega2
+        u(4) = theta_bar;             % tilt rotore 1
+        u(5) = theta_bar;             % tilt rotore 2
+
+
 
     otherwise
         error('Controllo non valido');

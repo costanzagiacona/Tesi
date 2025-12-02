@@ -183,6 +183,14 @@ x0 = zeros(26,1);            % stato iniziale
 x0(4) = 0; % condizione iniziale della velocità lungo X
 x4eq = x0(4);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% "controllo all'equilibrio"
+omega1_2 = (0.0)*((parametri.rho*parametri.s*parametri.C_d*(x4eq)^2)/parametri.k);
+omega2_2 = (0.0)*((parametri.rho*parametri.s*parametri.C_d*(x4eq)^2)/parametri.k);
+x0(21) = sqrt(omega1_2);
+x0(23) = sqrt(omega2_2);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % posizione iniziale lungo z
 x0(3) = 0;
 
@@ -191,12 +199,15 @@ x0(13)= pi/2;
 x0(15)= pi/2;
 
 %inclinazione iniziale del rotore di coda (per il volo verticale)
-x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
-x0(19)= -pi/2;
+% x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+% x0(19)= -pi/2;
 
 %inclinazione iniziale del rotore di coda (per il volo verticale senza momento torcente)
 % x0(17) = pi/2;
 % x0(19)= 0;
+
+x0(17) = 0;
+x0(19)= 0;
 
 
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
@@ -231,9 +242,9 @@ r = x(:,12);
 time = linspace(0,tspan(2),size(x,1));
 
 flagPlot = 1; % grafici + pallina
-flagVoloVerticale = 1; % grafici
+flagVoloVerticale = 0; % grafici
 plotPallina = 0;% pallina
-flagPlot3D = 1; % tricottero 3D
+flagPlot3D = 0; % tricottero 3D
 
 if flagPlot == 1
 
