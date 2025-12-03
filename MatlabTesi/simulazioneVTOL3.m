@@ -1,4 +1,4 @@
-function x_dot = simulazioneVTOL3(t, x,params)
+function x_dot = simulazioneVTOL3(t, x,params, test_id)
 
 % check parametri
 
@@ -51,7 +51,7 @@ r = x(12);
 V_body = [x(4);x(5);x(6)]; % velocità nel body frame
 Omega_body = [p;q;r]; % velocità angolare body
 
-u = controlloVTOL_v3(params,x);
+u = controlloVTOL_v3(params,x, test_id);
 
 
 

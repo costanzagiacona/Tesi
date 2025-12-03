@@ -1,8 +1,5 @@
 %% SIMULAZIONE VTOL 
 
-% Locatelli Andrea 
-% A.A 2025-2026
-
 clear all
 clc
 close all
@@ -12,6 +9,13 @@ clear functions
 paramFlag = 0; % se 1 print del valore dei parametri
 
 fase = 3;
+test_id = 0;
+
+if fase == 1
+    test_id = 5;
+elseif fase == 3
+    test_id = 6;
+end
 new_model = 1;
 
 % parametri VTOL 
@@ -51,7 +55,7 @@ if new_model == 1
     % (13.89 m/s) in caduta libera
     % C_d_z = (m*g)/(rho*s_body_z*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
     C_d_z = 0;
-    C_d_x = 3;
+    C_d_x = 0.1;
     C_d_y = 3;
 
     parametri.s_body_x = s_body_x;
@@ -212,7 +216,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 100];              % intervallo di simulazione
+tspan = [0 120];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 
@@ -230,14 +234,19 @@ if fase == 1
     % x0(19)= 0;
 
 elseif fase == 3
-    x0(4) = 25;
-    x4eq = x0(4);
-    
     % posizione iniziale lungo z
     x0(3) = -10;
+    x0(4) = 25;
+    x4eq = x0(4);
+    F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
     % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
-    x0(8) = deg2rad(2);
-    
+    % x0(8) = deg2rad(2);
+    F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
+    F0_x = F_drag + F_drag_ali;
+    T_i = F0_x/2;
+    x0(21)= sqrt(T_i/parametri.k);
+    x0(23)= x0(21);
+
     %inclinazione iniziale dei rotori anterioiri (per il volo verticale)
     x0(13) = 0;
     x0(15) = 0;
@@ -249,13 +258,13 @@ end
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
 
 
-[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri), tspan, x0, options);
+[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id), tspan, x0, options);
 
 %per plot controllo
 global U_values
 U_values = zeros(length(t),7);
 for k = 1:length(t)
-    U_values(k,:) = controlloVTOL_v3(parametri,x(k,:));
+    U_values(k,:) = controlloVTOL_v3(parametri,x(k,:), test_id);
 end
 
 
@@ -291,10 +300,11 @@ if flagPlot == 1
 
     subplot(4,1,1);
     h1 = plot(time, xp, 'r', time, yp, 'b', time, zp, 'g');
+    yline(10,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
     set(h1, 'LineWidth', 2)
     legend('x_{inertial frame}','y_{inertial frame}','z_{inertial frame}', ...
         'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    ylim([-20 20]); grid on
+    ylim([-20 50]); grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Posizione [m]', 'FontSize', 14)
     title('Andamento stati (x1,...,x12)','FontSize',16)
@@ -303,6 +313,7 @@ if flagPlot == 1
 
     subplot(4,1,2);
     h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g');
+    h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
     set(h2, 'LineWidth', 2)
     legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
         'FontSize', 14, 'Interpreter','tex', 'Location','best')
@@ -382,7 +393,7 @@ if flagPlot == 1
         subplot(3,1,1);
         h1 = plot(time, parametri.k*omega_1.^2, 'r','LineWidth',2);
         legend('Thrust_{1}','FontSize',14,'Location','best')
-        grid on
+        ylim([0 100]); grid on
         ylabel('[N]','FontSize',14)
         set(gca,'FontSize',14)
         title('Thrust generato dai rotori','FontSize',16)
@@ -390,14 +401,14 @@ if flagPlot == 1
         subplot(3,1,2);
         h2 = plot(time, parametri.k*omega_2.^2, 'r','LineWidth',2);
         legend('Thrust_{2}','FontSize',14,'Location','best')
-        grid on
+        ylim([0 100]); grid on
         ylabel('[N]','FontSize',14)
         set(gca,'FontSize',14)
 
         subplot(3,1,3);
         h3 = plot(time, parametri.k*omega_3.^2, 'r','LineWidth',2);
         legend('Thrust_{3}','FontSize',14,'Location','best')
-        grid on
+        ylim([0 100]); grid on
         ylabel('[N]','FontSize',14)
         set(gca,'FontSize',14)
 

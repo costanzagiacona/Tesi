@@ -1,9 +1,9 @@
-function u = controlloVTOL_v3(params, x)
+function u = controlloVTOL_v3(params, x, test_id)
 
 % Preallocazione
 u = zeros(7,1);
 
-test_id = 6;
+% test_id = 6;
 % TEST
 
 % -1 : Debug (tutto simbolico)
@@ -215,7 +215,7 @@ switch test_id
         u(7)=-pi/2;
 
     case 5
-        % --- CONTROLLO COMPLETO ROBUSTO (X, Y, Z) ---
+        % --- CONTROLLO VERTICALE ROBUSTO (X, Y, Z) ---
         
         % 1. Estrazione Stato
         phi = x(7); theta = x(8); psi = x(9);
@@ -351,17 +351,22 @@ switch test_id
     
     case 6
         % === STATI ===
-        u_body = x(4); % Velocità lungo l'asse x del drone
-        p = x(10);     % Rateo di rollio (per smorzamento)
-        r = x(12);     % Rateo di imbardata (per smorzamento)
+        V_body = [x(4);x(5);x(6)]; 
+        V_global = R*V_body ;
+        vx_global = V_global(1);
+        vy_global = V_global(2);
+        vz_global = V_global(3);
+
+        p = x(10);     % Rate di rollio (per smorzamento)
+        r = x(12);     % Rate di imbardata (per smorzamento)
     
         % === RIFERIMENTI ===
         V_des = 25;    % Manteniamo questa velocità costante
     
         % === 1. CONTROLLO DI VELOCITA' (CRUISE CONTROL) ===
         % Usiamo un PI (Proporzionale-Integrale) per annullare l'errore statico
-        Kp_v = 50;  % Guadagno proporzionale (regola la reattività)
-        Ki_v = 5;   % Guadagno integrale (elimina l'errore a regime dovuto al Drag)
+        Kp_v = 5;  % Guadagno proporzionale (regola la reattività)
+        Ki_v = 3;   % Guadagno integrale (elimina l'errore a regime dovuto al Drag)
         
         % Variabile persistente per l'integratore
         persistent err_v_int;
@@ -370,32 +375,24 @@ switch test_id
         end
         
         % Calcolo errore
-        err_v = V_des - u_body;
+        err_v = V_des - x(4);% vx_global;
         
-        % Accumulo errore (integrale) - anti-windup semplice
+        % Accumulo errore (integrale) 
         err_v_int = err_v_int + err_v * 0.01; % Assumiamo dt approx
         err_v_int = max(-50, min(50, err_v_int)); % Saturazione integrale
         
         % Feedforward: Calcoliamo la spinta necessaria per vincere il Drag a 25m/s
-        % F = 0.5 * rho * S * Cd * V^2
-        % (Stima approssimativa per aiutare il controllore)
-        F_drag_stimato = 0.5 * params.rho * params.s * params.C_d * V_des^2; 
+        F_drag = 0.5*params.rho*params.s_body_x*params.C_d_x*sign(x(4))*x(4)^2;
+        F_drag_ali = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
         
         % Comando Totale di Spinta
-        Thrust_cmd = F_drag_stimato + Kp_v*err_v + Ki_v*err_v_int;
+        Thrust_cmd = F_drag + F_drag_ali + Kp_v*err_v + Ki_v*err_v_int;
         Thrust_cmd = max(0, Thrust_cmd); % Non possiamo avere spinta negativa
-    
-        % === 2. STABILIZZAZIONE LATERALE MINIMA (SAS) ===
-        % Anche se andiamo dritti, aggiungiamo un piccolissimo smorzamento 
-        % per evitare che il drone inizi a ruotare su se stesso (roll/yaw)
-        % usando una spinta differenziale.
-        Kd_roll = 20;
-        diff_thrust = -Kd_roll * p; 
     
         % === 3. ASSEGNAZIONE AI MOTORI ===
         % Ripartiamo la spinta sui due motori anteriori
-        T_dx = 0.5 * Thrust_cmd - diff_thrust;
-        T_sx = 0.5 * Thrust_cmd + diff_thrust;
+        T_dx = 0.5 * Thrust_cmd;
+        T_sx = 0.5 * Thrust_cmd;
         
         % Saturazione fisica (minimo 0)
         T_dx = max(0, T_dx);
@@ -412,7 +409,7 @@ switch test_id
         tilt_1 = 0; 
         tilt_2 = 0;
         
-        % Coda (ininfluente se spenta)
+        % Coda 
         tilt_3 = 0;
         tilt_4 = 0;
     
