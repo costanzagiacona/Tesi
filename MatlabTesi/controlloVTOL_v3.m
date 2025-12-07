@@ -27,6 +27,8 @@ phi = x(7);
 theta = x(8);
 psi = x(9);
 R = matriceRotazione(phi,theta,psi);
+V_body = [x(4);x(5);x(6)]; % velocità nel body frame
+V_global = R*V_body ;
 
 switch test_id
 
@@ -415,6 +417,158 @@ switch test_id
     
         u = [omega_1; omega_2; omega_3; tilt_1; tilt_2; tilt_3; tilt_4];
 
+    case 7
+        % --- CONTROLLO VERTICALE ROBUSTO + YAW CON TILT (X, Y, Z, PSI) ---
+        
+        % 1. Estrazione Stato
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10); q = x(11); r = x(12);
+        
+        V_body = [x(4);x(5);x(6)]; 
+        V_global = R*V_body ;
+        vx_global = V_global(1); vy_global = V_global(2); vz_global = V_global(3);
+        u = zeros(7,1);
+
+        % 2. Parametri Obiettivo
+        z_des = -10;    vz_des = 0;
+        y_des = 0;      vy_des = 0;
+        x_des = 0;      vx_des = 0; 
+        psi_des = 0;    r_des = 0;  % NUOVO: Obiettivo Yaw
+        % psi_des = 45 * (pi/180);  % ~0.785 radianti
+
+        % 3. Parametri Controllori
+        % ... (Z, Y, X rimangono uguali) ...
+        % Z (Quota)
+        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
+        % Y (Laterale)
+        lambda_y = 0.8; K_y_smc = 15; Phi_y = 1.0;
+        % X (Longitudinale)
+        lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
+        
+        % PD Attitudine (Roll & Pitch)
+        kp_phi = 40;   kd_phi = 8; 
+        kp_theta = 40; kd_theta = 8;
+
+        % NUOVO: PD Yaw (Imbardata)
+        kp_psi = 15;   kd_psi = 5; 
+
+        % =========================================================
+        %   LOOP Z (QUOTA) - Invariato
+        % =========================================================
+        e_z = z_des - x(3);           
+        de_z = vz_des - vz_global;    
+        s_z = de_z + lambda_z * e_z;    
+        F_grav = params.m * params.g * cos(theta) * cos(phi); 
+        F_drag_z = -params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
+        F_lift = -params.C_l*params.rho*params.s*x(4)^2;
+        u_smc_z = params.m * lambda_z * de_z + K_z_smc * tanh(s_z / Phi_z);
+        Thrust_req = F_grav + F_drag_z + F_lift - u_smc_z;
+        if Thrust_req < 1; Thrust_req = 1; end
+
+        % =========================================================
+        %   LOOP Y (LATERALE -> ROLLIO) - Invariato
+        % =========================================================
+        e_y = y_des - x(2);          
+        de_y = vy_des - vy_global;   
+        s_y = de_y + lambda_y * e_y; 
+        F_y_req = params.m * lambda_y * de_y + K_y_smc * tanh(s_y / Phi_y);
+        sin_phi_des = F_y_req / Thrust_req;
+        sin_phi_des = max(min(sin_phi_des, 0.5), -0.5); 
+        phi_des = asin(sin_phi_des);
+        e_phi = phi_des - phi;
+        de_phi = 0 - p; 
+        Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
+
+        % =========================================================
+        %   LOOP X (LONGITUDINALE -> PITCH) - Invariato
+        % =========================================================
+        e_x = x_des - x(1);
+        de_x = vx_des - vx_global;
+        s_x = de_x + lambda_x * e_x;
+        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
+        sin_theta_des = -F_x_req / Thrust_req;
+        sin_theta_des = max(min(sin_theta_des, 0.5), -0.5);
+        theta_des = asin(sin_theta_des);
+        e_theta = theta_des - theta;
+        de_theta = 0 - q;
+        Moment_pitch_req = kp_theta * e_theta + kd_theta * de_theta;
+
+        % =========================================================
+        %   NUOVO LOOP: YAW (IMBARDATA)
+        % =========================================================
+        % Calcolo errore angolo (gestione wrap -pi/pi opzionale ma consigliata)
+        e_psi = psi_des - psi;
+        % Se necessario normalizzare tra -pi e pi: e_psi = atan2(sin(e_psi), cos(e_psi));
+        
+        de_psi = r_des - r;
+        
+        % Richiesta di Momento Yaw
+        Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
+
+        % =========================================================
+        %   MIXING E ALLOCAZIONE AGGIORNATA
+        % =========================================================
+        theta3_ideal = atan2(((-params.d_tx*params.k)/params.b),1);
+        theta3_actual = x(17); 
+        
+        % --- 1. Mixing Longitudinale (Z + Pitch) ---
+        denom_mix = params.d_mx*params.k*sin(theta3_actual) ...
+                  - params.d_tx*params.k*sin(theta3_actual) ...
+                  + params.b*cos(theta3_actual);
+        if abs(denom_mix) < 1e-6; denom_mix = 1e-6; end
+        
+        numeratore_coda = (params.d_mx * Thrust_req) - Moment_pitch_req;
+        omega3_sq = numeratore_coda / denom_mix;
+        
+        F_tail_z = omega3_sq * params.k * sin(theta3_actual);
+        
+        % Spinta totale richiesta ai motori anteriori (componente Z)
+        F_front_tot_z = Thrust_req - F_tail_z;
+        % Protezione per evitare divisioni per zero se i motori anteriori sono spenti
+        if F_front_tot_z < 0.1; F_front_tot_z = 0.1; end
+
+        omega_front_sq_base = F_front_tot_z / (2 * params.k);
+        
+        % --- 2. Mixing Laterale (Roll) ---
+        braccio_y = params.d_my;
+        delta_omega_sq = Moment_roll_req / (params.k * braccio_y * 2);
+        
+        omega_dx_sq = omega_front_sq_base - delta_omega_sq; 
+        omega_sx_sq = omega_front_sq_base + delta_omega_sq; 
+        
+        % --- 3. Mixing Yaw (Tilt Differenziale) ---
+        % Per generare Yaw, tiltiamo i motori in direzioni opposte.
+        % Momento Yaw = (F_motore * sin(tilt)) * braccio_y * 2 (circa)
+        % Assumendo piccoli angoli: sin(delta) ~ delta.
+        % Forza orizzontale disponibile = F_front_tot_z (approx, assumendo tilt piccoli)
+        
+        % Calcolo angolo di tilt differenziale richiesto (in radianti)
+        % Nota: F_front_tot_z agisce come guadagno di autorità. Più spinta ho, meno tilt serve.
+        delta_tilt_yaw = Moment_yaw_req / (F_front_tot_z * params.d_my);
+        
+        % Saturazione del tilt per sicurezza (es. max 20 gradi = 0.35 rad)
+        max_tilt = 0.35; 
+        delta_tilt_yaw = max(min(delta_tilt_yaw, max_tilt), -max_tilt);
+
+        % Assegnazione Tilt (Partendo da pi/2 verticale)
+        % Segni: Dipendono dalla geometria esatta. 
+        % Logica standard: Per Yaw positivo (naso a sinistra), 
+        % Motore DX spinge indietro (Tilt > 90), Motore SX spinge avanti (Tilt < 90).
+        tilt_1 = pi/2 + delta_tilt_yaw; % Motore DX (1)
+        tilt_2 = pi/2 - delta_tilt_yaw; % Motore SX (2)
+
+        % Saturazioni Motori
+        if omega_dx_sq < 0; omega_dx_sq = 0; end
+        if omega_sx_sq < 0; omega_sx_sq = 0; end
+        if omega3_sq < 0; omega3_sq = 0; end
+
+        u(1) = sqrt(omega_dx_sq);    
+        u(2) = sqrt(omega_sx_sq);    
+        u(3) = sqrt(omega3_sq);      
+        u(4) = tilt_1;  % Tilt Destro Modulato
+        u(5) = tilt_2;  % Tilt Sinistro Modulato
+        u(6) = theta3_ideal; 
+        u(7) = -pi/2;
     otherwise
         error('Controllo non valido');
 end

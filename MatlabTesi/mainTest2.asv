@@ -227,10 +227,10 @@ if fase == 1
     x0(13)= pi/2;
     x0(15)= pi/2;
     %inclinazione iniziale del rotore di coda (per il volo verticale)
-    x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+    % x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
     x0(19)= -pi/2;
     %inclinazione iniziale del rotore di coda (per il volo verticale senza momento torcente)
-    % x0(17) = pi/2;
+    x0(17) = pi/2;
     % x0(19)= 0;
 
 elseif fase == 3
