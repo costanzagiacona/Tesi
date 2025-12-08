@@ -498,6 +498,7 @@ switch test_id
         % =========================================================
         % Calcolo errore angolo (gestione wrap -pi/pi opzionale ma consigliata)
         e_psi = psi_des - psi;
+        e_psi = atan2(sin(e_psi), cos(e_psi));
         % Se necessario normalizzare tra -pi e pi: e_psi = atan2(sin(e_psi), cos(e_psi));
         
         de_psi = r_des - r;

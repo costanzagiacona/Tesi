@@ -216,7 +216,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 10];              % intervallo di simulazione
+tspan = [0 100];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 
