@@ -216,12 +216,14 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 100];              % intervallo di simulazione
+tspan = [0 10];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 
 if fase == 1
     x0(4) = 0; % condizione iniziale della velocità lungo X
+    % x0(7) = pi/10;
+    % x0(9) = pi/10;
     x4eq = x0(4);
     x0(3) = 0;
     x0(13)= pi/2;
@@ -327,7 +329,8 @@ if flagPlot == 1
     set(h3, 'LineWidth', 2)
     legend('\phi (roll,x)','\theta (pitch,y)','\psi (yaw,z)', ...
         'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    ylim([-1 1]);grid on
+    % ylim([-1 1]);
+    grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Angoli [grad]', 'FontSize', 14)
     set(gca, 'FontSize', 14)

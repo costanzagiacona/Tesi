@@ -475,6 +475,12 @@ switch test_id
         sin_phi_des = F_y_req / Thrust_req;
         sin_phi_des = max(min(sin_phi_des, 0.5), -0.5); 
         phi_des = asin(sin_phi_des);
+        F_drag_y = params.rho * params.s_body_y * params.C_d_y * sign(x(5)) * x(5)^2;
+        % phi_des = asin(F_drag_y+params.k * x(23)^2 * cos(x(17))/(params.m*params.g));
+        % if abs(phi_des_SMC - phi_des)> 1e-10
+        %     test = 1;
+        % end
+        % % phi_des = 0;
         e_phi = phi_des - phi;
         de_phi = 0 - p; 
         Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
