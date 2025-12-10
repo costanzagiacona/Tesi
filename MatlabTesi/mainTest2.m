@@ -8,13 +8,13 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-fase = 1;
+fase = 3;
 test_id = 0;
 
 if fase == 1
-    test_id = 7;
+    test_id = 5;
 elseif fase == 3
-    test_id = 6;
+    test_id = 7;
 end
 new_model = 1;
 
@@ -216,7 +216,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-tspan = [0 10];              % intervallo di simulazione
+tspan = [0 50];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
 
 
