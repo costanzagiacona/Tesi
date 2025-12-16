@@ -1,0 +1,6 @@
+\babel@toc {english}{}\relax 
+\beamer@sectionintoc {1}{Panoramica UAV VTOL}{3}{0}{1}
+\beamer@sectionintoc {2}{Tecniche di Controllo (Stato dell'Arte)}{6}{0}{2}
+\beamer@sectionintoc {3}{Sviluppi Paralleli: LTA}{13}{0}{3}
+\beamer@sectionintoc {4}{Estremizzazione: Il Bi-cottero}{16}{0}{4}
+\beamer@sectionintoc {5}{Conclusioni}{19}{0}{5}

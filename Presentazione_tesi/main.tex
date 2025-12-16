@@ -1,0 +1,277 @@
+% Tor Vergata - Engineering Beamer template.
+% Roberto Masocco <robmasocco[at]gmail.com>
+% Alessandro Tenaglia <alessandro.tenaglia42[at]gmail.com>
+% First version: February 5, 2022
+% Last update: November 16, 2024
+
+% Preferred aspect ratio is 16:9 but feel free to change it here
+\documentclass[aspectratio=169]{beamer}
+
+% --- FIX PER ERRORE FONT (MICROTYPE) ---
+\usepackage{lmodern} 
+% ---------------------------------------
+
+% Customized document information by setting these string options
+% To leave a field empty, use "{}"
+\usepackage[
+    title={Stato dell'Arte: UAV VTOL e LTA},
+    subtitle={Modellazione, Controllo e Allocazione},
+    event={Tesi di Laurea},
+    author={Giacona}, % <--- INSERISCI IL TUO NOME
+    longauthor={Maria Costanza Giacona},
+    email={mariacostanza.giacona@students.uniroma2.it},
+    institute={Università degli Studi di Roma "Tor Vergata"},
+    longinstitute={Università degli Studi di Roma "Tor Vergata"},
+    department={Dipartimento di Ingegneria},
+    researchgroup={},
+    date={\today}
+]{utvengbeamer}
+
+\begin{document}
+
+% --- Title page ---
+\frame{\titlepage}
+
+% --- Table of contents ---
+\begin{frame}
+\frametitle{Roadmap}
+\tableofcontents
+\end{frame}
+
+% --- INIZIO CONTENUTO TESI ---
+
+% --- SEZIONE 1: PANORAMICA ---
+\section{Panoramica UAV VTOL}
+
+\begin{frame}{Panoramica sugli UAV VTOL}
+    Le principali configurazioni di UAV a decollo verticale (VTOL) includono:
+    \begin{itemize}
+        \item \textbf{Multirotori} (es. Quadricotteri):
+        \begin{itemize}
+            \item Semplicità meccanica e hovering stabile.
+            \item Bassa efficienza energetica e autonomia limitata.
+        \end{itemize}
+        \item \textbf{Ala Fissa}:
+        \begin{itemize}
+            \item Elevata efficienza aerodinamica e lungo raggio.
+            \item Necessità di spazi ampi per decollo/atterraggio.
+        \end{itemize}
+        \item \textbf{Ibridi} (Tilt-Rotor, Tilt-Wing, Tailsitter):
+        \begin{itemize}
+            \item Combinano i vantaggi delle due categorie precedenti.
+            \item Capacità di transizione tra volo verticale (hovering) e orizzontale (crociera).
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Sfide di Modellazione e Controllo}
+    Lo sviluppo di VTOL ibridi presenta complessità significative:
+    \begin{block}{Fase di Transizione}
+        È la fase critica in cui si passa dalla portanza generata dai rotori a quella alare.
+    \end{block}
+    \begin{itemize}
+        \item \textbf{Non-linearità aerodinamiche}: Interazioni complesse tra flussi dei rotori e superfici.
+        \item \textbf{Accoppiamento dinamico}: I gradi di libertà longitudinali e laterali sono fortemente interconnessi.
+        \item \textbf{Requisiti di Controllo}: Il sistema deve garantire robustezza sia in hovering statico che in volo aerodinamico veloce.
+    \end{itemize}
+\end{frame}
+
+% --- SEZIONE 2: STATO DELL'ARTE CONTROLLO ---
+\section{Tecniche di Controllo (Stato dell'Arte)}
+
+\begin{frame}{UAV VTOL con Ali Indipendenti [1]}
+    \textbf{Obiettivo}: Superare i limiti di manovrabilità dei tricotteri e gestire la coppia del rotore di coda.
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Modellazione}: Modello 6-DOF (Newton-Eulero). Il controllo differenziale del \textit{tilt} alare genera portanza asimmetrica per indurre rollio.
+        \item \textbf{Strategia di Controllo (Ardupilot)}:
+        \begin{itemize}
+            \item \textit{Verticale}: PID classici su motori e servi.
+            \item \textit{Orizzontale}: Rollio via tilt differenziale; Imbardata via sideslip minimization (PI).
+        \end{itemize}
+        \item \textbf{Transizione}: Gestita da una logica a stati finiti per un passaggio fluido.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Backstepping per Quadricotteri 6-DOF [2]}
+    Analisi di un modello completo che include effetti giroscopici e dinamica attuatori.
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Approccio Sequenziale}:
+        \begin{enumerate}
+            \item \textit{Sottosistema Traslazionale}: Linearizzazione con retroazione + PD (Posizione/Altitudine).
+            \item \textit{Sottosistema Rotazionale}: Controllo non lineare \textbf{Backstepping} + Azione Integrale.
+        \end{enumerate}
+        \item \textbf{Risultati}:
+        \begin{itemize}
+            \item Stabilità asintotica globale (Lyapunov).
+            \item Maggiore robustezza ai disturbi rispetto ai PID tradizionali[2].
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Disaccoppiamento e Sliding Mode Control [3]}
+    Soluzione per il forte accoppiamento dinamico nei VTOL.
+    \vspace{0.3cm}
+    \begin{block}{Metodologia}
+        \begin{itemize}
+            \item \textbf{Decoupling}: Procedura in 4 fasi per trasformare le equazioni accoppiate in una forma standard sottattuata.
+            \item \textbf{Sliding Mode Control (SMC)}: Garantisce robustezza contro incertezze parametriche.
+        \end{itemize}
+    \end{block}
+    \begin{itemize}
+        \item \textbf{Vantaggi}: Annullamento dell'errore di tracciamento in tempo finito e riduzione del fenomeno del \textit{chattering}[3].
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Coaxial Tilt-Rotor (CTRUAV) [4]}
+    Configurazione innovativa: 2 coppie di rotori coassiali anteriori + 1 rotore di coda.
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \textbf{Vantaggi}: Spinta elevata, dimensioni compatte, annullamento naturale del momento giroscopico.
+        \item \textbf{Controllo Gerarchico}:
+        \begin{itemize}
+            \item \textit{Loop Esterno (Posizione)}: Backstepping.
+            \item \textit{Loop Interno (Assetto)}: \textbf{Robust Adaptive Backstepping Sliding Mode (ABSMC)}.
+        \end{itemize}
+        \item \textbf{Adattività}: Stima online dei disturbi per ridurre il chattering tramite funzioni di saturazione[4].
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Control Allocation per Tricotteri [5]}
+    Focus sul volo autonomo "full-mode" senza modelli dinamici costosi.
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Strategia di Volo}: Macchina a stati (Rotor mode $\to$ Conversion $\to$ Fixed-wing $\to$ Reconversion).
+        \item \textbf{Mixer (Control Allocation)}:
+        \begin{itemize}
+            \item Sistema sovra-attuato.
+            \item Distribuzione pesi tra rotori e superfici alari in base all'efficienza e all'angolo di tilt.
+            \item Imbardata in hovering gestita tramite \textit{tilt differenziale} dei rotori anteriori.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Fixed-Time Sliding Mode Control [6]}
+    Problema della convergenza rapida indipendente dalle condizioni iniziali.
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Fixed-Time Stability}: Convergenza all'equilibrio entro un tempo limitato e noto a priori ($T < T_{max}$).
+        \item \textbf{Controllore NFTSMC}:
+        \begin{itemize}
+            \item \textit{Nonsingular Sliding Surface}: Evita singolarità matematiche.
+            \item \textit{Stima Adattiva}: Compensazione in tempo reale dei disturbi esterni[6].
+        \end{itemize}
+        \item \textbf{Risultati Sperimentali}: Stabilizzazione assetto in $< 0.3\text{s}$ e reiezione disturbi (vento/carichi)[6].
+    \end{itemize}
+\end{frame}
+
+% --- SEZIONE 3: SVILUPPI LTA ---
+\section{Sviluppi Paralleli: LTA}
+
+\begin{frame}{Thrust-Based Control per Dirigibili [7]}
+    Applicazione di logiche simili ai droni su piattaforme \textit{Lighter-Than-Air} (LTA).
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Concept}: Dirigibile a 4 propulsori senza superfici aerodinamiche (no timoni/alettoni).
+        \item \textbf{Requisito}: Motori reversibili (spinta positiva/negativa).
+        \item \textbf{Obiettivo}: Dimostrare che la modulazione della spinta può sostituire completamente il controllo aerodinamico, efficace anche a bassa velocità[7].
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Allocazione Spinta Differenziale (Paper [7])}
+    Mappatura dei comandi sui 4 motori:
+    \vspace{0.1cm} % Spazio ridotto per far entrare tutto
+
+    % Pitch
+    \begin{block}{Pitch (Beccheggio)}
+        Spinta differenziale tra motori Alti e Bassi. \\
+        {\footnotesize (Es: Bassi spingono, Alti tirano $\to$ Muso su)}
+    \end{block}
+    
+    \vspace{0.1cm}
+
+    % Roll
+    \begin{block}{Roll (Rollio)}
+        Configurazione incrociata (diagonale). \\
+        {\footnotesize (Es: Basso-DX + Alto-SX spingono)}
+    \end{block}
+
+    \vspace{0.1cm}
+
+    % Yaw
+    \begin{block}{Yaw (Imbardata)}
+        Spinta differenziale tra motori Destri e Sinistri. \\
+        {\footnotesize (Es: Sinistri spingono, Destri tirano $\to$ Naso a DX)}
+    \end{block}
+\end{frame}
+
+% --- NUOVA SEZIONE: BI-COTTERO ---
+\section{Estremizzazione: Il Bi-cottero}
+
+\begin{frame}{Dal Tricottero al Bi-cottero [8]}
+    Un'evoluzione concettuale interessante è la riduzione al minimo degli attuatori:
+    \begin{alertblock}{Configurazione Bi-cottero}
+        Rimuovendo il rotore di coda da un tricottero e eliminando le superfici alari, si ottiene un \textbf{Bi-cottero}.
+    \end{alertblock}
+    \vspace{0.2cm}
+    \textbf{Caratteristiche distintive}:
+    \begin{itemize}
+        \item \textbf{Assenza di Ali}: I rotori devono fornire portanza in \textit{tutte} le fasi di volo (Hovering e Crociera), non solo al decollo.
+        \item \textbf{Instabilità Intrinseca}: Il sistema è staticamente instabile e richiede un controllo robusto e veloce.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Uso dei Rotori e Controllo INDI [8]}
+    A differenza dei Tilt-Rotor "classici" (dove i rotori diventano eliche in crociera), qui l'uso è continuo:
+    \vspace{0.2cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Control Allocation}:
+        \begin{itemize}
+            \item \textbf{Rollio}: Spinta differenziale.
+            \item \textbf{Beccheggio}: Tilt simmetrico dei rotori.
+            \item \textbf{Imbardata}: Tilt differenziale.
+        \end{itemize}
+
+        \column{0.5\textwidth}
+        \textbf{Strategia INDI}: \\
+        \textit{Incremental Nonlinear Dynamic Inversion}
+        \begin{itemize}
+            \item Metodo basato sulla variazione incrementale del comando.
+            \item Estremamente robusto ai disturbi (vento) senza richiedere modelli aerodinamici perfetti.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% --- SEZIONE 4: CONCLUSIONI ---
+\section{Conclusioni}
+
+\begin{frame}{Conclusioni}
+    L'analisi dello stato dell'arte evidenzia:
+    \begin{itemize}
+        \item L'evoluzione verso configurazioni \textbf{ibride} per massimizzare efficienza e versatilità.
+        \item La necessità di controllori \textbf{robusti} (SMC, Backstepping) per gestire la fase critica di transizione.
+        \item L'importanza del \textbf{Control Allocation} intelligente in sistemi sovra-attuati (Tilt-rotor).
+        \item L'estensione delle logiche \textit{Thrust-Based} anche a domini diversi (LTA), eliminando la complessità meccanica a favore del controllo software.
+    \end{itemize}
+\end{frame}
+
+% --- BIBLIOGRAFIA ---
+\begin{frame}[allowframebreaks]{Riferimenti Bibliografici}
+    \tiny 
+    \begin{thebibliography}{99}
+        
+        \bibitem{1} K.-J. Nam et al., ``Tri-copter UAV with individually tilted main wings...'', \textit{IEEE Access}, 2020.
+        \bibitem{2} A. A. Mian and D. Wang, ``Modeling and Backstepping-based Nonlinear Control Strategy...'', \textit{Chin. J. Aero.}, 2008.
+        \bibitem{3} Y. Zhang et al., ``A sliding mode controller design... based on model decoupling'', \textit{Proc. 33rd CCC}, 2014.
+        \bibitem{4} W.-G. Cheng et al., ``Robust backstepping sliding mode control for coaxial tilt-rotor UAV'', \textit{ISAS}, 2022.
+        \bibitem{5} C. Chen et al., ``Control and flight test of a tilt-rotor unmanned aerial vehicle'', \textit{Int. J. Adv. Robot. Syst.}, 2017.
+        \bibitem{6} L. Yu et al., ``Robust Fixed-Time Sliding Mode Attitude Control...'', \textit{IEEE Trans. Ind. Electron.}, 2022.
+        \bibitem{7} C. E. D. Riboldi and A. Rolando, ``Thrust-Based Flight Stabilization and Guidance for Autonomous Airships'', \textit{EUCASS}, 2023.
+        \bibitem{8} M. Taherinezhad, A. Ramirez-Serrano, and A. Abedini, ``Robust Trajectory-Tracking for a Bi-Copter Drone Using INDI...'', \textit{Robotics}, 2022.
+
+    \end{thebibliography}
+\end{frame}
+
+\end{document}
