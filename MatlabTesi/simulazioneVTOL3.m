@@ -51,7 +51,7 @@ r = x(12);
 V_body = [x(4);x(5);x(6)]; % velocità nel body frame
 Omega_body = [p;q;r]; % velocità angolare body
 
-u = controlloVTOL_v3(params,x, test_id);
+u = controlloVTOL_v3(t, params, x, test_id);
 
 
 
@@ -61,11 +61,12 @@ simbolico = 0;
 
 % rotori anteriori
 zeta = 0.8;
-omega_n = 2*pi*2;
+omega_n = 2*pi*15;
 
 % tail rotor
 zeta_tail = 0.8;
-omega_n_tail = 2*pi*4;
+omega_n_tail = 2*pi*15;
+
 
 % dinamica eliche rotori
 zeta_rotor = 0.9;

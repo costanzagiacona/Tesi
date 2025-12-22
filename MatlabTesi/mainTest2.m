@@ -8,7 +8,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 30];              % intervallo di simulazione
+tspan = [0 50];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
@@ -16,7 +16,7 @@ test_id = 0;
 if fase == 1
     test_id = 5;
 elseif fase == 3
-    test_id = 7;
+    test_id = 8;
 end
 new_model = 1;
 
@@ -268,7 +268,7 @@ options = odeset('RelTol',1e-3,'AbsTol',1e-6);
 global U_values
 U_values = zeros(length(t),7);
 for k = 1:length(t)
-    U_values(k,:) = controlloVTOL_v3(parametri,x(k,:), test_id);
+    U_values(k,:) = controlloVTOL_v3(t, parametri,x(k,:), test_id);
 end
 
 
