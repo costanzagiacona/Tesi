@@ -16,7 +16,7 @@ test_id = 0;
 if fase == 1
     test_id = 5;
 elseif fase == 3
-    test_id = 8;
+    test_id = 7;
 end
 new_model = 1;
 
@@ -279,6 +279,29 @@ zp = -1*x(:,3); % asse z positivo verso il basso
 xv = x(:,4);
 yv = x(:,5);
 zv = -1* x(:,6); % asse z positivo verso il basso
+% Inizializza i vettori per i risultati
+vz_global = zeros(size(x,1), 1);
+
+for i = 1:size(x,1)
+    % Estrai gli angoli all'istante i
+    phi_i = x(i, 7); 
+    theta_i = x(i, 8); 
+    psi_i = x(i, 9);
+    
+    % Calcola la matrice per questo istante
+    R = matriceRotazione(phi_i, theta_i, psi_i);
+    
+    % Velocità body all'istante i
+    V_body_i = [x(i,4); x(i,5); x(i,6)];
+    
+    % Trasformazione
+    V_global_i = R * V_body_i;
+    
+    % Salva la componente Z globale
+    vz_global(i) = V_global_i(3);
+end
+
+zv = vz_global;
 
 phi = rad2deg(x(:,7));
 theta = rad2deg(x(:,8));

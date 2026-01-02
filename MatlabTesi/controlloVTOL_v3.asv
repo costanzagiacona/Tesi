@@ -28,13 +28,15 @@ phi = x(7); theta = x(8); psi = x(9);
 p = x(10); q = x(11); r = x(12);
 R = matriceRotazione(phi,theta,psi);
 V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-V_global = R*V_body;
+V_global = R*V_body ;
 vx_global = V_global(1); 
 vy_global = V_global(2);
 vz_global = V_global(3);
 
 persistent err_v_int err_z_int;     
-
+persistent err_q_int;
+persistent adaptive_pitch_bias adaptive_roll_bias;
+persistent last_time;
 
 switch test_id
 
@@ -425,74 +427,362 @@ switch test_id
     
         u = [omega_1; omega_2; omega_3; tilt_1; tilt_2; tilt_3; tilt_4];
     
-      
     case 7
-        % =================================
-        %      VOLO ORIZZONTALE STABILE
-        %      SOLO PID - NON ROBUSTO
-        % =================================
-
-
-        % --- PARAMETRI OBIETTIVO ---
-        V_des = 25; z_des = -10;
-        theta_des = 0;
-        phi_des = 0;
-        psi_des = 0;
+        % --- CONTROLLO ORIZZONTALE (CRUISE - STABILE & PRECISO) ---
+        % Versione finale: Oscillazioni rimosse + Integratore Quota aggiunto
         
-        % --- 1. CONTROLLO QUOTA (Fz richiesta) ---
-        e_z = z_des - x(3);
-        de_z = 0 - vz_global;
-        if t == 0; err_z_int = 0; end
+        % 1. Parametri Obiettivo
+        V_des  = 25;      
+        z_des  = -10;     
+        vz_des = 0;
+        y_des  = 0;       
+    
+        % =========================================================
+        %   A. LOOP LONGITUDINALE (Thrust & Pitch)
+        % =========================================================
+    
+        % -- 1. Controllo Velocità -> Spinta (Thrust) --
+        e_v = V_des - x(4); 
+        
+        % Integratore Velocità
+        if x(1) == 0; err_v_int = 0; end
+        err_v_int = err_v_int + e_v * 0.01; 
+        err_v_int = max(min(err_v_int, 20), -20);
+    
+        F_drag = 0.5 * params.rho * params.s_body_x * params.C_d_x * x(4)^2 + ...
+                 params.rho * params.s * params.C_d * x(4)^2;
+    
+        Kp_v = 10; Ki_v = 2;
+        Thrust_req = F_drag + Kp_v*e_v + Ki_v*err_v_int;
+        Thrust_req = max(Thrust_req, 1.0); 
+    
+        % -- 2. Controllo Quota -> Pitch (Theta) --
+        e_z = z_des - x(3);        
+        de_z = vz_des - vz_global; 
+        
+        % [NOVITA'] Integratore sulla Quota (err_z_int)
+        % Serve a mantenere z=-10 esatto anche se il peso non è perfettamente bilanciato
+        if x(1) == 0; err_z_int = 0; end
         err_z_int = err_z_int + e_z * 0.01;
-        err_z_int = max(min(err_z_int, 5), -5);
-
-        % Calcoliamo quanta forza verticale serve per stare a -10m
-        % Usiamo un PID che genera un'accelerazione verticale desiderata
-        kp_z = 12.0; ki_z = 3.0; kd_z = 8.0;
-        az_cmd = kp_z*e_z + ki_z*err_z_int + kd_z*de_z;
-        Fz_req = params.m * (params.g - az_cmd); % Forza in Newton verso l'alto
-
-        % --- 2. CONTROLLO VELOCITÀ (Fx richiesta) ---
-        e_v = V_des - vx_global;
-        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
-        kp_v = 15.0;
-        Fx_req = F_drag + kp_v * e_v;
-
-        % --- 3. VETTORAMENTO (Calcolo Angolo Servo e Spinta Totale) ---
-        % Invece di far beccheggiare il drone, incliniamo i motori
-        % T_tot = sqrt(Fx^2 + Fz^2)
-        Thrust_total = sqrt(Fx_req^2 + Fz_req^2);
-        % alpha_base è l'angolo che i motori DEVONO avere per bilanciare Fx e Fz
-        alpha_base = atan2(Fx_req, Fz_req); 
-
-        alpha_servo = alpha_base - x(8);
-
-        % --- 4. STABILIZZAZIONE ASSETTO (Inner Loop) ---
-        % Teniamo la fusoliera piatta (theta = 0) per ridurre il drag
-        % Se theta > 0 (muso su), i servi devono inclinarsi in avanti (alpha aumenta)
-        kp_pitch = 1.5; kd_pitch = 0.2;
-        u_pitch = kp_pitch * (theta_des - x(8)) - kd_pitch * x(11);
-
-        % --- 5. MIXER FINALE ---
-        T_base = Thrust_total / 2;
+        err_z_int = max(min(err_z_int, 5), -5); % Anti-windup piccolo
+    
+        % PID Quota (Lento ma preciso con l'integratore)
+        kp_z = 0.005;  
+        ki_z = 0.001;  % Termine nuovo per precisione
+        kd_z = 0.02;   
+    
+        % Theta di trim (Angolo base di volo)
+        theta_trim = 0.05; 
         
-        % Rollio (Differenziale di spinta)
-        kp_roll = 20; kd_roll = 5;
-        u_roll = kp_roll * (phi_des - x(7)) - kd_roll * x(10);
+        theta_des = theta_trim + kp_z*e_z + ki_z*err_z_int + kd_z*de_z;
+        theta_des = max(min(theta_des, 0.18), -0.18); % Limitiamo a ~10 gradi
+    
+        % -- 3. Rate Loop Pitch --
+        e_theta = theta_des - theta;
+    
+        % Tuning Finale Pitch:
+        % Kp alzato leggermente (da 2.5 a 3.0) per più precisione ora che è stabile
+        kp_pitch = 3.0;  
+        kd_pitch = 0.9;  
+    
+        Moment_pitch_req = kp_pitch*e_theta - kd_pitch*q;
+    
+        % =========================================================
+        %   B. LOOP LATERALE (Roll & Yaw)
+        % =========================================================
+    
+        e_y = y_des - x(2);
+        kp_y = 0.12; kd_y = 0.3; % Kp_y ridotto leggermente per evitare scatti iniziali
+    
+        phi_des = -(kp_y * e_y + kd_y * vy_global);
         
-        T_dx = T_base - u_roll;
-        T_sx = T_base + u_roll;
+        % Limite Roll ridotto per entrate più morbide
+        phi_des = max(min(phi_des, 0.4), -0.4); 
+    
+        e_phi = phi_des - phi;
+        kp_roll = 18; kd_roll = 3.5; 
+        Moment_roll_req = kp_roll*e_phi - kd_roll*p;
+    
+        % Yaw Damping
+        r_des = 0; 
+        kp_yaw = 15; 
+        Moment_yaw_req = kp_yaw * (r_des - r);
+    
+        % =========================================================
+        %   C. MIXER (Tricopter Tilt-Front)
+        % =========================================================
+    
+        T_base = Thrust_req / 2;
+        d_y = params.d_my; 
+        delta_T_yaw = Moment_yaw_req / d_y;
+    
+        T_dx = T_base - delta_T_yaw;
+        T_sx = T_base + delta_T_yaw;
+        T_dx = max(0.1, T_dx); T_sx = max(0.1, T_sx);
+    
+        d_x = params.d_mx; 
+        F_z_pitch = Moment_pitch_req / d_x; 
+        F_z_roll = Moment_roll_req / (d_y * 2);
+    
+        T_calc = T_dx + T_sx; 
+        tilt_pitch = F_z_pitch / (T_calc/2); 
+        tilt_roll = F_z_roll / (T_calc/2);
+    
+        tilt_1_dx = tilt_pitch - tilt_roll; 
+        tilt_2_sx = tilt_pitch + tilt_roll; 
+    
+        % Limite Servo (Soft saturation)
+        lim_tilt = 0.20; 
+        tilt_1_dx = max(min(tilt_1_dx, lim_tilt), -lim_tilt);
+        tilt_2_sx = max(min(tilt_2_sx, lim_tilt), -lim_tilt);
+    
+        % Output
+        u(1) = sqrt(T_dx / params.k); 
+        u(2) = sqrt(T_sx / params.k); 
+        u(3) = 0;                     
+        u(4) = tilt_1_dx;             
+        u(5) = tilt_2_sx;             
+        u(6) = 0; 
+        u(7) = 0;
 
-        % Tilt (Base vettoriale + correzione Pitch + correzione Yaw)
-        u_yaw = 1.0 * (psi_des - x(12)); % Yaw damping
+    case 8
+        % --- 1. RIFERIMENTI ---
+        V_des = 25;       % Velocità crociera
+        h_des = -10;      % Quota
         
-        u(4) = alpha_servo + u_pitch + u_yaw; % Servo DX
-        u(5) = alpha_servo + u_pitch - u_yaw; % Servo SX
+        % --- 2. LETTURA STATO ---
+        z_ned = x(3);     % Z inerziale (negativo = alto)
+        vx    = vx_global;     % Velocità body X
+        vz    = x(6);     % Velocità body Z
         
-        % Output Motori
-        u(1) = sqrt(max(0, T_dx) / params.k);
-        u(2) = sqrt(max(0, T_sx) / params.k);
-        u(3) = 0; % Coda off
+        phi   = x(7);     % Roll
+        theta = x(8);     % Pitch
+        psi   = x(9);     % Yaw
+        
+        p     = x(10);    % Roll rate
+        q     = x(11);    % Pitch rate
+        r     = x(12);    % Yaw rate
+
+        % --- 3. CONTROLLO VELOCITÀ (THRUST MEDIO) ---
+        % Manteniamo i 25 m/s
+        err_v = V_des - vx;
+        
+        % Integratore Velocità
+        if t == 0; err_v_int = 0; end
+        err_v_int = err_v_int + err_v * 0.01; 
+        err_v_int = max(min(err_v_int, 20), -20);
+        
+        % Feedforward Drag (Stima aerodinamica)
+        F_drag = 0.5 * params.rho * params.s * params.C_d * vx^2;
+        
+        % P Controller semplice per il gas
+        Kp_v = 15;
+        Ki_v = 5;
+        Thrust_avg = F_drag + Kp_v * err_v + Ki_v*err_v_int;
+        
+        % Trim di base per sostenere il peso (circa mg)
+        % Se i motori sono inclinati, serve più gas: T = mg / cos(tilt)
+        Thrust_avg = max(Thrust_avg, params.m * params.g * 1.2); 
+
+        % --- 4. CONTROLLO QUOTA -> PITCH DESIDERATO ---
+        % In un aereo, la quota si controlla col Pitch (climb rate)
+        
+        err_h = h_des - z_ned; % Se z_ned = -12 (alto), err = -10 - (-12) = +2 (scendi)
+        
+        % Guadagno Quota MOLTO BASSO (Il drone deve reagire lentamente)
+        Kp_h = 0.5; 
+        theta_target = Kp_h * err_h;
+        
+        % Saturazione Pitch (Max +/- 15 gradi per non stallare)
+        theta_target = max(-0.25, min(0.25, theta_target));
+        
+        % Aggiungiamo un TRIM DI PITCH statico se il drone tende a cadere di coda/muso
+        % Modifica questo valore se vedi che vola sempre col muso basso/alto
+        PITCH_TRIM_AERO = 0.0; % Circa 3 gradi a cabrare di base
+        theta_des = theta_target + PITCH_TRIM_AERO;
+        % --- 5. STABILIZZAZIONE (INNER LOOPS) ---
+        
+        % A. ROLLIO (Usiamo la SPINTA DIFFERENZIALE - Veloce)
+        % Questo risolve le oscillazioni ad alta frequenza
+        Kp_roll = 15;  % Possiamo osare di più qui perché i motori reagiscono
+        Kd_roll = 4;   % Damping necessario
+        
+        % Comando Rollio (-1 a +1 idealmente)
+        u_roll = Kp_roll * (0 - phi) - Kd_roll * p;
+        
+        % B. PITCH (Usiamo i SERVI - Lenti)
+        % Qui dobbiamo essere DELICATI. Il servo ha banda 2Hz.
+        Kp_pitch = 1.5; % Basso!
+        Kd_pitch = 0.2; % Molto basso per non amplificare rumore
+        
+        u_pitch = Kp_pitch * (theta_des - theta) - Kd_pitch * q;
+        
+        % C. YAW (Usiamo i SERVI Differenziali)
+        Kp_yaw = 1.0;
+        Kd_yaw = 0.1;
+        u_yaw = Kp_yaw * (0 - psi) - Kd_yaw * r;
+
+        % --- 6. MIXER FISICO (BI-COPTER) ---
+        
+        % 1. Motori (Thrust + Roll)
+        % Rollio positivo (dx giù) -> Aumenta spinta SX, diminuisci DX
+        diff_thrust = u_roll * (0.2 * Thrust_avg); % 20% autorità
+        
+        T_dx = 0.5 * Thrust_avg - diff_thrust;
+        T_sx = 0.5 * Thrust_avg + diff_thrust;
+        
+        T_dx = max(0, T_dx);
+        T_sx = max(0, T_sx);
+        
+        % 2. Servi (Pitch + Yaw)
+        % Tilt Collettivo = Pitch
+        % Tilt Differenziale = Yaw
+        
+        % IMPORTANTE: TRIM MECCANICO
+        % Senza coda, il baricentro è indietro. I rotori devono puntare AVANTI/GIU'
+        % o INDIETRO/SU a seconda di dove sono rispetto al CG.
+        % Se d_mx (motori) = 0.6 (avanti), e CG=0:
+        % Thrust in su crea momento CABRANTE (naso su).
+        % Dobbiamo inclinare i rotori in AVANTI (negativo) per contrastarlo?
+        % O il drag delle ali fa tutto?
+        % Proviamo con un trim neutro o leggermente positivo.
+        
+        SERVO_TRIM = 0.01; % Parti da 0. Se cade di coda, metti -0.1 o +0.1
+        
+        tilt_common = u_pitch + SERVO_TRIM;
+        tilt_diff   = u_yaw;
+        
+        t_1 = tilt_common + tilt_diff; % DX
+        t_2 = tilt_common - tilt_diff; % SX
+        
+        % Saturazione Servi (max 30 gradi)
+        max_tilt = deg2rad(30);
+        t_1 = max(-max_tilt, min(max_tilt, t_1));
+        t_2 = max(-max_tilt, min(max_tilt, t_2));
+
+
+        % --- 7. OUTPUT ---
+        u(1) = sqrt(T_dx / params.k);
+        u(2) = sqrt(T_sx / params.k);
+        u(3) = 0; % Coda spenta
+        u(4) = t_1;
+        u(5) = t_2;
+        u(6) = 0; u(7) = 0;
+
+    case 9
+        % --- 1. RIFERIMENTI ---
+        V_des = 25;       % Velocità crociera
+        h_des = -10;      % Quota
+        
+        % --- 2. LETTURA STATO ---
+        z_ned = x(3);     % Z inerziale (negativo = alto)
+        vx    = vx_global;     % Velocità body X
+        vz    = x(6);     % Velocità body Z
+        
+        phi   = x(7);     % Roll
+        theta = x(8);     % Pitch
+        psi   = x(9);     % Yaw
+        
+        p     = x(10);    % Roll rate
+        q     = x(11);    % Pitch rate
+        r     = x(12);    % Yaw rate
+
+        % --- 3. CONTROLLO VELOCITÀ (THRUST MEDIO) ---
+        % Manteniamo i 25 m/s
+        vx_des = 25;
+        kp_x = 5;
+        F_x_des = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
+        F_x_des = F_x_des +kp_x*(vx_des-x(4));
+
+        kp_z = -3;
+        kd_z = -5;
+        z_des = -10; % asse z positivo verso il basso
+        vz_des = 0; % hovering
+
+        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;      
+        F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
+
+        Thrust_avg = sqrt(F_x_des^2 + F_z_des^2);
+
+        % Trim di base per sostenere il peso (circa mg)
+        % Se i motori sono inclinati, serve più gas: T = mg / cos(tilt)
+        Thrust_avg = max(Thrust_avg, params.m * params.g * 1.2); 
+        theta_bar = atan2(F_z_des,F_x_des);
+
+        % Assegna ai due rotori anteriori
+        T_i = Thrust_avg/2;
+        
+        % --- 4. CONTROLLO QUOTA -> PITCH DESIDERATO ---
+        % In un aereo, la quota si controlla col Pitch (climb rate)
+        
+        err_h = h_des - z_ned; % Se z_ned = -12 (alto), err = -10 - (-12) = +2 (scendi)
+        
+        % Guadagno Quota MOLTO BASSO (Il drone deve reagire lentamente)
+        Kp_h = 0.5; 
+        theta_target = Kp_h * err_h;
+        
+        % Saturazione Pitch (Max +/- 15 gradi per non stallare)
+        theta_target = max(-0.25, min(0.25, theta_target));
+        
+        % Aggiungiamo un TRIM DI PITCH statico se il drone tende a cadere di coda/muso
+        % Modifica questo valore se vedi che vola sempre col muso basso/alto
+        PITCH_TRIM_AERO = 0.0; % Circa 3 gradi a cabrare di base
+        theta_des = theta_target + PITCH_TRIM_AERO;
+        % --- 5. STABILIZZAZIONE (INNER LOOPS) ---
+        
+        % A. ROLLIO (Usiamo la SPINTA DIFFERENZIALE - Veloce)
+        % Questo risolve le oscillazioni ad alta frequenza
+        Kp_roll = 15;  % Possiamo osare di più qui perché i motori reagiscono
+        Kd_roll = 4;   % Damping necessario
+        
+        % Comando Rollio (-1 a +1 idealmente)
+        u_roll = Kp_roll * (0 - phi) - Kd_roll * p;
+        
+        % B. PITCH (Usiamo i SERVI - Lenti)
+        % Qui dobbiamo essere DELICATI. Il servo ha banda 2Hz.
+        Kp_pitch = 1.5; % Basso!
+        Kd_pitch = 0.2; % Molto basso per non amplificare rumore
+        
+        u_pitch = Kp_pitch * (theta_des - theta) - Kd_pitch * q;
+        
+        % C. YAW (Usiamo i SERVI Differenziali)
+        Kp_yaw = 1.0;
+        Kd_yaw = 0.1;
+        u_yaw = Kp_yaw * (0 - psi) - Kd_yaw * r;
+
+        % --- 6. MIXER FISICO (BI-COPTER) ---
+        
+        % 1. Motori (Thrust + Roll)
+        % Rollio positivo (dx giù) -> Aumenta spinta SX, diminuisci DX
+        diff_thrust = u_roll * (0.2 * Thrust_avg); % 20% autorità
+        
+        T_dx = 0.5 * Thrust_avg - diff_thrust;
+        T_sx = 0.5 * Thrust_avg + diff_thrust;
+        
+        T_dx = max(0, T_dx);
+        T_sx = max(0, T_sx);
+              
+        SERVO_TRIM = 0.0; % Parti da 0. Se cade di coda, metti -0.1 o +0.1
+        
+        tilt_common = u_pitch;
+        tilt_diff   = u_yaw;
+        
+        t_1 = theta_bar + tilt_common + tilt_diff; % DX
+        t_2 = theta_bar + tilt_common - tilt_diff; % SX
+        
+        % Saturazione Servi (max 30 gradi)
+        max_tilt = deg2rad(30);
+        t_1 = max(-max_tilt, min(max_tilt, t_1));
+        t_2 = max(-max_tilt, min(max_tilt, t_2));
+
+
+        % --- 7. OUTPUT ---
+        u(1) = sqrt(T_dx / params.k);
+        u(2) = sqrt(T_sx / params.k);
+        u(3) = 0; % Coda spenta
+        u(4) = t_1;
+        u(5) = t_2;
+        u(6) = 0; u(7) = 0;
 
     otherwise
         error('Controllo non valido');
