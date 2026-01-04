@@ -135,7 +135,7 @@ F_aero_body = F_aeroWing + F_aeroBody;
 
 F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel body frame
 
-F_disturbo = [0; 0; 0]; 
+F_disturbo = [10; 0; 10]; 
 % disp("F_Coriolis = ");
 % disp(F_cor);
 if t > 5.0 && t < 5.5
