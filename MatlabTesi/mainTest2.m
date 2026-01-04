@@ -16,7 +16,7 @@ test_id = 0;
 if fase == 1
     test_id = 5;
 elseif fase == 3
-    test_id = 7;
+    test_id = 8;
 end
 new_model = 1;
 
