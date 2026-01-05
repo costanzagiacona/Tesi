@@ -75,7 +75,7 @@ if new_model == 1
     d_tz = 0;
     
     d_my = (1/2)*ala_y;
-    d_mz = 0;
+    d_mz = 0.1;
     
     d_mx = 0.6;
     d_tx = -1.2;
@@ -314,7 +314,7 @@ r = x(:,12);
 time = linspace(0,tspan(2),size(x,1));
 
 flagPlot = 1; % grafici + pallina
-flagVoloVerticale = 1; % grafici
+
 plotPallina = 0;% pallina
 flagPlot3D = 0; % tricottero 3D
 
@@ -340,7 +340,11 @@ if flagPlot == 1
 
     subplot(4,1,2);
     h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g');
-    h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    if fase == 1
+        h3 = yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    elseif fase == 3
+        h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    end
     set(h2, 'LineWidth', 2)
     legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
         'FontSize', 14, 'Interpreter','tex', 'Location','best')
@@ -369,151 +373,113 @@ if flagPlot == 1
     ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
     set(gca, 'FontSize', 14)
 
-    if flagVoloVerticale == 1
-        % grafici volo verticale
 
-        figure(2)
-        set(gcf, 'Position', [100 100 1200 900])
+    figure(2)
+    set(gcf, 'Position', [100 100 1200 900])
 
-        % --- vz ---
-        subplot(3,1,2);
-        h3=plot(time, zv, 'b', 'LineWidth', 2); hold on;
-        h4=yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-        grid on; ylim([-20 20])
-        xlabel('Time [s]', 'FontSize', 14)
-        ylabel('v_z [m/s]', 'FontSize', 14)
-        title('Velocità lungo z','FontSize',16)
-        set(gca, 'FontSize', 14)
-        legend([h3 h4], {'v_z','vz_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
+    % --- vz ---
+    subplot(3,1,2);
+    h3=plot(time, zv, 'b', 'LineWidth', 2); hold on;
+    h4=yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    grid on; ylim([-20 20])
+    xlabel('Time [s]', 'FontSize', 14)
+    ylabel('v_z [m/s]', 'FontSize', 14)
+    title('Velocità lungo z','FontSize',16)
+    set(gca, 'FontSize', 14)
+    legend([h3 h4], {'v_z','vz_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
 
 
-        % --- z (quota) ---
-        subplot(3,1,1);
-        h5=plot(time, zp, 'g', 'LineWidth', 2); hold on;
-        h6=yline(10,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-        grid on; ylim([-16 16])
-        xlabel('Time [s]', 'FontSize', 14)
-        ylabel('Quota z [m]', 'FontSize', 14)
-        title('Posizione lungo z','FontSize',16)
-        set(gca, 'FontSize', 14)
-        legend([h5 h6], {'z','z_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
+    % --- z (quota) ---
+    subplot(3,1,1);
+    h5=plot(time, zp, 'g', 'LineWidth', 2); hold on;
+    h6=yline(10,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    grid on; ylim([-16 16])
+    xlabel('Time [s]', 'FontSize', 14)
+    ylabel('Quota z [m]', 'FontSize', 14)
+    title('Posizione lungo z','FontSize',16)
+    set(gca, 'FontSize', 14)
+    legend([h5 h6], {'z','z_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
 
-        % --- y (posizione lungo y) ---
-        subplot(3,1,3);
-        h5=plot(time, yp, 'r', 'LineWidth', 2); hold on;
-        h6=yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-        grid on; ylim([-10 10])
-        xlabel('Time [s]', 'FontSize', 14)
-        ylabel('Posizione y [m]', 'FontSize', 14)
-        title('Posizione lungo y','FontSize',16)
-        set(gca, 'FontSize', 14)
-        legend([h5 h6], {'y','y_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
+    % --- y (posizione lungo y) ---
+    subplot(3,1,3);
+    h5=plot(time, yp, 'r', 'LineWidth', 2); hold on;
+    h6=yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+    grid on; ylim([-10 10])
+    xlabel('Time [s]', 'FontSize', 14)
+    ylabel('Posizione y [m]', 'FontSize', 14)
+    title('Posizione lungo y','FontSize',16)
+    set(gca, 'FontSize', 14)
+    legend([h5 h6], {'y','y_{des}'}, 'Interpreter','tex','FontSize',12,'Location','best')
 
-        % thrust genearato dai rotori
+    % thrust genearato dai rotori
 
-        omega_1 = x(:,21);
-        omega_2 = x(:,23);
-        omega_3 = x(:,25);
+    omega_1 = x(:,21);
+    omega_2 = x(:,23);
+    omega_3 = x(:,25);
 
-        figure(3)
-        set(gcf, 'Position', [100 100 1200 900])
+    figure(3)
+    set(gcf, 'Position', [100 100 1200 900])
 
-        subplot(3,1,1);
-        h1 = plot(time, parametri.k*omega_1.^2, 'r','LineWidth',2);
-        legend('Thrust_{1}','FontSize',14,'Location','best')
-        ylim([0 100]); grid on
-        ylabel('[N]','FontSize',14)
-        set(gca,'FontSize',14)
-        title('Thrust generato dai rotori','FontSize',16)
+    subplot(3,1,1);
+    h1 = plot(time, parametri.k*omega_1.^2, 'r','LineWidth',2);
+    legend('Thrust_{1}','FontSize',14,'Location','best')
+    ylim([0 100]); grid on
+    ylabel('[N]','FontSize',14)
+    set(gca,'FontSize',14)
+    title('Thrust generato dai rotori','FontSize',16)
 
-        subplot(3,1,2);
-        h2 = plot(time, parametri.k*omega_2.^2, 'r','LineWidth',2);
-        legend('Thrust_{2}','FontSize',14,'Location','best')
-        ylim([0 100]); grid on
-        ylabel('[N]','FontSize',14)
-        set(gca,'FontSize',14)
+    subplot(3,1,2);
+    h2 = plot(time, parametri.k*omega_2.^2, 'r','LineWidth',2);
+    legend('Thrust_{2}','FontSize',14,'Location','best')
+    ylim([0 100]); grid on
+    ylabel('[N]','FontSize',14)
+    set(gca,'FontSize',14)
 
-        subplot(3,1,3);
-        h3 = plot(time, parametri.k*omega_3.^2, 'r','LineWidth',2);
-        legend('Thrust_{3}','FontSize',14,'Location','best')
-        ylim([0 100]); grid on
-        ylabel('[N]','FontSize',14)
-        set(gca,'FontSize',14)
+    subplot(3,1,3);
+    h3 = plot(time, parametri.k*omega_3.^2, 'r','LineWidth',2);
+    legend('Thrust_{3}','FontSize',14,'Location','best')
+    ylim([0 100]); grid on
+    ylabel('[N]','FontSize',14)
+    set(gca,'FontSize',14)
 
-        figure(4)
-        set(gcf, 'Position', [100 100 1200 900])
+    figure(4)
+    set(gcf, 'Position', [100 100 1200 900])
 
-        theta1 = rad2deg(x(:,13));
-        theta2 = rad2deg(x(:,15));
-        theta3 = rad2deg(x(:,17));
-        theta4 = rad2deg(x(:,19));
+    theta1 = rad2deg(x(:,13));
+    theta2 = rad2deg(x(:,15));
+    theta3 = rad2deg(x(:,17));
+    theta4 = rad2deg(x(:,19));
 
-        subplot(4,1,1);
-        h1 = plot(time, theta1, 'r','LineWidth',2);
-        legend('\theta_1','FontSize',14,'Location','best')
-        grid on
-        ylabel('[grad]','FontSize',14)
-        title('Andamento angoli di tilt dei rotori','FontSize',16)
-        set(gca,'FontSize',14)
+    subplot(4,1,1);
+    h1 = plot(time, theta1, 'r','LineWidth',2);
+    legend('\theta_1','FontSize',14,'Location','best')
+    grid on
+    ylabel('[grad]','FontSize',14)
+    title('Andamento angoli di tilt dei rotori','FontSize',16)
+    set(gca,'FontSize',14)
 
-        subplot(4,1,2);
-        h2 = plot(time, theta2, 'b','LineWidth',2);
-        legend('\theta_2','FontSize',14,'Location','best')
-        grid on
-        ylabel('[grad]','FontSize',14)
-        set(gca,'FontSize',14)
+    subplot(4,1,2);
+    h2 = plot(time, theta2, 'b','LineWidth',2);
+    legend('\theta_2','FontSize',14,'Location','best')
+    grid on
+    ylabel('[grad]','FontSize',14)
+    set(gca,'FontSize',14)
 
-        subplot(4,1,3);
-        h3 = plot(time, theta3, 'g','LineWidth',2);
-        legend('\theta_3','FontSize',14,'Location','best')
-        grid on
-        ylabel('[grad]','FontSize',14)
-        title('Andamento angoli di tilt dei rotori','FontSize',16)
-        set(gca,'FontSize',14)
+    subplot(4,1,3);
+    h3 = plot(time, theta3, 'g','LineWidth',2);
+    legend('\theta_3','FontSize',14,'Location','best')
+    grid on
+    ylabel('[grad]','FontSize',14)
+    title('Andamento angoli di tilt dei rotori','FontSize',16)
+    set(gca,'FontSize',14)
 
-        subplot(4,1,4);
-        h4 = plot(time, theta4, 'g','LineWidth',2);
-        legend('\theta_4','FontSize',14,'Location','best')
-        grid on
-        ylabel('[grad]','FontSize',14)
-        set(gca,'FontSize',14)
-
-    end
-
-    if plotPallina == 1
-
-        figure(5);
-        set(gcf, 'Position', [100 100 1200 900])
-        axis equal
-        hold on;
-
-        % Traiettoria completa in 3D
-        plot3(xp, yp, zp, 'Color', [0.8 0.8 0.8], 'LineWidth', 1.0);
-
-        % Punto mobile (tricottero)
-        hP = plot3(xp(1), yp(1), zp(1), 'ro', ...
-            'MarkerSize', 15, 'MarkerFaceColor', 'r');
-
-        grid on;
-        axis equal;
-        xlabel('X [m]');
-        ylabel('Y [m]');
-        zlabel('Z [m]');
-        title('Animazione 3D del tricottero');
-
-        % Vista 3D
-        view(3);
-
-
-        for k = 1:5:length(t)
-            set(hP, 'XData', xp(k), ...
-                'YData', yp(k), ...
-                'ZData', zp(k));
-            drawnow;
-        end
-
-    end
-
+    subplot(4,1,4);
+    h4 = plot(time, theta4, 'g','LineWidth',2);
+    legend('\theta_4','FontSize',14,'Location','best')
+    grid on
+    ylabel('[grad]','FontSize',14)
+    set(gca,'FontSize',14)
+ 
 end
 
 

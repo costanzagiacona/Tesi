@@ -3,7 +3,6 @@ function x_dot = simulazioneVTOL3(t, x,params, test_id)
 % check parametri
 
 paramFlag = 0;
-vento = 0;
 
 if paramFlag == 1
     % === Stampa dei parametri ===
@@ -135,24 +134,17 @@ F_aero_body = F_aeroWing + F_aeroBody;
 
 F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel body frame
 
-F_disturbo = [10; 0; 10]; 
+F_disturbo = [0; 0; 0]; 
 % disp("F_Coriolis = ");
 % disp(F_cor);
+
 if t > 5.0 && t < 5.5
-    % Una botta secca di 40 Newton verso il basso (o alto)
     F_disturbo = [0; 0; 0]; 
 end
 
 % FORZE TOTALI
 
 F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_disturbo; % body frame
-
-% DISTURBO VENTO (Opzionale)
-if vento == 1 && t > 5
-    F_vento_global = [0; 0; 30]; % Raffica in Giù
-    F_vento_body = R' * F_vento_global;
-    F_tot_body = F_tot_body + F_vento_body;
-end
 
 
 % disp("F_tot_body = ");
