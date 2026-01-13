@@ -228,7 +228,7 @@ switch test_id
 
         % 2. Parametri Obiettivo
         z_des = -10;    vz_des = 0;
-        y_des = 0;      vy_des = 0;
+        y_des = -10;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
         psi_des = 0;    r_des = 0;  
         % psi_des = 45 * (pi/180);  % ~0.785 radianti
@@ -610,6 +610,7 @@ switch test_id
         %   D. LOOP PSI (YAW) -> MOMENTO Z
         % =========================================================
         psi_des = 0;
+        % psi_des = 45 * (pi/180);
 
         e_psi = psi_des - psi;
         % Gestione wrapping angolo (-pi a pi)
@@ -618,6 +619,7 @@ switch test_id
         
         % PD YAW
         Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
+        
 
         % =========================================================
         %   E. MIXER & ALLOCAZIONE (CORRETTO CON SEGNI)
@@ -630,7 +632,7 @@ switch test_id
         % Se il drone diverge (va all'infinito), INVERTI questi segni.
         SIGN_ROLL  = -1;  % Prova 1 o -1 (Scambia Motore DX/SX)
         SIGN_PITCH =  1;  % Prova 1 o -1 (Inverte il senso del Tilt)
-        SIGN_YAW   =  1;  % Prova 1 o -1
+        SIGN_YAW   =  -1;  % Prova 1 o -1
         
         % 1. ROLL -> Spinta Differenziale
         % M_x = (T_sx - T_dx) * d_y
@@ -678,143 +680,185 @@ switch test_id
 
 
     case 9
-        % =========================================================
-        %  CONTROLLO "TURN AND MOVE" - VERSIONE SOFT (Anti-Oscillazione)
-        % =========================================================
-        
-        % --- 0. CINEMATICA ---
-        phi = x(7); theta = x(8); psi = x(9);
-        R = matriceRotazione(phi,theta,psi);
-        V_glob = R*[x(4);x(5);x(6)];
-        vx_global = V_glob(1); vy_global = V_glob(2); vz_global = V_glob(3);
+    % =========================================================
+    %  CONTROLLO ORIZZONTALE A CASCATA (CORRETTO & STABILIZZATO)
+    %  SMC (Posizione Globale) -> Rotazione -> PD (Assetto) -> Mixer
+    % =========================================================
 
-        % --- 1. OBIETTIVO ---
-        x_des = 50;  vx_des = 0; 
-        y_des = 50;  vy_des = 0;  
-        z_des = -10; vz_des = 0;  
-        
+    % --- 0. AGGIORNAMENTO CINEMATICA ---
+    phi = x(7); theta = x(8); psi = x(9);
+    p = x(10); q = x(11); r = x(12);
 
-        % --- 2. TUNING CONTROLLORI ---
-        
-        % OUTER LOOP (SMC): Posizione -> Forza/Angolo
-        % Tuning "Soft" per evitare chattering sugli angoli
-        lam_pos = 2; K_pos = 10.0; Phi_pos = 2.0;
-        lam_y = 0.8; K_y = 5.0; Phi_y = 1.0;
-        lam_z = 3.0; K_z = 25.0; Phi_z = 1.0;
-        
-        % INNER LOOP (PD): Assetto -> Momento
-        % Guadagni alti per risposta rapida
-        kp_phi = 40;   kd_phi = 8; 
-        kp_theta = 12; kd_theta = 3;
-        kp_psi = 15;   kd_psi = 5;
+    R = matriceRotazione(phi,theta,psi);
+    V_body = [x(4);x(5);x(6)];
+    V_glob = R*V_body;
+    vx_global = V_glob(1); 
+    vy_global = V_glob(2);
+    vz_global = V_glob(3);
 
-        % =========================================================
-        %   A. LOOP Z (QUOTA)
-        % =========================================================
-        e_z = z_des - x(3); de_z = vz_des - vz_global;
-        s_z = de_z + lam_z * e_z;
-        
-        % Compensazione Tilt limitata
-        cos_tilt = max(cos(theta)*cos(phi), 0.7); % Max ~45 gradi comp
-        F_grav_body = (params.m * params.g) / cos_tilt;
-        
-        u_smc_z = params.m * lam_z * de_z + K_z * tanh(s_z / Phi_z);
-        Thrust_req = max(F_grav_body - u_smc_z, 2.0);
+    % --- 1. PARAMETRI OBIETTIVO ---
+    x_des = 100;    vx_des = 25; % Target: vai a X=100
+    y_des = 0;      vy_des = 0;  % Target: resta su Y=0
+    z_des = -10;    vz_des = 0;  % Target: Quota -10m
+    
+    % --- 2. TUNING CONTROLLORI (Rilassati per stabilità) ---
+    
+    % OUTER LOOP (SMC): Posizione -> Forza
+    % Valori ridotti per evitare scatti violenti
+    lam_x = 1.5; K_x = 3.0; Phi_x = 2.0;
+    lam_y = 1.5; K_y = 3.0; Phi_y = 2.0;
+    lam_z = 2.0; K_z = 10.0; Phi_z = 1.0; 
+    
+    % INNER LOOP (PD): Assetto -> Momento
+    kp_phi = 25;   kd_phi = 5; 
+    kp_theta = 25; kd_theta = 5;
+    kp_psi = 15;   kd_psi = 4;
 
-        % =========================================================
-        %   B. OUTER LOOP (NORD/EST)
-        % =========================================================
-        e_nord = x_des - x(1); de_nord = vx_des - vx_global;
-        s_nord = de_nord + lam_pos * e_nord;
-        F_nord = params.m * lam_pos * de_nord + K_pos * tanh(s_nord / Phi_pos);
-        
-        e_est = y_des - x(2); de_est = vy_des - vy_global;
-        s_est = de_est + lam_pos * e_est;
-        F_est = params.m * lam_pos * de_est + K_pos * tanh(s_est / Phi_pos);
+    % =========================================================
+    %   A. LOOP Z (QUOTA) -> SPINTA TOTALE
+    % =========================================================
+    
+    e_z  = z_des - x(3);
+    de_z = vz_des - vz_global;
+    s_z  = de_z + lam_z * e_z;
+    
+    % Feedforward Gravità compensata dal Tilt corrente
+    F_grav_body = params.m * params.g / (cos(theta)*cos(phi) + 1e-3);
+    
+    % SMC Output Z
+    u_smc_z = params.m * lam_z * de_z + K_z * tanh(s_z / Phi_z);
+    
+    % Spinta Totale (Thrust)
+    Thrust_req = F_grav_body - u_smc_z;
+    Thrust_req = max(Thrust_req, 1.0); % Saturazione minima
 
-        % =========================================================
-        %   C. GUIDANCE & ROTAZIONE
-        % =========================================================
-        
-        % 1. YAW: Calcolo dolce
-        dist_sq = e_nord^2 + e_est^2;
-        if dist_sq > 4.0
-            psi_target = atan2(y_des - x(2), x_des - x(1));
-        else
-            psi_target = psi; 
-        end
-        
-        % 2. Rotazione Forze
-        c_p = cos(psi); s_p = sin(psi);
-        F_body_x =  F_nord * c_p + F_est * s_p;
-        F_body_y = -F_nord * s_p + F_est * c_p;
-        
-        % =========================================================
-        %   D. GENERAZIONE ANGOLI (SATURATI)
-        % =========================================================
-        
-        % LIMITATORE DI SICUREZZA
-        % Non permettere al drone di inclinarsi più di 12 gradi (0.2 rad)
-        % Questo impedisce fisicamente le grandi oscillazioni.
-        MAX_ANGLE = 0.2; 
-        
-        % Pitch (Turn then Move parziale)
-        yaw_err = psi_target - psi;
-        yaw_err = atan2(sin(yaw_err), cos(yaw_err));
-        
-        if abs(yaw_err) > 0.3 % Se non allineato (>17 gradi)
-            theta_des = 0;    % Aspetta
-        else
-            sin_th = -F_body_x / Thrust_req;
-            theta_des = asin(max(min(sin_th, MAX_ANGLE), -MAX_ANGLE));
-        end
-        
-        % Roll
-        sin_ph = F_body_y / Thrust_req;
-        phi_des = asin(max(min(sin_ph, MAX_ANGLE), -MAX_ANGLE));
-        
-        % =========================================================
-        %   E. INNER LOOP & MIXER
-        % =========================================================
-        
-        % PD PITCH
-        e_theta = theta_des - theta; 
-        de_theta = 0 - q; % Smorzamento diretto su q
-        Moment_pitch = kp_theta * e_theta + kd_theta * de_theta;
-        
-        % PD ROLL
-        e_phi = phi_des - phi; 
-        de_phi = 0 - p;
-        Moment_roll = kp_phi * e_phi + kd_phi * de_phi;
-        
-        % PD YAW
-        e_psi = yaw_err; 
-        de_psi = 0 - r;
-        Moment_yaw = kp_psi * e_psi + kd_psi * de_psi;
-        
-        % --- MIXER ---
-        % SEGNI: Quelli che abbiamo stabilito funzionare
-        SIGN_ROLL = -1; SIGN_PITCH = 1; SIGN_YAW = 1;
-        
-        d_y = params.d_my; h_z = 0.1;
-        
-        % Calcolo Tilt/Thrust
-        delta_T = (Moment_roll * SIGN_ROLL) / (2 * d_y);
-        sin_a_p = (Moment_pitch * SIGN_PITCH) / (Thrust_req * h_z + 1e-3);
-        sin_a_y = (Moment_yaw * SIGN_YAW) / (Thrust_req * d_y + 1e-3);
-        
-        a_coll = asin(max(min(sin_a_p, 0.5), -0.5));
-        a_diff = asin(max(min(sin_a_y, 0.4), -0.4));
-        
-        T_dx = max(0, (Thrust_req/2) - delta_T);
-        T_sx = max(0, (Thrust_req/2) + delta_T);
-        
-        % Servi limitati
-        a_dx = max(min(a_coll + a_diff, 0.6), -0.6);
-        a_sx = max(min(a_coll - a_diff, 0.6), -0.6);
-        
-        u(1) = sqrt(T_dx/params.k); u(2) = sqrt(T_sx/params.k);
-        u(3) = 0; u(4) = a_dx; u(5) = a_sx; u(6)=0; u(7)=0;
+    % =========================================================
+    %   B & C. LOOP XY (POSIZIONE) -> PITCH & ROLL
+    %   Logica: Calcolo Forza Globale -> Ruoto in Body -> Calcolo Angoli
+    % =========================================================
+    
+    % 1. Calcolo richieste nel sistema GLOBALE
+    
+    % --- Asse X Globale ---
+    e_x  = x_des - x(1);
+    de_x = vx_des - vx_global;
+    s_x  = de_x + lam_x * e_x;
+    
+    F_drag_x = 0.5 * params.rho * params.s_body_x * params.C_d_x * vx_global^2 * sign(vx_global);
+    u_smc_x_glob = params.m * lam_x * de_x + K_x * tanh(s_x / Phi_x);
+    F_x_glob_req = F_drag_x + u_smc_x_glob;
+
+    % --- Asse Y Globale ---
+    e_y  = y_des - x(2);
+    de_y = vy_des - vy_global;
+    s_y  = de_y + lam_y * e_y;
+    
+    u_smc_y_glob = params.m * lam_y * de_y + K_y * tanh(s_y / Phi_y);
+    F_y_glob_req = u_smc_y_glob;
+
+    % 2. ROTAZIONE VETTORE FORZA (Globale -> Body)
+    % Usiamo la matrice di rotazione inversa (trasposta) su Z
+    % Questo proietta la forza desiderata "Nord/Est" sugli assi "Naso/Destra" del drone
+    
+    c_psi = cos(psi);
+    s_psi = sin(psi); % Nota: Nessun segno meno qui! La matematica fa il resto.
+    
+    F_x_body_req =  F_x_glob_req * c_psi + F_y_glob_req * s_psi;
+    F_y_body_req = -F_x_glob_req * s_psi + F_y_glob_req * c_psi;
+
+    % 3. CONVERSIONE FORZA BODY -> ANGOLI PITCH/ROLL
+    
+    % Pitch (Theta) gestisce la forza X Body
+    % Per andare avanti (X+), il drone deve picchiare giù (Theta negativo)
+    sin_theta_des = -F_x_body_req / Thrust_req;
+    sin_theta_des = max(min(sin_theta_des, 0.5), -0.5); % Max ~30 gradi
+    theta_des = asin(sin_theta_des);
+    
+    % Roll (Phi) gestisce la forza Y Body
+    % Per andare a destra (Y+), il drone deve rollare a destra (Phi positivo)
+    sin_phi_des = F_y_body_req / Thrust_req;
+    sin_phi_des = max(min(sin_phi_des, 0.5), -0.5);
+    phi_des = asin(sin_phi_des);
+
+    % --- LOOP PD ASSETTO ---
+    
+    % PD Pitch
+    e_theta  = theta_des - theta;
+    de_theta = 0 - q;
+    Moment_pitch_req = kp_theta * e_theta + kd_theta * de_theta;
+    
+    % PD Roll
+    e_phi  = phi_des - phi;
+    de_phi = 0 - p;
+    Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
+
+    % =========================================================
+    %   D. LOOP PSI (YAW) -> MOMENTO Z
+    % =========================================================
+    
+    % Qui impostiamo l'orientamento del naso.
+    % Prova 0 prima. Se stabile, prova 45 * (pi/180).
+    psi_des = 45 * (pi/180); 
+    r_des = 0;
+
+    e_psi = psi_des - psi;
+    e_psi = atan2(sin(e_psi), cos(e_psi)); % Gestione wrapping angolo
+    de_psi = r_des - r;
+    
+    Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
+
+    % =========================================================
+    %   E. MIXER & ALLOCAZIONE (CRITICO)
+    % =========================================================
+    
+    d_y = params.d_my; 
+    h_z = params.d_mz;         
+    
+    % --- CONFIGURAZIONE SEGNI ---
+    % IMPORTANTE: Se il drone diverge su un asse, inverti SOLO quel segno.
+    
+    SIGN_ROLL  =  1;  % Se oscilla lateralmente (DX/SX), prova -1
+    SIGN_PITCH =  1;  % Se fa capriole avanti/indietro, prova -1
+    SIGN_YAW   =  1;  % Se ruota su se stesso senza fermarsi, prova -1
+    
+    % 1. ROLL -> Spinta Differenziale (Motore SX vs DX)
+    % M_roll > 0 => Roll a DX => SX aumenta, DX diminuisce
+    delta_T_roll = (Moment_roll_req * SIGN_ROLL) / (2 * d_y);
+    
+    % 2. PITCH -> Tilt Collettivo (Entrambi i servi avanti/indietro)
+    % M_pitch > 0 => Naso SU => Servi tirano indietro (segno dipende dai servi)
+    sin_alpha_pitch = (Moment_pitch_req * SIGN_PITCH) / (Thrust_req * h_z + 1e-3);
+    sin_alpha_pitch = max(min(sin_alpha_pitch, 0.8), -0.8);
+    alpha_coll = asin(sin_alpha_pitch);
+    
+    % 3. YAW -> Tilt Differenziale (Servo SX vs DX)
+    sin_alpha_yaw = (Moment_yaw_req * SIGN_YAW) / (Thrust_req * d_y + 1e-3);
+    sin_alpha_yaw = max(min(sin_alpha_yaw, 0.5), -0.5);
+    alpha_diff = asin(sin_alpha_yaw);
+    
+    % --- CALCOLO U (OUTPUT AI MOTORI) ---
+    
+    T_dx = (Thrust_req / 2) - delta_T_roll;
+    T_sx = (Thrust_req / 2) + delta_T_roll;
+    
+    alpha_dx = alpha_coll + alpha_diff;
+    alpha_sx = alpha_coll - alpha_diff;
+    
+    % Saturazioni fisiche
+    T_dx = max(0, T_dx);
+    T_sx = max(0, T_sx);
+    
+    lim_servo = 0.6; % +/- 35 gradi circa
+    alpha_dx = max(min(alpha_dx, lim_servo), -lim_servo);
+    alpha_sx = max(min(alpha_sx, lim_servo), -lim_servo);
+    
+    % Assegnazione vettore di controllo
+    u(1) = sqrt(T_dx / params.k);
+    u(2) = sqrt(T_sx / params.k);
+    u(3) = 0; 
+    u(4) = alpha_dx;
+    u(5) = alpha_sx;
+    u(6) = 0; u(7) = 0;
 
     otherwise
         error('Controllo non valido');

@@ -8,7 +8,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 50];              % intervallo di simulazione
+tspan = [0 150];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;

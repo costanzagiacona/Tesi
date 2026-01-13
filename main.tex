@@ -1,0 +1,117 @@
+\documentclass[a4paper,12pt]{article}
+
+% --- 1. PREAMBOLO: I PACCHETTI ---
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+
+
+% Gestione Immagini
+\usepackage{graphicx}
+\graphicspath{{immagini/}}
+
+% Formattazione Pagina
+\usepackage{geometry}
+% Impostazioni margini
+\geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=30mm,
+ right=25mm,
+ top=25mm,
+ bottom=25mm
+}
+
+% Matematica e Simboli
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Bibliografia e Link
+\usepackage{cite}
+\usepackage{microtype} 
+\usepackage{url}       
+\usepackage{hyperref}  
+
+% Interlinea
+\usepackage{setspace}
+\onehalfspacing % Interlinea 1.5 (Standard Tesi)
+
+
+% --- 2. INIZIO DOCUMENTO ---
+\begin{document}
+
+
+% --- A. FRONTESPIZIO (Copertina) ---
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+
+    {\Large \textbf{UNIVERSITÀ DEGLI STUDI DI ROMA TOR VERGATA}} \\
+    \vspace{0.5cm}
+    {\large Dipartimento di Ingegneria} \\
+    \vspace{0.5cm}
+    {\large Corso di Laurea in Ingegneria dell'Automazione}
+    
+    \vspace{3cm}
+    
+    {\Huge \textbf{TITOLO DELLA TESI}} \\
+    \vspace{0.5cm}
+    {\Large \textbf{Sottotitolo (opzionale)}}
+    
+    \vspace{4cm}
+    
+    \begin{minipage}[t]{0.47\textwidth}
+        \raggedright \large
+        \textbf{Relatore:}\\
+        Prof. Nome Cognome\\
+        \vspace{0.5cm}
+        \textbf{Correlatore:}\\
+        Dott. Nome Cognome
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.47\textwidth}
+        \raggedleft \large
+        \textbf{Candidato:}\\
+        Tuo Nome\\
+        Matricola: 123456
+    \end{minipage}
+    
+    \vfill
+    
+    {\large Anno Accademico 2025/2026}
+\end{titlepage}
+
+% --- B. INDICE E SOMMARIO ---
+\pagenumbering{roman} % Numeri romani (i, ii, iii) per l'inizio
+
+% Dedica
+\newpage
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents % genera l'indice
+\newpage
+
+% --- C. CORPO DELLA TESI ----
+\pagenumbering{arabic} % Numeri arabi (1, 2, 3) per i capitoli
+
+
+% L'ordine è importante!
+% \input{capitoli/introduzione}    
+\input{capitoli/stato_arte}     
+% \input{capitoli/modello_matematico}
+% \input{capitoli/volo_verticale}
+% \input{capitoli/transizione}
+% \input{capitoli/volo_orizzontale}
+% \input{capitoli/conclusioni}   
+
+% D. BIBLIOGRAFIA ---
+\newpage
+\addcontentsline{toc}{section}{Bibliografia} % Aggiunge la voce "Bibliografia" all'indice
+
+% Se usi un file .bib esterno (consigliato):
+\bibliographystyle{plain}
+\bibliography{bibliografia}
+
+\end{document}

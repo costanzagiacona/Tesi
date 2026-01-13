@@ -1,0 +1,14 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {section}{\numberline {1}Stato dell'Arte}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Panoramica sugli UAV VTOL}{1}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Configurazioni principali}{1}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Sfide di modellazione e controllo}{1}{subsubsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.2}UAV VTOL con ali indipendentemente inclinabili}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Modellazione e controllo Backstepping per Quadricotteri}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Disaccoppiamento e Controllo Sliding Mode (SMC)}{3}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}{3}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}{4}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{4}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Allocazione del Controllo tramite Spinta Differenziale}{5}{subsection.1.8}%
+\contentsline {section}{Bibliografia}{6}{subsection.1.8}%
