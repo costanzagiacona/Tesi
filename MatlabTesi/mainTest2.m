@@ -8,7 +8,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 150];              % intervallo di simulazione
+tspan = [0 40];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
@@ -16,7 +16,7 @@ test_id = 0;
 if fase == 1
     test_id = 5;
 elseif fase == 3
-    test_id = 8;
+    test_id = 9;
 end
 new_model = 1;
 

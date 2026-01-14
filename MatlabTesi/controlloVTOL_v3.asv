@@ -34,7 +34,6 @@ vy_global = V_global(2);
 vz_global = V_global(3);
 
 persistent err_v_int err_z_int;     
-persistent integral_error_theta
 
 
 switch test_id
@@ -708,8 +707,6 @@ switch test_id
         phi_des = 0;
         psi_des = 0;       % Prua
 
-        T_total = 30;
-
         % =====================================================
         %   TUNING PARAMETRI
         % =====================================================
@@ -719,38 +716,16 @@ switch test_id
         K_psi = 2.0; Phi_psi = 1.0; lam_psi = 3.0;
 
         % ==================================================
-        %   PITCH con INTEGRALE PROTETTO
+        %   PITCH
         % ==================================================
-        
-        % Gestione memoria variabile
-        % persistent integral_error_theta
-        if isempty(integral_error_theta)
-            integral_error_theta = 0;
-        end
     
-        dt = 0.01; 
         e_theta = theta_des - theta;
         de_theta = 0 - q;
-        
-        % --- PROTEZIONE 1: Anti-Windup (Clamping) ---
-        % Impediamo all'integrale di diventare un numero mostruoso
-        max_integral = 10; % Valore di saturazione dell'integrale
-        integral_error_theta = integral_error_theta + e_theta * dt;
-        integral_error_theta = max(-max_integral, min(max_integral, integral_error_theta));
-        
-        % Tuning
-        Ki_theta = 0.5; % Abbassalo un po' all'inizio
-        
-        % Superficie di scorrimento (senza integrale dentro, per ora)
         s_theta = de_theta + lam_theta * e_theta;
-        
-        % Legge di controllo
-        M_y_req = params.Iyy * lam_theta * de_theta ...
-                + params.Iyy * K_theta * tanh(s_theta/Phi_theta) ...
-                + Ki_theta * integral_error_theta; 
-                
-        u_pitch = M_y_req / (T_total * params.d_my); 
-    
+
+        M_y_req = params.Iyy * lam_theta * de_theta + params.Iyy * K_theta * tanh(s_theta/Phi_theta);
+            
+        u_pitch = M_y_req / (T_total * d_arm); 
 
         % ==================================================
         %   ROLL
@@ -761,7 +736,7 @@ switch test_id
         s_phi = de_phi + lam_phi * e_phi;
 
         M_x_req = params.Ixx * lam_phi * de_phi + params.Ixx * K_phi * tanh(s_phi/Phi_phi);
-        u_roll = M_x_req / (T_total * params.d_my); 
+        u_roll = M_x_req / (T_total * d_arm); 
 
         % ==================================================
         %   Yaw
@@ -772,41 +747,20 @@ switch test_id
         s_psi = de_psi + lam_psi * e_psi;
 
         M_z_req = params.Izz * lam_psi * de_psi + params.Izz * K_psi * tanh(s_psi/Phi_psi);
-        u_yaw = M_z_req / (2 * params.d_my);
+        u_yaw = M_z_req / (2 * d_arm);
 
-        % 4. MIXER (Configurazione AEREO)
-        % Roll -> Tilt Differenziale
-        % Yaw  -> Spinta Differenziale
-        
-        % Angolo base dei servi (per compensare l'assetto del corpo, come da tuoi appunti)
-        alpha_base = 0; % Angolo di montaggio standard (es. 0 o 90 gradi)
-        alpha_servo = alpha_base - theta; % Compensazione attiva del beccheggio fusoliera
-   
+        % 1. PITCH (Tilt Collettivo): Genera momento My
+    % My ~ T_total * d_arm * sin(theta_tilt) -> approssimato per piccoli angoli
+    % u_pitch è l'angolo in radianti da aggiungere ai servi
 
-        % Calcolo angoli servi (in radianti)
-        % Motore 1 (destro), Motore 2 (sinistro)
-        theta_servo_1 = alpha_servo + u_pitch + u_roll; 
-        theta_servo_2 = alpha_servo + u_pitch - u_roll; 
     
-        % --- PROTEZIONE 2: Saturazione Attuatori ---
-        servo_lim = deg2rad(45); % Limite fisico a 45 gradi
-        theta_servo_1 = max(-servo_lim, min(servo_lim, theta_servo_1));
-        theta_servo_2 = max(-servo_lim, min(servo_lim, theta_servo_2));
+    % 2. ROLL (Tilt Differenziale): Genera momento Mx
+    % Mx ~ T_total * d_arm * sin(theta_diff)
     
-        % Calcolo Spinte motori (in Newton)
-        T1 = (T_total / 2) - u_yaw;
-        T2 = (T_total / 2) + u_yaw;
     
-        % Saturazione minima (i motori non possono girare al contrario o spegnersi in volo)
-        T1 = max(0, T1);
-        T2 = max(0, T2);
-
-        u(1) = sqrt(T1 / params.k);
-        u(2) = sqrt(T2 / params.k);
-        u(3) = 0; 
-        u(4) = theta_servo_1;
-        u(5) = theta_servo_2;
-        u(6) = 0; u(7) = 0;
+    % 3. YAW (Spinta Differenziale): Genera momento Mz
+    % Mz ~ (T_right - T_left) * d_arm
+    % u_yaw è la forza (Newton) differenziale
     
 
     otherwise
