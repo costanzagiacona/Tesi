@@ -1,0 +1,64 @@
+\subsection{Inner Loop: Controllo d'Assetto Robusto (ISMC)}
+
+Il loop interno ha il compito di stabilizzare la dinamica rotazionale del velivolo, garantendo l'inseguimento dei riferimenti d'assetto ($\phi_{des}, \theta_{des}, \psi_{des}$) calcolati o imposti dal livello superiore.
+Per garantire robustezza contro i disturbi aerodinamici e annullare l'errore a regime, è stata adottata una strategia di controllo \textit{Integral Sliding Mode Control} (ISMC).
+
+\subsubsection{Formulazione Matematica}
+Prendendo in esame la dinamica di beccheggio (Pitch) governata dall'equazione $I_{yy}\ddot{\theta} = M_y + d(t)$, definiamo l'errore di tracciamento come:
+\begin{equation}
+    e_\theta(t) = \theta_{des}(t) - \theta(t)
+\end{equation}
+La superficie di scorrimento (\textit{sliding surface}) $s_\theta$ è progettata per includere la dinamica dell'errore e la sua derivata:
+\begin{equation}
+    s_\theta = \dot{e}_\theta + \lambda_\theta e_\theta
+\end{equation}
+dove $\lambda_\theta > 0$ determina la banda passante del sistema a ciclo chiuso.
+
+La legge di controllo per il momento richiesto $M_{y,req}$ è composta da tre contributi fondamentali: il termine di smorzamento (proporzionale al rateo), il termine robusto (switching) e l'azione integrale esplicita.
+\begin{equation}
+    M_{y,req} = \underbrace{I_{yy} \lambda_\theta \dot{e}_\theta}_{\text{Damping}} + \underbrace{I_{yy} K_{smc} \tanh\left(\frac{s_\theta}{\Phi}\right)}_{\text{Robustezza}} + \underbrace{K_I \int_{0}^{t} e_\theta(\tau) d\tau}_{\text{Trim Integrale}}
+\end{equation}
+Questa struttura assicura che, una volta raggiunta la superficie ($s_\theta \approx 0$), il sistema converga all'equilibrio e l'integrale compensi eventuali disturbi costanti o errori di modellazione.
+
+\subsubsection{Gestione del Trim Aerodinamico (Giustificazione di $\theta_{des}=0$)}
+Una peculiarità fondamentale di questa architettura di controllo è la scelta progettuale di impostare i riferimenti d'assetto a zero per il volo di crociera:
+\begin{equation}
+    \theta_{des} = 0, \quad \phi_{des} = 0, \quad \psi_{des} = 0
+\end{equation}
+Fisicamente, un velivolo ad ala fissa richiede spesso un angolo di incidenza (Pitch) non nullo ($\theta_{trim} \approx 2^\circ - 5^\circ$) per generare, a una data velocità, la portanza necessaria a bilanciare esattamente il peso ($L=mg$).
+Imporre matematicamente $\theta_{des}=0$ creerebbe un conflitto tra il controllore (che vuole il drone piatto) e la fisica (che richiede il drone inclinato per non scendere).
+
+L'introduzione del termine integrale $K_I \int e_\theta$ risolve questo conflitto senza richiedere la conoscenza a priori dell'angolo di trim.
+L'integratore accumula l'errore statico derivante dalla discrepanza tra $\theta_{des}=0$ e l'assetto di equilibrio fisico, generando automaticamente un momento di comando costante ("bias") che mantiene il velivolo all'angolo $\theta_{trim}$ necessario. In questo modo, il controllore "impara" l'assetto di equilibrio aerodinamico in tempo reale.
+
+\subsection{Strategia di Mixing (Configurazione Aereo)}
+Una volta calcolati i momenti richiesti ($M_x, M_y, M_z$) e la spinta totale $T_{tot}$ (dal loop esterno), il mixer distribuisce i comandi agli attuatori secondo la logica "Fixed-Wing", dove i motori restano solidali alla fusoliera ($\alpha_{base} \approx 0$).
+
+\begin{enumerate}
+    \item \textbf{Beccheggio (Pitch) $\rightarrow$ Tilt Collettivo:}
+    Il momento di beccheggio è generato inclinando simultaneamente entrambi i rotori anteriori. Questo crea una componente verticale di forza $F_z = T_{tot} \sin(\theta_{tilt})$ che agisce con braccio $d_{mx}$ rispetto al baricentro.
+    \begin{equation}
+        u_{pitch} = \frac{M_{y,req}}{T_{tot} d_{mx}}
+    \end{equation}
+
+    \item \textbf{Rollio (Roll) $\rightarrow$ Tilt Differenziale:}
+    Il controllo laterale non utilizza alettoni, ma il \textit{tilt differenziale}. Inclinando i rotori in direzioni opposte, si generano forze verticali antiparallele che creano una coppia di rollio pura.
+    \begin{equation}
+        u_{roll} = \frac{M_{x,req}}{T_{tot} d_{my}}
+    \end{equation}
+
+    \item \textbf{Imbardata (Yaw) $\rightarrow$ Spinta Differenziale:}
+    Il controllo direzionale è ottenuto modulando la spinta tra il motore destro ($T_1$) e sinistro ($T_2$). Una differenza di trazione genera un momento di imbardata dovuto al braccio laterale $d_{my}$.
+    \begin{equation}
+        u_{yaw} = \frac{M_{z,req}}{2 d_{my}}
+    \end{equation}
+\end{enumerate}
+
+I comandi finali inviati ai servocomandi ($\theta_{s1}, \theta_{s2}$) e ai motori ($T_1, T_2$) sono quindi:
+\begin{align}
+    \theta_{s1} &= u_{pitch} + u_{roll} \quad \text{(Servo Destro)} \\
+    \theta_{s2} &= u_{pitch} - u_{roll} \quad \text{(Servo Sinistro)} \\
+    T_1 &= \frac{T_{tot}}{2} - u_{yaw} \\
+    T_2 &= \frac{T_{tot}}{2} + u_{yaw}
+\end{align}
+Questa allocazione disaccoppia efficacemente i tre assi, permettendo al drone di manovrare come un aereo convenzionale ma sfruttando la vettorizzazione della spinta.

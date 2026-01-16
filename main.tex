@@ -1,124 +1,146 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt]{report}
 
-% --- 1. PREAMBOLO: I PACCHETTI ---
+% --- PREAMBOLO ---
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}
-
-
-% Gestione Immagini
 \usepackage{graphicx}
-\graphicspath{{./img/}}
-
-% Formattazione Pagina
 \usepackage{geometry}
-% Impostazioni margini
-\geometry{
- a4paper,
- total={170mm,257mm},
- left=30mm,
- right=25mm,
- top=25mm,
- bottom=25mm
-}
-
-% Matematica e Simboli
+\geometry{a4paper, top=3cm, bottom=3cm, left=3.5cm, right=2.5cm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-
-% Bibliografia e Link
 \usepackage{cite}
-\usepackage{microtype} 
-\usepackage{url}       
-\usepackage{hyperref}  
-
-% Interlinea
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,fit,positioning}
 \usepackage{setspace}
-\onehalfspacing % Interlinea 1.5 (Standard Tesi)
+\onehalfspacing
+
+% Percorso immagini
+\graphicspath{{./img/}}
+
+\usepackage{titlesec}
+
+% 1. Definisci lo stile (opzionale, ma serve per mantenere l'aspetto standard "Capitolo X")
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\centering}   % Stile del testo (grassetto, enorme)
+  {\chaptertitlename\ \thechapter} % Scrive "Capitolo 1"
+  {20pt}                        % Spazio tra "Capitolo 1" e il titolo "Introduzione"
+  {\Huge}                       % Dimensione del titolo del capitolo
+
+% 2. Definisci gli spazi
+\titlespacing*{\chapter}
+  {0pt}   % Spazio a sinistra (rientro)
+  {-30pt} % Spazio SOPRA il titolo (usa valori negativi per spostarlo in alto)
+  {20pt}  % Spazio SOTTO il titolo (prima che inizi il testo)
 
 
-% --- 2. INIZIO DOCUMENTO ---
 \begin{document}
 
-
-% --- A. FRONTESPIZIO (Copertina) ---
+% --- A. FRONTESPIZIO (Dati dal PDF) ---
 \begin{titlepage}
     \centering
     \vspace*{1cm}
+    
+    {\LARGE \textbf{UNIVERSITÀ DEGLI STUDI DI ROMA\\TOR VERGATA}} \\
+    \vspace{0.5cm}
+    {\Large Macroarea di Ingegneria} \\
+    \vspace{0.2cm}
+    {\large Corso di Studio in Ingegneria dell'Automazione} \\
+    \vspace{2cm}
 
-    {\Large \textbf{UNIVERSITÀ DEGLI STUDI DI ROMA TOR VERGATA}} \\
-    \vspace{0.5cm}
-    {\large Dipartimento di Ingegneria} \\
-    \vspace{0.5cm}
-    {\large Corso di Laurea in Ingegneria dell'Automazione}
+    {\Large Tesi di Laurea in \\ Analisi e Sintesi di Sistemi Non Lineari} \\
+    \vspace{2cm}
+
+    {\Huge \textbf{}} \\
     
     \vspace{3cm}
-    
-    {\Huge \textbf{TITOLO DELLA TESI}} \\
-    \vspace{0.5cm}
-    {\Large \textbf{Sottotitolo (opzionale)}}
-    
-    \vspace{4cm}
-    
-    \begin{minipage}[t]{0.47\textwidth}
+
+    \begin{minipage}[t]{0.45\textwidth}
         \raggedright \large
         \textbf{Relatore:}\\
-        Prof. Nome Cognome\\
+        Chiar.mo Prof.\\ Daniele Carnevale\\
         \vspace{0.5cm}
         \textbf{Correlatore:}\\
-        Dott. Nome Cognome
+        
     \end{minipage}
     \hfill
-    \begin{minipage}[t]{0.47\textwidth}
+    \begin{minipage}[t]{0.45\textwidth}
         \raggedleft \large
-        \textbf{Candidato:}\\
-        Tuo Nome\\
-        Matricola: 123456
+        \textbf{Laureanda:}\\
+        
     \end{minipage}
-    
+
     \vfill
-    
     {\large Anno Accademico 2025/2026}
 \end{titlepage}
 
-% --- B. INDICE E SOMMARIO ---
-\pagenumbering{roman} % Numeri romani (i, ii, iii) per l'inizio
-
-% Dedica
-\newpage
-\thispagestyle{empty}
-
-\newpage
-\tableofcontents % genera l'indice
+% --- B. INDICE ---
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
 \newpage
 
-% --- C. CORPO DELLA TESI ----
-\pagenumbering{arabic} % Numeri arabi (1, 2, 3) per i capitoli
+% --- C. CORPO DELLA TESI (Struttura PDF) ---
+\pagenumbering{arabic}
 
+% CAPITOLO 1
+\chapter{Introduzione}
+\label{ch:introduzione}
+% \input{capitoli/1_introduzione} % Crea questo file se hai il testo
 
-% L'ordine è importante!
-% \input{capitoli/introduzione}    
-\input{capitoli/stato_arte}  
+% CAPITOLO 2
+\chapter{Stato dell'Arte}
+\label{ch:stato_arte}
+\input{capitoli/stato_arte.tex} 
+
+% CAPITOLO 3
+\chapter{Modello Matematico}
+\label{ch:modello}
+\input{capitoli/modello.tex} % Qui andrebbero le equazioni di moto (Thrust, Gravità)
+
+% CAPITOLO 5
+\chapter{Progettazione del Controllo Robusto (SMC)}
+\label{ch:dimostrazione}
+\input{capitoli/dimostrazione_SMC.tex}
+
+% CAPITOLO 5
+\chapter{Architettura di Controllo del Drone}
+\label{ch:architettura_controllo}
+
+% (Opzionale) Breve introduzione al capitolo qui...
+In questo capitolo viene descritta l'architettura di controllo a cascata, divisa tra dinamica verticale e orizzontale.
+
+% --- SEZIONE 1: VERTICALE ---
+\section{Controllo Verticale} 
+\label{sec:controllo_verticale}
+\input{capitoli/controllo_verticale.tex}
 \clearpage
+% --- SEZIONE 2: ORIZZONTALE ---
+\section{Controllo Orizzontale} 
+\label{sec:controllo_orizzontale}
+\input{capitoli/controllo_orizzontale.tex} % <--- Assicurati di aver salvato il file con questo nome
 
-\input{capitoli/dimostrazione_SMC}   
-\clearpage
+% % CAPITOLO 5
+% \chapter{Proposta di variazione strutturale del tricottero}
+% \label{ch:variazione}
+% % \input{capitoli/5_variazione}
 
-\input{capitoli/controllo_verticale}
-\clearpage
+% % CAPITOLO 6 - Qui inseriamo il tuo controllo SMC
+% \chapter{Simulazioni}
+% \label{ch:simulazioni}
+% \input{capitoli/6_simulazioni} 
 
-% \input{capitoli/modello_matematico}
+% % CAPITOLO 7
+% \chapter{Conclusioni}
+% \label{ch:conclusioni}
+% % \input{capitoli/7_conclusioni}
 
-% \input{capitoli/transizione}
-% \input{capitoli/volo_orizzontale}
-% \input{capitoli/conclusioni}   
-
-% D. BIBLIOGRAFIA ---
-\newpage
-\addcontentsline{toc}{section}{Bibliografia} % Aggiunge la voce "Bibliografia" all'indice
-
-% Se usi un file .bib esterno (consigliato):
+% --- D. BIBLIOGRAFIA ---
 \bibliographystyle{plain}
 \bibliography{bibliografia}
 

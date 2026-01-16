@@ -8,7 +8,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 40];              % intervallo di simulazione
+tspan = [0 100];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
@@ -75,7 +75,7 @@ if new_model == 1
     d_tz = 0;
     
     d_my = (1/2)*ala_y;
-    d_mz = 0.1;
+    d_mz = 0;
     
     d_mx = 0.6;
     d_tx = -1.2;
