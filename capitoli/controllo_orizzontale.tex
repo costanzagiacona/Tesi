@@ -1,8 +1,66 @@
-\subsection{Inner Loop: Controllo d'Assetto Robusto (ISMC)}
+\subsection{Outer Loop: Controllo di Posizione e Velocità}
+Il loop esterno è responsabile della gestione energetica del velivolo e del mantenimento della traiettoria di riferimento.
+In configurazione di volo orizzontale ("Fixed-Wing Mode"), il controllo è disaccoppiato in due canali principali: il mantenimento della velocità di crociera (Longitudinale) e il mantenimento della quota (Verticale).
 
+\subsubsection{Controllo della Velocità (Longitudinale)}
+L'obiettivo è mantenere una velocità di avanzamento costante $v_{x,des}$ (fissata a 25 m/s) per garantire la generazione della portanza necessaria.
+L'errore di velocità è definito come $e_v = v_{x,des} - v_x$.
+%
+La forza propulsiva richiesta lungo l'asse $X$ ($F_{x,req}$) è calcolata sommando un termine di feed-forward per la compensazione della resistenza aerodinamica ($D$) e un'azione proporzionale sull'errore:
+%
+\begin{equation}
+    F_{drag} = \frac{1}{2} \rho S C_D v_x^2
+\end{equation}
+\begin{equation}
+    F_{x,req} = F_{drag} + K_{P,v} e_v
+\end{equation}
+dove $K_{P,v}$ è il guadagno proporzionale del regolatore. Questo assicura che il velivolo fornisca esattamente la spinta necessaria a vincere l'attrito dell'aria alla velocità di equilibrio.
+
+\subsubsection{Controllo della Quota (Verticale)}
+Il controllo di quota mira a stabilizzare il velivolo all'altitudine desiderata $z_{des}$.
+Definito l'errore di quota $e_z = z_{des} - z$, un controllore PID calcola l'accelerazione verticale richiesta $a_{z,cmd}$ per annullare l'errore:
+%
+\begin{equation}
+    a_{z,cmd} = K_{P,z} e_z + K_{I,z} \int_{0}^{t} e_z(\tau) d\tau + K_{D,z} \dot{e}_z
+\end{equation}
+%
+Per determinare la forza verticale che i motori devono effettivamente generare ($F_{z,req}$), è necessario considerare il bilancio delle forze sull'asse $Z$.
+A differenza del volo in hovering, dove i motori sostengono l'intero peso, in questa fase la portanza alare ($L$) fornisce il contributo principale al sostentamento.
+Stimando la portanza come $F_{lift} = -\frac{1}{2} \rho S C_L v_x^2$ (segno negativo perché diretta verso l'alto nel sistema NED), la forza richiesta ai motori è:
+%
+\begin{equation}
+    F_{z,req} = m(g - a_{z,cmd}) + F_{lift}
+\end{equation}
+%
+A regime, se la velocità è quella di progetto ($v_x \approx 25$ m/s), il termine $F_{lift}$ bilancia quasi perfettamente la forza peso $mg$, rendendo la richiesta ai motori $F_{z,req}$ prossima allo zero.
+%
+\subsubsection{Generazione della Spinta Totale}
+Una volta ottenute le componenti di forza ortogonali richieste, il modulo della spinta totale $T_{tot}$ da inviare al mixer è calcolato come la risultante vettoriale:
+%
+\begin{equation}
+    T_{tot} = \sqrt{F_{x,req}^2 + F_{z,req}^2}
+\end{equation}
+%
+% ============= SCELTA PID CONTRO SMC ==================
+%
+\subsubsection{Scelta del Controllo PID per il Loop Esterno}
+A differenza della fase di hovering (Capitolo \ref{sec:controllo_verticale}), dove il controllo di quota è stato affidato a una strategia \textit{Sliding Mode} (SMC) per garantire la massima reiezione dei disturbi, per la fase di volo orizzontale si è preferito adottare un classico regolatore PID con Feed-Forward.
+\\Questa scelta deriva dai risultati osservati in fase di simulazione preliminare. L'applicazione di un controllore SMC al loop esterno di velocità e posizione in configurazione \textit{fixed-wing} ha evidenziato criticità significative ("chattering" e instabilità), dovute principalmente a due fattori:
+\begin{enumerate}
+    \item \textbf{Dinamica Aerodinamica:} Nel volo planato, la risposta del velivolo ai comandi di forza è dominata dalle costanti di tempo aerodinamiche, che sono intrinsecamente più lente rispetto alla dinamica diretta dei rotori in hovering. Un controllore SMC, cercando di forzare lo stato sulla superficie di scorrimento con un'azione ad alta frequenza, tende a generare richieste di accelerazione troppo aggressive.
+    
+    \item \textbf{Accoppiamento Pitch-Velocità:} Poiché l'accelerazione longitudinale richiede variazioni di assetto (o di spinta) che influenzano la portanza, comandi bruschi generati dall'SMC portano a violente oscillazioni di beccheggio. Tali manovre possono spingere istantaneamente l'ala oltre l'angolo di incidenza critico (stallo) o indurre comportamenti non lineari (es. impennate involontarie), compromettendo la stabilità del loop interno.
+\end{enumerate}
+Il PID, grazie alla sua azione più dolce e progressiva, combinato con un termine di Feed-Forward che compensa le forze note (Drag e Lift), si è rivelato la soluzione più idonea per mantenere il punto di lavoro di crociera senza eccitare le modalità oscillanti del velivolo.
+%
+% ============= INNER LOOP ===============
+%
+Questo valore rappresenta l'input energetico che verrà successivamente distribuito tra i due motori anteriori.
+\subsection{Inner Loop: Controllo d'Assetto Robusto (ISMC)}
+%
 Il loop interno ha il compito di stabilizzare la dinamica rotazionale del velivolo, garantendo l'inseguimento dei riferimenti d'assetto ($\phi_{des}, \theta_{des}, \psi_{des}$) calcolati o imposti dal livello superiore.
 Per garantire robustezza contro i disturbi aerodinamici e annullare l'errore a regime, è stata adottata una strategia di controllo \textit{Integral Sliding Mode Control} (ISMC).
-
+%
 \subsubsection{Formulazione Matematica}
 Prendendo in esame la dinamica di beccheggio (Pitch) governata dall'equazione $I_{yy}\ddot{\theta} = M_y + d(t)$, definiamo l'errore di tracciamento come:
 \begin{equation}
@@ -13,7 +71,7 @@ La superficie di scorrimento (\textit{sliding surface}) $s_\theta$ è progettata
     s_\theta = \dot{e}_\theta + \lambda_\theta e_\theta
 \end{equation}
 dove $\lambda_\theta > 0$ determina la banda passante del sistema a ciclo chiuso.
-
+%
 La legge di controllo per il momento richiesto $M_{y,req}$ è composta da tre contributi fondamentali: il termine di smorzamento (proporzionale al rateo), il termine robusto (switching) e l'azione integrale esplicita.
 \begin{equation}
     M_{y,req} = \underbrace{I_{yy} \lambda_\theta \dot{e}_\theta}_{\text{Damping}} + \underbrace{I_{yy} K_{smc} \tanh\left(\frac{s_\theta}{\Phi}\right)}_{\text{Robustezza}} + \underbrace{K_I \int_{0}^{t} e_\theta(\tau) d\tau}_{\text{Trim Integrale}}
@@ -27,13 +85,23 @@ Una peculiarità fondamentale di questa architettura di controllo è la scelta p
 \end{equation}
 Fisicamente, un velivolo ad ala fissa richiede spesso un angolo di incidenza (Pitch) non nullo ($\theta_{trim} \approx 2^\circ - 5^\circ$) per generare, a una data velocità, la portanza necessaria a bilanciare esattamente il peso ($L=mg$).
 Imporre matematicamente $\theta_{des}=0$ creerebbe un conflitto tra il controllore (che vuole il drone piatto) e la fisica (che richiede il drone inclinato per non scendere).
-
+%
 L'introduzione del termine integrale $K_I \int e_\theta$ risolve questo conflitto senza richiedere la conoscenza a priori dell'angolo di trim.
 L'integratore accumula l'errore statico derivante dalla discrepanza tra $\theta_{des}=0$ e l'assetto di equilibrio fisico, generando automaticamente un momento di comando costante ("bias") che mantiene il velivolo all'angolo $\theta_{trim}$ necessario. In questo modo, il controllore "impara" l'assetto di equilibrio aerodinamico in tempo reale.
 
 \subsection{Strategia di Mixing (Configurazione Aereo)}
 Una volta calcolati i momenti richiesti ($M_x, M_y, M_z$) e la spinta totale $T_{tot}$ (dal loop esterno), il mixer distribuisce i comandi agli attuatori secondo la logica "Fixed-Wing", dove i motori restano solidali alla fusoliera ($\alpha_{base} \approx 0$).
+\\La strategia adottata implementa delle \textbf{"superfici virtuali"} associando a ciascun angolo di assetto una specifica modalità di vettorizzazione della spinta:
 
+\begin{itemize}
+    \item \textbf{Funzione Equilibratore (Pitch):} Viene sostituita dal \textit{Tilt Collettivo}. Invece di deflettere una superficie di coda per alzare il muso, entrambi i rotori anteriori si inclinano verso l'alto, generando una componente verticale di spinta che crea il momento di cabrata.
+    
+    \item \textbf{Funzione Alettoni (Roll):} Viene sostituita dal \textit{Tilt Differenziale}. Invece di variare la portanza sulle semiali tramite alettoni, si inclinano i rotori in direzioni opposte (uno su, uno giù), creando una coppia di forze verticali che induce il rollio.
+    
+    \item \textbf{Funzione Timone (Yaw):} Viene sostituita dalla \textit{Spinta Differenziale}. Il controllo direzionale non avviene tramite deviazione aerodinamica, ma sbilanciando la trazione tra il motore destro e sinistro per generare un momento di imbardata attorno all'asse verticale.
+\end{itemize}
+
+Matematicamente, questa allocazione è definita dalle seguenti relazioni:
 \begin{enumerate}
     \item \textbf{Beccheggio (Pitch) $\rightarrow$ Tilt Collettivo:}
     Il momento di beccheggio è generato inclinando simultaneamente entrambi i rotori anteriori. Questo crea una componente verticale di forza $F_z = T_{tot} \sin(\theta_{tilt})$ che agisce con braccio $d_{mx}$ rispetto al baricentro.
@@ -53,7 +121,7 @@ Una volta calcolati i momenti richiesti ($M_x, M_y, M_z$) e la spinta totale $T_
         u_{yaw} = \frac{M_{z,req}}{2 d_{my}}
     \end{equation}
 \end{enumerate}
-
+%
 I comandi finali inviati ai servocomandi ($\theta_{s1}, \theta_{s2}$) e ai motori ($T_1, T_2$) sono quindi:
 \begin{align}
     \theta_{s1} &= u_{pitch} + u_{roll} \quad \text{(Servo Destro)} \\

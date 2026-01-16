@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1768580293.44701 "main.aux" "main.bbl" "main" 1768580297.72447 0
+["bibtex main"] 1768581893.86084 "main.aux" "main.bbl" "main" 1768581945.98115 0
   "./bibliografia.bib" 1768321645 2091 3a7b1561567dcd07259db08c8bfcfda8 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1768580296 8692 a4dcaa592643fb794b495f47c2d8d136 "pdflatex"
+  "main.aux" 1768581944 9387 26c714a2e059566794b1d031aac08352 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1768580293.80613 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1768580297.72536 0
+["pdflatex"] 1768581941.92314 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1768581945.9819 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1768561861 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -209,19 +209,19 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1768579263 4035 f767ae931b3016268865905967128ae7 ""
-  "capitoli/controllo_orizzontale.tex" 1768580288 5059 a2c40e8d972b16aa586a5d5286ca2fb7 ""
+  "capitoli/controllo_orizzontale.tex" 1768581941 11093 da236e03b37ea373e6046fc3c62b74fa ""
   "capitoli/controllo_verticale.tex" 1768578716 7568 f466c82ecbb050abcdc99a509e9cd537 ""
   "capitoli/dimostrazione_SMC.tex" 1768562042 6238 8baaefdccad87dd1f76f726bb6f23eb0 ""
   "capitoli/modello.tex" 1768562475 6538 06b11020779ea8e9f4607b16bf586a90 ""
   "capitoli/stato_arte.tex" 1768557540 13460 c9467d10806a163e037aed5a4ffd8461 ""
   "img/coaxial.png" 1768555921 66686 ab3b88c701116b77c7429fda20f3d465 ""
   "img/paper5.png" 1768556792 346972 4d1588acb44ec33f5651b4110dd6bbe0 ""
-  "main.aux" 1768580296 8692 a4dcaa592643fb794b495f47c2d8d136 "pdflatex"
-  "main.bbl" 1768580293 1705 fd29171eb3cd5cffeaaa97879eebe741 "bibtex main"
-  "main.lof" 1768580296 622 efc8f203beffaf4738b029cc10bd1aca "pdflatex"
-  "main.out" 1768580296 7118 18a611294a9fda2fd543732a96175d39 "pdflatex"
+  "main.aux" 1768581944 9387 26c714a2e059566794b1d031aac08352 "pdflatex"
+  "main.bbl" 1768581894 1705 fd29171eb3cd5cffeaaa97879eebe741 "bibtex main"
+  "main.lof" 1768581944 622 efc8f203beffaf4738b029cc10bd1aca "pdflatex"
+  "main.out" 1768581944 7426 fc8b39ad74a6a399f58a0778a19fae98 "pdflatex"
   "main.tex" 1768579263 4035 f767ae931b3016268865905967128ae7 ""
-  "main.toc" 1768580296 4064 054167334167d46cc517dcf075f1a826 "pdflatex"
+  "main.toc" 1768581944 4554 f971483004d31187abe05c1ca323d290 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"

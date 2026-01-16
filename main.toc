@@ -37,7 +37,12 @@
 \contentsline {subsubsection}{Stabilizzazione dell'Assetto (PID)}{17}{subsubsection*.11}%
 \contentsline {subsection}{\numberline {5.1.3}Mixing}{17}{subsection.5.1.3}%
 \contentsline {section}{\numberline {5.2}Controllo Orizzontale}{18}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{18}{subsection.5.2.1}%
-\contentsline {subsubsection}{Formulazione Matematica}{18}{subsubsection*.12}%
-\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{18}{subsubsection*.13}%
-\contentsline {subsection}{\numberline {5.2.2}Strategia di Mixing (Configurazione Aereo)}{19}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.1}Outer Loop: Controllo di Posizione e Velocità}{18}{subsection.5.2.1}%
+\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{18}{subsubsection*.12}%
+\contentsline {subsubsection}{Controllo della Quota (Verticale)}{18}{subsubsection*.13}%
+\contentsline {subsubsection}{Generazione della Spinta Totale}{19}{subsubsection*.14}%
+\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{19}{subsubsection*.15}%
+\contentsline {subsection}{\numberline {5.2.2}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{20}{subsection.5.2.2}%
+\contentsline {subsubsection}{Formulazione Matematica}{20}{subsubsection*.16}%
+\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{21}{subsubsection*.17}%
+\contentsline {subsection}{\numberline {5.2.3}Strategia di Mixing (Configurazione Aereo)}{21}{subsection.5.2.3}%

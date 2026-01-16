@@ -16,7 +16,7 @@ test_id = 0;
 if fase == 1
     test_id = 5;
 elseif fase == 3
-    test_id = 8;
+    test_id = ;
 end
 new_model = 1;
 
@@ -25,7 +25,10 @@ new_model = 1;
 
 m = 6.7;      % massa UAV VTOL (Kg)  
 g = 9.8;    % costante gravitazionele (m/s^2)
+
 k = 7*(10^-5);      % coeff. thrust rotori
+
+
 rho = 1.225;    % densità dell'aria (kg/m^3)
 ala_y = 0.4;
 ala_x = 0.15;
@@ -215,7 +218,9 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
+% tspan = [0 10];              % intervallo di simulazione
 x0 = zeros(26,1);            % stato iniziale 
+
 
 if fase == 1
     x0(4) = 0; % condizione iniziale della velocità lungo X
@@ -228,6 +233,9 @@ if fase == 1
     %inclinazione iniziale del rotore di coda (per il volo verticale)
     x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
     x0(19)= -pi/2;
+    %inclinazione iniziale del rotore di coda (per il volo verticale senza momento torcente)
+    % x0(17) = pi/2;
+    % x0(19)= 0;
 
 elseif fase == 3
     % posizione iniziale lungo z
@@ -243,7 +251,7 @@ elseif fase == 3
     x0(21)= sqrt(T_i/parametri.k);
     x0(23)= x0(21);
 
-    %inclinazione iniziale dei rotori anteriori (per il volo verticale)
+    %inclinazione iniziale dei rotori anterioiri (per il volo verticale)
     x0(13) = 0;
     x0(15) = 0;
     x0(17) = 0;
@@ -252,13 +260,15 @@ elseif fase == 3
 end
 
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
+
+
 [t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id), tspan, x0, options);
 
 %per plot controllo
 global U_values
 U_values = zeros(length(t),7);
 for k = 1:length(t)
-    U_values(k,:) = controlloVTOL_v3(parametri,x(k,:), test_id);
+    U_values(k,:) = controlloVTOL_v3(t, parametri,x(k,:), test_id);
 end
 
 
@@ -478,4 +488,56 @@ if flagPlot3D == 1
     TricopterPlot_v3(t,x);
 
 end
+
+
+%% test orientamento angoli
+
+% phi = 0;
+% theta = pi/4;
+% psi = 0;
+% 
+% e_x = [1;0;0];
+% e_y = [0;1;0];
+% e_z = [0;0;1];
+% 
+% R = matriceRotazione(phi,theta,psi);
+% disp("Matrice di rotazione R(b->g):")
+% disp(R);
+% 
+% disp("Direzione Xb (muso):")
+% disp(R*e_x);
+
+
+
+%% test direzione rotore di coda
+
+% %inclinazione iniziale dei rotori anterioiri (per il volo verticale)
+% x0(13)= pi/2;
+% x0(15)= pi/2;
+% %inclinazione iniziale del rotore di coda (per il volo verticale)
+% x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+% x0(19)= -pi/2;
+% 
+% e_x = [1;0;0];
+% 
+% s3 = sin(x0(17));
+% c3 = cos(x0(17));
+% s4 = sin(x0(19));
+% c4 = cos(x0(19));
+% R_tail = [c4*c3 -s4 c4*s3;s4*c3 c4 s4*s3;-s3 0 c3];
+% disp(R_tail);
+% 
+% disp("Direzione rotore di coda:")
+% disp(R_tail*e_x);
+
+
+%% test wing frame
+% syms Cd Cy Cl
+% 
+% % volo verticale
+% alpha = pi/2;
+% beta = 0;
+% coeffAero = [-Cd;Cy;-Cl];
+% Rwb = round(matriceRotazioneWingToBodyFrame(alpha,beta),3);
+% disp(Rwb*coeffAero)
 
