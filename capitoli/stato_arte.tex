@@ -53,7 +53,18 @@ Il problema dell'accoppiamento dinamico nei VTOL è trattato specificamente in \
 Su questo modello disaccoppiato viene applicato un controllore \textit{Sliding Mode Control} (SMC). La scelta dello SMC è motivata dalla sua intrinseca capacità di gestire incertezze parametriche e disturbi esterni mantenendo il sistema sulla superficie di scorrimento desiderata. Le simulazioni confermano che l'integrazione tra la tecnica di disaccoppiamento e il controllo robusto SMC permette di annullare l'errore di tracciamento in tempo finito, eliminando al contempo il fenomeno del \textit{chattering} (vibrazioni ad alta frequenza) tipico di queste strategie.
 
 \subsection{Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}
-Un'evoluzione significativa nel panorama dei velivoli a decollo verticale è rappresentata dalla configurazione \textit{Coaxial Tilt-Rotor} (CTRUAV), analizzata approfonditamente in \cite{cheng2022}. Questa architettura si distingue per la presenza di due coppie di rotori coassiali inclinabili posizionati nella parte anteriore del velivolo e un rotore fisso in coda. Rispetto ai tricotteri convenzionali, l'impiego di rotori coassiali permette di generare una spinta maggiore senza aumentare le dimensioni del telaio, migliorando la manovrabilità e annullando naturalmente il momento giroscopico grazie alla configurazione controrotante.
+Un'evoluzione significativa nel panorama dei velivoli a decollo verticale è rappresentata dalla configurazione \textit{Coaxial Tilt-Rotor} (CTRUAV), 
+analizzata approfonditamente in \cite{cheng2022}. Questa architettura si distingue per la presenza di due coppie di rotori coassiali inclinabili 
+posizionati nella parte anteriore del velivolo e un rotore fisso in coda. Rispetto ai tricotteri convenzionali, l'impiego di rotori coassiali 
+permette di generare una spinta maggiore senza aumentare le dimensioni del telaio, migliorando la manovrabilità e annullando naturalmente il 
+momento giroscopico grazie alla configurazione controrotante.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{coaxial}
+    \caption{Coaxial tilt rotor UAV.}
+    \label{fig:coaxial}
+\end{figure}
 
 Il modello dinamico a sei gradi di libertà è derivato utilizzando le formule di Newton-Eulero. Per governare questo sistema in presenza di disturbi esterni, è stata proposta una strategia di controllo gerarchica:
 \begin{itemize}
@@ -68,6 +79,12 @@ In \cite{chen2017}, l'attenzione si sposta sulla realizzazione pratica di un vol
 La gestione del volo è affidata a una strategia basata su una macchina a stati finiti che coordina le diverse fasi: \textit{Rotor mode} (decollo verticale), \textit{Conversion} (transizione accelerata), \textit{Fixed-wing mode} (crociera) e \textit{Reconversion} (ritorno all'hovering).
 Un elemento centrale è il sistema di \textbf{Control Allocation (Mixer)}. Poiché il sistema è sovra-attuato e non affine durante la transizione, il mixer distribuisce i pesi di controllo tra modalità rotore e ala fissa in base all'efficienza degli attuatori e all'angolo di tilt corrente. Una peculiarità è il controllo dell'imbardata in hovering tramite tilt differenziale dei rotori anteriori, che viene disattivato progressivamente durante la transizione.
 I test di volo reali hanno validato la capacità del velivolo di eseguire l'intero inviluppo di volo mantenendo la stabilità \cite{chen2017}.
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{paper5.png}
+        \caption{Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}
+        \label{fig:paper5}
+\end{figure}
 
 \subsection{Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}
 La problematica della convergenza rapida e garantita è affrontata in \cite{yu2022}, dove viene proposto uno schema per la stabilizzazione dell'assetto di un \textit{Tilt Trirotor UAV} basato sulla stabilità a tempo fisso (\textit{Fixed-Time Stability}). A differenza della stabilità asintotica o a tempo finito, questo approccio garantisce che il sistema raggiunga l'equilibrio entro un tempo limitato, noto a priori e indipendente dallo stato iniziale.

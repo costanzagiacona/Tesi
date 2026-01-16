@@ -16,17 +16,43 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Modellazione e controllo Backstepping per Quadricotteri}{2}{subsection.1.3}\protected@file@percent }
 \citation{zhang2014}
 \citation{cheng2022}
-\citation{chen2017}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Disaccoppiamento e Controllo Sliding Mode (SMC)}{3}{subsection.1.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}{3}{subsection.1.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Coaxial tilt rotor UAV.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:coaxial}{{1}{3}{Coaxial tilt rotor UAV}{figure.1}{}}
+\citation{chen2017}
 \citation{chen2017}
 \citation{yu2022}
-\citation{yu2022}
-\citation{riboldi2023}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}{4}{subsection.1.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{4}{subsection.1.7}\protected@file@percent }
+\citation{yu2022}
 \citation{riboldi2023}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{5}{figure.2}\protected@file@percent }
+\newlabel{fig:paper5}{{2}{5}{Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.8}Allocazione del Controllo tramite Spinta Differenziale}{5}{subsection.1.8}\protected@file@percent }
+\citation{riboldi2023}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Progettazione del Controllo Robusto (SMC)}{7}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Modellazione della Dinamica Verticale}{7}{subsection.2.1}\protected@file@percent }
+\newlabel{eq:dynamics_z}{{1}{7}{Modellazione della Dinamica Verticale}{equation.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Definizione della Superficie di Scorrimento}{7}{subsection.2.2}\protected@file@percent }
+\newlabel{eq:sliding_surface}{{3}{7}{Definizione della Superficie di Scorrimento}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Sintesi della Legge di Controllo}{7}{subsection.2.3}\protected@file@percent }
+\newlabel{eq:control_law_ideal}{{8}{8}{Sintesi della Legge di Controllo}{equation.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Analisi di Stabilità (Metodo di Lyapunov)}{8}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Regolarizzazione e Chattering}{9}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Architettura di Controllo del Drone}{10}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Controllo Verticale (Outer Loop)}{10}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Modello Dinamico}{10}{subsubsection.3.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}Sintesi della Legge di Controllo}{10}{subsubsection.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Controllo Laterale - Roll (Cascade)}{11}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Posizione (Outer Loop - SMC)}{11}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Assetto (Inner Loop - PD)}{11}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Controllo Longitudinale - Pitch (Cascade)}{11}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Posizione (Outer Loop - SMC)}{11}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}Assetto (Inner Loop - PD)}{12}{subsubsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Allocazione dei Comandi (Control Allocation)}{12}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Motore di Coda (Rotore 3)}{12}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Motori Frontali (Rotori 1 e 2)}{12}{subsubsection.3.4.2}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{bibliografia}
 \bibcite{chen2017}{1}
@@ -36,5 +62,5 @@
 \bibcite{riboldi2023}{5}
 \bibcite{yu2022}{6}
 \bibcite{zhang2014}{7}
-\@writefile{toc}{\contentsline {section}{Bibliografia}{6}{subsection.1.8}\protected@file@percent }
-\gdef \@abspage@last{8}
+\@writefile{toc}{\contentsline {section}{Bibliografia}{13}{equation.24}\protected@file@percent }
+\gdef \@abspage@last{15}

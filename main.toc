@@ -11,4 +11,23 @@
 \contentsline {subsection}{\numberline {1.6}Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}{4}{subsection.1.6}%
 \contentsline {subsection}{\numberline {1.7}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{4}{subsection.1.7}%
 \contentsline {subsection}{\numberline {1.8}Allocazione del Controllo tramite Spinta Differenziale}{5}{subsection.1.8}%
-\contentsline {section}{Bibliografia}{6}{subsection.1.8}%
+\contentsline {section}{\numberline {2}Progettazione del Controllo Robusto (SMC)}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modellazione della Dinamica Verticale}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Definizione della Superficie di Scorrimento}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Sintesi della Legge di Controllo}{7}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Analisi di Stabilità (Metodo di Lyapunov)}{8}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Regolarizzazione e Chattering}{9}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Architettura di Controllo del Drone}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Controllo Verticale (Outer Loop)}{10}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Modello Dinamico}{10}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Sintesi della Legge di Controllo}{10}{subsubsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.2}Controllo Laterale - Roll (Cascade)}{11}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Posizione (Outer Loop - SMC)}{11}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Assetto (Inner Loop - PD)}{11}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}Controllo Longitudinale - Pitch (Cascade)}{11}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Posizione (Outer Loop - SMC)}{11}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Assetto (Inner Loop - PD)}{12}{subsubsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.4}Allocazione dei Comandi (Control Allocation)}{12}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Motore di Coda (Rotore 3)}{12}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Motori Frontali (Rotori 1 e 2)}{12}{subsubsection.3.4.2}%
+\contentsline {section}{Bibliografia}{13}{equation.24}%

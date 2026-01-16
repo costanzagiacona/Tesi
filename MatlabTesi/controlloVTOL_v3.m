@@ -480,15 +480,15 @@ switch test_id
         % Rollio (Differenziale di spinta)
         kp_roll = 20; kd_roll = 5;
         u_roll = kp_roll * (phi_des - x(7)) - kd_roll * x(10);
-        
-        T_dx = T_base - u_roll;
-        T_sx = T_base + u_roll;
+       
 
         % Tilt (Base vettoriale + correzione Pitch + correzione Yaw)
         u_yaw = 1.0 * (psi_des - x(12)); % Yaw damping
         
-        u(4) = alpha_servo + u_pitch + u_yaw; % Servo DX
-        u(5) = alpha_servo + u_pitch - u_yaw; % Servo SX
+        u(4) = alpha_servo + u_pitch + u_roll; % Servo DX
+        u(5) = alpha_servo + u_pitch - u_roll; % Servo SX
+        T_dx = T_base - u_yaw;
+        T_sx = T_base + u_yaw;
         
         % Output Motori
         u(1) = sqrt(max(0, T_dx) / params.k);
@@ -749,7 +749,7 @@ switch test_id
                 + params.Iyy * K_theta * tanh(s_theta/Phi_theta) ...
                 + Ki_theta * integral_error_theta; 
                 
-        u_pitch = M_y_req / (T_total * params.d_my); 
+        u_pitch = M_y_req / (T_total * params.d_mx); 
     
 
         % ==================================================

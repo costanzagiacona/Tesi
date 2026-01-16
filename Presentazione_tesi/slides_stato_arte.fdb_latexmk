@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1768319273.94428 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/slides_stato_arte.tex" "slides_stato_arte.pdf" "slides_stato_arte" 1768319278.51159 0
+["pdflatex"] 1768556981.69676 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/slides_stato_arte.tex" "slides_stato_arte.pdf" "slides_stato_arte" 1768556988.01596 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1768317960 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -307,13 +307,15 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/zref/zref-abspage.sty" 1750428951 2269 2de6c7a5fd634dfef00a960544463a38 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/zref/zref-base.sty" 1750428951 20785 198a9cb2e04238d92c320d0d9edbd76a ""
-  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/slides_stato_arte.tex" 1768319273 12481 41079fc0964b9081047979dafce49c4a ""
+  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/slides_stato_arte.tex" 1768556974 13087 f8305949a4bb565b5618454a8cda56fe ""
   "figs/logo_utv.pdf" 1765880644 358964 79fa6289ff69fdae647557ac0d608078 ""
-  "slides_stato_arte.aux" 1768319278 5420 dd5fe2324b83eb530e0f01b435038c06 "pdflatex"
-  "slides_stato_arte.nav" 1768319278 3039 a2077a5f28a18bcb6da78a7dc3635c31 "pdflatex"
-  "slides_stato_arte.out" 1768319278 861 ebc8ab1b9d452f7948cee292efec7af4 "pdflatex"
-  "slides_stato_arte.tex" 1768319273 12481 41079fc0964b9081047979dafce49c4a ""
-  "slides_stato_arte.toc" 1768319278 335 3d21a09708bb810805ac135eede7c1a6 "pdflatex"
+  "slides_stato_arte.aux" 1768556987 5966 088513ed103e709082d0d11ac029cb71 "pdflatex"
+  "slides_stato_arte.nav" 1768556987 3223 78729e6d98cfac37254b0f4cab679743 "pdflatex"
+  "slides_stato_arte.out" 1768556987 861 ebc8ab1b9d452f7948cee292efec7af4 "pdflatex"
+  "slides_stato_arte.tex" 1768556974 13087 f8305949a4bb565b5618454a8cda56fe ""
+  "slides_stato_arte.toc" 1768556987 335 29bcee89cfaa0397536b4dc063931142 "pdflatex"
+  "stato_arte_img/coaxial.png" 1768555921 66686 ab3b88c701116b77c7429fda20f3d465 ""
+  "stato_arte_img/paper5.png" 1768556792 346972 4d1588acb44ec33f5651b4110dd6bbe0 ""
   "utvengbeamer.sty" 1765880644 7387 2652569158edcd1b1c8ebdd4e1aad433 ""
   (generated)
   "slides_stato_arte.aux"

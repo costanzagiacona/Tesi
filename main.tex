@@ -9,7 +9,7 @@
 
 % Gestione Immagini
 \usepackage{graphicx}
-\graphicspath{{immagini/}}
+\graphicspath{{./img/}}
 
 % Formattazione Pagina
 \usepackage{geometry}
@@ -99,9 +99,17 @@
 
 % L'ordine è importante!
 % \input{capitoli/introduzione}    
-\input{capitoli/stato_arte}     
+\input{capitoli/stato_arte}  
+\clearpage
+
+\input{capitoli/dimostrazione_SMC}   
+\clearpage
+
+\input{capitoli/controllo_verticale}
+\clearpage
+
 % \input{capitoli/modello_matematico}
-% \input{capitoli/volo_verticale}
+
 % \input{capitoli/transizione}
 % \input{capitoli/volo_orizzontale}
 % \input{capitoli/conclusioni}   

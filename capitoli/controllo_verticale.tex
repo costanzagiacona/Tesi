@@ -1,0 +1,91 @@
+% !TEX root = ../main.tex
+
+\section{Architettura di Controllo del Drone}
+
+In questo capitolo si presentano le strategie di controllo implementate per la stabilizzazione e la navigazione del velivolo. L'architettura adottata è di tipo gerarchico a cascata (\textit{Cascade Control Strategy}), basata sulla separazione delle scale temporali delle dinamiche del sistema.
+Lo schema si suddivide in due anelli di controllo principali:
+
+\begin{description}
+    \item[Anello Esterno (Outer Loop - Posizione):] Gestisce la dinamica traslazionale lenta ($x, y, z$). Dato che il drone è un sistema sottostimato (\textit{underactuated}), questo stadio calcola la spinta totale necessaria e gli angoli di assetto virtuali ($\phi_{\mathrm{des}}, \theta_{\mathrm{des}}$) richiesti per ottenere lo spostamento desiderato. La tecnica utilizzata è il \textbf{Controllo Robusto SMC} (Sliding Mode Control).
+    
+    \item[Anello Interno (Inner Loop - Assetto):] Gestisce la dinamica rotazionale veloce. Il controllo è diviso in due loop: il primo utilizza SMC per calcolare gli angoli desiderati e il secondo riceve i riferimenti angolari e, tramite controllori \textbf{PD (Proporzionale-Derivativo)}, determina i momenti torcenti ($\tau$) necessari per orientare il velivolo.
+\end{description}
+Di seguito si dettagliano le leggi di controllo per i singoli gradi di libertà.
+
+\subsection{Controllo Verticale (Outer Loop)}
+
+La gestione dell'altitudine è affidata al loop esterno tramite tecnica SMC, garantendo robustezza contro disturbi aerodinamici e incertezze parametriche.
+
+\subsubsection{Modello Dinamico}
+L'equazione del moto lungo l'asse $z$ (sistema NED) è data da:
+\begin{equation}
+    m\ddot{z} = mg + F_{\mathrm{aero},z} - F_{\mathrm{thrust},z} + d_z(t)
+\end{equation}
+Esplicitando la resistenza aerodinamica e il disturbo limitato $d_z(t)$:
+\begin{equation}
+    m\ddot{z} = mg - \frac{1}{2}\rho S C_d \, \mathrm{sgn}(v_z)v_z^2 - F_{\mathrm{thrust},z} + d_z(t)
+\end{equation}
+
+\subsubsection{Sintesi della Legge di Controllo}
+Dopo aver definito l'errore di tracciamento $e_z(t) = z_{\mathrm{des}} - z$ e la superficie di scorrimento $\sigma_z = \dot{e}_z + \lambda_z e_z$, si ricava la legge di controllo per la spinta verticale $F_{\mathrm{req},z}$.
+Al fine di mitigare il fenomeno del \textit{chattering}, la funzione discontinua $\mathrm{sgn}(\cdot)$ è approssimata dalla tangente iperbolica:
+\begin{equation}
+    F_{\mathrm{req},z} = m \left( g - \ddot{z}_{\mathrm{des}} + \lambda_z \dot{e}_z \right) + F_{\mathrm{aero},z} + K_z \tanh\left(\frac{\sigma_z}{\Phi_z}\right)
+\end{equation}
+dove $K_z$ è il guadagno di robustezza e $\Phi_z$ lo spessore dello strato limite.
+
+\subsection{Controllo Laterale - Roll (Cascade)}
+
+Il controllo della dinamica traslazionale lungo l'asse $y$ richiede l'attuazione indiretta tramite l'angolo di rollio $\phi$.
+
+\subsubsection{Posizione (Outer Loop - SMC)}
+Dalla dinamica linearizzata $m\ddot{y} \approx T \phi - d_y \dot{y}$ (per piccoli angoli), si definisce la superficie $\sigma_y = \dot{e}_y + \lambda_y e_y$. Imponendo la dinamica di raggiungimento $\dot{\sigma}_y = -k_y \tanh(\sigma_y)$, si ottiene l'angolo di rollio desiderato:
+\begin{equation}
+    \phi_{\mathrm{des}} = \arcsin\left[ \frac{m}{F_{\mathrm{req}}} \left( k_y \tanh(\sigma_y) + \lambda_y \dot{e}_y + \frac{d_y \dot{y}}{m} \right) \right]
+\end{equation}
+
+\subsubsection{Assetto (Inner Loop - PD)}
+L'anello interno assicura che l'angolo reale $\phi$ insegua il riferimento $\phi_{\mathrm{des}}$. Il momento di rollio richiesto $M_{x,\mathrm{eq}}$ è calcolato tramite un controllore PD:
+\begin{equation}
+    M_{x,\mathrm{eq}} = K_{P,\phi}(\phi_{\mathrm{des}} - \phi) - K_{D,\phi}\dot{\phi}
+\end{equation}
+%
+Si noti che il termine derivativo agisce sulla velocità angolare misurata dal giroscopio, con riferimento di velocità nullo.
+
+\subsection{Controllo Longitudinale - Pitch (Cascade)}
+
+Analogamente, il movimento lungo l'asse $x$ è governato dall'angolo di beccheggio $\theta$.
+
+\subsubsection{Posizione (Outer Loop - SMC)}
+Considerando la dinamica $m\ddot{x} \approx -T \theta - d_x \dot{x}$, e definita la superficie $\sigma_x$, il controllore SMC genera il riferimento di assetto:
+\begin{equation}
+    \theta_{\mathrm{des}} = \arcsin\left( -\frac{u_{x,\mathrm{SMC}}}{F_{\mathrm{req}}} \right)
+\end{equation}
+%
+dove $u_{x,\mathrm{SMC}}$ rappresenta l'azione di controllo virtuale necessaria per annullare l'errore di posizione lungo $x$.
+
+\subsubsection{Assetto (Inner Loop - PD)}
+Il momento di beccheggio $M_{y,\mathrm{eq}}$ necessario per tracciare $\theta_{\mathrm{des}}$ è dato da:
+\begin{equation}
+    M_{y,\mathrm{eq}} = K_{P,\theta}(\theta_{\mathrm{des}} - \theta) - K_{D,\theta}\dot{\theta}
+\end{equation}
+
+\subsection{Allocazione dei Comandi (Control Allocation)}
+
+Il blocco di \textit{Mixing} traduce le forze e i momenti generalizzati $\mathbf{v} = [F_{\mathrm{req}}, M_{x}, M_{y}]^T$ nei comandi specifici per gli attuatori. La configurazione prevede due motori frontali fissi (1, 2) e un motore di coda tiltabile (3).
+Il problema è risolto invertendo analiticamente il sistema delle forze e dei momenti:
+
+\subsubsection{Motore di Coda (Rotore 3)}
+La velocità angolare $\omega_3$ è determinata dall'equilibrio dei momenti attorno all'asse di beccheggio:
+\begin{equation}
+    \omega_3^2 = \frac{F_{\mathrm{req}} d_{mx} - M_{y,\mathrm{eq}}}{k \left[ \sin(\theta_3)(d_{mx} - d_{tx}) + \frac{b}{k} \cos(\theta_3) \right]}
+\end{equation}
+dove $k$ e $b$ sono rispettivamente i coefficienti di spinta e di resistenza del rotore, mentre $d_{(\cdot)}$ rappresenta i bracci di leva geometrici rispetto al baricentro.
+
+\subsubsection{Motori Frontali (Rotori 1 e 2)}
+Definita la spinta residua che i motori anteriori devono fornire come $T_{\mathrm{front}} = \frac{1}{2} (F_{\mathrm{req}} - T_3 \sin\theta_3)$, le velocità angolari sono calcolate differenzialmente per generare il momento di rollio:
+
+\begin{align}
+    \omega_1^2 &= \frac{1}{k} \left( T_{\mathrm{front}} - \frac{1}{2} \frac{M_{x,\mathrm{eq}}}{d_{my}} \right) \\
+    \omega_2^2 &= \frac{1}{k} \left( T_{\mathrm{front}} + \frac{1}{2} \frac{M_{x,\mathrm{eq}}}{d_{my}} \right)
+\end{align}

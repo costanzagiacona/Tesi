@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  13 JAN 2026 17:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  16 JAN 2026 11:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -500,26 +500,48 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
 <to be read again> 
                    \relax 
 l.32 
-      [1{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] [2] [3] [4]) [5] (main.bbl) [6] (main.aux)
+      [1{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] [2]
+<./img/coaxial.png, id=185, 376.40625pt x 226.59656pt>
+File: ./img/coaxial.png Graphic file (type png)
+<use ./img/coaxial.png>
+Package pdftex.def Info: ./img/coaxial.png  used on input line 64.
+(pdftex.def)             Requested size: 220.50887pt x 132.75034pt.
+ [3 <./img/coaxial.png>]
+<./img/paper5.png, id=197, 586.44093pt x 447.17062pt>
+File: ./img/paper5.png Graphic file (type png)
+<use ./img/paper5.png>
+Package pdftex.def Info: ./img/paper5.png  used on input line 84.
+(pdftex.def)             Requested size: 220.50887pt x 168.1389pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4] [5 <./img/paper5.png>]) [6] (capitoli/dimostrazione_SMC.tex [7
+
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}] [8{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]) [9] (capitoli/controllo_verticale [10
+
+] [11]) [12] (main.bbl) [13
+
+] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: AC93D2351521C4B9CFEAE2D2D5D085B3;3304.
+(rerunfilecheck)             Checksum: A74344C0CAFCF31B92AE505DCAEE75D6;7838.
  ) 
 Here is how much of TeX's memory you used:
- 13909 strings out of 467871
- 221722 string characters out of 5418375
- 679732 words of memory out of 5000000
- 42429 multiletter control sequences out of 15000+600000
- 675476 words of font info for 135 fonts, out of 8000000 for 9000
+ 14107 strings out of 467871
+ 224906 string characters out of 5418375
+ 684054 words of memory out of 5000000
+ 42504 multiletter control sequences out of 15000+600000
+ 692808 words of font info for 167 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,5n,79p,1038b,508s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
-Output written on main.pdf (8 pages, 126359 bytes).
+ 75i,11n,79p,1038b,561s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb>
+Output written on main.pdf (15 pages, 668970 bytes).
 PDF statistics:
- 144 PDF objects out of 1000 (max. 8388607)
- 28 named destinations out of 1000 (max. 500000)
- 26721 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 358 PDF objects out of 1000 (max. 8388607)
+ 82 named destinations out of 1000 (max. 500000)
+ 37123 words of extra memory for PDF output out of 42996 (max. 10000000)
 

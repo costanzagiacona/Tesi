@@ -28,6 +28,9 @@
     date={\today}
 ]{utvengbeamer}
 
+\usepackage{graphicx}
+\graphicspath{ {./stato_arte_img/} }
+
 \begin{document}
 
 % --- Title page ---
@@ -128,6 +131,16 @@
 \begin{frame}{Coaxial Tilt-Rotor (CTRUAV) [4]}
     Configurazione innovativa: 2 coppie di rotori coassiali anteriori + 1 rotore di coda.
     \vspace{0.2cm}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{coaxial}
+        \caption{Coaxial tilt rotor UAV.}
+        \label{fig:coaxial}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Coaxial Tilt-Rotor (CTRUAV) [4]}
     \begin{itemize}
         \item \textbf{Vantaggi}: Spinta elevata, dimensioni compatte, annullamento naturale del momento giroscopico.
         \item \textbf{Controllo Gerarchico}:
@@ -151,6 +164,15 @@
             \item Imbardata in hovering gestita tramite \textit{tilt differenziale} dei rotori anteriori.
         \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}{Control Allocation per Tricotteri [5]}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{paper5.png}
+        \caption{Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}
+        \label{fig:paper5}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Fixed-Time Sliding Mode Control [6]}
