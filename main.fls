@@ -377,6 +377,12 @@ INPUT .\img\paper5.png
 INPUT .\capitoli\modello.tex
 INPUT .\capitoli\modello.tex
 INPUT capitoli\modello.tex
+INPUT .\img\sist_rif.png
+INPUT .\img\sist_rif.png
+INPUT .\img\sist_rif.png
+INPUT .\img\sist_rif.png
+INPUT .\img\sist_rif.png
+INPUT .\img\sist_rif.png
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathsy.enc
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathit.enc
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-rm.enc

@@ -1,18 +1,17 @@
 % !TEX root = ../main.tex
 
-\subsection{Dettagli sulla Progettazione del Controllo Robusto (SMC)}
+% \section{Dettagli sulla Progettazione del Controllo Robusto (SMC)}
 
-% Era \subsection -> Diventa \subsubsection
-\subsubsection{Modellazione approfondita della Dinamica Verticale}
+% Era \section -> Diventa \subsection
+\section{Modellazione della Dinamica Verticale}
 L'obiettivo è il controllo della dinamica traslazionale del velivolo lungo l'asse verticale $z$.
 Assumendo un sistema di riferimento NED (North-East-Down), l'equazione del moto è definita dal secondo principio della dinamica:
-
 \begin{equation}
     m\ddot{z} = mg + F_{\mathrm{aero},z} - F_{\mathrm{thrust},z} + d(t)
     \label{eq:dynamics_z_detailed}
 \end{equation}
 dove $m$ è la massa del velivolo, $g$ l'accelerazione di gravità, $F_{\mathrm{thrust},z}$ la spinta dei motori (input di controllo), e $d(t)$ rappresenta i disturbi esterni non modellati (es. raffiche di vento).
-Espandendo il termine aerodinamico e normalizzando rispetto alla massa, si ottiene l'equazione di stato in forma affine:
+\\Espandendo il termine aerodinamico e normalizzando rispetto alla massa, si ottiene l'equazione di stato in forma affine:
 %
 \begin{equation}
     \ddot{z} = g - \frac{1}{2m}\rho S C_d \, \mathrm{sgn}(w_z)w_z^2 - \frac{F_{\mathrm{thrust},z}}{m} + \Delta(t)
@@ -20,10 +19,9 @@ Espandendo il termine aerodinamico e normalizzando rispetto alla massa, si ottie
 %
 In questa formulazione, $\Delta(t) = d(t)/m$ rappresenta l'incertezza \textit{matched} (agente sullo stesso canale dell'ingresso), che si assume limitata superiormente: $|\Delta(t)| \le \delta_{\max}$.
 
-% Era \subsection -> Diventa \subsubsection
-\subsubsection{Definizione della Superficie di Scorrimento}
-Sia $z_{\mathrm{des}}(t)$ la traiettoria desiderata.
-Si definisce l'errore di tracciamento come $e(t) = z(t) - z_{\mathrm{des}}(t)$.
+% Era \section -> Diventa \subsection
+\subsection{Definizione della Superficie di Scorrimento}
+Sia $z_{\mathrm{des}}(t)$ la traiettoria desiderata e l'errore di tracking come $e(t) = z(t) - z_{\mathrm{des}}(t)$.
 Poiché il sistema è del secondo ordine, si sceglie una superficie di scorrimento (\textit{sliding surface}) $\sigma(t)$ lineare del primo ordine:
 \begin{equation}
     \sigma(t) = \dot{e}(t) + \lambda e(t)
@@ -31,14 +29,25 @@ Poiché il sistema è del secondo ordine, si sceglie una superficie di scorrimen
 \end{equation}
 %
 dove $\lambda > 0$ è un parametro di progetto che impone la larghezza di banda del sistema a ciclo chiuso sulla superficie.
-L'obiettivo del controllo è duplice:
+\\L'obiettivo del controllo è duplice:
 \begin{enumerate}
     \item \textbf{Reaching Phase:} Portare lo stato del sistema sulla superficie ($\sigma = 0$) in tempo finito.
     \item \textbf{Sliding Phase:} Mantenere lo stato sulla superficie, garantendo che $e(t) \to 0$ esponenzialmente con costante di tempo $\tau = 1/\lambda$.
 \end{enumerate}
-
-% Era \subsection -> Diventa \subsubsection
-\subsubsection{Sintesi della Legge di Controllo}
+La necessità di confinare lo stato sulla superficie $\sigma = 0$ deriva dalla definizione
+stessa della superficie di scorrimento. Definendo $\sigma = \dot{e} + \lambda e$, la condizione di scorrimento
+impone una dinamica vincolata descritta dall'equazione differeniale omogenea:
+\begin{equation*}
+    \dot{e}(t) + \lambda e(t) = 0
+\end{equation*}
+La soluzione di tale equazione è:
+\begin{equation*}
+    e(t) = e(0) e^{-\lambda t}
+\end{equation*}
+Di conseguenza, garantire $\sigma = 0$ implica matematicamente che l'errore converga esponenzialmente a zero
+con velocità determinata dal parametro di progetto $\lambda$.
+% Era \section -> Diventa \subsection
+\subsection{Sintesi della Legge di Controllo}
 Per derivare la legge di controllo $u = F_{\mathrm{thrust},z}$, si considera la derivata temporale della superficie di scorrimento:
 %
 \begin{equation}
@@ -64,14 +73,14 @@ Il termine di \textbf{switching} $u_{\mathrm{sw}}$ è aggiunto per contrastare l
 \end{equation}
 %
 dove $k > 0$ è il guadagno di robustezza.
-La legge di controllo completa risulta quindi:
+\\La legge di controllo completa è quindi:
 \begin{equation}
     F_{\mathrm{thrust},z} = \underbrace{m(g - \ddot{z}_{\mathrm{des}} + \lambda \dot{e}) + F_{\mathrm{aero},z}}_{\text{Termine Equivalente}} + \underbrace{m k \, \mathrm{sgn}(\sigma)}_{\text{Termine Robusto}}
     \label{eq:control_law_ideal_detailed}
 \end{equation}
 
-% Era \subsection -> Diventa \subsubsection
-\subsubsection{Analisi di Stabilità (Metodo di Lyapunov)}
+% Era \section -> Diventa \subsection
+\subsection{Analisi di Stabilità (Metodo di Lyapunov)}
 Per dimostrare la stabilità e determinare il guadagno $k$ necessario, si considera la funzione candidata di Lyapunov:
 \begin{equation}
     V(\sigma) = \frac{1}{2}\sigma^2
@@ -98,8 +107,8 @@ Affinché sia garantita la \textbf{condizione di raggiungibilità} ($\dot{V} < 0
 \end{equation}
 Ciò dimostra che il sistema è stabile fintanto che il guadagno di controllo supera l'ampiezza massima del disturbo.
 
-% Era \subsection -> Diventa \subsubsection
-\subsubsection{Regolarizzazione e Chattering}
+% Era \section -> Diventa \subsection
+\subsection{Regolarizzazione e Chattering}
 L'uso della funzione discontinua $\mathrm{sgn}(\cdot)$ nell'equazione (\ref{eq:control_law_ideal_detailed}) provoca il fenomeno del \textit{chattering} (oscillazioni ad alta frequenza dell'ingresso di controllo), che può danneggiare gli attuatori.
 Per mitigare questo effetto, si approssima la funzione segno con una funzione sigmoide continua, come la tangente iperbolica, all'interno di uno strato limite $\Phi$ (boundary layer):
 

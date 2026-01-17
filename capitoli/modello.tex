@@ -6,6 +6,12 @@ Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di rifer
     \item \textbf{Sistema Inerziale (Earth Frame) $\mathcal{F}_g$}: Fisso rispetto al terreno, definito dalla terna $(O_g, X_g, Y_g, Z_g)$. La posizione del velivolo è indicata dal vettore $P_g = [x_g, y_g, z_g]^T$ e l'orientamento dagli angoli di Eulero $\Theta_g = [\phi, \theta, \psi]^T$ (Roll, Pitch, Yaw).
     \item \textbf{Sistema Solidale (Body Frame) $\mathcal{F}_b$}: Con origine nel centro di massa (CoM) del velivolo e assi $(X_b, Y_b, Z_b)$ solidali alla struttura. Le velocità lineari e angolari sono definite rispettivamente come $V_b = [u, v, w]^T$ e $\Omega_b = [p, q, r]^T$.
 \end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{sist_rif.png}
+    \caption{Sistemi di riferimento.}
+    \label{fig:sist_rif}
+\end{figure}
 La trasformazione delle velocità lineari dal sistema solidale a quello inerziale avviene tramite la matrice di rotazione $R_{b \to g}$ (convenzione ZYX):
 \begin{equation}
     \dot{P}_g = R_{b \to g}(\Theta_g) V_b
