@@ -3,9 +3,9 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Coaxial tilt rotor UAV.}}{7}{figure.2.1}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{8}{figure.2.2}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{9}{figure.2.2}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{11}{figure.3.1}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno.}}{20}{figure.5.1}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno.}}{24}{figure.5.1}%

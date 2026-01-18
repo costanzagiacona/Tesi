@@ -7,40 +7,47 @@
 \contentsline {subsection}{\numberline {2.1.2}Sfide di modellazione e controllo}{2}{subsection.2.1.2}%
 \contentsline {section}{\numberline {2.2}UAV VTOL con ali indipendentemente inclinabili}{4}{section.2.2}%
 \contentsline {section}{\numberline {2.3}Modellazione e controllo Backstepping per Quadricotteri}{5}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Disaccoppiamento e Controllo Sliding Mode (SMC)}{6}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Disaccoppiamento e Controllo Robusto Adattivo}{6}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}{7}{section.2.5}%
-\contentsline {section}{\numberline {2.6}Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}{8}{section.2.6}%
-\contentsline {section}{\numberline {2.7}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{9}{section.2.7}%
-\contentsline {section}{\numberline {2.8}Allocazione del Controllo tramite Spinta Differenziale}{10}{section.2.8}%
-\contentsline {chapter}{\numberline {3}Modello Matematico}{11}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Sistemi di Riferimento}{11}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Equazioni della Dinamica}{12}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Analisi delle Forze}{12}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Spinta dei Propulsori (Thrust)}{12}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Gravità e Aerodinamica}{13}{subsection.3.3.2}%
-\contentsline {section}{\numberline {3.4}Analisi dei Momenti}{13}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Momenti generati dai Rotori}{13}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}Effetti Aerodinamici e Giroscopici}{14}{subsection.3.4.2}%
-\contentsline {chapter}{\numberline {4}Dimostrazione SMC}{15}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Modellazione della Dinamica Verticale}{15}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Definizione della Superficie di Scorrimento}{15}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Sintesi della Legge di Controllo}{16}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Analisi di Stabilità (Metodo di Lyapunov)}{17}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}Regolarizzazione e Chattering}{17}{subsection.4.1.4}%
-\contentsline {chapter}{\numberline {5}Architettura di Controllo del Drone}{19}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Controllo Verticale}{19}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}Controllo Verticale (Outer Loop - SMC)}{20}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Controllo Planare e d'Assetto (Inner Loop)}{20}{subsection.5.1.2}%
-\contentsline {subsubsection}{Generazione dei Riferimenti (SMC)}{20}{subsubsection*.3}%
-\contentsline {subsubsection}{Stabilizzazione dell'Assetto (PID)}{21}{subsubsection*.4}%
-\contentsline {subsection}{\numberline {5.1.3}Mixing}{21}{subsection.5.1.3}%
-\contentsline {section}{\numberline {5.2}Controllo Orizzontale}{22}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Outer Loop: Controllo di Posizione e Velocità}{22}{subsection.5.2.1}%
-\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{22}{subsubsection*.5}%
-\contentsline {subsubsection}{Controllo della Quota (Verticale)}{22}{subsubsection*.6}%
-\contentsline {subsubsection}{Generazione della Spinta Totale}{23}{subsubsection*.7}%
-\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{23}{subsubsection*.8}%
-\contentsline {subsection}{\numberline {5.2.2}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{24}{subsection.5.2.2}%
-\contentsline {subsubsection}{Formulazione Matematica}{24}{subsubsection*.9}%
-\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{25}{subsubsection*.10}%
-\contentsline {subsection}{\numberline {5.2.3}Strategia di Mixing (Configurazione Aereo)}{25}{subsection.5.2.3}%
+\contentsline {section}{\numberline {2.6}Controllo Sliding Mode "Smoothed" e Non-Overshooting}{8}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}{9}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{10}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Allocazione del Controllo tramite Spinta Differenziale}{11}{section.2.9}%
+\contentsline {chapter}{\numberline {3}Modello Matematico}{12}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Sistemi di Riferimento}{12}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Equazioni della Dinamica}{13}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Analisi delle Forze}{13}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Spinta dei Propulsori (Thrust)}{13}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Gravità e Aerodinamica}{14}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Analisi dei Momenti}{14}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Momenti generati dai Rotori}{14}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Effetti Aerodinamici e Giroscopici}{15}{subsection.3.4.2}%
+\contentsline {chapter}{\numberline {4}Dimostrazione SMC}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Modellazione della Dinamica Verticale}{16}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Definizione della Superficie di Scorrimento}{16}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Sintesi della Legge di Controllo}{17}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Analisi di Stabilità (Metodo di Lyapunov)}{18}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Regolarizzazione e Chattering}{18}{subsection.4.1.4}%
+\contentsline {chapter}{\numberline {5}Architettura di Controllo del Drone}{20}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Dinamica del Veicolo e Architettura di Controllo}{20}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Fase di Volo Verticale (Hovering)}{20}{subsection.5.1.1}%
+\contentsline {subsubsection}{Equilibrio dei Momenti in Hovering}{21}{subsubsection*.3}%
+\contentsline {subsection}{\numberline {5.1.2}Fase di Transizione}{21}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Fase di Volo Orizzontale (Crociera)}{22}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Necessità di una Strategia di Controllo Adattiva}{22}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}Controllo Verticale}{23}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Controllo Verticale (Outer Loop - SMC)}{23}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Controllo Planare e d'Assetto (Inner Loop)}{24}{subsection.5.2.2}%
+\contentsline {subsubsection}{Generazione dei Riferimenti (SMC)}{24}{subsubsection*.4}%
+\contentsline {subsubsection}{Stabilizzazione dell'Assetto (PID)}{24}{subsubsection*.5}%
+\contentsline {subsection}{\numberline {5.2.3}Mixing}{25}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{26}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{26}{subsection.5.3.1}%
+\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{26}{subsubsection*.6}%
+\contentsline {subsubsection}{Controllo della Quota (Verticale)}{26}{subsubsection*.7}%
+\contentsline {subsubsection}{Generazione della Spinta Totale}{27}{subsubsection*.8}%
+\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{27}{subsubsection*.9}%
+\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{28}{subsection.5.3.2}%
+\contentsline {subsubsection}{Formulazione Matematica}{28}{subsubsection*.10}%
+\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{29}{subsubsection*.11}%
+\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing (Configurazione Aereo)}{29}{subsection.5.3.3}%

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  16 JAN 2026 10:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  18 JAN 2026 11:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1150,90 +1150,144 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 
 pdfTeX warning: pdflatex (file ./figs/logo_utv.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<figs/logo_utv.pdf, id=48, 548.13786pt x 130.55676pt>
+<figs/logo_utv.pdf, id=68, 548.13786pt x 130.55676pt>
 File: figs/logo_utv.pdf Graphic file (type pdf)
 <use figs/logo_utv.pdf>
 Package pdftex.def Info: figs/logo_utv.pdf  used on input line 37.
 (pdftex.def)             Requested size: 209.0473pt x 49.79231pt.
-
-Overfull \vbox (1.35867pt too high) detected at line 37
- []
-
 [1
 
-{C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc} <./figs/logo_utv.pdf>] (slides_stato_arte.toc) [2
+{C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc} <./figs/logo_utv.pdf>] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
 
-] (slides_stato_arte.toc) [3
+) [2
+
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [3
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 69.
+(Font)              <10> on input line 67.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 69.
+(Font)              <7> on input line 67.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 69.
+(Font)              <5> on input line 67.
  [4
 
 ] [5
 
-] (slides_stato_arte.toc) [6
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [6
 
 ]
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 98.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 95.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 98.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 95.
  [7
 
-] [8
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [8
 
 ] [9
 
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [10
+
+] [11
+
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [12
+
 ]
-<./stato_arte_img/coaxial.png, id=376, 376.40625pt x 226.59656pt>
+<./stato_arte_img/coaxial.png, id=528, 376.40625pt x 226.59656pt>
 File: ./stato_arte_img/coaxial.png Graphic file (type png)
 <use ./stato_arte_img/coaxial.png>
-Package pdftex.def Info: ./stato_arte_img/coaxial.png  used on input line 141.
-(pdftex.def)             Requested size: 216.67204pt x 130.44067pt.
- [10
-
- <./stato_arte_img/coaxial.png>] [11
-
-] [12
-
-{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-<./stato_arte_img/paper5.png, id=465, 586.44093pt x 447.17062pt>
-File: ./stato_arte_img/paper5.png Graphic file (type png)
-<use ./stato_arte_img/paper5.png>
-Package pdftex.def Info: ./stato_arte_img/paper5.png  used on input line 177.
-(pdftex.def)             Requested size: 216.67204pt x 165.21172pt.
+Package pdftex.def Info: ./stato_arte_img/coaxial.png  used on input line 160.
+(pdftex.def)             Requested size: 173.33498pt x 104.34978pt.
  [13
 
- <./stato_arte_img/paper5.png>] [14
+ <./stato_arte_img/coaxial.png>] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
 
-{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}] (slides_stato_arte.toc) [15
+) [14
 
-] [16
+] [15
+
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [16
 
 ]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 231.
- [17
+<./stato_arte_img/paper5.png, id=664, 586.44093pt x 447.17062pt>
+File: ./stato_arte_img/paper5.png Graphic file (type png)
+<use ./stato_arte_img/paper5.png>
+Package pdftex.def Info: ./stato_arte_img/paper5.png  used on input line 201.
+(pdftex.def)             Requested size: 173.33498pt x 132.16664pt.
 
-] (slides_stato_arte.toc) [18
+Overfull \vbox (41.64806pt too high) detected at line 201
+ []
+
+[17
+
+ <./stato_arte_img/paper5.png>] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [18
 
 ] [19
 
-] [20
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
 
-] (slides_stato_arte.toc) [21
+) [20
 
-] [22
+] [21
+
+] (slides_stato_arte.toc
+Overfull \hbox (0.50014pt too wide) detected at line 11
+ []\T1/lmss/m/n/8 10 
+ []
+
+) [22
+
+] [23
 
 ]
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 299.
- [23
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 268.
+ [24
 
  <C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/beamer/beamericonarticle.pdf>]
 \tf@nav=\write6
@@ -1251,20 +1305,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
 Package rerunfilecheck Info: File `slides_stato_arte.out' has not changed.
-(rerunfilecheck)             Checksum: EBC8AB1B9D452F7948CEE292EFEC7AF4;861.
+(rerunfilecheck)             Checksum: 5C08E49B62CB2044AA9B68B83E6E6358;2707.
  ) 
 Here is how much of TeX's memory you used:
- 40843 strings out of 467871
- 883827 string characters out of 5418375
- 1322653 words of memory out of 5000000
- 68790 multiletter control sequences out of 15000+600000
- 697510 words of font info for 136 fonts, out of 8000000 for 9000
+ 40833 strings out of 467871
+ 883054 string characters out of 5418375
+ 1320316 words of memory out of 5000000
+ 68768 multiletter control sequences out of 15000+600000
+ 696314 words of font info for 132 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,15n,123p,1070b,1110s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on slides_stato_arte.pdf (23 pages, 1191719 bytes).
+<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on slides_stato_arte.pdf (24 pages, 1181183 bytes).
 PDF statistics:
- 932 PDF objects out of 1000 (max. 8388607)
- 62 named destinations out of 1000 (max. 500000)
- 41846 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 998 PDF objects out of 1000 (max. 8388607)
+ 68 named destinations out of 1000 (max. 500000)
+ 41742 words of extra memory for PDF output out of 42996 (max. 10000000)
 

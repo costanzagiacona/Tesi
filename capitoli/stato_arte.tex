@@ -1,36 +1,23 @@
 % !TEX root = ../main.tex
 
-% \section{Stato dell'Arte}
-
 \section{Panoramica sugli UAV VTOL}
 
 \subsection{Configurazioni principali}
 La categoria degli UAV a decollo e atterraggio verticale (VTOL) è vasta e si articola principalmente in tre configurazioni strutturali, ognuna con specifici vantaggi e limitazioni operative:
 \begin{itemize}
-    \item \textbf{Multirotori:} Questa classe è caratterizzata da una notevole semplicità meccanica e 
-    dalla capacità di mantenere un \textit{hovering} estremamente stabile. 
-    Tuttavia, soffrono di una bassa efficienza energetica nel volo traslato, cosa che ne limita notevolmente l'autonomia e il raggio d'azione.
-    \item \textbf{Ala fissa:} I velivoli ad ala fissa convenzionali offrono un'elevata efficienza aerodinamica, 
-    permettendo lunghe percorrenze e velocità di crociera elevate. Il loro svantaggio principale risiede nella necessità di infrastrutture 
-    dedicate o spazi ampi per le manovre di decollo e atterraggio, precludendone l'uso in ambienti confinati.
-    \item \textbf{Ibridi:} Questa categoria nasce per combinare la versatilità operativa dei multirotori con l'efficienza dei velivoli ad ala fissa. 
-    Include architetture complesse come i \textit{tilting-rotor}, \textit{tilting-wing} e \textit{tailsitter}, 
-    capaci di transire tra le modalità di volo verticale e orizzontale.
+    \item \textbf{Multirotori:} Questa classe è caratterizzata da una notevole semplicità meccanica e dalla capacità di mantenere un \textit{hovering} estremamente stabile. Tuttavia, soffrono di una bassa efficienza energetica nel volo traslato, cosa che ne limita notevolmente l'autonomia e il raggio d'azione.
+    \item \textbf{Ala fissa:} I velivoli ad ala fissa convenzionali offrono un'elevata efficienza aerodinamica, permettendo lunghe percorrenze e velocità di crociera elevate. Il loro svantaggio principale risiede nella necessità di infrastrutture dedicate o spazi ampi per le manovre di decollo e atterraggio, precludendone l'uso in ambienti confinati.
+    \item \textbf{Ibridi:} Questa categoria nasce per combinare la versatilità operativa dei multirotori con l'efficienza dei velivoli ad ala fissa. Include architetture complesse come i \textit{tilting-rotor}, \textit{tilting-wing} e \textit{tailsitter}, capaci di transire tra le modalità di volo verticale e orizzontale.
 \end{itemize}
 
 \subsection{Sfide di modellazione e controllo}
-Lo sviluppo di velivoli VTOL ibridi presenta sfide ingegneristiche significative, concentrate prevalentemente nella gestione della fase di 
-transizione tra il volo verticale e quello orizzontale. In questo regime, il velivolo è soggetto a forti non linearità aerodinamiche causate 
-dall'interazione complessa tra i flussi dei rotori, le superfici alari e la fusoliera.
-Una modellazione efficace deve catturare accuratamente fenomeni quali gli effetti giroscopici, le variazioni repentine di portanza e resistenza, 
-e il forte accoppiamento tra i gradi di libertà longitudinale e laterale. 
-Di conseguenza, i sistemi di controllo devono essere progettati per garantire robustezza e prestazioni elevate durante tutte le fasi di volo, 
-adattandosi a condizioni operative che variano drasticamente tra l'hovering statico e la crociera aerodinamica.
+Lo sviluppo di velivoli VTOL ibridi presenta sfide ingegneristiche significative, concentrate prevalentemente nella gestione della fase di transizione tra il volo verticale e quello orizzontale. In questo regime, il velivolo è soggetto a forti non linearità aerodinamiche causate dall'interazione complessa tra i flussi dei rotori, le superfici alari e la fusoliera.
+Una modellazione efficace deve catturare accuratamente fenomeni quali gli effetti giroscopici, le variazioni repentine di portanza e resistenza, e il forte accoppiamento tra i gradi di libertà longitudinale e laterale. 
+Di conseguenza, i sistemi di controllo devono essere progettati per garantire robustezza e prestazioni elevate durante tutte le fasi di volo, adattandosi a condizioni operative che variano drasticamente tra l'hovering statico e la crociera aerodinamica.
+
 \clearpage
 \section{UAV VTOL con ali indipendentemente inclinabili}
-Un contributo significativo nello sviluppo di configurazioni ibride innovative è stato presentato in \cite{nam2020}, dove viene proposto un UAV VTOL 
-caratterizzato da ali inclinabili in modo indipendente. L'obiettivo primario di tale design è superare i limiti di manovrabilità dei tricotteri classici 
-e mitigare la coppia di reazione tipicamente gestita dal rotore di coda.
+Un contributo significativo nello sviluppo di configurazioni ibride innovative è stato presentato in \cite{nam2020}, dove viene proposto un UAV VTOL caratterizzato da ali inclinabili in modo indipendente. L'obiettivo primario di tale design è superare i limiti di manovrabilità dei tricotteri classici e mitigare la coppia di reazione tipicamente gestita dal rotore di coda.
 \\Dal punto di vista della modellazione, è stato derivato un modello dinamico a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero. Il modello evidenzia come il controllo differenziale dell'angolo di inclinazione (\textit{tilt}) delle due ali generi una differenza di portanza in grado di indurre momenti di rollio, sfruttando le forze propulsive in combinazione con quelle aerodinamiche.
 \\La strategia di controllo implementata si basa su regolatori PID e PI integrati nel firmware Ardupilot, strutturati in base alla fase di volo:
 \begin{itemize}
@@ -38,6 +25,7 @@ e mitigare la coppia di reazione tipicamente gestita dal rotore di coda.
     \item \textbf{Modalità Orizzontale:} Il controllo del rollio è affidato alla variazione differenziale del tilt alare, il beccheggio è gestito tramite il rotore di coda (spinta e inclinazione vettoriale), mentre l'imbardata è stabilizzata da un controllore PI che minimizza lo scivolamento laterale (\textit{sideslip}).
 \end{itemize}
 La transizione è governata da una logica a stati finiti che coordina l'inclinazione progressiva delle ali, garantendo una traiettoria fluida durante il cambio di configurazione.
+
 \clearpage
 \section{Modellazione e controllo Backstepping per Quadricotteri}
 In \cite{mian2008}, viene affrontato il problema del controllo non lineare per quadricotteri attraverso la derivazione di un modello completo a 6-DOF che include effetti giroscopici e dinamica degli attuatori. L'analisi sottolinea la natura sottattuata e fortemente accoppiata del sistema.
@@ -47,17 +35,22 @@ La strategia di controllo proposta adotta un approccio sequenziale ibrido:
     \item Per il \textbf{sottosistema rotazionale} (assetto), viene implementato un controllore non lineare basato sulla tecnica \textit{Backstepping} integrata con un'azione integrale (PID).
 \end{itemize}
 L'uso del Backstepping garantisce la stabilità asintotica globale (dimostrata tramite funzioni di Lyapunov) e offre una robustezza superiore rispetto ai PID tradizionali, specialmente nella reiezione dei disturbi esterni e nella riduzione dell'errore di inseguimento a regime.
+
 \clearpage
-\section{Disaccoppiamento e Controllo Sliding Mode (SMC)}
-Il problema dell'accoppiamento dinamico nei VTOL è trattato specificamente in \cite{zhang2014}. Gli autori propongono una procedura di \textit{decoupling} in quattro fasi per trasformare le equazioni del moto, fortemente interconnesse, in una forma standard sottattuata più semplice da controllare.
-Su questo modello disaccoppiato viene applicato un controllore \textit{Sliding Mode Control} (SMC). La scelta dello SMC è motivata dalla sua intrinseca capacità di gestire incertezze parametriche e disturbi esterni mantenendo il sistema sulla superficie di scorrimento desiderata. Le simulazioni confermano che l'integrazione tra la tecnica di disaccoppiamento e il controllo robusto SMC permette di annullare l'errore di tracciamento in tempo finito, eliminando al contempo il fenomeno del \textit{chattering} (vibrazioni ad alta frequenza) tipico di queste strategie.
+\section{Disaccoppiamento e Controllo Robusto Adattivo}
+Il problema del disaccoppiamento dinamico è fondamentale per il controllo efficace dei velivoli ibridi, come discusso in \cite{zhang2014}.
+Nel contesto specifico del \textit{Coaxial Tilt-Rotor UAV} (CTRUAV), la complessità derivante dalla struttura a rotori coassiali basculanti richiede una strategia di \textit{decoupling} esplicita per gestire la natura sottattuata del velivolo \cite{cheng2022}. Il lavoro in esame propone un disaccoppiatore che agisce come ponte tra il controllo di posizione (anello esterno) e quello di assetto (anello interno). Nello specifico, il disaccoppiatore trasforma gli ingressi di controllo virtuali --- generati dal controllore di posizione basato su \textit{backstepping} --- negli ingressi di controllo reali (le forze lungo gli assi $x_b$ e $z_b$) e nell'angolo di rollio desiderato $\phi_d$. Questo processo permette di isolare le dinamiche traslazionali da quelle rotazionali, semplificando il compito del controllore di assetto.
+
+Per il controllo di assetto (anello interno), viene implementato un \textit{Adaptive Backstepping Sliding Mode Control} (ABSMC). Questa architettura avanzata supera i limiti dello SMC tradizionale e del semplice backstepping attraverso due meccanismi chiave:
+\begin{itemize}
+    \item \textbf{Legge Adattiva per i Disturbi:} Poiché in uno scenario di volo reale è difficile conoscere a priori l'ampiezza esatta dei disturbi esterni (come le raffiche di vento), il controllore integra un algoritmo adattivo. Questo stima online il limite superiore del disturbo, denotato con $\eta_1$. La stima $\hat{\eta}_1$ viene aggiornata dinamicamente in base alla distanza dalla superficie di scorrimento $|s_1|$, secondo la legge $\dot{\hat{\eta}}_1 = \gamma_1 |s_1|$, garantendo robustezza senza la necessità di utilizzare guadagni di controllo eccessivamente elevati che potrebbero destabilizzare il sistema.
+    \item \textbf{Riduzione del Chattering:} Per mitigare le vibrazioni ad alta frequenza (\textit{chattering}) tipiche della funzione segno ($\text{sign}(s)$) nello SMC, il controllore adotta una funzione di saturazione $\text{sat}(s)$ all'interno di uno strato limite $\Delta$. Questo approccio ammorbidisce l'azione di controllo vicino alla superficie di scorrimento, preservando l'integrità degli attuatori.
+\end{itemize}
+L'analisi di stabilità, condotta tramite la teoria di Lyapunov, dimostra che questo schema combinato (Backstepping per la posizione e ABSMC per l'assetto) assicura la stabilità asintotica del sistema a ciclo chiuso. Le simulazioni confermano che l'errore di tracciamento converge in un intorno dell'origine anche in presenza di incertezze parametriche e disturbi esterni significativi.
+
 \clearpage
 \section{Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}
-Un'evoluzione significativa nel panorama dei velivoli a decollo verticale è rappresentata dalla configurazione \textit{Coaxial Tilt-Rotor} (CTRUAV), 
-analizzata approfonditamente in \cite{cheng2022}. Questa architettura si distingue per la presenza di due coppie di rotori coassiali inclinabili 
-posizionati nella parte anteriore del velivolo e un rotore fisso in coda. Rispetto ai tricotteri convenzionali, l'impiego di rotori coassiali 
-permette di generare una spinta maggiore senza aumentare le dimensioni del telaio, migliorando la manovrabilità e annullando naturalmente il 
-momento giroscopico grazie alla configurazione controrotante.
+Un'evoluzione significativa nel panorama dei velivoli a decollo verticale è rappresentata dalla configurazione \textit{Coaxial Tilt-Rotor} (CTRUAV), analizzata approfonditamente sempre in \cite{cheng2022}. Questa architettura si distingue per la presenza di due coppie di rotori coassiali inclinabili posizionati nella parte anteriore del velivolo e un rotore fisso in coda. Rispetto ai tricotteri convenzionali, l'impiego di rotori coassiali permette di generare una spinta maggiore senza aumentare le dimensioni del telaio, migliorando la manovrabilità e annullando naturalmente il momento giroscopico grazie alla configurazione controrotante.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{coaxial}
@@ -70,6 +63,25 @@ Il modello dinamico a sei gradi di libertà è derivato utilizzando le formule d
     \item \textbf{Loop Interno (Assetto):} La stabilizzazione è affidata a un controllore \textit{Robust Adaptive Backstepping Sliding Mode} (ABSMC). L'integrazione di una legge adattiva permette di stimare online il limite superiore dei disturbi esterni. Tale stima modula il guadagno della legge di controllo, minimizzando il fenomeno del \textit{chattering} tramite l'uso di funzioni di saturazione.
 \end{itemize}
 Le simulazioni dimostrano che l'approccio proposto garantisce una robustezza superiore rispetto ai controllori backstepping tradizionali.
+
+\clearpage
+\section{Controllo Sliding Mode "Smoothed" e Non-Overshooting}
+Un'evoluzione recente per affrontare simultaneamente il problema del \textit{chattering} e quello delle sovraelongazioni (\textit{overshoot}) nella risposta dinamica degli UAV è presentata in \cite{Wang2024}.
+Gli autori propongono una strategia di controllo robusta denominata \textit{Smoothed Non-overshooting Sliding Mode Control}, progettata per garantire la stabilità esponenziale globale anche in presenza di disturbi stocastici limitati.
+
+A differenza degli approcci classici discusso nelle sezioni precedenti, che utilizzano una funzione di saturazione lineare a tratti ($\text{sat}(s)$) per mitigare il chattering, questo metodo impiega una funzione basata sulla tangente iperbolica ($\tanh(\cdot)$).
+La legge di controllo assume la forma generale:
+\begin{equation}
+    u(t) = -k \cdot \tanh(\rho \cdot s(t))
+\end{equation}
+dove $\rho$ è un parametro di sintonizzazione che determina la pendenza della funzione.
+I vantaggi principali di questa formulazione includono:
+\begin{itemize}
+    \item \textbf{Continuità e Derivabilità:} L'uso della $\tanh(\cdot)$ rende il segnale di controllo una funzione liscia (\textit{smooth}) e ovunque differenziabile. Questo elimina le discontinuità nella derivata che si verificano ai bordi dello strato limite nella funzione $\text{sat}(\cdot)$, riducendo lo stress meccanico sugli attuatori e migliorando la precisione di tracciamento.
+    \item \textbf{Approssimazione Universale:} Viene dimostrato che per valori sufficientemente elevati di $\rho$, la funzione $\tanh(\rho \cdot s)$ approssima la funzione $\text{sign}(s)$ ideale, permettendo di recuperare le proprietà di robustezza dello SMC puro pur mantenendo un comportamento continuo.
+    \item \textbf{Assenza di Overshoot:} La struttura del controllore è progettata con due sottosistemi sequenziali (raggiungibilità e stabilità) che garantiscono che la variabile di errore converga a zero senza mai superare il target, una caratteristica critica per la sicurezza nelle manovre UAV in ambienti ostili.
+\end{itemize}
+
 \clearpage
 \section{Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}
 In \cite{chen2017}, l'attenzione si sposta sulla realizzazione pratica di un volo autonomo "full-mode" per un UAV tilt-rotor in configurazione tricottero compatta. L'obiettivo è superare le limitazioni di costo associate all'ottenimento di modelli dinamici precisi, proponendo una strategia robusta che non dipenda da dati aerodinamici ad alta fedeltà.
@@ -82,6 +94,7 @@ I test di volo reali hanno validato la capacità del velivolo di eseguire l'inte
         \caption{Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}
         \label{fig:paper5}
 \end{figure}
+
 \clearpage
 \section{Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}
 La problematica della convergenza rapida e garantita è affrontata in \cite{yu2022}, dove viene proposto uno schema per la stabilizzazione dell'assetto di un \textit{Tilt Trirotor UAV} basato sulla stabilità a tempo fisso (\textit{Fixed-Time Stability}). A differenza della stabilità asintotica o a tempo finito, questo approccio garantisce che il sistema raggiunga l'equilibrio entro un tempo limitato, noto a priori e indipendente dallo stato iniziale.
@@ -91,6 +104,7 @@ La problematica della convergenza rapida e garantita è affrontata in \cite{yu20
     \item \textbf{Tecnica Adattiva per i Disturbi:} Una legge di aggiornamento stima i disturbi in tempo reale, assicurando robustezza.
 \end{itemize}
 La validazione sperimentale su prototipo reale ha confermato una convergenza degli errori di assetto in meno di 0,3 secondi e una notevole reiezione dei disturbi \cite{yu2022}.
+
 \clearpage
 \section{Allocazione del Controllo tramite Spinta Differenziale}
 Un aspetto tecnologico cruciale esplorato in \cite{riboldi2023} è la completa sostituzione delle superfici di controllo aerodinamiche convenzionali (alettoni, elevatori, timoni) con una logica di controllo basata esclusivamente sulla modulazione della spinta (\textit{Differential Thrust}).
@@ -102,4 +116,3 @@ Questa architettura richiede l'impiego di propulsori in grado di fornire spinta 
     \item \textbf{Controllo di Rollio (Roll):} Sostituisce gli alettoni. A differenza dei velivoli ad ala fissa dove il rollio è generato alle estremità alari, qui viene prodotto tramite una configurazione incrociata. Ad esempio, una spinta positiva del motore in basso a destra combinata con il motore in alto a sinistra, opposta alla coppia degli altri due, genera il momento torcente longitudinale necessario \cite{riboldi2023}.
 \end{itemize}
 Questa metodologia offre il vantaggio di eliminare attuatori meccanici complessi (servocomandi) e parti mobili, riducendo il peso strutturale e la manutenzione. Tuttavia, introduce una maggiore complessità nel software di controllo, poiché i gradi di libertà risultano fortemente accoppiati: una singola manovra richiede spesso la modulazione simultanea di tutti i propulsori per evitare effetti secondari indesiderati sugli altri assi.
-

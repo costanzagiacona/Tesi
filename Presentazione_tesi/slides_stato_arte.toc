@@ -1,6 +1,11 @@
 \babel@toc {english}{}\relax 
-\beamer@sectionintoc {1}{Panoramica UAV VTOL}{3}{0}{1}
-\beamer@sectionintoc {2}{Tecniche di Controllo (Stato dell'Arte)}{6}{0}{2}
-\beamer@sectionintoc {3}{Sviluppi Paralleli: LTA}{15}{0}{3}
-\beamer@sectionintoc {4}{Estremizzazione: Il Bi-cottero}{18}{0}{4}
-\beamer@sectionintoc {5}{Conclusioni}{21}{0}{5}
+\beamer@sectionintoc {1}{Panoramica sugli UAV VTOL}{3}{0}{1}
+\beamer@sectionintoc {2}{UAV VTOL con ali indipendentemente inclinabili}{6}{0}{2}
+\beamer@sectionintoc {3}{Modellazione e controllo Backstepping per Quadricotteri}{8}{0}{3}
+\beamer@sectionintoc {4}{Disaccoppiamento e Controllo Robusto Adattivo}{10}{0}{4}
+\beamer@sectionintoc {5}{Modellazione e Controllo Robusto per UAV Coaxial Tilt-Rotor}{12}{0}{5}
+\beamer@sectionintoc {6}{Controllo Sliding Mode "Smoothed" e Non-Overshooting}{14}{0}{6}
+\beamer@sectionintoc {7}{Strategie di Volo e Allocazione del Controllo}{16}{0}{7}
+\beamer@sectionintoc {8}{Controllo Sliding Mode a Tempo Fisso}{18}{0}{8}
+\beamer@sectionintoc {9}{Allocazione del Controllo tramite Spinta Differenziale}{20}{0}{9}
+\beamer@sectionintoc {10}{Conclusioni}{22}{0}{10}

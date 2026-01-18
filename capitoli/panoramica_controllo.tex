@@ -1,7 +1,51 @@
-Il tricottero preso in considerazione è un VTOL, caratteristica che ha orientato 
-la modellazione del sistema di controllo in tre fasi:
+\section{Dinamica del Veicolo e Architettura di Controllo}
+
+Il sistema oggetto di studio è un velivolo a decollo e atterraggio verticale (VTOL) in configurazione tricottero ibrido. L'architettura del drone è caratterizzata da una specifica complessità cinematica: due rotori anteriori basculanti dotati di un singolo grado di libertà (tilt longitudinale), posizionati in leggero avanzamento rispetto al bordo d'attacco alare, e un rotore posteriore dotato di un meccanismo a due gradi di libertà, definiti dagli angoli $\theta_3$ e $\theta_4$. A ciò si aggiunge una componente fissa: un'ala priva di superfici di controllo aerodinamiche (alettoni, flap o elevatori), demandata esclusivamente alla generazione di portanza.
+
+Tale configurazione non convenzionale impedisce l'utilizzo di un'unica legge di controllo lineare per l'intero inviluppo di volo. La variazione dell'angolo di tilt dei rotori modifica radicalmente la matrice di allocazione delle forze e dei momenti, rendendo il sistema fortemente \textit{time-variant}. Di conseguenza, la strategia di controllo è stata modellata suddividendo la missione in tre fasi operative distinte, ognuna delle quali presenta sfide dinamiche uniche.
+
+\subsection{Fase di Volo Verticale (Hovering)}
+In questa fase, i rotori anteriori sono orientati verticalmente ($\approx 90^\circ$). Il velivolo si comporta come un tricottero classico, dove la gravità è contrastata interamente dalla spinta propulsiva. La peculiarità dinamica di questa fase risiede nella gestione dell'equilibrio rotazionale.
+
+A causa della configurazione a tre rotori, il sistema è intrinsecamente soggetto a una coppia di reazione non bilanciata che, in assenza di correzioni, indurrebbe una rotazione incontrollata sull'asse di imbardata (effetto trottola). La stabilità è garantita dal rotore posteriore: sfruttando i suoi due gradi di libertà ($\theta_3$ e $\theta_4$), il sistema vettorializza la spinta di coda non solo per il controllo di beccheggio, ma soprattutto per generare una contro-coppia precisa che annulla il momento torcente residuo, mantenendo l'\textit{heading} desiderato.
+\subsubsection{Equilibrio dei Momenti in Hovering}
+Per garantire la stabilità sull'asse di imbardata (yaw) ed evitare rotazioni indesiderate dovute alla coppia di reazione dei rotori, è necessario determinare un angolo di equilibrio $\theta_3$ per il rotore di coda.
+\\Partendo dall'equazione di equilibrio dei momenti sull'asse $Z$, si bilancia il momento generato dalla componente laterale della spinta con la coppia resistiva aerodinamica:
+\begin{equation}
+    dt_x K \omega_3^2 \cos(\theta_3) \sin(\theta_4) - b \omega_3^2 \sin(\theta_3) = 0
+\end{equation}
+dove $K$ è il coefficiente di spinta, $b$ il coefficiente di coppia, $\omega_3$ la velocità angolare del rotore e $dt_x$ il braccio di leva. Assumendo $\sin(\theta_4) \approx 1$ e semplificando il termine comune $\omega_3^2 \neq 0$, si ottiene:
+\begin{equation}
+    - b \sin(\theta_3) = dt_x K \cos(\theta_3)
+\end{equation}
+Dividendo per $\cos(\theta_3)$ e per $-b$, si ricava la relazione per la tangente dell'angolo:
+\begin{equation}
+    \tan(\theta_3) = - \frac{dt_x K}{b}
+\end{equation}
+Il valore di riferimento (\textit{trim}) da assegnare al controllore per mantenere l'heading è dunque:
+\begin{equation}
+    \theta_3 = \arctan\left( - \frac{dt_x K}{b} \right)
+\end{equation}
+Questo risultato dimostra che l'angolo di compensazione dipende esclusivamente dai parametri geometrici e propulsivi del velivolo.
+\subsection{Fase di Transizione}
+La transizione rappresenta il ponte critico tra la sostentazione propulsiva e quella aerodinamica. Durante questa manovra, i rotori anteriori ruotano progressivamente verso l'asse orizzontale. La difficoltà di controllo in questo stadio è duplice:
+
 \begin{itemize}
-    \item volo verticale
-    \item fase di transizione
-    \item volo orizzontale
+    \item \textbf{Aerodinamica instazionaria:} L'ala, investita da un flusso d'aria crescente e perturbato dalle scie dei rotori anteriori (leggermente avanzati rispetto ad essa), inizia a generare portanza, mentre la componente verticale della spinta dei motori decresce trigonometricamente con l'angolo di tilt.
+    \item \textbf{Accoppiamento dei comandi:} L'azione di tilt non influenza solo l'accelerazione, ma introduce forti momenti di beccheggio che devono essere compensati dinamicamente dal rotore di coda, il quale deve rimanere attivo e reattivo fino al raggiungimento della velocità di stallo alare.
 \end{itemize}
+
+\subsection{Fase di Volo Orizzontale (Crociera)}
+Raggiunta la velocità di crociera, la configurazione del sistema cambia drasticamente, imponendo una riconfigurazione totale della logica di controllo. I rotori anteriori sono bloccati in posizione orizzontale ($\approx 0^\circ$) per fornire spinta propulsiva, mentre l'ala sostiene interamente il peso del drone.
+
+L'aspetto cruciale di questa fase è la gestione del rotore posteriore: esso viene \textbf{spento}. Mantenerlo attivo, infatti, genererebbe un momento torcente parassita e fenomeni di instabilità aerodinamica dannosi per il volo livellato. Lo spegnimento del motore di coda, tuttavia, rende il sistema \textit{sotto-attuato}: il velivolo perde l'autorità di controllo vettoriale sulla coda e, non disponendo di alettoni o timoni sulle ali, deve affidare il controllo di rollio e imbardata esclusivamente alla spinta differenziale dei due motori anteriori.
+
+\subsection{Necessità di una Strategia di Controllo Adattiva}
+La disamina delle tre fasi evidenzia come il drone non cambi solo assetto, ma modifichi la propria struttura di attuazione (passando da 3 motori attivi con vettorizzazione a 2 motori con spinta differenziale). Un controllore statico PID non è in grado di gestire:
+
+\begin{enumerate}
+    \item La disattivazione di un attuatore critico (il motore posteriore) senza perdere stabilità.
+    \item L'assenza di superfici aerodinamiche, che richiede un \textit{mixing} dei comandi motori non convenzionale in crociera.
+    \item La gestione non lineare degli angoli $\theta_3$ e $\theta_4$ in hovering per la compensazione della coppia.
+\end{enumerate}
+È pertanto necessario sviluppare un'architettura di controllo che evolva con lo stato del sistema, adattando le leggi di stabilità e l'allocazione dei comandi in funzione dell'angolo di tilt dei rotori e della fase di volo corrente.

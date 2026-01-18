@@ -31,6 +31,12 @@ C.~E.~D. Riboldi and A.~Rolando.
   2023.
 \newblock DOI: 10.13009/EUCASS2023-025.
 
+\bibitem{Wang2024}
+Xinhua Wang and Xuerui Mao.
+\newblock Non-overshooting sliding mode for uav control.
+\newblock {\em The Aeronautical Journal}, 2024.
+\newblock arXiv:2405.01087.
+
 \bibitem{yu2022}
 L.~Yu, G.~He, X.~Wang, and S.~Zhao.
 \newblock Robust fixed-time sliding mode attitude control of tilt trirotor uav
