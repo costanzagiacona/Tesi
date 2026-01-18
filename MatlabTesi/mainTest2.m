@@ -8,13 +8,15 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 100];              % intervallo di simulazione
+tspan = [0 10];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
 
 if fase == 1
     test_id = 5;
+elseif fase == 2
+    test_id = 9;
 elseif fase == 3
     test_id = 8;
 end
@@ -229,7 +231,24 @@ if fase == 1
     x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
     x0(19)= -pi/2;
 
+elseif fase == 2
+    
+    % Partiamo già in volo stabile
+    x0(3) = -10;    % 10 metri altezza
+    x0(4) = 0.1;    % Velocità quasi nulla
+    x0(7) = 0; x0(8) = 0; x0(9) = 0; % Assetto piatto
+    
+    % Motori già avviati (circa hover)
+    hover_omega = sqrt((parametri.m * parametri.g / 3) / parametri.k); % stima grezza
+    x0(21) = hover_omega;
+    x0(23) = hover_omega;
+    x0(25) = hover_omega;
+    
+    % Tilt verticali
+    x0(13) = pi/2; x0(15) = pi/2; x0(17) = pi/2;
+
 elseif fase == 3
+    
     % posizione iniziale lungo z
     x0(3) = -10;
     x0(4) = 25;
@@ -258,7 +277,7 @@ options = odeset('RelTol',1e-3,'AbsTol',1e-6);
 global U_values
 U_values = zeros(length(t),7);
 for k = 1:length(t)
-    U_values(k,:) = controlloVTOL_v3(parametri,x(k,:), test_id);
+    U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id);
 end
 
 

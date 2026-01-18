@@ -1,8 +1,8 @@
-function u = controlloVTOL_v3(params, x, test_id)
+function u = controlloVTOL_v3(t, params, x, test_id)
 
 % Preallocazione
 u = zeros(7,1);
-t = 0;
+time = 0;
 
 % TEST
 
@@ -227,7 +227,7 @@ switch test_id
 
         % 2. Parametri Obiettivo
         z_des = -10;    vz_des = 0;
-        y_des = -10;      vy_des = 0;
+        y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
         psi_des = 0;    r_des = 0;  
         % psi_des = 45 * (pi/180);  % ~0.785 radianti
@@ -523,7 +523,7 @@ switch test_id
         % --- 1. CONTROLLO QUOTA (Fz richiesta) ---
         e_z = z_des - x(3);
         de_z = 0 - vz_global;
-        if t == 0; err_z_int = 0; end
+        if time == 0; err_z_int = 0; end
         err_z_int = err_z_int + e_z * 0.01;
         err_z_int = max(min(err_z_int, 5), -5);
 
@@ -643,9 +643,184 @@ switch test_id
         u(5) = theta_servo_2;
         u(6) = 0; u(7) = 0;
 
-    
-    otherwise
-        error('Controllo non valido');
-end
+    case 9
+        % =========================================================
+        %   CONTROLLO TRANSIZIONE "CLIMB & BLEND"
+        %   Obiettivo: Salire, Accelerare, Spegnere Coda
+        % =========================================================
+        d_mx = params.d_mx;
+        d_my = params.d_my;
+        d_mz = params.d_mz;
+        d_tx = params.d_tx;
 
+
+        % 1. TIMING E SCHEDULING
+        % Aumentiamo il tempo per dare modo all'ala di lavorare
+        T_transizione = 20.0; 
+        
+        % Sigma: 0 (Inizio Hover) -> 1 (Fine Cruise)
+        sigma = max(0, min(1, t / T_transizione));
+        
+        % Profilo Tilt Base: 90° -> 0° (Coseno per morbidezza)
+        theta_base = (pi/2) * (cos(sigma * pi/2))^0.8; % Esponente <1 per accelerare tilt all'inizio
+        
+        % Profilo Velocità Target: 0 -> 28 m/s (Leggero overshoot per sicurezza stallo)
+        vx_des = 28 * sigma;
+        
+        % 2. STRATEGIA DI QUOTA "SAFETY ARC"
+        % Saliamo da -10 a -15/-18 durante la fase critica (sigma 0.3 - 0.7)
+        % poi torniamo a -10.
+        z_start = -10;
+        z_safe = -18; % 8 metri di buffer
+        
+        if sigma < 0.5
+            % Salita: da -10 a -18
+            z_des = z_start + (z_safe - z_start) * (sigma / 0.5);
+        else
+            % Discesa controllata (Glide): da -18 a -10
+            progress_desc = (sigma - 0.5) / 0.5;
+            z_des = z_safe + (z_start - z_safe) * progress_desc;
+        end
+        
+        % 3. OUTER LOOP (Controllo Traiettoria)
+        
+        % Controllo Quota (Z)
+        e_z = z_des - x(3);
+        de_z = 0 - vz_global;
+        kp_z = 8.0; kd_z = 4.0;
+        acc_z_des = kp_z * e_z + kd_z * de_z;
+        
+        % Stima Lift Alare
+        % Limitiamo la stima per non "fidarci" troppo dell'ala finché non siamo veloci
+        F_lift_est = 0.5 * params.rho * params.s * params.C_l * vx_global^2;
+        F_lift_est = min(F_lift_est, params.m * params.g * 1.1);
+        
+        % Forza Verticale che devono generare i MOTORI
+        F_z_req = params.m * (params.g - acc_z_des) - F_lift_est;
+        
+        % Controllo Velocità (X)
+        e_vx = vx_des - vx_global;
+        kp_v = 4.0;
+        F_drag_est = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
+        F_x_req = F_drag_est + kp_v * e_vx;
+        
+        % Spinta Totale Richiesta (Vettoriale approssimata)
+        % Nota: F_x la otteniamo col coseno del tilt, F_z col seno.
+        % T_tot approx:
+        T_tot_req = sqrt(F_x_req^2 + F_z_req^2);
+        
+        % 4. INNER LOOP (PID Assetto)
+        theta_ref = 0; % Fusoliera orizzontale
+        phi_ref = 0;
+        psi_ref = 0;
+        
+        kp_pitch = 12; kd_pitch = 4;
+        kp_roll = 15;  kd_roll = 5;
+        kp_yaw = 8;    kd_yaw = 2;
+        
+        M_x_cmd = kp_roll * (phi_ref - x(7)) - kd_roll * x(10);
+        M_y_cmd = kp_pitch * (theta_ref - x(8)) - kd_pitch * x(11);
+        M_z_cmd = kp_yaw * (psi_ref - x(9)) - kd_yaw * x(12);
+        
+        % =========================================================
+        %   5. MIXING IBRIDO (CROSS-FADING)
+        % =========================================================
+        
+        % Definiamo due strategie di attuazione:
+        % A) HOVER STRATEGY (Coda attiva per Pitch)
+        % B) CRUISE STRATEGY (Coda spenta, Pitch via Tilt Collettivo)
+        
+        % Peso transizione
+        w_cruise = sigma^2; % Inizia lento, finisce deciso (curva quadratica)
+        w_hover = 1 - w_cruise;
+        
+        % --- Strategia A: HOVER (Pitch -> T_rear) ---
+        % Sistema semplificato: T_front sostiene Z, T_rear bilancia M_y
+        % Braccio anteriore efficace nel body frame
+        arm_f = sin(theta_base)*d_mx - cos(theta_base)*d_mz;
+        
+        % Matrice [Tf; Tr] * [coeffs] = [F_z; M_y]
+        A_hov = [sin(theta_base), 1; 
+                 arm_f,           d_tx];
+        res_hov = pinv(A_hov) * [F_z_req; M_y_cmd];
+        
+        T_front_hov = res_hov(1);
+        T_rear_hov  = res_hov(2);
+        d_theta_pitch_hov = 0; % In hover non usiamo tilt collettivo per il pitch
+        
+        % --- Strategia B: CRUISE (Pitch -> Delta Tilt Anteriore) ---
+        % T_rear forzato a 0.
+        % Il Pitch si controlla inclinando i motori anteriori (Tilt Collettivo)
+        % u_pitch = M_y / (T_tot * d_mx) [cite: 108]
+        
+        T_rear_cr = 0; 
+        T_front_cr = T_tot_req; % Tutto il thrust davanti
+        
+        if T_front_cr > 1
+            % Variazione di angolo necessaria per generare M_y
+            % Delta Fz = M_y / d_mx -> Delta Theta approx Fz / T
+            d_theta_pitch_cr = M_y_cmd / (T_front_cr * d_mx);
+        else
+            d_theta_pitch_cr = 0;
+        end
+        
+        % --- BLENDING FINALE ---
+        
+        % Spinta Anteriore
+        T_front_final = w_hover * T_front_hov + w_cruise * T_front_cr;
+        
+        % Spinta Posteriore (deve andare a 0)
+        T_rear_final = w_hover * T_rear_hov + w_cruise * T_rear_cr;
+        
+        % Correzione Tilt per Pitch (nasce progressivamente)
+        % Saturiamo la correzione per sicurezza (max 15 gradi)
+        d_theta_pitch_mix = w_cruise * d_theta_pitch_cr;
+        d_theta_pitch_mix = max(-0.25, min(0.25, d_theta_pitch_mix));
+        
+        % 6. ROLL & YAW MIXING
+        
+        % Roll: Spinta Diff (Hover) -> Tilt Diff (Cruise)
+        d_thrust_roll = (M_x_cmd * w_hover) / (2 * d_my);
+        if T_front_final > 1
+            d_tilt_roll = (M_x_cmd * w_cruise) / (T_front_final * d_my);
+        else
+            d_tilt_roll = 0;
+        end
+        
+        % Yaw: Tilt Diff (Hover) -> Spinta Diff (Cruise)
+        % Attenzione: In crociera usiamo spinta differenziale per yaw [cite: 111]
+        d_thrust_yaw = (M_z_cmd * w_cruise) / (2 * d_my);
+        if T_front_final > 1
+             d_tilt_yaw = (M_z_cmd * w_hover) / (T_front_final * d_my);
+        else
+             d_tilt_yaw = 0;
+        end
+        
+        % 7. ASSEGNAZIONE ATTUATORI
+        
+        % Motori Anteriori (T + Roll_Diff_Thrust + Yaw_Diff_Thrust)
+        T1 = (T_front_final / 2) - d_thrust_roll - d_thrust_yaw;
+        T2 = (T_front_final / 2) + d_thrust_roll + d_thrust_yaw;
+        T3 = T_rear_final;
+        
+        % Saturazioni minime
+        T1 = max(0, T1); T2 = max(0, T2); T3 = max(0, T3);
+        
+        u(1) = sqrt(T1 / params.k);
+        u(2) = sqrt(T2 / params.k);
+        u(3) = sqrt(T3 / params.k);
+        
+        % Servi (Tilt Base + Pitch_Corr + Roll_Corr + Yaw_Corr)
+        % DX
+        u(4) = theta_base + d_theta_pitch_mix - d_tilt_roll + d_tilt_yaw;
+        % SX
+        u(5) = theta_base + d_theta_pitch_mix + d_tilt_roll - d_tilt_yaw;
+        
+        % Coda
+        u(6) = pi/2; 
+        u(7) = 0;
+    otherwise
+        % Se richiami altri case non definiti qui, metti un default
+        u = zeros(7,1);
+end
 end

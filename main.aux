@@ -73,32 +73,34 @@
 \@writefile{lot}{\addvspace {10\p@ }}
 \newlabel{ch:architettura_controllo}{{5}{20}{Architettura di Controllo del Drone}{chapter.5}{}}
 \newlabel{sec:panoramica}{{5}{20}{Architettura di Controllo del Drone}{chapter.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Dinamica del Veicolo e Architettura di Controllo}{20}{section.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}Fase di Volo Verticale (Hovering)}{20}{subsection.5.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equilibrio dei Momenti in Hovering}{21}{subsubsection*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Fase di Transizione}{21}{subsection.5.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.3}Fase di Volo Orizzontale (Crociera)}{22}{subsection.5.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.4}Necessità di una Strategia di Controllo Adattiva}{22}{subsection.5.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Controllo Verticale}{23}{section.5.2}\protected@file@percent }
-\newlabel{sec:controllo_verticale}{{5.2}{23}{Controllo Verticale}{section.5.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Controllo Verticale (Outer Loop - SMC)}{23}{subsection.5.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno.}}{24}{figure.5.1}\protected@file@percent }
-\newlabel{fig:control_scheme}{{5.1}{24}{Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno}{figure.5.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}Controllo Planare e d'Assetto (Inner Loop)}{24}{subsection.5.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Generazione dei Riferimenti (SMC)}{24}{subsubsection*.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Stabilizzazione dell'Assetto (PID)}{24}{subsubsection*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}Mixing}{25}{subsection.5.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{26}{section.5.3}\protected@file@percent }
-\newlabel{sec:controllo_orizzontale}{{5.3}{26}{Controllo Orizzontale}{section.5.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{26}{subsection.5.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{26}{subsubsection*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Controllo della Quota (Verticale)}{26}{subsubsection*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Generazione della Spinta Totale}{27}{subsubsection*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{27}{subsubsection*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{28}{subsection.5.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Formulazione Matematica}{28}{subsubsection*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{29}{subsubsection*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing (Configurazione Aereo)}{29}{subsection.5.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Modello Dinamico e Architettura di Controllo}{20}{section.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}Modellazione delle Forze e dei Momenti}{20}{subsection.5.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Strategia di Controllo per Fasi di Volo}{21}{subsection.5.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Fase 1: Volo Verticale (Hovering)}{21}{subsubsection*.3}\protected@file@percent }
+\newlabel{eq:theta3_eq}{{5.6}{22}{Fase 1: Volo Verticale (Hovering)}{equation.5.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Fase 2: Transizione}{22}{subsubsection*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Fase 3: Volo Orizzontale (Crociera)}{22}{subsubsection*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Controllo Verticale}{24}{section.5.2}\protected@file@percent }
+\newlabel{sec:controllo_verticale}{{5.2}{24}{Controllo Verticale}{section.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Controllo Verticale (Outer Loop - SMC)}{24}{subsection.5.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. L'SMC di quota fornisce la spinta totale $F_{req,z}$ necessaria per le formule di inversione nel controllo planare.}}{25}{figure.5.1}\protected@file@percent }
+\newlabel{fig:control_scheme}{{5.1}{25}{Schema a blocchi del controllo. L'SMC di quota fornisce la spinta totale $F_{req,z}$ necessaria per le formule di inversione nel controllo planare}{figure.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}Controllo Planare (Generazione Riferimenti)}{25}{subsection.5.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}Control Allocation (Mixing)}{26}{subsection.5.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equilibrio Longitudinale (Pitch) e Motore di Coda}{26}{subsubsection*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{26}{subsubsection*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{27}{subsubsection*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{28}{section.5.3}\protected@file@percent }
+\newlabel{sec:controllo_orizzontale}{{5.3}{28}{Controllo Orizzontale}{section.5.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{28}{subsection.5.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{28}{subsubsection*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Controllo della Quota (Verticale)}{28}{subsubsection*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Generazione della Spinta Totale}{29}{subsubsection*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{29}{subsubsection*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Robusto (ISMC)}{30}{subsection.5.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Formulazione Matematica}{30}{subsubsection*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Gestione del Trim Aerodinamico (Giustificazione di $\theta _{des}=0$)}{31}{subsubsection*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing (Configurazione Aereo)}{31}{subsection.5.3.3}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{bibliografia}
 \bibcite{chen2017}{1}
@@ -109,4 +111,4 @@
 \bibcite{Wang2024}{6}
 \bibcite{yu2022}{7}
 \bibcite{zhang2014}{8}
-\gdef \@abspage@last{35}
+\gdef \@abspage@last{37}

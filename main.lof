@@ -8,4 +8,4 @@
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno.}}{24}{figure.5.1}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo. L'SMC di quota fornisce la spinta totale $F_{req,z}$ necessaria per le formule di inversione nel controllo planare.}}{25}{figure.5.1}%

@@ -1,24 +1,23 @@
 % !TEX root = ../main.tex
-
-% \section{Architettura di Controllo}
-
-Sulla base delle specifiche di progetto, è stata implementata un'architettura di controllo gerarchica a cascata. 
-Una peculiarità di questo schema è la dipendenza del controllo planare dalla spinta totale calcolata per il controllo di quota. Per questo motivo, la suddivisione logica degli anelli è la seguente:
+Sulla base delle specifiche di progetto e dell'analisi dinamica svolta, è stata implementata un'architettura di controllo gerarchica a cascata. 
+La peculiarità dello schema risiede nell'accoppiamento tra il controllo di quota e quello planare: la spinta totale ($T$), calcolata per sostenere il drone, funge da termine di normalizzazione per determinare l'inclinazione necessaria del vettore spinta.
+\\La suddivisione logica degli anelli è la seguente:
 
 \begin{enumerate}
-    \item \textbf{Outer Loop (Anello Esterno - Quota):} È responsabile esclusivamente del controllo della dinamica verticale ($z$). Utilizza un controllore \textbf{SMC} per calcolare la spinta totale ($Thrust_{tot}$) necessaria a sostenere il drone e inseguire il riferimento di altitudine. Questo segnale è propedeutico ai calcoli del loop interno.
+    \item \textbf{Outer Loop (Posizione $z$):} Responsabile della dinamica verticale. Utilizza la tecnica \textbf{Siling Mode Control (SMC)} per calcolare la forza di spinta totale richiesta ($F_{req,z}$) per annullare l'errore di quota e compensare la gravità.
     
-    \item \textbf{Inner Loop (Anello Interno - Assetto e Posizione Planare):} Gestisce sia la generazione dei riferimenti d'assetto (tramite \textbf{SMC} su $x$ e $y$) sia la stabilizzazione rotazionale (tramite \textbf{PID}). 
-    Gli SMC di posizione ricevono in ingresso il $Thrust_{tot}$ calcolato dal loop esterno per determinare gli angoli di rollio e beccheggio ($\phi_{des}, \theta_{des}$) necessari al movimento orizzontale. Successivamente, i PID calcolano i momenti torcenti ($M_x, M_y, M_z$).
+    \item \textbf{Inner Loop (Assetto e Posizione Planare):} Questo stadio è a sua volta suddiviso in due sottolivelli:
+    \begin{itemize}
+        \item \textbf{Controllo di Posizione ($x, y$):} Utilizza tecniche SMC per generare i riferimenti d'assetto ($\phi_{des}, \theta_{des}$), interpretati come "comandi virtuali" per orientare la spinta totale $T$.
+        \item \textbf{Controllo di Assetto ($\phi, \theta, \psi$):} Utilizza controllori \textbf{PID} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
+    \end{itemize}
 \end{enumerate}
-
-Le variabili di stato utilizzate nello schema fanno riferimento al vettore di stato completo $ \mathbf{x} \in \mathbb{R}^{12} $:
+Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \mathbb{R}^{12} $:
 \[
 \mathbf{x} = [x, y, z, u, v, w, \phi, \theta, \psi, p, q, r]^T
 \]
-corrispondenti rispettivamente a $x(1) \dots x(12)$.
 
-% --- DIAGRAMMA A BLOCCHI GENERATO CON TIKZ ---
+% --- DIAGRAMMA A BLOCCHI (Invariato nella struttura, aggiornato concettualmente) ---
 \begin{figure}[htbp]
     \centering
     \resizebox{\textwidth}{!}{
@@ -28,7 +27,6 @@ corrispondenti rispettivamente a $x(1) \dots x(12)$.
         \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.4cm]
         
         % --- NODI ---
-        
         % OUTER LOOP: SMC Quota
         \node [block] (smc_z) {SMC\\Quota $z$};
         
@@ -39,37 +37,30 @@ corrispondenti rispettivamente a $x(1) \dots x(12)$.
         \node [below of=in_x, node distance=2cm] (in_psi) {$x(9), x(12)$};
 
         % INNER LOOP: SMC Posizione (x, y)
-        % Li posizioniamo sotto smc_z ma spostati a destra per ricevere il Thrust
-        \node [block, right of=in_y, node distance=3.5cm] (smc_phi) {SMC\\$\phi$};
-        \node [block, right of=in_x, node distance=3.5cm] (smc_theta) {SMC\\$\theta$};
+        \node [block, right of=in_y, node distance=3.5cm] (smc_phi) {SMC\\$y \to \phi$};
+        \node [block, right of=in_x, node distance=3.5cm] (smc_theta) {SMC\\$x \to \theta$};
         
         % INNER LOOP: PID Assetto
         \node [block, right of=smc_phi, node distance=3cm] (pid_roll) {PID\\ROLL};
         \node [block, right of=smc_theta, node distance=3cm] (pid_pitch) {PID\\PITCH};
-        \node [block, right of=in_psi, node distance=6.5cm] (pid_yaw) {PID\\YAW}; % Allineato col resto
+        \node [block, right of=in_psi, node distance=6.5cm] (pid_yaw) {PID\\YAW};
         
         % Mixer e Drone
         \node [block, right of=pid_roll, node distance=3.5cm, minimum height=7cm, text width=1.5cm] (mixer) {MIXER};
         \node [block, right of=mixer, node distance=3cm, minimum height=5cm] (drone) {DRONE};
         
         % --- COLLEGAMENTI ---
-        
-        % Input -> Blocchi
         \draw [->] (in_z) -- (smc_z);
         \draw [->] (in_y) -- (smc_phi);
         \draw [->] (in_x) -- (smc_theta);
         \draw [->] (in_psi) -- (pid_yaw);
         
-        % Thrust connection (CRUCIALE: da smc_z a smc_phi/theta E al mixer)
-        \draw [->] (smc_z) -- node [name=thrust_node, pos=0.3] {$Thrust_{tot}$} (mixer.west |- smc_z);
+        % Thrust connection
+        \draw [->] (smc_z) -- node [name=thrust_node, pos=0.3] {$F_{req,z}$} (mixer.west |- smc_z);
         
-        % Derivazione del Thrust verso gli SMC interni
+        % Derivazione del Thrust verso gli SMC interni per il calcolo arcsin
         \draw [->] (thrust_node.center) -- ++(0,-1.5) -| (smc_phi.north);
         \draw [->] (thrust_node.center) -- ++(0,-3.5) -| (smc_theta.north);
-        
-        % Feedback locali agli SMC (stato assetto attuale per calcolo)
-        %\node [above of=smc_phi, node distance=1cm, xshift=-1cm] (state_phi) {\scriptsize $x(7), x(10)$};
-        %\draw [->] (state_phi) -| (smc_phi);
         
         % SMC -> PID
         \draw [->] (smc_phi) -- node {$\phi_{des}$} (pid_roll);
@@ -83,50 +74,96 @@ corrispondenti rispettivamente a $x(1) \dots x(12)$.
         % Mixer -> Drone
         \draw [->] (mixer) -- (drone);
         
-        % Feedback Loop (estetico)
+        % Feedback Loop
         \draw [->] (drone.east) -- ++(0.5,0) |- ++(0,-5) -| (in_psi.south) -- ++(0,0.2);
         
-        % --- RIQUADRI LOGICI (IL TUO CORRETTIVO) ---
-        
-        % Outer Loop: SOLO Z
-        \node [container, fit=(smc_z), label=above:\textbf{Outer Loop: Posizione ($z$)}] (box_outer) {};
-        
-        % Inner Loop: TUTTO IL RESTO
-        \node [container, fit=(smc_phi) (smc_theta) (pid_roll) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop: Assetto}] (box_inner) {};
+        % --- RIQUADRI LOGICI ---
+        \node [container, fit=(smc_z), label=above:\textbf{Outer Loop: Quota}] (box_outer) {};
+        \node [container, fit=(smc_phi) (smc_theta) (pid_roll) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop: Assetto \& Posizione}] (box_inner) {};
 
     \end{tikzpicture}
     }
-    \caption{Schema a blocchi del controllo. Si nota come l'SMC di quota (Outer Loop) fornisca il Thrust necessario agli SMC di posizione nel Loop Interno.}
+    \caption{Schema a blocchi del controllo. L'SMC di quota fornisce la spinta totale $F_{req,z}$ necessaria per le formule di inversione nel controllo planare.}
     \label{fig:control_scheme}
 \end{figure}
 
 \subsection{Controllo Verticale (Outer Loop - SMC)}
-Il controllo della quota $z$ (variabile di stato $x(3)$) rappresenta l'anello più esterno della catena di controllo.
-La legge di controllo è progettata per calcolare la spinta totale $Thrust_{tot}$ necessaria per annullare l'errore di quota $e_z = z_{des} - x(3)$.
-Utilizzando la tecnica Sliding Mode, la legge di controllo risulta:
+Il controllo della quota $z$ è progettato per garantire stabilità robusta rispetto ai disturbi. Definendo l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la superficie di scorrimento come:
+\begin{equation}
+    \sigma_z = \dot{e}_z + \lambda_z e_z
+\end{equation}
+l'obiettivo è imporre una dinamica di raggiungimento $\dot{\sigma}_z = -K_z \tanh(\sigma_z / \Phi)$, con l'uso della funzione tangente iperbolica al posto della funzione segno per evitare il fenomeno del \textit{chattering}.
+Risolvendo l'equazione dinamica lungo $z$ ($m\ddot{z} = mg - F_{thrust} + F_{aero}$), la legge di controllo risultante per la spinta richiesta è:
+\begin{equation}
+    F_{req,z} = m g + F_{aero,z} - m \lambda_z \dot{e}_z - m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)
+\end{equation}
+dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
+
+\subsection{Controllo Planare (Generazione Riferimenti)}
+Il controllo planare sfrutta la spinta totale $T \approx F_{req,z}$ per generare le accelerazioni orizzontali.
+Dalle equazioni di Newton, ruotando il vettore spinta, si ottengono le componenti $F_y = T \sin\phi$ e $F_x = -T \sin\theta$ (assumendo piccoli angoli per la linearizzazione o inversione diretta).
+\\Le leggi di controllo SMC per la posizione, invertendo la dinamica, calcolano gli angoli desiderati:
+\begin{itemize}
+    \item \textbf{Controllo $y$ (Roll):} Per ottenere la forza laterale richiesta $u_y$ (output dell'SMC su $y$), l'angolo di rollio desiderato è:
+    \begin{equation}
+        \phi_{des} = \arcsin\left( \frac{m}{T} \left( u_y \right) \right) \quad \text{con } u_y = \dots + K_y \tanh(\sigma_y)
+    \end{equation}
+    
+    \item \textbf{Controllo $x$ (Pitch):} Analogamente, per la forza longitudinale (notare il segno negativo derivante dalla definizione dei frame):
+    \begin{equation}
+        \theta_{des} = \arcsin\left( - \frac{m}{T} \left( u_x \right) \right)
+    \end{equation}
+\end{itemize}
+
+\subsection{Control Allocation (Mixing)}
+Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi generalizzati $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e l'angolo di inclinazione (\textit{tilt}) del meccanismo di imbardata ($\delta$).
+
+A causa della geometria del tricottero e dell'accoppiamento tra le forze, il sistema non viene risolto tramite una singola matrice pseudoinversa, ma attraverso una risoluzione algebrica sequenziale che rispetta i vincoli di equilibrio meccanico derivati dal modello dinamico [cite: 155-169].
+
+\subsubsection{Equilibrio Longitudinale (Pitch) e Motore di Coda}
+Il primo passo consiste nel determinare la spinta necessaria al rotore posteriore ($T_3$) per soddisfare contemporaneamente la richiesta di spinta verticale totale ($F_{req}$) e il momento di beccheggio ($M_y$).
+Imponendo l'equilibrio alla rotazione attorno all'asse $y$ e considerando le distanze geometriche dal baricentro ($d_{mx}$ per i motori anteriori, $d_{tx}$ per il posteriore), si ottiene il sistema[cite: 156]:
 
 \begin{equation}
-    Thrust_{tot} = m \left( g + \lambda_z \dot{e}_z \right) + K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)
+    \begin{cases}
+    2 T_{ant} + T_3 \sin\theta_3 = F_{req} \\
+    T_{ant} d_{mx} \sin\theta_3 + T_3 \sin\theta_3 d_{tx} + M_{drag,3} = M_y
+    \end{cases}
+\end{equation}
+dove $\theta_3$ rappresenta l'angolo strutturale del braccio posteriore e $T_{ant}$ è la componente di spinta media dei rotori anteriori ($T_1 \approx T_2$). Risolvendo per $T_3$ e sostituendo la relazione costitutiva del motore $T = K \omega^2$ e del momento resistivo $M_{drag} = b \omega^2$, si ricava la velocità angolare del rotore 3[cite: 157]:
+
+\begin{equation}
+    \omega_3^2 = \frac{F_{req} d_{mx} - M_y}{K \sin\theta_3 (d_{mx} - d_{tx}) + b \cos\theta_3}
 \end{equation}
 
-Questo valore di spinta è fondamentale non solo per il sostentamento, ma anche come parametro di ingresso per il calcolo degli angoli di inclinazione necessari al movimento planare.
+Una volta determinato $T_3 = K \omega_3^2$, è possibile calcolare la spinta residua che deve essere fornita complessivamente dalla coppia di motori anteriori ($T_{front\_tot}$) per garantire il sostentamento[cite: 158]:
+\begin{equation}
+    T_{front\_tot} = F_{req} - T_3 \sin\theta_3
+\end{equation}
 
-\subsection{Controllo Planare e d'Assetto (Inner Loop)}
-Il loop interno racchiude sia la generazione dei riferimenti di assetto (che dipendono dalla spinta totale) sia la stabilizzazione vera e propria.
+\subsubsection{Equilibrio Laterale (Roll) e Motori Anteriori}
+La spinta totale anteriore $T_{front\_tot}$ viene ripartita tra il motore sinistro (2) e destro (1) per generare il momento di rollio richiesto ($M_x$).
+Il sistema da risolvere è[cite: 162]:
+\begin{equation}
+    \begin{cases}
+    T_1 + T_2 = T_{front\_tot} \\
+    (T_2 - T_1) d_{my} = M_x
+    \end{cases}
+\end{equation}
+Definendo la spinta media anteriore come $T_i = T_{front\_tot} / 2$, le spinte dei singoli motori si ottengono per somma e differenza rispetto al termine differenziale legato al momento [cite: 162-164]:
 
-\subsubsection{Generazione dei Riferimenti (SMC)}
-Per muovere il drone nel piano orizzontale, è necessario inclinare il vettore spinta. I blocchi SMC per $x$ e $y$ utilizzano il valore di $Thrust_{tot}$ calcolato dall'Outer Loop per determinare l'angolo di inclinazione necessario:
-\begin{itemize}
-    \item \textbf{SMC $\phi$:} Calcola l'angolo di rollio $\phi_{des}$ in funzione dell'errore su $y$.
-    \item \textbf{SMC $\theta$:} Calcola l'angolo di beccheggio $\theta_{des}$ in funzione dell'errore su $x$.
-\end{itemize}
+\begin{equation}
+    T_1 = T_i - \frac{M_x}{2 d_{my}}, \quad T_2 = T_i + \frac{M_x}{2 d_{my}}
+\end{equation}
 
-\subsubsection{Stabilizzazione dell'Assetto (PID)}
-Una volta ottenuti gli angoli desiderati, i controllori PID assicurano che il drone raggiunga tale assetto agendo sui momenti:
-\begin{itemize}
-    \item \textbf{PID Roll/Pitch:} Inseguono $\phi_{des}$ e $\theta_{des}$ generando $M_x$ e $M_y$.
-    \item \textbf{PID Yaw:} Mantiene l'orientamento desiderato $\psi_{des}$ generando $M_z$.
-\end{itemize}
+Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/K}$ [cite: 168-169].
 
-\subsection{Mixing}
-Il blocco Mixer riceve in ingresso il vettore dei comandi generalizzati $[Thrust_{tot}, M_x, M_y, M_z]^T$ e lo distribuisce ai motori e ai servocomandi secondo la matrice di allocazione specifica del tricottero.
+\subsubsection{Controllo di Imbardata (Yaw)}
+Il controllo dell'imbardata è gestito tramite il tilt dei rotori (o del rotore di coda, a seconda della configurazione specifica implementata). La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come [cite: 140-141]:
+\begin{equation}
+    M_z \approx F_{thrust} d_{braccio} \sin(\delta)
+\end{equation}
+Invertendo questa relazione, si calcola l'angolo di tilt necessario, applicando una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale [cite: 150-152]:
+\begin{equation}
+    \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right), \delta_{max} \right)
+\end{equation}
