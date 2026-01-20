@@ -1,4 +1,4 @@
-function x_dot = simulazioneVTOL3(t, x,params, test_id)
+function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo)
 
 % check parametri
 
@@ -138,8 +138,10 @@ F_disturbo = [0; 0; 0];
 % disp("F_Coriolis = ");
 % disp(F_cor);
 
-if t > 5.0 && t < 5.5
-    F_disturbo = [0; 0; 0]; 
+if disturbo == 1
+    if t > 5.0 && t < 5.5
+        F_disturbo = [10; 0; 30]; 
+    end
 end
 
 % FORZE TOTALI

@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1768927177.88631 "main.aux" "main.bbl" "main" 1768927182.94662 0
+["bibtex main"] 1768934406.82434 "main.aux" "main.bbl" "main" 1768934410.44767 0
   "./bibliografia.bib" 1768731482 2410 5180033513ffec778060e31485f88cb7 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1768927181 11860 44b8655797281373f5af7f0dff0ac0cd "pdflatex"
+  "main.aux" 1768934409 11587 b0d5dcbe89e3709c27e4a68003b588f1 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1768927178.40749 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1768927182.94737 0
+["pdflatex"] 1768934407.28758 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1768934410.44856 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1768811153 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -227,8 +227,8 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/titlesec/titlesec.sty" 1736608268 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1768838084 3984 16f5f4de3f6b6bbcb244bbc78767ed62 ""
-  "capitoli/controllo_orizzontale.tex" 1768927171 23834 2f8de222d1f3e4e6354ceb022fd471a0 ""
+  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1768934396 4022 bea7c1631e1adf8cd18b2ae9036220c3 ""
+  "capitoli/controllo_PID.tex" 1768934396 15295 80afdd77816785a8a2a98ddfffdb8f7f ""
   "capitoli/controllo_verticale.tex" 1768839116 13604 d6c785675db1d6733d867b59751411dc ""
   "capitoli/dimostrazione_SMC.tex" 1768672297 6788 4d743a5aecff6788b6fb20da7574246e ""
   "capitoli/modello.tex" 1768836022 7240 405802cdf0b54181045cf547e0ba1190 ""
@@ -239,12 +239,12 @@
   "img/rotore_3.png" 1768810366 59375 d7469c5e94361e78b37009b63c35f0e7 ""
   "img/rotori_1_2.png" 1768809669 25943 50ed241f919088f4dda81227631b04a0 ""
   "img/sist_rif.png" 1768670278 45481 1a298cee47908eecf130f24be69c15e7 ""
-  "main.aux" 1768927181 11860 44b8655797281373f5af7f0dff0ac0cd "pdflatex"
-  "main.bbl" 1768927178 1892 fe15782e4554bd6f739b3a974dae61d4 "bibtex main"
-  "main.lof" 1768927181 1103 64b035671aa7d8763cec017f45c316c5 "pdflatex"
-  "main.out" 1768927181 9757 bed03c7111ef316ee464a22b258a74ae "pdflatex"
-  "main.tex" 1768838084 3984 16f5f4de3f6b6bbcb244bbc78767ed62 ""
-  "main.toc" 1768927181 5311 e5ac4e4a1d12c326d1c23f939539b16f "pdflatex"
+  "main.aux" 1768934409 11587 b0d5dcbe89e3709c27e4a68003b588f1 "pdflatex"
+  "main.bbl" 1768934407 1892 fe15782e4554bd6f739b3a974dae61d4 "bibtex main"
+  "main.lof" 1768934409 1114 965b961b3deb686b78fc726384b08df7 "pdflatex"
+  "main.out" 1768934409 9853 8f1c25798feba9da951d7f4b3304b0bf "pdflatex"
+  "main.tex" 1768934396 4022 bea7c1631e1adf8cd18b2ae9036220c3 ""
+  "main.toc" 1768934409 5225 199aa4dbe417c02c86136bd3cd7a9e8a "pdflatex"
   (generated)
   "main.aux"
   "main.lof"

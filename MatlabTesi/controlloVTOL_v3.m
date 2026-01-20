@@ -615,7 +615,7 @@ switch test_id
         
         % Angolo base dei servi (per compensare l'assetto del corpo, come da tuoi appunti)
         alpha_base = 0; % Angolo di montaggio standard (es. 0 o 90 gradi)
-        alpha_servo = alpha_base; %- theta; % Compensazione attiva del beccheggio fusoliera
+        alpha_servo = alpha_base; %+ atan2(Fz_req, Fx_req); %- theta; % Compensazione attiva del beccheggio fusoliera
    
 
         % Calcolo angoli servi (in radianti)
@@ -643,182 +643,319 @@ switch test_id
         u(5) = theta_servo_2;
         u(6) = 0; u(7) = 0;
 
+    
     case 9
         % =========================================================
-        %   CONTROLLO TRANSIZIONE "CLIMB & BLEND"
-        %   Obiettivo: Salire, Accelerare, Spegnere Coda
+        %  CONTROLLO CROCIERA "FINE TUNING" (NO-TAIL)
         % =========================================================
-        d_mx = params.d_mx;
-        d_my = params.d_my;
-        d_mz = params.d_mz;
-        d_tx = params.d_tx;
-
-
-        % 1. TIMING E SCHEDULING
-        % Aumentiamo il tempo per dare modo all'ala di lavorare
-        T_transizione = 20.0; 
         
-        % Sigma: 0 (Inizio Hover) -> 1 (Fine Cruise)
-        sigma = max(0, min(1, t / T_transizione));
+        % --- 0. STATI ---
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10); q = x(11); r = x(12);
         
-        % Profilo Tilt Base: 90° -> 0° (Coseno per morbidezza)
-        theta_base = (pi/2) * (cos(sigma * pi/2))^0.8; % Esponente <1 per accelerare tilt all'inizio
+        R = matriceRotazione(phi,theta,psi);
+        V_glob = R * [x(4);x(5);x(6)];
+        vx_global = V_glob(1); 
+        vz_global = V_glob(3);
         
-        % Profilo Velocità Target: 0 -> 28 m/s (Leggero overshoot per sicurezza stallo)
-        vx_des = 28 * sigma;
+        % --- 1. SETPOINT ---
+        vx_des = 25;       
+        z_des  = -10;
+        theta_des = 0; 
         
-        % 2. STRATEGIA DI QUOTA "SAFETY ARC"
-        % Saliamo da -10 a -15/-18 durante la fase critica (sigma 0.3 - 0.7)
-        % poi torniamo a -10.
-        z_start = -10;
-        z_safe = -18; % 8 metri di buffer
-        
-        if sigma < 0.5
-            % Salita: da -10 a -18
-            z_des = z_start + (z_safe - z_start) * (sigma / 0.5);
-        else
-            % Discesa controllata (Glide): da -18 a -10
-            progress_desc = (sigma - 0.5) / 0.5;
-            z_des = z_safe + (z_start - z_safe) * progress_desc;
-        end
-        
-        % 3. OUTER LOOP (Controllo Traiettoria)
+        % --- 2. LOOP Z e X ---
         
         % Controllo Quota (Z)
         e_z = z_des - x(3);
         de_z = 0 - vz_global;
-        kp_z = 8.0; kd_z = 4.0;
-        acc_z_des = kp_z * e_z + kd_z * de_z;
+        kp_z = 4.0; kd_z = 6.0; 
+        az_cmd = kp_z*e_z + kd_z*de_z;
+        az_cmd = max(-4, min(4, az_cmd)); % Limitiamo ancora un po'
         
-        % Stima Lift Alare
-        % Limitiamo la stima per non "fidarci" troppo dell'ala finché non siamo veloci
-        F_lift_est = 0.5 * params.rho * params.s * params.C_l * vx_global^2;
-        F_lift_est = min(F_lift_est, params.m * params.g * 1.1);
-        
-        % Forza Verticale che devono generare i MOTORI
-        F_z_req = params.m * (params.g - acc_z_des) - F_lift_est;
+        F_lift_wing = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
+        Fz_req = params.m * (params.g - az_cmd) + F_lift_wing;
         
         % Controllo Velocità (X)
-        e_vx = vx_des - vx_global;
-        kp_v = 4.0;
+        e_v = vx_des - vx_global;
+        kp_v = 8.0; 
+        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
+        Fx_req = F_drag + kp_v * e_v;
+        if Fx_req < 0.1; Fx_req = 0.1; end
+
+        % --- 3. MIXER VETTORIALE PROTETTO ---
+        
+        alpha_ideal = atan2(Fz_req, Fx_req);
+        
+        % CLAMP: Limitiamo l'angolo massimo a 12 gradi.
+        % Questo riduce il rischio di innescare oscillazioni.
+        max_tilt_safe = deg2rad(12); 
+        alpha_limited = max(-max_tilt_safe, min(max_tilt_safe, alpha_ideal));
+        
+        alpha_servo_base = alpha_limited - theta;
+
+        % --- 4. CONTROLLO PITCH (PID Completo) ---
+        e_theta = theta_des - theta;
+        de_theta = 0 - q;
+        
+        % INTEGRALE PITCH (Nuovo)
+        % Serve a rimuovere quei 8 gradi di errore statico
+        if isempty(integral_error_theta); integral_error_theta = 0; end
+        integral_error_theta = integral_error_theta + e_theta * 0.01; % dt approx
+        % Anti-windup (Saturazione integrale)
+        integral_error_theta = max(-0.5, min(0.5, integral_error_theta));
+        
+        % TUNING AGGIORNATO
+        kp_th = 2.5;   % Aumentato leggermente per rigidità
+        ki_th = 1.5;   % Nuovo termine per azzerare l'errore
+        kd_th = 0.8;   % RIDOTTO DRASTICAMENTE (era 1.5) per fermare il chattering
+        
+        u_pitch_angle = kp_th*e_theta + ki_th*integral_error_theta + kd_th*de_theta;
+        
+        % --- 5. LATERALI ---
+        % Anche qui riduciamo i KD se vedi vibrazioni su Roll/Yaw
+        kp_phi = 2.0; kd_phi = 0.3; 
+        M_x = kp_phi*(0-phi) + kd_phi*(0-p);
+        
+        kp_psi = 1.5; kd_psi = 0.3;
+        M_z = kp_psi*(0-psi) + kd_psi*(0-r);
+
+        % --- 6. ASSEGNAZIONE ---
+        T_tot = sqrt(Fx_req^2 + Fz_req^2);
+        
+        u_roll_angle = M_x / (T_tot * params.d_my);
+        u_yaw_thrust = M_z / (2 * params.d_my);
+        
+        % Calcolo angoli finali
+        ts1 = alpha_servo_base + u_pitch_angle + u_roll_angle;
+        ts2 = alpha_servo_base + u_pitch_angle - u_roll_angle;
+        
+        % Saturazione fisica servi
+        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
+        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+        
+        % Calcolo Spinte
+        T1 = (T_tot / 2) - u_yaw_thrust;
+        T2 = (T_tot / 2) + u_yaw_thrust;
+        
+        u(1) = sqrt(max(0, T1) / params.k);
+        u(2) = sqrt(max(0, T2) / params.k);
+        u(3) = 0; 
+        
+        u(4) = ts1;
+        u(5) = ts2;
+        u(6) = 0; u(7) = 0;
+
+    case 10
+        % =========================================================
+        %  CONTROLLO "EMERGENCY STABILITY" (NO INTEGRALE)
+        %  Risolve il conflitto con ode45 rimuovendo la memoria
+        % =========================================================
+        
+        % --- 0. STATI ---
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10); q = x(11); r = x(12);
+        
+        R = matriceRotazione(phi,theta,psi);
+        V_glob = R * [x(4);x(5);x(6)];
+        vx_global = V_glob(1); 
+        vz_global = V_glob(3);
+        
+        % --- 1. SETPOINT ---
+        vx_des = 25;       
+        z_des  = -10;
+        theta_des = 0; 
+        
+        % --- 2. LOOP Z e X ---
+        e_z = z_des - x(3);
+        de_z = 0 - vz_global;
+        
+        % Guadagni Z standard
+        kp_z = 5.0; 
+        kd_z = 6.0; 
+        az_cmd = kp_z*e_z + kd_z*de_z;
+        az_cmd = max(-5, min(5, az_cmd)); 
+        
+        F_lift_wing = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
+        Fz_req = params.m * (params.g - az_cmd) + F_lift_wing;
+        
+        % Controllo X
+        e_v = vx_des - vx_global;
+        kp_v = 10.0; 
+        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
+        Fx_req = F_drag + kp_v * e_v;
+        if Fx_req < 0.1; Fx_req = 0.1; end
+
+        % --- 3. MIXER VETTORIALE ---
+        alpha_ideal = atan2(Fz_req, Fx_req);
+        
+        % Clamp a 15 gradi (Sicurezza)
+        max_tilt_safe = deg2rad(15); 
+        alpha_limited = max(-max_tilt_safe, min(max_tilt_safe, alpha_ideal));
+        
+        alpha_servo_base = alpha_limited - theta;
+
+        % --- 4. CONTROLLO PITCH (PD + FEEDFORWARD) ---
+        e_theta = theta_des - theta;
+        de_theta = 0 - q;
+        
+        % IMPORTANTE: Integrale DISABILITATO per stabilità con ode45
+        ki_th = 0; 
+        integral_error_theta = 0; 
+        
+        % Tuning PD "Solido"
+        kp_th = 3.0;   % Abbastanza forza per tenere il drone
+        kd_th = 0.6;   % Smorzamento pulito
+        
+        % FEEDFORWARD (Il trucco per azzerare l'errore senza integrale)
+        % Sappiamo che il drone tende a cabrare (naso su) a causa dei motori avanzati.
+        % Aggiungiamo manualmente un comando "picchia" (naso giù).
+        % Valore empirico: proviamo con -0.05 rad (circa -3 gradi sui servi)
+        pitch_trim = -0.05; 
+        
+        % Comando Totale
+        u_pitch_angle = kp_th*e_theta + kd_th*de_theta + pitch_trim;
+        
+        % Saturazione comando Pitch
+        u_pitch_angle = max(deg2rad(-15), min(deg2rad(15), u_pitch_angle));
+        
+        % --- 5. LATERALI ---
+        kp_phi = 2.5; kd_phi = 0.4; 
+        M_x = kp_phi*(0-phi) + kd_phi*(0-p);
+        
+        kp_psi = 1.5; kd_psi = 0.4;
+        M_z = kp_psi*(0-psi) + kd_psi*(0-r);
+
+        % --- 6. ASSEGNAZIONE ---
+        T_tot = sqrt(Fx_req^2 + Fz_req^2);
+        
+        u_roll_angle = M_x / (T_tot * params.d_my);
+        u_yaw_thrust = M_z / (2 * params.d_my);
+        
+        ts1 = alpha_servo_base + u_pitch_angle + u_roll_angle;
+        ts2 = alpha_servo_base + u_pitch_angle - u_roll_angle;
+        
+        % Clamp Attuatori
+        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
+        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+        
+        T1 = (T_tot / 2) - u_yaw_thrust;
+        T2 = (T_tot / 2) + u_yaw_thrust;
+        
+        u(1) = sqrt(max(0, T1) / params.k);
+        u(2) = sqrt(max(0, T2) / params.k);
+        u(3) = 0; 
+        
+        u(4) = ts1;
+        u(5) = ts2;
+        u(6) = 0; u(7) = 0;
+
+    case 11
+        % =========================================================
+        %  CONTROLLO "AIRPLANE MODE" (CASCADED)
+        %  Strategia: Z -> comanda Theta -> comanda Tilt
+        %  Risolve il conflitto Fz-My sfruttando la portanza alare
+        % =========================================================
+        
+        % --- 0. ESTRAZIONE STATI ---
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10); q = x(11); r = x(12);
+        
+        R = matriceRotazione(phi,theta,psi);
+        V_glob = R * [x(4);x(5);x(6)];
+        vx_global = V_glob(1); 
+        vz_global = V_glob(3);
+        
+        % --- 1. SETPOINT ---
+        vx_des = 25;       
+        z_des  = -10;
+        % theta_des NON è più fisso a 0, viene calcolato dal loop Z
+        
+        % --- 2. LOOP VELOCITÀ (Gestione Energia) ---
+        e_v = vx_des - vx_global;
+        kp_v = 15.0; ki_v = 2.0;
+        
+        % Integrale velocità (con anti-windup semplice)
+        persistent int_err_v
+        if isempty(int_err_v); int_err_v = 0; end
+        int_err_v = int_err_v + e_v * 0.01;
+        int_err_v = max(-10, min(10, int_err_v));
+        
         F_drag_est = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
-        F_x_req = F_drag_est + kp_v * e_vx;
+        Thrust_cmd = F_drag_est + kp_v * e_v + ki_v * int_err_v;
+        if Thrust_cmd < 0.1; Thrust_cmd = 0.1; end
+
+        % --- 3. LOOP QUOTA (Outer Loop) -> Genera Theta Desiderato ---
+        e_z = z_des - x(3);
+        de_z = 0 - vz_global;
         
-        % Spinta Totale Richiesta (Vettoriale approssimata)
-        % Nota: F_x la otteniamo col coseno del tilt, F_z col seno.
-        % T_tot approx:
-        T_tot_req = sqrt(F_x_req^2 + F_z_req^2);
+        % Guadagni Z -> Theta
+        % Es: 1 metro di errore -> comando 3 gradi di pitch (0.05 rad)
+        K_z2theta = 0.08; 
+        D_z2theta = 0.06;
         
-        % 4. INNER LOOP (PID Assetto)
-        theta_ref = 0; % Fusoliera orizzontale
-        phi_ref = 0;
-        psi_ref = 0;
+        theta_cmd = K_z2theta * e_z + D_z2theta * de_z;
         
-        kp_pitch = 12; kd_pitch = 4;
-        kp_roll = 15;  kd_roll = 5;
-        kp_yaw = 8;    kd_yaw = 2;
+        % SATURAZIONE PITCH (Safety)
+        % Non permettiamo al drone di cabrare troppo (>15°) o picchiare troppo (<-10°)
+        theta_cmd = max(deg2rad(-10), min(deg2rad(15), theta_cmd));
         
-        M_x_cmd = kp_roll * (phi_ref - x(7)) - kd_roll * x(10);
-        M_y_cmd = kp_pitch * (theta_ref - x(8)) - kd_pitch * x(11);
-        M_z_cmd = kp_yaw * (psi_ref - x(9)) - kd_yaw * x(12);
+        % Assegnamo il target
+        theta_ref = theta_cmd;
+
+        % --- 4. LOOP PITCH (Inner Loop) -> Genera Tilt ---
+        e_theta = theta_ref - theta;
+        de_theta = 0 - q;
         
-        % =========================================================
-        %   5. MIXING IBRIDO (CROSS-FADING)
-        % =========================================================
+        % Il drone è instabile (rotori avanti), servono guadagni decisi
+        kp_th = 6.0;  % Reattività
+        kd_th = 2.5;  % Smorzamento forte
         
-        % Definiamo due strategie di attuazione:
-        % A) HOVER STRATEGY (Coda attiva per Pitch)
-        % B) CRUISE STRATEGY (Coda spenta, Pitch via Tilt Collettivo)
+        % Feedforward (Trim Statico)
+        % Valore medio per tenere il muso giù (-0.05 rad)
+        trim_tilt = -0.05; 
         
-        % Peso transizione
-        w_cruise = sigma^2; % Inizia lento, finisce deciso (curva quadratica)
-        w_hover = 1 - w_cruise;
+        u_tilt_pitch = kp_th * e_theta + kd_th * de_theta + trim_tilt;
         
-        % --- Strategia A: HOVER (Pitch -> T_rear) ---
-        % Sistema semplificato: T_front sostiene Z, T_rear bilancia M_y
-        % Braccio anteriore efficace nel body frame
-        arm_f = sin(theta_base)*d_mx - cos(theta_base)*d_mz;
+        % Saturazione Tilt (Meccanica)
+        % Permettiamo ai servi di muoversi tra -20° e +45°
+        u_tilt_pitch = max(deg2rad(-20), min(deg2rad(45), u_tilt_pitch));
+
+        % --- 5. LOOP LATERALI (Roll & Yaw) ---
+        kp_phi = 3.5; kd_phi = 0.4; 
+        M_x = kp_phi*(0-phi) + kd_phi*(0-p);
         
-        % Matrice [Tf; Tr] * [coeffs] = [F_z; M_y]
-        A_hov = [sin(theta_base), 1; 
-                 arm_f,           d_tx];
-        res_hov = pinv(A_hov) * [F_z_req; M_y_cmd];
+        kp_psi = 2.0; kd_psi = 0.5;
+        M_z = kp_psi*(0-psi) + kd_psi*(0-r);
+
+        % --- 6. MIXING ---
+        % Non usiamo più atan2(Fz, Fx). 
+        % Il Tilt è determinato SOLO dal Pitch Controller.
         
-        T_front_hov = res_hov(1);
-        T_rear_hov  = res_hov(2);
-        d_theta_pitch_hov = 0; % In hover non usiamo tilt collettivo per il pitch
+        alpha_base = u_tilt_pitch;
         
-        % --- Strategia B: CRUISE (Pitch -> Delta Tilt Anteriore) ---
-        % T_rear forzato a 0.
-        % Il Pitch si controlla inclinando i motori anteriori (Tilt Collettivo)
-        % u_pitch = M_y / (T_tot * d_mx) [cite: 108]
+        % Roll -> Tilt Differenziale
+        u_roll_tilt = M_x / (Thrust_cmd * params.d_my + 1); % +1 per evitare div/0
         
-        T_rear_cr = 0; 
-        T_front_cr = T_tot_req; % Tutto il thrust davanti
+        % Yaw -> Spinta Differenziale
+        u_yaw_thrust = M_z / (2 * params.d_my);
         
-        if T_front_cr > 1
-            % Variazione di angolo necessaria per generare M_y
-            % Delta Fz = M_y / d_mx -> Delta Theta approx Fz / T
-            d_theta_pitch_cr = M_y_cmd / (T_front_cr * d_mx);
-        else
-            d_theta_pitch_cr = 0;
-        end
+        % Calcolo finale angoli servi
+        ts1 = alpha_base + u_roll_tilt;
+        ts2 = alpha_base - u_roll_tilt;
         
-        % --- BLENDING FINALE ---
+        % Calcolo finale Spinte
+        T1 = (Thrust_cmd / 2) - u_yaw_thrust;
+        T2 = (Thrust_cmd / 2) + u_yaw_thrust;
         
-        % Spinta Anteriore
-        T_front_final = w_hover * T_front_hov + w_cruise * T_front_cr;
+        % Output
+        u(1) = sqrt(max(0, T1) / params.k);
+        u(2) = sqrt(max(0, T2) / params.k);
+        u(3) = 0; % Coda OFF
         
-        % Spinta Posteriore (deve andare a 0)
-        T_rear_final = w_hover * T_rear_hov + w_cruise * T_rear_cr;
+        u(4) = ts1;
+        u(5) = ts2;
+        u(6) = 0; u(7) = 0;
         
-        % Correzione Tilt per Pitch (nasce progressivamente)
-        % Saturiamo la correzione per sicurezza (max 15 gradi)
-        d_theta_pitch_mix = w_cruise * d_theta_pitch_cr;
-        d_theta_pitch_mix = max(-0.25, min(0.25, d_theta_pitch_mix));
-        
-        % 6. ROLL & YAW MIXING
-        
-        % Roll: Spinta Diff (Hover) -> Tilt Diff (Cruise)
-        d_thrust_roll = (M_x_cmd * w_hover) / (2 * d_my);
-        if T_front_final > 1
-            d_tilt_roll = (M_x_cmd * w_cruise) / (T_front_final * d_my);
-        else
-            d_tilt_roll = 0;
-        end
-        
-        % Yaw: Tilt Diff (Hover) -> Spinta Diff (Cruise)
-        % Attenzione: In crociera usiamo spinta differenziale per yaw [cite: 111]
-        d_thrust_yaw = (M_z_cmd * w_cruise) / (2 * d_my);
-        if T_front_final > 1
-             d_tilt_yaw = (M_z_cmd * w_hover) / (T_front_final * d_my);
-        else
-             d_tilt_yaw = 0;
-        end
-        
-        % 7. ASSEGNAZIONE ATTUATORI
-        
-        % Motori Anteriori (T + Roll_Diff_Thrust + Yaw_Diff_Thrust)
-        T1 = (T_front_final / 2) - d_thrust_roll - d_thrust_yaw;
-        T2 = (T_front_final / 2) + d_thrust_roll + d_thrust_yaw;
-        T3 = T_rear_final;
-        
-        % Saturazioni minime
-        T1 = max(0, T1); T2 = max(0, T2); T3 = max(0, T3);
-        
-        u(1) = sqrt(T1 / params.k);
-        u(2) = sqrt(T2 / params.k);
-        u(3) = sqrt(T3 / params.k);
-        
-        % Servi (Tilt Base + Pitch_Corr + Roll_Corr + Yaw_Corr)
-        % DX
-        u(4) = theta_base + d_theta_pitch_mix - d_tilt_roll + d_tilt_yaw;
-        % SX
-        u(5) = theta_base + d_theta_pitch_mix + d_tilt_roll - d_tilt_yaw;
-        
-        % Coda
-        u(6) = pi/2; 
-        u(7) = 0;
     otherwise
         % Se richiami altri case non definiti qui, metti un default
         u = zeros(7,1);

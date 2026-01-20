@@ -8,17 +8,19 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 20];              % intervallo di simulazione
+tspan = [0 30];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
+test_casi = 1;
+disturbo = 0;
 
 if fase == 1
     test_id = 5;
 elseif fase == 2
     test_id = 9;
 elseif fase == 3
-    test_id = 8;
+    test_id = 10;
 end
 new_model = 1;
 
@@ -249,19 +251,68 @@ elseif fase == 2
 
 elseif fase == 3
     
-    % posizione iniziale lungo z
-    x0(3) = -10;
-    x0(4) = 25;
-    x4eq = x0(4);
-    F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
-    % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
-    % x0(8) = deg2rad(2);
-    F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
-    F0_x = F_drag + F_drag_ali;
-    T_i = F0_x/2;
-    x0(21)= sqrt(T_i/parametri.k);
-    x0(23)= x0(21);
+    switch test_casi 
+        case 1
+            % condizioni ideali
+            % posizione iniziale lungo z
+            x0(3) = -10;
+            x0(4) = 25;
+            x4eq = x0(4);
+            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
+            % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
+            % x0(8) = deg2rad(2);
+            F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
+            F0_x = F_drag + F_drag_ali;
+            T_i = F0_x/2;
+            x0(21)= sqrt(T_i/parametri.k);
+            x0(23)= x0(21);
 
+        case 2
+            % velocità inferiore a quella desiderata
+            x0(3) = -10;
+            x0(4) = 20;
+            x4eq = x0(4);
+            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
+            % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
+            % x0(8) = deg2rad(2);
+            F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
+            F0_x = F_drag + F_drag_ali;
+            T_i = F0_x/2;
+            x0(21)= sqrt(T_i/parametri.k);
+            x0(23)= x0(21);
+
+        case 3
+            % quota maggiore
+            x0(3) = -15;
+            x0(4) = 25;
+            x4eq = x0(4);
+            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
+            % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
+            % x0(8) = deg2rad(2);
+            F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
+            F0_x = F_drag + F_drag_ali;
+            T_i = F0_x/2;
+            x0(21)= sqrt(T_i/parametri.k);
+            x0(23)= x0(21);
+
+        case 4
+            % disturbi
+            disturbo = 1;
+            x0(3) = -10;
+            x0(4) = 25;
+            x4eq = x0(4);
+            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
+            % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
+            % x0(8) = deg2rad(2);
+            F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
+            F0_x = F_drag + F_drag_ali;
+            T_i = F0_x/2;
+            x0(21)= sqrt(T_i/parametri.k);
+            x0(23)= x0(21);
+
+    end
+
+    
     %inclinazione iniziale dei rotori anteriori (per il volo verticale)
     x0(13) = 0;
     x0(15) = 0;
@@ -271,7 +322,7 @@ elseif fase == 3
 end
 
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
-[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id), tspan, x0, options);
+[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo), tspan, x0, options);
 
 %per plot controllo
 global U_values
