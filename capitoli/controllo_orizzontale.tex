@@ -2,6 +2,124 @@
 Il loop esterno è responsabile della gestione energetica del velivolo e del mantenimento della traiettoria di riferimento.
 In configurazione di volo orizzontale ("Fixed-Wing Mode"), il controllo è disaccoppiato in due canali principali: il mantenimento della velocità di crociera (Longitudinale) e il mantenimento della quota (Verticale).
 
+\begin{figure}[htbp]
+    \centering
+    % Resizebox per adattare il diagramma alla larghezza della pagina
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[auto, node distance=2cm, >=latex']
+        % --- STILI ---
+        % Stile base per i blocchi
+        \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=4em, align=center, fill=white, thick]
+        % Stile per i sommatori
+        \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, thick]
+        % Punti di input/output invisibili
+        \tikzstyle{input} = [coordinate]
+        \tikzstyle{output} = [coordinate]
+        % Stile per i contenitori colorati (Outer/Inner loop)
+        \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, thick]
+
+        % --- POSIZIONAMENTO DEI NODI ---
+
+        % --- COLONNA 1 & 2: Riferimenti e Sommatori (OUTER LOOP) ---
+        % Riga Z (Top)
+        \node [input] (ref_z) {};
+        \node [sum, right of=ref_z, node distance=1.5cm] (sum_z) {$\Sigma$};
+        \node [block, right of=sum_z, node distance=2.5cm] (pid_z) {PID\\$z$};
+        \node [left of=ref_z, node distance=0.8cm] {$z_{ref}$};
+
+        % Riga Vx (Bottom) - Posizionata sotto Z
+        \node [input, below of=ref_z, node distance=3cm] (ref_vx) {};
+        \node [sum, right of=ref_vx, node distance=1.5cm] (sum_vx) {$\Sigma$};
+        \node [block, right of=sum_vx, node distance=2.5cm] (pid_vx) {PID\\$v_x$};
+        \node [left of=ref_vx, node distance=0.8cm] {$v_{ref}$};
+
+        % --- COLONNA 3: Blocco THRUST Centrale ---
+        % Posizionato a metà altezza tra i due PID
+        \node [block, right of=pid_z, xshift=1cm, yshift=-1.5cm, minimum height=5cm ] (thrust) {Thrust};
+
+        % --- COLONNA 4: INNER LOOP (SMCs) ---
+        % ISMC Pitch (Top) - Allineato approssimativamente con PID z
+        \node [block, right of=thrust, xshift=2cm, yshift=1.5cm] (ismc_pitch) {ISMC\\PITCH};
+        % SMC Roll (Middle) - Sotto Pitch
+        \node [block, below of=ismc_pitch, node distance=2.5cm] (smc_roll) {SMC\\ROLL};
+        % SMC Yaw (Bottom) - Sotto Roll
+        \node [block, below of=smc_roll, node distance=2.5cm] (smc_yaw) {SMC\\YAW};
+
+        % --- COLONNA 5 & 6: MIXER e DRONE ---
+        % Mixer: Alto per coprire tutti gli ingressi
+        \node [block, right of=smc_roll, xshift=2cm, minimum height=8cm] (mixer) {MIXER};
+        % Drone: A destra del mixer
+        \node [block, right of=mixer, node distance=3cm, minimum height=6cm] (drone) {DRONE};
+        % Output finale del drone
+        \node [output, right of=drone, node distance=2cm] (drone_out) {};
+
+
+        % --- COLLEGAMENTI ---
+
+        % 1. Riferimenti ai Sommatori
+        \draw [->] (ref_z) -- node[above, near start] {$+$} (sum_z);
+        \draw [->] (ref_vx) -- node[above, near start] {$+$} (sum_vx);
+
+        % 2. Sommatori ai PID Outer Loop
+        \draw [->] (sum_z) -- (pid_z);
+        \draw [->] (sum_vx) -- (pid_vx);
+
+        % 3. PID Outer Loop al blocco THRUST
+        % Usiamo gli anchor .east e .west per collegamenti orizzontali puliti
+        \draw [->] (pid_z.east) -- (thrust.west |- pid_z.east);
+        \draw [->] (pid_vx.east) -- (thrust.west |- pid_vx.east);
+
+        % 4. Uscita THRUST -> Diramazione verso SMCs e Mixer
+        % Creiamo un punto intermedio (tap) a destra del blocco Thrust
+        \draw (thrust.east) -- ++(1,0) coordinate (thrust_tap);
+
+        % Collegamento principale Thrust -> Mixer (input superiore)
+        \draw [->] (thrust_tap) -- (mixer.west |- thrust.east);
+
+        % Diramazioni Thrust -> Ingressi SMC Inner Loop
+        \draw [->] (thrust_tap) |- (ismc_pitch.west);
+        \draw [->] (thrust_tap) |- (smc_roll.west);
+        \draw [->] (thrust_tap) |- (smc_yaw.west);
+
+        % 5. Uscite SMC Inner Loop -> Mixer
+        \draw [->] (ismc_pitch) -- (mixer.west |- ismc_pitch);
+        \draw [->] (smc_roll) -- (mixer.west |- smc_roll);
+        \draw [->] (smc_yaw) -- (mixer.west |- smc_yaw);
+
+        % 6. Mixer -> Drone -> Output
+        \draw [->] (mixer) -- (drone);
+        \draw [->] (drone) -- (drone_out);
+
+
+        % --- FEEDBACK LOOP ---
+        % Percorso unico che parte dal drone, scende e torna all'inizio
+        \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start)
+            -- ++(0,-5.5) coordinate (fb_corner_right) % Scende nell'angolo in basso a destra
+            -- (fb_corner_right -| sum_z) coordinate (fb_corner_left) % Va a sinistra sotto i sommatori
+            -- ++(-0.5,0); % Estetico: prolunga leggermente la linea a sinistra
+
+        % Risalite dal bus di feedback ai sommatori (con segno meno)
+        \draw [->] (fb_corner_left -| sum_z) -- node[left, near end] {$-$} (sum_z.south);
+        \draw [->] (fb_corner_left -| sum_vx) -- node[left, near end] {$-$} (sum_vx.south);
+
+        % Etichetta sul bus di feedback
+        \node [above] at ($(fb_corner_left)!0.5!(fb_corner_right)$) {Stato $\mathbf{x}$ (Feedback)};
+
+
+        % --- RIQUADRI LOGICI (CONTAINERS) ---
+        % Outer Loop (Blu)
+        \node [container, fit=(sum_z) (pid_z) (sum_vx) (pid_vx) (ref_z) (ref_vx), label={above:\textbf{OUTER LOOP}}] {};
+
+        % Inner Loop (Rosso)
+        \node [container, fit=(ismc_pitch) (smc_roll) (smc_yaw), label={above:\textbf{INNER LOOP}}] {};
+
+    \end{tikzpicture}
+    } % Fine resizebox
+\caption{Schema di controllo a cascata basato sul diagramma manoscritto.}
+\label{fig:hand_drawn_scheme}
+\end{figure}
+
+
 \subsubsection{Controllo della Velocità (Longitudinale)}
 L'obiettivo è mantenere una velocità di avanzamento costante $v_{x,des}$ (fissata a 25 m/s) per garantire la generazione della portanza necessaria.
 L'errore di velocità è definito come $e_v = v_{x,des} - v_x$.
@@ -79,17 +197,41 @@ La legge di controllo per il momento richiesto $M_{y,req}$ è composta da tre co
 Questa struttura assicura che, una volta raggiunta la superficie ($s_\theta \approx 0$), il sistema converga all'equilibrio e l'integrale compensi eventuali disturbi costanti o errori di modellazione.
 
 \subsubsection{Gestione del Trim Aerodinamico (Giustificazione di $\theta_{des}=0$)}
-Una peculiarità fondamentale di questa architettura di controllo è la scelta progettuale di impostare i riferimenti d'assetto a zero per il volo di crociera:
+Una peculiarità fondamentale di questa architettura di controllo è la scelta progettuale di impostare i riferimenti d'assetto a zero per la condizione di volo di crociera:
 \begin{equation}
     \theta_{des} = 0, \quad \phi_{des} = 0, \quad \psi_{des} = 0
 \end{equation}
-Fisicamente, un velivolo ad ala fissa richiede spesso un angolo di incidenza (Pitch) non nullo ($\theta_{trim} \approx 2^\circ - 5^\circ$) per generare, a una data velocità, la portanza necessaria a bilanciare esattamente il peso ($L=mg$).
-Imporre matematicamente $\theta_{des}=0$ creerebbe un conflitto tra il controllore (che vuole il drone piatto) e la fisica (che richiede il drone inclinato per non scendere).
-%
-L'introduzione del termine integrale $K_I \int e_\theta$ risolve questo conflitto senza richiedere la conoscenza a priori dell'angolo di trim.
-L'integratore accumula l'errore statico derivante dalla discrepanza tra $\theta_{des}=0$ e l'assetto di equilibrio fisico, generando automaticamente un momento di comando costante ("bias") che mantiene il velivolo all'angolo $\theta_{trim}$ necessario. In questo modo, il controllore "impara" l'assetto di equilibrio aerodinamico in tempo reale.
+Fisicamente, un velivolo ad ala fissa richiede un angolo di incidenza (Pitch) non nullo, tipicamente $\theta_{trim} \approx 2^\circ - 5^\circ$, per generare a una data velocità la portanza necessaria a bilanciare il peso ($L=mg$).
+Imporre matematicamente $\theta_{des}=0$ crea un apparente conflitto tra il controllore, che mira a un assetto perfettamente orizzontale, e la fisica del volo, che richiede un assetto inclinato per il sostentamento.
+\\Tale conflitto viene risolto dall'azione integrale del controllore, definita dal termine $K_I \int e_\theta \, dt$. L'integratore accumula l'errore statico derivante dalla discrepanza tra il riferimento nullo e l'assetto di equilibrio fisico, generando automaticamente il momento di comando costante (spesso definito ``bias'') necessario a mantenere il velivolo all'angolo $\theta_{trim}$ reale.
+\\Questa strategia di \textit{automatic trimming} presenta specifici vantaggi e svantaggi progettuali:
+\begin{itemize}
+    \item \textbf{Robustezza parametrica:} A differenza di un trim fisso impostato a priori (\textit{feedforward}), l'azione integrale adatta il punto di equilibrio in tempo reale. Il sistema è quindi in grado di compensare autonomamente variazioni non modellate o incertezze parametriche --- come lo spostamento del baricentro (CG), la riduzione della massa dovuta al consumo di carburante/batteria o disturbi aerodinamici costanti --- senza richiedere una ricalibrazione manuale.
+    
+    \item \textbf{Dinamica del transitorio:} L'assenza di un valore di pre-trim comporta un ritardo nella risposta iniziale del sistema. All'attivazione, il controllore necessita di un tempo di assestamento (\textit{settling time}) affinché l'integratore accumuli il valore necessario a sostenere il velivolo. In questa fase transitoria, il drone potrebbe subire una momentanea perdita di quota se la dinamica non è gestita adeguatamente.
+\end{itemize}
+Infine, è necessario sottolineare che l'uso predominante dell'azione integrale per il mantenimento dell'assetto impone l'adozione di rigorose logiche di \textit{anti-windup}. Tali logiche sono fondamentali per prevenire la saturazione del comando integrale (e la conseguente perdita di controllabilità) in situazioni in cui l'attuazione è limitata o il velivolo è vincolato al suolo.
+\subsubsection{Strategie di Mitigazione}
+Per contrastare le limitazioni dinamiche intrinseche all'uso del solo termine integrale, l'architettura di controllo implementa due strategie correttive fondamentali:
 
-\subsection{Strategia di Mixing (Configurazione Aereo)}
+\begin{enumerate}
+    \item \textbf{Inizializzazione del Feedforward (Pre-loading):} 
+    Per minimizzare il ritardo nel transitorio iniziale, l'integratore non viene inizializzato a zero, ma a un valore stimato prossimo all'equilibrio teorico ($\theta_{guess} \approx \theta_{trim}$).
+    L'equazione di controllo diventa:
+    \begin{equation}
+        u(t) = K_P e(t) + \underbrace{\left( K_I \int_0^t e(\tau) d\tau + u_{FF} \right)}_{\text{Termine Integrale + Feedforward}} + K_D \dot{e}(t)
+    \end{equation}
+    Dove $u_{FF}$ rappresenta una stima \textit{a priori} del momento di trim. In questo modo, l'azione integrale deve compensare soltanto l'errore residuo (ovvero la discrepanza tra la stima $u_{FF}$ e la realtà fisica), garantendo una risposta molto più rapida e riducendo la perdita di quota all'attivazione.
+
+    \item \textbf{Tecnica di Anti-Windup (Clamping):}
+    Per prevenire la saturazione pericolosa dell'integratore (fenomeno del \textit{wind-up}), specialmente quando il drone è vincolato al suolo prima del decollo, viene applicata una logica di saturazione condizionata (\textit{Clamping}). Il valore dell'integrale viene limitato all'interno di un intervallo di sicurezza:
+    \begin{equation}
+        I_{min} \leq \int e_\theta \, dt \leq I_{max}
+    \end{equation}
+    Inoltre, l'aggiornamento dell'integrale viene inibito se l'attuatore ha raggiunto i suoi limiti fisici e l'errore ha lo stesso segno del comando, evitando che il termine integrale cresca inutilmente quando il sistema non può più reagire fisicamente.
+\end{enumerate}
+
+\subsection{Strategia di Mixing}
 Una volta calcolati i momenti richiesti ($M_x, M_y, M_z$) e la spinta totale $T_{tot}$ (dal loop esterno), il mixer distribuisce i comandi agli attuatori secondo la logica "Fixed-Wing", dove i motori restano solidali alla fusoliera ($\alpha_{base} \approx 0$).
 \\La strategia adottata implementa delle \textbf{"superfici virtuali"} associando a ciascun angolo di assetto una specifica modalità di vettorizzazione della spinta:
 
@@ -130,3 +272,22 @@ I comandi finali inviati ai servocomandi ($\theta_{s1}, \theta_{s2}$) e ai motor
     T_2 &= \frac{T_{tot}}{2} + u_{yaw}
 \end{align}
 Questa allocazione disaccoppia efficacemente i tre assi, permettendo al drone di manovrare come un aereo convenzionale ma sfruttando la vettorizzazione della spinta.
+
+\subsection{Elementi di Innovazione della Strategia Proposta} L'analisi dello stato dell'arte evidenzia come la maggior parte delle architetture VTOL ibride tenda a mantenere una netta separazione tra gli attuatori dedicati al volo verticale e quelli per il volo orizzontale. Configurazioni come quella descritta in \cite{nam2020} o i tilt-rotor convenzionali discussi in \cite{chen2017}, pur introducendo capacità di transizione, si affidano spesso a superfici aerodinamiche classiche (alettoni, equillibratori, timoni) per il controllo d'assetto durante la fase di crociera (\textit{Fixed-Wing Mode}).
+\\La strategia di controllo sviluppata in questa tesi si discosta significativamente da tale approccio, introducendo un paradigma di \textbf{"Total Propulsive Control"} che elimina completamente la necessità di superfici di controllo mobili. Questa scelta progettuale introduce tre principali elementi di innovazione rispetto alla letteratura esaminata:
+
+\begin{enumerate} \item \textbf{Semplificazione Meccanica e Strutturale:} Mentre \cite{chen2017} e \cite{nam2020} gestiscono la fase di crociera riattivando la logica di pilotaggio convenzionale (che richiede servocomandi dedicati, cerniere e link meccanici per le parti mobili), il sistema proposto trasferisce l'intera autorità di controllo ai gruppi propulsori principali. Rimuovendo alettoni ed elevatori, si ottiene una riduzione del peso strutturale e dei punti di guasto meccanico, aumentando l'affidabilità operativa del velivolo.
+
+\item \textbf{Strategia di Mixing a "Superfici Virtuali":}
+Sebbene l'uso della spinta differenziale sia trattato in \cite{riboldi2023}, tale approccio è generalmente limitato alla modulazione del modulo della spinta ($T_1 \neq T_2$) su configurazioni multirotore fisse o per sostituire il timone.
+L'innovazione della nostra architettura risiede nell'estensione di questo concetto tramite il \textbf{Tilt Vectoring Attivo} in volo traslato.
+\begin{itemize}
+    \item A differenza di \cite{riboldi2023}, che utilizza la spinta differenziale per generare momenti (spesso richiedendo eliche a passo invertibile o configurazioni a X complesse), il nostro schema sfrutta il \textit{Tilt Differenziale} ($\theta_{s1} \neq \theta_{s2}$) per emulare gli alettoni e il \textit{Tilt Collettivo} per emulare l'equilibratore.
+    \item Questo permette di disaccoppiare la generazione dei momenti dalla velocità del flusso d'aria sulle ali: l'autorità di controllo non decade drasticamente a basse velocità (come avviene per le superfici aerodinamiche in fase di stallo o transizione lenta), garantendo manovrabilità anche in condizioni critiche dove i sistemi convenzionali perderebbero efficacia.
+\end{itemize}
+
+\item \textbf{Robustezza Intrinseca tramite ISMC senza Aerodinamica Esplicita:}
+La letteratura classica (\cite{mian2008}, \cite{cheng2022}) punta spesso su modelli aerodinamici complessi o osservatori di disturbi (ADRC/ABSMC) per compensare le incertezze delle superfici alari.
+La nostra strategia, combinando un \textit{Inner Loop} ISMC con un mixer basato puramente sulla geometria della spinta, bypassa la necessità di modellare le complesse derivate di stabilità degli alettoni ($C_{l\delta_a}, C_{m\delta_e}$). Il controllore ISMC "vede" le forze aerodinamiche dell'ala fissa semplicemente come un disturbo esterno da compensare tramite l'azione integrale, permettendo al drone di mantenere l'assetto di trim ($\theta_{des}=0$ che diventa fisicamente $\theta_{trim}$) senza richiedere tabelle di lookup aerodinamiche o sensori di angolo d'incidenza ($\alpha$).
+\end{enumerate}
+In conclusione, l'assenza di superfici aerodinamiche, lungi dall'essere una limitazione, configura una strategia di controllo \textit{fault-tolerant} e strutturalmente efficiente, che sposta la complessità dall'hardware (meno parti mobili) al software (algoritmi di allocazione vettoriale e controllo robusto), allineandosi con le più recenti tendenze verso velivoli \textit{software-defined}.
