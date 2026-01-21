@@ -1,4 +1,4 @@
-function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo, target)
+function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo)
 
 % check parametri
 
@@ -50,7 +50,7 @@ r = x(12);
 V_body = [x(4);x(5);x(6)]; % velocità nel body frame
 Omega_body = [p;q;r]; % velocità angolare body
 
-u = controlloVTOL_v3(t, params, x, test_id, target);
+u = controlloVTOL_v3(t, params, x, test_id);
 
 
 
@@ -226,24 +226,26 @@ vx_global_curr = V_global_temp(1);
 % Se nel controller usi logiche adattive (es. if z < -10...), qui dovresti replicarle
 % per avere l'integrale esatto. Per ora usiamo i valori nominali del case 9.
 
-vx_target = target(1);    % Target velocità
-theta_target = target(2);  % Target pitch (se fisso a 0)
+vx_target = 30;    % Target velocità
+theta_target = 0;  % Target pitch (se fisso a 0)
 
 % 3. Calcolo delle derivate (solo se siamo nel test di crociera)
 if test_id == 9
-    % Stato 27: Integrale errore Velocità
-    x27_dot = vx_target - vx_global_curr;
+    % Derivata dello stato 27 (Integrale Pitch) è l'errore di Pitch
+    x27_dot = theta_target - theta; 
     
-    % Stato 28: Integrale errore Pitch (NUOVO)
-    x28_dot = theta_target - theta;
+    % Derivata dello stato 28 (Integrale Velocità) è l'errore di Velocità
+    x28_dot = vx_target - vx_global_curr;
 else
+    % Se non siamo in crociera, non accumuliamo errore negli integrali
     x27_dot = 0;
     x28_dot = 0;
 end
 
-% Anti-windup simulazione
-if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
-if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end % Saturazione pitch
+% Anti-windup "fisico" nella simulazione (Opzionale ma consigliato)
+% Se l'integrale è già enorme, smettiamo di farlo crescere per stabilità numerica
+if abs(x(27)) > 1.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
+if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end
 %=====================================================================
 
 
@@ -288,6 +290,6 @@ x25_dot = x(26);
 x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2; 
 
 % x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
-x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot];
+x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot];
 
 end

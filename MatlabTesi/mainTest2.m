@@ -14,15 +14,18 @@ fase = 3;
 test_id = 0;
 test_casi = 1;
 disturbo = 0;
+vx_des = 25;
+theta_des = 0;
+target = [vx_des theta_des];
 
 if fase == 1
     test_id = 5;
 elseif fase == 2
-    test_id = 9;
+    % test_id = 9;
 elseif fase == 3
 
     % usare 12
-    test_id = 12;
+    test_id = 9;
 end
 new_model = 1;
 
@@ -221,7 +224,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-x0 = zeros(26,1);            % stato iniziale 
+x0 = zeros(28,1);            % stato iniziale 
 
 if fase == 1
 
@@ -342,13 +345,13 @@ elseif fase == 3
 end
 
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
-[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo), tspan, x0, options);
+[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo, target), tspan, x0, options);
 
 %per plot controllo
 global U_values
 U_values = zeros(length(t),7);
 for k = 1:length(t)
-    U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id);
+    U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id, target);
 end
 
 
