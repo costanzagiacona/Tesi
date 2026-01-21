@@ -20,7 +20,9 @@ if fase == 1
 elseif fase == 2
     test_id = 9;
 elseif fase == 3
-    test_id = 10;
+
+    % usare 12
+    test_id = 12;
 end
 new_model = 1;
 
@@ -222,16 +224,34 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 x0 = zeros(26,1);            % stato iniziale 
 
 if fase == 1
-    x0(4) = 0; % condizione iniziale della velocità lungo X
-    % x0(7) = pi/10;
-    % x0(9) = pi/10;
-    x4eq = x0(4);
-    x0(3) = 0;
-    x0(13)= pi/2;
-    x0(15)= pi/2;
-    %inclinazione iniziale del rotore di coda (per il volo verticale)
-    x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
-    x0(19)= -pi/2;
+
+    switch test_casi
+        case 1
+            x0(4) = 0; % condizione iniziale della velocità lungo X
+            % x0(7) = pi/10;
+            % x0(9) = pi/10;
+            x4eq = x0(4);
+            x0(3) = 0;
+            x0(13)= pi/2;
+            x0(15)= pi/2;
+            %inclinazione iniziale del rotore di coda (per il volo verticale)
+            x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+            x0(19)= -pi/2;
+
+        case 4
+            disturbo = 1;
+            x0(4) = 0; % condizione iniziale della velocità lungo X
+            % x0(7) = pi/10;
+            % x0(9) = pi/10;
+            x4eq = x0(4);
+            x0(3) = 0;
+            x0(13)= pi/2;
+            x0(15)= pi/2;
+            %inclinazione iniziale del rotore di coda (per il volo verticale)
+            x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+            x0(19)= -pi/2;
+
+    end
 
 elseif fase == 2
     

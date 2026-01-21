@@ -436,9 +436,9 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\sym
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm7.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm5.tfm
-INPUT .\capitoli\controllo_PID.tex
-INPUT .\capitoli\controllo_PID.tex
-INPUT capitoli\controllo_PID.tex
+INPUT .\capitoli\controllo_orizzontale.tex
+INPUT .\capitoli\controllo_orizzontale.tex
+INPUT capitoli\controllo_orizzontale.tex
 INPUT .\main.bbl
 INPUT .\main.bbl
 INPUT main.bbl
