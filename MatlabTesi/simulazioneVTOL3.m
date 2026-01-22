@@ -220,30 +220,63 @@ M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna;
 % 1. Ricostruzione variabili globali necessarie per il calcolo errore
 V_global_temp = R * V_body; % R è già calcolata sopra
 vx_global_curr = V_global_temp(1);
+vy_global_curr = V_global_temp(2);
 
 % 2. Definizione dei Setpoint
 % ATTENZIONE: Questi devono coincidere con quelli definiti dentro controlloVTOL_v3!
 % Se nel controller usi logiche adattive (es. if z < -10...), qui dovresti replicarle
 % per avere l'integrale esatto. Per ora usiamo i valori nominali del case 9.
 
-vx_target = target(1);    % Target velocità
-theta_target = target(2);  % Target pitch (se fisso a 0)
+vx_target = target(1);    
+theta_target = target(2);  
+z_target = target(3);
 
-% 3. Calcolo delle derivate (solo se siamo nel test di crociera)
-if test_id == 10
-    % Stato 27: Integrale errore Velocità
+% Estrazione vy_body per il calcolo dell'errore
+% Assumiamo che x(5) sia la velocità Y nel Body Frame (come da tuo modello standard)
+vy_body = x(5); 
+
+% 3. Calcolo delle derivate (Abilitato per Case 12 e Case 10 modificato)
+if test_id == 12 || test_id == 10
+    % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     
-    % Stato 28: Integrale errore Pitch (NUOVO)
+    % Stato 28: Integrale errore Pitch
     x28_dot = theta_target - theta;
+    
+    % Stato 29: Integrale errore Quota Z
+    x29_dot = z_target - x(3);
+    
+    % Stato 30: Integrale errore Vy (Sideslip) [NUOVO]
+    % Target = 0 (vogliamo scivolata nulla), Current = vy_body
+    % Errore = Target - Current = 0 - vy_body
+    x30_dot = 0 - vy_global_curr;
 else
     x27_dot = 0;
     x28_dot = 0;
+    x29_dot = 0;
+    x30_dot = 0;
 end
 
-% Anti-windup simulazione
+% --- Anti-windup simulazione ---
+
+% Velocità X
 if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
-if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end % Saturazione pitch
+
+% Pitch
+if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
+
+% Quota Z
+if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
+
+% Integrale Vy (Sideslip) [NUOVO]
+% Verifica se x ha dimensione sufficiente (per evitare crash se x ha solo 29 stati)
+if length(x) >= 30
+    % Limitiamo l'accumulo a un valore ragionevole (es. 15-20)
+    % Se l'integrale diventa troppo alto, il drone rimane inclinato anche senza vento
+    if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
+else
+    x30_dot = 0; % Sicurezza
+end
 %=====================================================================
 
 
@@ -288,6 +321,6 @@ x25_dot = x(26);
 x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2; 
 
 % x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
-x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot];
+x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
 
 end

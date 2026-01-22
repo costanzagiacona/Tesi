@@ -16,7 +16,8 @@ test_casi = 1;
 disturbo = 0;
 vx_des = 25;
 theta_des = 0;
-target = [vx_des theta_des];
+z_des = -10;
+target = [vx_des theta_des z_des];
 
 if fase == 1
     test_id = 5;
@@ -24,7 +25,6 @@ elseif fase == 2
     % test_id = 9;
 elseif fase == 3
 
-    % usare 12
     test_id = 10;
 end
 new_model = 1;
@@ -224,7 +224,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-x0 = zeros(28,1);            % stato iniziale 
+x0 = zeros(30,1);            % stato iniziale 
 
 if fase == 1
 
@@ -281,7 +281,7 @@ elseif fase == 3
             x0(3) = -10;
             x0(4) = 25;
             x4eq = x0(4);
-            % x0(7) = deg2rad(10);
+            % x0(7) = deg2rad(5);
             % x0(8) = deg2rad(2);
             % x0(9) = deg2rad(15); % Psi iniziale
             
@@ -357,7 +357,7 @@ for k = 1:length(t)
     U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id, target);
 end
 
-
+%% GRAFICI
 xp = x(:,1);
 yp = x(:,2);
 zp = -1*x(:,3); % asse z positivo verso il basso
@@ -568,10 +568,62 @@ if flagPlot == 1
  
 end
 
+%%
+% figure(5)
+% 
+% subplot(2,1,1)
+% h1 = plot(time, xp, 'r', time, yp, 'b', time, zp, 'g');
+% yline(10,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+% set(h1, 'LineWidth', 2)
+% legend('x_{inertial frame}','y_{inertial frame}','z_{inertial frame}', ...
+%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
+% ylim([-20 50]); 
+% grid on
+% xlabel('Time [s]', 'FontSize', 14)
+% ylabel('Posizione [m]', 'FontSize', 14)
+% % title('Andamento stati (x1,...,x12)','FontSize',16)
+% title('Dinamica Traslazionale (Posizione e Velocità)', 'FontSize', 16, 'FontWeight', 'bold');
+% set(gca, 'FontSize', 14)
+% 
+% 
+% subplot(2,1,2)
+% h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g');
+% if fase == 1
+%     h3 = yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+% elseif fase == 3
+%     h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
+% end
+% set(h2, 'LineWidth', 2)
+% legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
+%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
+% ylim([-20 30]); 
+% grid on
+% xlabel('Time [s]', 'FontSize', 14)
+% ylabel('Velocità [m/s]', 'FontSize', 14)
+% set(gca, 'FontSize', 14)
+% 
+% figure(6)
+% 
+% subplot(2,1,1)
+% h3 = plot(time, phi, 'r', time, theta, 'b', time, psi, 'g');
+% set(h3, 'LineWidth', 2)
+% legend('\phi (roll,x)','\theta (pitch,y)','\psi (yaw,z)', ...
+%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
+% ylim([-10 20]);
+% grid on
+% xlabel('Time [s]', 'FontSize', 14)
+% ylabel('Angoli [grad]', 'FontSize', 14)
+% title('Dinamica Rotazionale (Angoli e Vel. Angolari)', 'FontSize', 16, 'FontWeight', 'bold');
+% set(gca, 'FontSize', 14)
+% 
+% subplot(2,1,2)
+% h4 = plot(time, p, 'r', time, q, 'b', time, r, 'g');
+% set(h4, 'LineWidth', 2)
+% legend('p','q','r', 'FontSize', 14, 'Interpreter','tex', 'Location','best')
+% ylim([-1 2]);
+% grid on
+% xlabel('Time [s]', 'FontSize', 14)
+% ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
+% set(gca, 'FontSize', 14)
 
-if flagPlot3D == 1
-
-    TricopterPlot_v3(t,x);
-
-end
 

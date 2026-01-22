@@ -1,0 +1,305 @@
+\documentclass[demo]{beamer} % Rimuovi [demo] quando hai le immagini reali
+
+% --- IMPOSTAZIONI TEMA ---
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% --- PACCHETTI STANDARD ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+% graphicx è caricato da beamer
+
+% --- PACCHETTI PER GRAFICA E SCHEMI (TIKZ) ---
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, fit, calc, positioning}
+
+% --- METADATI ---
+\title{Modellazione e Controllo di un Tricottero VTOL}
+\subtitle{Dinamica, Architettura di Controllo e Allocazione}
+\author{Autore}
+\date{\today}
+
+\begin{document}
+
+% --- SLIDE TITOLO ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- INDICE ---
+\begin{frame}{Sommario}
+    \tableofcontents
+\end{frame}
+
+% ============================================================
+% PARTE 1: MODELLAZIONE DINAMICA
+% ============================================================
+\section{Sistemi di Riferimento e Dinamica}
+
+\begin{frame}{Sistemi di Riferimento}
+    Per descrivere la dinamica si adottano due sistemi destrorsi:
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item \textbf{Sistema Inerziale (Earth Frame) $\mathcal{F}_g$}: 
+            \begin{itemize}
+                \item Fisso al terreno $(O_g, X_g, Y_g, Z_g)$.
+                \item Posizione: $P_g = [x_g, y_g, z_g]^T$.
+                \item Orientamento: $\Theta_g = [\phi, \theta, \psi]^T$.
+            \end{itemize}
+            \vspace{0.5cm}
+            \item \textbf{Sistema Solidale (Body Frame) $\mathcal{F}_b$}:
+            \begin{itemize}
+                \item Origine nel CoM, assi $(X_b, Y_b, Z_b)$.
+                \item Velocità lineari: $V_b = [u, v, w]^T$.
+                \item Velocità angolari: $\Omega_b = [p, q, r]^T$.
+            \end{itemize}
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \begin{figure}
+            \centering
+            \includegraphics[width=\textwidth]{sist_rif.png}
+            \caption{Sistemi di riferimento.}
+        \end{figure}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Equazioni della Dinamica}
+    Modello Newton-Eulero per corpo rigido a 6 gradi di libertà:
+    
+    \begin{block}{Equazioni Vettoriali}
+    \begin{equation}
+        \begin{cases}
+            m \dot{V}_b + \Omega_b \times (m V_b) = F_{\mathrm{tot}} \\
+            I_b \dot{\Omega}_b + \Omega_b \times (I_b \Omega_b) = M_{\mathrm{tot}}
+        \end{cases}
+    \end{equation}
+    \end{block}
+    
+    Dove:
+    \begin{itemize}
+        \item $F_{\mathrm{tot}} = F_{\mathrm{th}} + F_g + F_{\mathrm{aero}}$
+        \item $M_{\mathrm{tot}} = M_{\mathrm{th}} + M_{\mathrm{drag}} + M_{\mathrm{aero}} + M_{\mathrm{gyro}}$
+    \end{itemize}
+\end{frame}
+
+\section{Analisi delle Forze}
+
+\begin{frame}{Configurazione dei Rotori (Thrust)}
+    Il velivolo è dotato di tre rotori con capacità di \textit{tilt}:
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Rotori Anteriori (1 e 2):}
+        \begin{itemize}
+            \item Tilt attorno asse $Y_b$.
+        \end{itemize}
+        \begin{figure}
+            \includegraphics[width=0.8\textwidth]{rotori_1_2.png}
+            \caption{Thrust rotori 1 e 2.}
+        \end{figure}
+
+        \column{0.5\textwidth}
+        \textbf{Rotore di Coda (3):}
+        \begin{itemize}
+            \item Tilt su $Y_b$ e $Z_b$.
+        \end{itemize}
+        \begin{figure}
+            \includegraphics[width=0.8\textwidth]{rotore_3.png}
+            \caption{Thrust rotore 3.}
+        \end{figure}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Forza Totale e Componenti}
+    La forza generata dai propulsori nel body frame è:
+    {\footnotesize 
+    \begin{equation}
+        F_{\mathrm{th}} = 
+        \begin{bmatrix}
+        c_{\theta_1} f_1 + c_{\theta_2} f_2 + c_{\theta_3} c_{\theta_4} f_3 \\
+        c_{\theta_3} s_{\theta_4} f_3 \\
+        -s_{\theta_1} f_1 - s_{\theta_2} f_2 - s_{\theta_3} f_3
+        \end{bmatrix}
+    \end{equation}
+    }
+    
+    A cui si aggiungono gravità e aerodinamica:
+    \begin{equation}
+        F_g = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}, \quad
+        F_{\mathrm{aero}} \approx 
+        \begin{bmatrix}
+            -\frac{1}{2}\rho S C_D v_x |v_x| \\
+            0 \\
+            -\frac{1}{2}\rho S C_L v_x^2
+        \end{bmatrix}
+    \end{equation}
+\end{frame}
+
+% ============================================================
+% PARTE 2: CONTROLLO E ALLOCAZIONE (NUOVA PARTE)
+% ============================================================
+\section{Architettura di Controllo}
+
+\begin{frame}{Strategia di Controllo}
+    È stata implementata un'architettura **gerarchica a cascata**.
+    
+    \begin{block}{Concetto Chiave}
+        La spinta totale $T$ sostiene il drone, mentre la sua orientazione (tramite rollio e beccheggio) genera le forze planari.
+    \end{block}
+
+    \vspace{0.5cm}
+    \textbf{Struttura degli Anelli:}
+    \begin{enumerate}
+        \item \textbf{Outer Loop (Quota):} Dinamica verticale lenta. Usa \textbf{SMC} per calcolare la spinta $F_{req,z}$.
+        \item \textbf{Inner Loop (Posizione e Assetto):} 
+        \begin{itemize}
+            \item \textit{Posizione ($x,y$):} Genera angoli di riferimento $\phi_{des}, \theta_{des}$ (SMC).
+            \item \textit{Assetto ($\phi, \theta, \psi$):} Insegue gli angoli e stabilizza le velocità angolari (PID).
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+% --- SLIDE SCHEMA A BLOCCHI ---
+\begin{frame}{Schema a Blocchi}
+    \centering
+    % Resizebox fondamentale per adattare il TikZ alla slide
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[auto, node distance=1.5cm, >=latex']
+        % STILI
+        \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3.5em, align=center, fill=white]
+        \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, node distance=1.5cm]
+        \tikzstyle{input} = [coordinate]
+        \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, black!60]
+    
+        % 1. RIGA: QUOTA (Z)
+        \node [input] (ref_z) {};
+        \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
+        \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
+        \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
+    
+        % 2. RIGA: POSIZIONE Y -> ROLL
+        \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
+        \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
+        \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
+        \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
+        \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {PID\\ROLL};
+        \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
+    
+        % 3. RIGA: POSIZIONE X -> PITCH
+        \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
+        \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
+        \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
+        \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
+        \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {PID\\PITCH};
+        \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
+    
+        % 4. RIGA: YAW
+        \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
+        \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
+        \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {PID\\YAW}; 
+        \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
+    
+        % MIXER E DRONE
+        \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MIXER};
+        \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
+    
+        % COLLEGAMENTI
+        % Z Loop
+        \draw [->] (ref_z) -- (sum_z);
+        \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
+        \draw [->] (smc_z) -- node[above, font=\footnotesize] {$F_{req,z}$} (mixer.west |- smc_z);
+        
+        % Bus spinta per SMC planari
+        \draw [->] (smc_z.south) -- ++(0,-0.3) -| ($(sum_y)!0.5!(smc_phi)$) coordinate (thrust_bus) -- (thrust_bus |- smc_theta.south);
+        \draw [->] (thrust_bus |- smc_phi.north) -- ++(0,-0.2) -| ([xshift=-0.2cm]smc_phi.north);
+        \draw [->] (thrust_bus |- smc_theta.north) -- ++(0,-0.1) -| ([xshift=-0.2cm]smc_theta.north);
+
+        % Y Loop
+        \draw [->] (ref_y) -- (sum_y);
+        \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
+        \draw [->] (smc_phi) -- node[above, font=\footnotesize] {$\phi_{des}$} (sum_roll);
+        \draw [->] (sum_roll) -- node[above, font=\footnotesize] {$e_\phi$} (pid_roll);
+        \draw [->] (pid_roll) -- node[above, near end, font=\footnotesize] {$M_x$} (mixer.west |- pid_roll);
+    
+        % X Loop
+        \draw [->] (ref_x) -- (sum_x);
+        \draw [->] (sum_x) -- node[above, font=\footnotesize] {$e_x$} (smc_theta);
+        \draw [->] (smc_theta) -- node[above, font=\footnotesize] {$\theta_{des}$} (sum_pitch);
+        \draw [->] (sum_pitch) -- node[above, font=\footnotesize] {$e_\theta$} (pid_pitch);
+        \draw [->] (pid_pitch) -- node[above, near end, font=\footnotesize] {$M_y$} (mixer.west |- pid_pitch);
+    
+        % Yaw Loop
+        \draw [->] (ref_psi) -- (sum_yaw);
+        \draw [->] (sum_yaw) -- node[above, font=\footnotesize] {$e_\psi$} (pid_yaw);
+        \draw [->] (pid_yaw) -- node[above, near end, font=\footnotesize] {$M_z$} (mixer.west |- pid_yaw);
+    
+        \draw [->] (mixer) -- (drone);
+    
+        % Feedback
+        \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start) -- ++(0,-6.5) coordinate (fb_corner) -- (fb_corner -| sum_z) coordinate (fb_end) -- ++(-1,0); 
+        \draw [->] (fb_end -| sum_z) -- (sum_z.south);
+        \draw [->] (fb_end -| sum_y) -- (sum_y.south);
+        \draw [->] (fb_end -| sum_x) -- (sum_x.south);
+        \draw [->] (fb_end -| sum_roll) -- (sum_roll.south);
+        \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
+        \draw [->] (fb_end -| sum_yaw) -- (sum_yaw.south);
+            
+        \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
+        
+        % Box
+        \node [container, fit=(sum_z) (smc_z), label=above:\textbf{Outer Loop}] {};
+        \node [container, fit=(sum_y) (smc_phi) (pid_roll) (sum_roll) (sum_x) (smc_theta) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop}] {};
+    \end{tikzpicture}
+    }
+\end{frame}
+
+\section{Algoritmi di Controllo}
+
+\begin{frame}{Sliding Mode Control (SMC)}
+    \textbf{Controllo Verticale:}
+    Superficie di scorrimento $\sigma_z = \dot{e}_z + \lambda_z e_z$. Legge di controllo per $F_{req,z}$:
+    \begin{equation}
+        F_{req,z} = m g + F_{aero,z} - m \lambda_z \dot{e}_z - m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)
+    \end{equation}
+    
+    \vspace{0.5cm}
+    \textbf{Controllo Planare (Generazione Riferimenti):}
+    Inversione della dinamica per calcolare l'assetto necessario:
+    \begin{align}
+        \phi_{des} &= \arcsin\left( \frac{m}{T} \cdot u_y \right) \quad (\text{Controllo laterale}) \\
+        \theta_{des} &= \arcsin\left( - \frac{m}{T} \cdot u_x \right) \quad (\text{Controllo longitudinale})
+    \end{align}
+\end{frame}
+
+\section{Control Allocation}
+
+\begin{frame}{Mixer e Allocazione Dinamica}
+    Il sistema non è risolvibile con una semplice matrice pseudoinversa a causa della non-linearità geometrica. Si usa un approccio sequenziale.
+    
+    \vspace{0.5em}
+    \textbf{1. Equilibrio Longitudinale (Pitch):}
+    Il motore di coda ($T_3$) bilancia il momento $M_y$ e parte della spinta verticale.
+    \begin{equation}
+        \omega_3^2 = \frac{F_{req} d_{mx} - M_y}{K \sin\theta_3 (d_{mx} - d_{tx}) + b \cos\theta_3}
+    \end{equation}
+    
+    \textbf{2. Equilibrio Laterale (Roll):}
+    La spinta residua necessaria viene divisa tra i motori anteriori.
+    \begin{equation}
+        T_1 = T_i - \frac{M_x}{2 d_{my}}, \quad T_2 = T_i + \frac{M_x}{2 d_{my}}
+    \end{equation}
+    
+    \textbf{3. Imbardata (Yaw):}
+    Si calcola il tilt necessario ($\delta$) del rotore di coda.
+    \begin{equation}
+        \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right), \delta_{max} \right)
+    \end{equation}
+\end{frame}
+
+\end{document}
