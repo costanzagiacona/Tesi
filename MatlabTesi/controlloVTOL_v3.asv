@@ -824,9 +824,11 @@ switch test_id
         % 2. DEFINIZIONE SETPOINT (Guida)
         % =================================================
         % Target operativi per la crociera
+        z_des     = -10;       % Quota target (negativa in NED)
         vx_des    = target(1); % Velocità target (es. 30 m/s)
         theta_des = target(2); % Pitch target (solitamente 0° in crociera)
-        z_des     = -10;       % Quota target (negativa in NED)
+        phi_des = 0;
+        
     
         % =================================================
         % 3. CONTROLLO QUOTA (Loop Z - Outer Loop)
@@ -874,7 +876,8 @@ switch test_id
         
         % Saturazione minima per evitare singolarità matematiche
         if Fx_req < 0.1; Fx_req = 0.1; end
-    
+
+        
         % =================================================
         % 5. STRATEGIA VETTORIALE (Thrust Vectoring)
         % =================================================
@@ -912,26 +915,22 @@ switch test_id
         % =================================================
         % --- B. ROLL (Rollio) ---
         % =================================================
-        % --- B. ROLL (Rollio) ---
-        % Creiamo un gradino: dopo 5 secondi, chiedi 5 gradi di rollio
-        if t > 5 && t < 10
-            phi_des = deg2rad(5);
-        else
-            phi_des = 0;
-        end
+
         
-        % --- B. ROLL (Rollio) - Tuning per Test al Gradino (30 m/s) ---
         kp_phi = 0.20;  % Abbastanza forza per salire verso i 5 gradi
         kd_phi = 0.10;  % Freno aerodinamico per non "scivolare" oltre
-        ki_phi = 0.0;   % Zero per ora (vogliamo vedere la risposta pulita)
+
         u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
         
         
         % =================================================
         % --- C. YAW (Imbardata) ---
         % =================================================
-        kp_psi = 0.2; kd_psi = 0.1;
-        u_yaw_thrust = kp_psi * (0 - psi) + kd_psi * (0 - r);
+        
+        kp_psi = 10;  % "Molla": 1 rad di errore -> 2.5 N di spinta differenziale
+        kd_psi = 2.5;  % "Smorzatore": Fondamentale per evitare lo scodinzolamento
+
+        u_yaw_thrust = kp_psi * ( - psi) + kd_psi * (0 - r);
     
         % =================================================
         % 7. MIXER / ALLOCAZIONE ATTUATORI

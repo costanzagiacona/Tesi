@@ -824,9 +824,12 @@ switch test_id
         % 2. DEFINIZIONE SETPOINT (Guida)
         % =================================================
         % Target operativi per la crociera
+        z_des     = -10;       % Quota target (negativa in NED)
         vx_des    = target(1); % Velocità target (es. 30 m/s)
         theta_des = target(2); % Pitch target (solitamente 0° in crociera)
-        z_des     = -10;       % Quota target (negativa in NED)
+        phi_des = 0;
+        psi_des = 0;
+        
     
         % =================================================
         % 3. CONTROLLO QUOTA (Loop Z - Outer Loop)
@@ -863,7 +866,7 @@ switch test_id
         
         % PID Velocità
         kp_v = 8.0; 
-        ki_v = 3.0; % Integrale attivo per eliminare errore a regime
+        ki_v = 4.0; % Integrale attivo per eliminare errore a regime
         
         % --- Feedforward Aerodinamico (DRAG) ---
         % D = 0.5 * rho * S * Cd * V^2
@@ -875,29 +878,7 @@ switch test_id
         % Saturazione minima per evitare singolarità matematiche
         if Fx_req < 0.1; Fx_req = 0.1; end
 
-        % =================================================
-        % 3b. CONTROLLO LATERALE (Cross-Track Error -> Roll Command)
-        % =================================================
-        % y_des = 0;          % Vogliamo stare sulla linea Y=0
-        % e_y = y_des - x(2); % Errore di posizione (0 - Y_attuale)
-        % 
-        % % PID Posizione Y: L'uscita è l'angolo di ROLLIO desiderato
-        % % Se sono a destra (Y>0), e_y è negativo -> Voglio Roll Negativo (Virare a SX)
-        % kp_y = 50;  % Guadagno basso: 1 metro di errore -> 0.05 rad (2.8 gradi) di rollio
-        % kd_y = 0.08;  % Smorzamento sulla velocità laterale (Vy)
-        % 
-        % % Calcolo phi_desiderato
-        % % Nota: Usiamo vy_global (che devi aver calcolato all'inizio come V_glob(2))
-        % % Se non hai vy_global, usa x(5) * cos(psi) + x(4) * sin(psi) approssimato
-        % vy_global = V_glob(2); 
-        % 
-        % phi_cmd_nav = kp_y * e_y + kd_y * (0 - vy_global);
-        % 
-        % % SATURAZIONE DI SICUREZZA
-        % % Non vogliamo che il drone si inclini più di 20 gradi per correggere la rotta
-        % max_bank = deg2rad(20);
-        % phi_des = max(-max_bank, min(max_bank, phi_cmd_nav));
-    
+        
         % =================================================
         % 5. STRATEGIA VETTORIALE (Thrust Vectoring)
         % =================================================
@@ -924,9 +905,9 @@ switch test_id
         e_theta  = theta_des - theta;
         de_theta = 0 - q;
         
-        kp_th = 0.2;  % Reazione proporzionale (bassa)
-        kd_th = 0.15; % Smorzamento (fondamentale ad alta velocità!)
-        ki_th = 0.6;  % Niente integrale per ora
+        kp_th = 2;  % Reazione proporzionale (bassa)
+        kd_th = 0.5; % Smorzamento (fondamentale ad alta velocità!)
+        ki_th = 1.5;  
         
         % L'output del PID pitch è un angolo correttivo da sommare al tilt base
         % (Funziona perché My = dmx * T * sin(theta_tilt))
@@ -936,7 +917,7 @@ switch test_id
         % --- B. ROLL (Rollio) ---
         % =================================================
 
-        phi_des = 0;
+        
         kp_phi = 0.20;  % Abbastanza forza per salire verso i 5 gradi
         kd_phi = 0.10;  % Freno aerodinamico per non "scivolare" oltre
 
@@ -950,7 +931,7 @@ switch test_id
         kp_psi = 10;  % "Molla": 1 rad di errore -> 2.5 N di spinta differenziale
         kd_psi = 2.5;  % "Smorzatore": Fondamentale per evitare lo scodinzolamento
 
-        u_yaw_thrust = kp_psi * (0 - psi) + kd_psi * (0 - r);
+        u_yaw_thrust = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
     
         % =================================================
         % 7. MIXER / ALLOCAZIONE ATTUATORI

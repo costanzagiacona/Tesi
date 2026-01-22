@@ -282,13 +282,14 @@ elseif fase == 3
             x0(4) = 25;
             x4eq = x0(4);
             % x0(7) = deg2rad(10);
-            % x0(9) = deg2rad(15); % Psi iniziale
-            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
-            % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
             % x0(8) = deg2rad(2);
+            % x0(9) = deg2rad(15); % Psi iniziale
+            
+            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
             F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
             F0_x = F_drag + F_drag_ali;
             T_i = F0_x/2;
+
             x0(21)= sqrt(T_i/parametri.k);
             x0(23)= x0(21);
 
