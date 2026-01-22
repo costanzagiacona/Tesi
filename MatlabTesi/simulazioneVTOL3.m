@@ -230,7 +230,7 @@ vx_target = target(1);    % Target velocità
 theta_target = target(2);  % Target pitch (se fisso a 0)
 
 % 3. Calcolo delle derivate (solo se siamo nel test di crociera)
-if test_id == 9
+if test_id == 10
     % Stato 27: Integrale errore Velocità
     x27_dot = vx_target - vx_global_curr;
     

@@ -8,7 +8,7 @@ clear functions
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
 
-tspan = [0 30];              % intervallo di simulazione
+tspan = [0 20];              % intervallo di simulazione
 
 fase = 3;
 test_id = 0;
@@ -25,7 +25,7 @@ elseif fase == 2
 elseif fase == 3
 
     % usare 12
-    test_id = 9;
+    test_id = 10;
 end
 new_model = 1;
 
@@ -281,6 +281,8 @@ elseif fase == 3
             x0(3) = -10;
             x0(4) = 25;
             x4eq = x0(4);
+            % x0(7) = deg2rad(10);
+            % x0(9) = deg2rad(15); % Psi iniziale
             F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
             % x0(8) potrebbe servire un piccolo pitch positivo iniziale (es. 2 gradi)
             % x0(8) = deg2rad(2);
