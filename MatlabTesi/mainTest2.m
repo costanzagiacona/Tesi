@@ -10,10 +10,24 @@ paramFlag = 0; % se 1 print del valore dei parametri
 
 tspan = [0 20];              % intervallo di simulazione
 
-fase = 3;
-test_id = 0;
-test_casi = 1;
+fase = 3;       % flag per fase di volo
+test_id = 0;    % flag per cambiare controllo
+
+test_casi = 1;  % flag per cambiare le condizioni di simulazione
+% CONTROLLO VERTICALE
+% test_casi = 1 => condizioni iniziali ideali
+% test_casi = 2 => condizioni iniziali angoli diverse da zero
+% test_casi = 4 => disturbo 
+
+% CONTROLLO ORIZZONTALE
+% test_casi = 1 => condizioni iniziali ideali
+% test_casi = 2 => condizioni iniziali velocità inferiori a 25 m/s
+% test_casi = 3 => condizioni iniziali quota maggiore di -10 
+% test_casi = 4 => disturbo 
+
 disturbo = 0;
+
+% condizioni desiderate volo orizzontale 
 vx_des = 25;
 theta_des = 0;
 z_des = -10;
@@ -21,12 +35,10 @@ target = [vx_des theta_des z_des];
 
 if fase == 1
     test_id = 5;
-elseif fase == 2
-    % test_id = 9;
 elseif fase == 3
-
     test_id = 10;
 end
+
 new_model = 1;
 
 % parametri VTOL 
@@ -233,6 +245,18 @@ if fase == 1
             x0(4) = 0; % condizione iniziale della velocità lungo X
             % x0(7) = pi/10;
             % x0(9) = pi/10;
+            x4eq = x0(4);
+            x0(3) = 0;
+            x0(13)= pi/2;
+            x0(15)= pi/2;
+            %inclinazione iniziale del rotore di coda (per il volo verticale)
+            x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
+            x0(19)= -pi/2;
+
+        case 2
+            x0(4) = 0; % condizione iniziale della velocità lungo X
+            x0(7) = pi/10;
+            x0(9) = pi/10;
             x4eq = x0(4);
             x0(3) = 0;
             x0(13)= pi/2;

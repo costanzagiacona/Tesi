@@ -892,8 +892,8 @@ switch test_id
         e_theta  = theta_des - theta;
         de_theta = 0 - q;
         
-        kp_th = 2;  % Reazione proporzionale (bassa)
-        kd_th = 0.3; % Smorzamento (fondamentale ad alta velocità!)
+        kp_th = 3;  % Reazione proporzionale (bassa)
+        kd_th = 1.5; % Smorzamento (fondamentale ad alta velocità!)
         ki_th = 1.5;  
         
         % L'output del PID pitch è un angolo correttivo da sommare al tilt base

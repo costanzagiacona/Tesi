@@ -140,7 +140,7 @@ F_disturbo = [0; 0; 0];
 
 if disturbo == 1
     if t > 5.0 && t < 5.5
-        F_disturbo = [10; 0; 30]; 
+        F_disturbo = [10; 10; 30]; 
     end
 end
 
@@ -231,12 +231,9 @@ vx_target = target(1);
 theta_target = target(2);  
 z_target = target(3);
 
-% Estrazione vy_body per il calcolo dell'errore
-% Assumiamo che x(5) sia la velocità Y nel Body Frame (come da tuo modello standard)
-vy_body = x(5); 
 
 % 3. Calcolo delle derivate (Abilitato per Case 12 e Case 10 modificato)
-if test_id == 12 || test_id == 10
+if test_id == 11 || test_id == 10
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     
@@ -249,7 +246,7 @@ if test_id == 12 || test_id == 10
     % Stato 30: Integrale errore Vy (Sideslip) [NUOVO]
     % Target = 0 (vogliamo scivolata nulla), Current = vy_body
     % Errore = Target - Current = 0 - vy_body
-    x30_dot = 0 - vy_global_curr;
+    x30_dot = 0 - x(5);
 else
     x27_dot = 0;
     x28_dot = 0;
@@ -321,6 +318,8 @@ x25_dot = x(26);
 x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2; 
 
 % x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
+
+
 x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
 
 end
