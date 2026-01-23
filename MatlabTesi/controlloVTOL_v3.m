@@ -773,12 +773,6 @@ switch test_id
         % =========================================================================
         %  MODO 10: CROCIERA VELOCE - FIXED WING MODE
         %  =========================================================================
-        %  Obiettivo: Mantenere quota e velocità usando portanza alare.
-        %  Ipotesi Dinamica: dmz = 0 (Baricentro sul piano motori).
-        %  Strategia: 
-        %  1. Thrust Vectoring per vincere la Drag e sostenere parte del peso.
-        %  2. Superfici mobili (o tilt differenziale) per l'assetto.
-        % =========================================================================
     
         % ================================================
         % 1. ESTRAZIONE E PREPARAZIONE STATI
@@ -1177,13 +1171,14 @@ switch test_id
     vy_body = V_body(2); 
 
     % Integrali (Assicurati che x(30) sia inizializzato nel main)
-    if length(x) >= 30
+    if length(x) >= 31
         int_err_v     = x(27); 
         int_err_theta = x(28); 
         int_err_z     = x(29); 
-        int_err_vy    = x(30); % Integrale per errore velocità laterale
+        int_err_y     = x(30); % Integrale per errore velocità laterale
+        int_err_vy     = x(31);
     else
-        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_vy = 0;
+        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0; int_err_vy = 0;
     end
     
     % --- 2. SETPOINT ---
@@ -1195,40 +1190,44 @@ switch test_id
     if length(target) >= 4
         psi_des = target(4); 
     else
-        psi_des = psi; % Modalità "Yaw Damper": resiste alle rotazioni ma non torna a Nord
+        psi_des = 0; % Modalità "Yaw Damper": resiste alle rotazioni ma non torna a Nord
     end
 
     % =================================================
-    % 3. CONTROLLO LATERALE A CASCATA (Posizione -> Velocità -> Rollio)
+    % 3. CONTROLLO LATERALE (TUNING V10 - SILK SMOOTH)
     % =================================================
     
-    % --- A. OUTER LOOP: POSIZIONE (Y -> 0) ---
     y_curr = x(2);
-    y_set  = 0; % Vogliamo stare sulla linea centrale
-    
+    y_set  = 0; 
     e_y = y_set - y_curr;
     
-    % Guadagno Posizione: 0.3 = rientro dolce (10m errore -> 3m/s correzione)
-    Kp_pos_y = 0.3; 
-    vy_des_correction = Kp_pos_y * e_y;
+    % Recuperiamo la velocità inerziale (reale)
+    vy_inertial = V_glob(2); 
     
-    % Saturazione Velocità laterale (Safety)
-    vy_des_correction = max(-4.0, min(4.0, vy_des_correction));
+    % --- FINE TUNING ---
     
-    % --- B. INNER LOOP: WING-DOWN (Vy -> Phi) ---
-    % Errore: differenza tra velocità richiesta e velocità attuale
-    e_vy = vy_des_correction - vy_body;
+    % 1. RIDUZIONE AGGRESSIVITÀ (K_steer)
+    % Era 0.15. Lo portiamo a 0.10.
+    % Meno "fame" di arrivare a zero = meno probabilità di superarlo.
+    K_steer = 0.10; 
     
-    % Guadagni Soft (Golden Copy tuning)
-    Kp_slip = 0.05; 
-    Ki_slip = 0.01; 
+    % 2. AUMENTO SMORZAMENTO (K_damp)
+    % Era 0.30. Lo portiamo a 0.45.
+    % Deve "sentire" la velocità laterale e raddrizzare il naso molto prima.
+    K_damp = 0.45; 
     
-    % Legge di controllo: +Errore Vy richiede +Roll (Destra) per scivolare a destra
-    phi_req = Kp_slip * e_vy + Ki_slip * int_err_vy;
+    % --- LEGGE DI GUIDA ---
+    psi_steering = (K_steer * e_y) - (K_damp * vy_inertial);
     
-    % Saturazione Rollio (Max 25 gradi)
-    max_bank = deg2rad(25);
-    phi_des = max(-max_bank, min(max_bank, phi_req));
+    % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
+    max_heading_corr = deg2rad(35);
+    psi_correction = max(-max_heading_corr, min(max_heading_corr, psi_steering));
+    
+    if length(target) >= 4; psi_base = target(4); else; psi_base = 0; end
+    psi_des_new = psi_base + psi_correction;
+
+    % Rollio sempre zero
+    phi_des = 0;
 
     % =================================================
     % 4. CONTROLLO LONGITUDINALE (Quota e Velocità X)
@@ -1236,7 +1235,12 @@ switch test_id
     % Quota Z
     e_z  = z_des - x(3);
     de_z = 0 - vz_global;
-    az_cmd = 4.0 * e_z + 6.0 * de_z + 0.5 * int_err_z;
+
+    kp_z = 4.0;
+    kd_z = 6.0;
+    ki_z = 0.5;
+
+    az_cmd = kp_z * e_z + kd_z * de_z + ki_z * int_err_z;
     
     % Feedforward Portanza (Lift)
     V_tas = norm(V_body);
@@ -1250,7 +1254,10 @@ switch test_id
     % Velocità X
     e_v = vx_des - vx_global;
     F_drag = 0.5 * params.rho * params.s * params.C_d * V_tas^2;
-    Fx_req = F_drag + 8.0 * e_v + 4.0 * int_err_v;
+
+    kp_x = 8.0;
+    ki_x = 4.0;
+    Fx_req = F_drag+ kp_x * e_v + ki_x * int_err_v;
     if Fx_req < 0.1; Fx_req = 0.1; end
     
     % Vectoring
@@ -1263,20 +1270,24 @@ switch test_id
     % =================================================
     
     % --- PITCH ---
-    u_pitch_angle = 2*(theta_des - theta) + 0.5*(0 - q) + 1.5*int_err_theta;
+    kp_theta = 2; 
+    kd_theta = 0.5; 
+    ki_theta = 1.5;
+    
+    u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
     
     % --- ROLL (Segue il phi_des calcolato per correggere Y) ---
-    kp_phi = 0.15; 
-    kd_phi = 0.08; 
+    kp_phi = 4; 
+    kd_phi = 0.8; 
     u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
     
     % --- YAW (Heading Hold / Damper) ---
-    diff_psi = psi_des - psi;
+    diff_psi = psi_des_new - psi;
     e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
     
     % Guadagni BASSI per evitare conflitti con il rollio
-    kp_psi = 2.0;   
-    kd_psi = 5.0;  % Smorzamento alto per stabilità
+    kp_psi = 3.0;   
+    kd_psi = 1.2;  % Smorzamento alto per stabilità
     u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
 
     % =================================================

@@ -247,13 +247,12 @@ if test_id == 11 || test_id == 10 || test_id == 12
     % Target = 0 (vogliamo scivolata nulla), Current = vy_body
     % Errore = Target - Current = 0 - vy_body
     x30_dot = 0 - x(2);
-    x31_dot = 0 - x(5);
+    % x30_dot = 0 - x(5);
 else
     x27_dot = 0;
     x28_dot = 0;
     x29_dot = 0;
     x30_dot = 0;
-    x31_dot = 0;
 end
 
 % --- Anti-windup simulazione ---
@@ -273,10 +272,8 @@ if length(x) >= 30
     % Limitiamo l'accumulo a un valore ragionevole (es. 15-20)
     % Se l'integrale diventa troppo alto, il drone rimane inclinato anche senza vento
     if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
-    if abs(x(31)) > 20.0 && sign(x31_dot) == sign(x(31)); x31_dot = 0; end
 else
     x30_dot = 0; % Sicurezza
-    x31_dot = 0; 
 end
 %=====================================================================
 
@@ -324,6 +321,6 @@ x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2;
 % x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
 
 
-x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot; x31_dot];
+x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
 
 end
