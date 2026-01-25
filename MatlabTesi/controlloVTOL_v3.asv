@@ -47,24 +47,13 @@ switch test_id
         psi_des = 0;    r_des = 0;  
         % psi_des = 45 * (pi/180);  % ~0.785 radianti
 
-        % 3. Parametri Controllori
-        % Z (Quota)
-        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
-        % Y (Laterale)
-        lambda_y = 0.8; K_y_smc = 15; Phi_y = 1.0;
-        % X (Longitudinale)
-        lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
-        
-        % PD Attitudine (Roll & Pitch)
-        kp_phi = 40;   kd_phi = 8; 
-        kp_theta = 40; kd_theta = 8;
-
-        % PD Yaw (Imbardata)
-        kp_psi = 15;   kd_psi = 5; 
+        %% OUTER LOOP
 
         % =========================================================
         %   LOOP Z (QUOTA) 
         % =========================================================
+        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
+
         e_z = z_des - x(3);           
         de_z = vz_des - vz_global;    
         s_z = de_z + lambda_z * e_z;    
@@ -80,12 +69,33 @@ switch test_id
         if Thrust_req < 1; Thrust_req = 1; end
 
         % =========================================================
-        %   LOOP Y (LATERALE -> ROLLIO)
+        %   LOOP Y 
         % =========================================================
+        lambda_y = 0.8; K_y_smc = 15; Phi_y = 1.0;
+
         e_y = y_des - x(2);          
         de_y = vy_des - vy_global;   
         s_y = de_y + lambda_y * e_y; 
         F_y_req = params.m * lambda_y * de_y + K_y_smc * tanh(s_y / Phi_y);
+
+        % =========================================================
+        %   LOOP X
+        % =========================================================
+        lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
+
+        e_x = x_des - x(1);
+        de_x = vx_des - vx_global;
+        s_x = de_x + lambda_x * e_x;
+        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
+
+        %% INNER LOOP
+
+        % =========================================================
+        %   ROLL
+        % =========================================================
+
+        kp_phi = 40;   kd_phi = 8; 
+
         sin_phi_des = F_y_req / Thrust_req;
         sin_phi_des = max(min(sin_phi_des, 0.5), -0.5); 
         phi_des = asin(sin_phi_des);
@@ -95,12 +105,10 @@ switch test_id
         Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
 
         % =========================================================
-        %   LOOP X (LONGITUDINALE -> PITCH) 
+        %   PITCH
         % =========================================================
-        e_x = x_des - x(1);
-        de_x = vx_des - vx_global;
-        s_x = de_x + lambda_x * e_x;
-        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
+        kp_theta = 40; kd_theta = 8;
+
         sin_theta_des = -F_x_req / Thrust_req;
         sin_theta_des = max(min(sin_theta_des, 0.5), -0.5);
         theta_des = asin(sin_theta_des);
@@ -109,8 +117,10 @@ switch test_id
         Moment_pitch_req = kp_theta * e_theta + kd_theta * de_theta;
 
         % =========================================================
-        %   YAW (IMBARDATA)
+        %   YAW 
         % =========================================================
+        kp_psi = 15;   kd_psi = 5; 
+
         % Calcolo errore angolo (normalizzazione [-pi,pi] 
         e_psi = psi_des - psi;
         e_psi = atan2(sin(e_psi), cos(e_psi));
@@ -120,6 +130,7 @@ switch test_id
         % Richiesta di Momento Yaw
         Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
 
+    
         % =========================================================
         %   MIXING E ALLOCAZIONE 
         % =========================================================
@@ -555,14 +566,13 @@ switch test_id
     vz_global = V_glob(3);
     
     % Integrali (Assicurati che x(30) sia inizializzato nel main)
-    if length(x) >= 31
+    if length(x) >= 30
         int_err_v     = x(27); 
         int_err_theta = x(28); 
         int_err_z     = x(29); 
         int_err_y     = x(30); % Integrale per errore velocità laterale
-        int_err_vy     = x(31);
     else
-        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0; int_err_vy = 0;
+        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0;
     end
     
     % --- 2. SETPOINT ---
@@ -578,19 +588,11 @@ switch test_id
     e_y = y_set - y_curr;
     
     % --- FINE TUNING ---
+    Kp_y = 0.20; 
+    Kd_y = 0.8; 
+    Ki_y = 0.02;
     
-    % 1. RIDUZIONE AGGRESSIVITÀ (K_steer)
-    % Era 0.15. Lo portiamo a 0.10.
-    % Meno "fame" di arrivare a zero = meno probabilità di superarlo.
-    K_steer = 0.10; 
-    
-    % 2. AUMENTO SMORZAMENTO (K_damp)
-    % Era 0.30. Lo portiamo a 0.45.
-    % Deve "sentire" la velocità laterale e raddrizzare il naso molto prima.
-    K_damp = 0.45; 
-    
-    % --- LEGGE DI GUIDA ---
-    psi_steering = (K_steer * e_y) - (K_damp * vy_body);
+    psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_body);
     
     % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
     max_heading_corr = deg2rad(35);

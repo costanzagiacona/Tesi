@@ -47,24 +47,22 @@ switch test_id
         psi_des = 0;    r_des = 0;  
         % psi_des = 45 * (pi/180);  % ~0.785 radianti
 
-        % 3. Parametri Controllori
-        % Z (Quota)
-        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
-        % Y (Laterale)
-        lambda_y = 0.8; K_y_smc = 15; Phi_y = 1.0;
-        % X (Longitudinale)
-        lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
-        
-        % PD Attitudine (Roll & Pitch)
-        kp_phi = 40;   kd_phi = 8; 
-        kp_theta = 40; kd_theta = 8;
+        % =================================================
+        % Lettura Integrali 
+        % =================================================
+        if length(x) >= 29
+            int_err_theta = x(28); % Integrale Pitch
+        else
+            int_err_theta = 0; 
+        end
 
-        % PD Yaw (Imbardata)
-        kp_psi = 15;   kd_psi = 5; 
+        %% OUTER LOOP
 
         % =========================================================
         %   LOOP Z (QUOTA) 
         % =========================================================
+        lambda_z = 2.5; K_z_smc = 60; Phi_z = 0.8;
+
         e_z = z_des - x(3);           
         de_z = vz_des - vz_global;    
         s_z = de_z + lambda_z * e_z;    
@@ -80,14 +78,37 @@ switch test_id
         if Thrust_req < 1; Thrust_req = 1; end
 
         % =========================================================
-        %   LOOP Y (LATERALE -> ROLLIO)
+        %   LOOP Y 
         % =========================================================
+        lambda_y = 7; K_y_smc = 20; Phi_y = 3.0;
+
         e_y = y_des - x(2);          
         de_y = vy_des - vy_global;   
         s_y = de_y + lambda_y * e_y; 
         F_y_req = params.m * lambda_y * de_y + K_y_smc * tanh(s_y / Phi_y);
         sin_phi_des = F_y_req / Thrust_req;
-        sin_phi_des = max(min(sin_phi_des, 0.5), -0.5); 
+        sin_phi_des = max(min(sin_phi_des, 0.5), -0.5);
+
+        % =========================================================
+        %   LOOP X
+        % =========================================================
+        lambda_x = 5; K_x_smc = 15; Phi_x = 1.0;
+
+        e_x = x_des - x(1);
+        de_x = vx_des - vx_global;
+        s_x = de_x + lambda_x * e_x;
+        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
+
+        sin_theta_des = -F_x_req / Thrust_req;
+        sin_theta_des = max(min(sin_theta_des, 0.5), -0.5);
+
+        %% INNER LOOP
+
+        % =========================================================
+        %   ROLL
+        % =========================================================
+        kp_phi = 40;   kd_phi = 8; 
+
         phi_des = asin(sin_phi_des);
         % F_drag_y = params.rho * params.s_body_y * params.C_d_y * sign(x(5)) * x(5)^2;
         e_phi = phi_des - phi;
@@ -95,22 +116,20 @@ switch test_id
         Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
 
         % =========================================================
-        %   LOOP X (LONGITUDINALE -> PITCH) 
+        %   PITCH
         % =========================================================
-        e_x = x_des - x(1);
-        de_x = vx_des - vx_global;
-        s_x = de_x + lambda_x * e_x;
-        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
-        sin_theta_des = -F_x_req / Thrust_req;
-        sin_theta_des = max(min(sin_theta_des, 0.5), -0.5);
+        kp_theta = 40; kd_theta = 8; ki_theta = 10;
+
         theta_des = asin(sin_theta_des);
         e_theta = theta_des - theta;
         de_theta = 0 - q;
-        Moment_pitch_req = kp_theta * e_theta + kd_theta * de_theta;
+        Moment_pitch_req = kp_theta * e_theta + ki_theta * int_err_theta + kd_theta * de_theta;
 
         % =========================================================
-        %   YAW (IMBARDATA)
+        %   YAW 
         % =========================================================
+        kp_psi = 15;   kd_psi = 5; 
+
         % Calcolo errore angolo (normalizzazione [-pi,pi] 
         e_psi = psi_des - psi;
         e_psi = atan2(sin(e_psi), cos(e_psi));
@@ -120,6 +139,7 @@ switch test_id
         % Richiesta di Momento Yaw
         Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
 
+        %%
         % =========================================================
         %   MIXING E ALLOCAZIONE 
         % =========================================================
@@ -536,12 +556,8 @@ switch test_id
     case 12
     
     % =========================================================================
-    %  MODO 10: CROCIERA VELOCE - POSITION HOLD (Y=0) & WING DOWN
-    %  =========================================================================
-    %  Strategia:
-    %  1. OUTER LOOP (Posizione): Errore Y -> Richiesta Velocità Laterale (Vy_des).
-    %  2. INNER LOOP (Velocità): Errore Vy -> Richiesta Rollio (Phi_des).
-    %  3. YAW: Mantiene la prua (Nord o Target) impedendo la virata spontanea.
+    % CONTROLLO ORIZZONTALE: PID 
+    % YAW: Mantiene la prua (Nord o Target) impedendo la virata spontanea.
     % =========================================================================
 
     % --- 1. ESTRAZIONE STATI ---

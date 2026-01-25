@@ -163,7 +163,7 @@ Una volta ottenute le componenti di forza ortogonali richieste, il modulo della 
 %
 \subsubsection{Scelta del Controllo PID per il Loop Esterno}
 A differenza della fase di hovering (Capitolo \ref{sec:controllo_verticale}), dove il controllo di quota è stato affidato a una strategia \textit{Sliding Mode} (SMC) per garantire la massima reiezione dei disturbi, per la fase di volo orizzontale si è preferito adottare un classico regolatore PID con Feed-Forward.
-\\Questa scelta deriva dai risultati osservati in fase di simulazione preliminare. L'applicazione di un controllore SMC al loop esterno in configurazione \textit{fixed-wing} ha evidenziato criticità significative, dovute principalmente alla dinamica aerodinamica intrinsecamente più lenta rispetto ai rotori in hovering. Comandi troppo aggressivi generati dall'SMC tendevano a saturare gli attuatori e indurre oscillazioni.
+\\Questa scelta deriva dai risultati osservati in fase di simulazione preliminare. L'applicazione di un controllore SMC al loop esterno in configurazione \textit{fixed-wing} ha evidenziato criticità significative, dovute principalmente alla dinamica intrinsecamente più lenta rispetto ai rotori in hovering. Comandi troppo aggressivi generati dall'SMC tendevano a saturare gli attuatori e indurre oscillazioni.
 Il PID, grazie alla sua azione più progressiva e combinato con un termine di Feed-Forward per le forze note (Drag e Lift), si è rivelato la soluzione più stabile.
 
 % ============= INNER LOOP ===============

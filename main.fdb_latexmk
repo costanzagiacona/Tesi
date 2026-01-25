@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex main"] 1769184196.03647 "main.aux" "main.bbl" "main" 1769184495.45007 0
+["bibtex main"] 1769365724.62066 "main.aux" "main.bbl" "main" 1769365739.21116 0
   "./bibliografia.bib" 1768731482 2410 5180033513ffec778060e31485f88cb7 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1769184494 10152 b734d775c205f5c3029f8d5a62ffa054 "pdflatex"
+  "main.aux" 1769365738 9862 c3af6da1728e4e2b467bc494bbc0fb99 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1769184491.97364 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1769184495.45079 0
-  "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1769182207 81088 29d6fa367ac022d1b69251d68c0742e6 ""
+["pdflatex"] 1769365735.93026 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1769365739.21199 0
+  "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1769340851 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc" 1256929440 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -231,21 +231,21 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/titlesec/titlesec.sty" 1736608268 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1769182201 4089 2c75adf964ba3ee0feb074c14dcb710b ""
-  "capitoli/controllo_orizzontale.tex" 1768927171 23834 2f8de222d1f3e4e6354ceb022fd471a0 ""
-  "capitoli/controllo_verticale.tex" 1768839116 13604 d6c785675db1d6733d867b59751411dc ""
+  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1769363489 4031 5ac16b66989478c1503215b001e7831b ""
+  "capitoli/controllo_PID.tex" 1769363564 15282 51d6e8ead6c081ff6386e8ae5517441f ""
+  "capitoli/controllo_verticale.tex" 1769365735 15047 33ee56ae6575d73b5da1060867fd9f1f ""
   "capitoli/dimostrazione_SMC.tex" 1768672297 6788 4d743a5aecff6788b6fb20da7574246e ""
   "capitoli/modello_aggiornato.tex" 1769184491 6106 70d92df2bbd2d28d0a0b4bae51001ec2 ""
   "capitoli/panoramica_controllo.tex" 1768753489 7240 a5421850c7d55e012c9b423c012cabf3 ""
   "capitoli/stato_arte.tex" 1768924744 17306 4a3fec79f5acf0834ffb94dbb58f68ab ""
   "img/coaxial.png" 1768555921 66686 ab3b88c701116b77c7429fda20f3d465 ""
   "img/paper5.png" 1768556792 346972 4d1588acb44ec33f5651b4110dd6bbe0 ""
-  "main.aux" 1769184494 10152 b734d775c205f5c3029f8d5a62ffa054 "pdflatex"
-  "main.bbl" 1769184196 1892 fe15782e4554bd6f739b3a974dae61d4 "bibtex main"
-  "main.lof" 1769184494 683 5e91ccd97dc5ec7609f35a4cfebeaafa "pdflatex"
-  "main.out" 1769184494 8373 2143fa5ebf5ed9d3ce1428e14480a051 "pdflatex"
-  "main.tex" 1769182201 4089 2c75adf964ba3ee0feb074c14dcb710b ""
-  "main.toc" 1769184494 4609 38ed474bb0c32be2e841b0a5ab445ef7 "pdflatex"
+  "main.aux" 1769365738 9862 c3af6da1728e4e2b467bc494bbc0fb99 "pdflatex"
+  "main.bbl" 1769365724 1892 fe15782e4554bd6f739b3a974dae61d4 "bibtex main"
+  "main.lof" 1769365738 694 10765c1576e7b32697c17624cabdeaeb "pdflatex"
+  "main.out" 1769365738 8362 02eaef446914cbfb7a33ab0935634b79 "pdflatex"
+  "main.tex" 1769363489 4031 5ac16b66989478c1503215b001e7831b ""
+  "main.toc" 1769365738 4506 0588308c4bb62b130ef9252e27157919 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"

@@ -123,6 +123,10 @@ if disturbo == 1
     if t > 5.0 && t < 5.5
         F_disturbo = [10; 10; 30]; 
     end
+elseif disturbo == 2
+    if t > 2.0
+        F_disturbo = [10; 10; 30]; 
+    end
 end
 
 % FORZE TOTALI
@@ -188,7 +192,14 @@ theta_target = target(2);
 z_target = target(3);
 
 % 3. Calcolo delle derivate 
-if test_id == 2 || test_id == 3 || test_id == 12
+if test_id == 1
+    % Stato 28: Integrale errore Pitch
+    x28_dot = theta_target - theta;
+    x27_dot = 0;
+    x29_dot = 0;
+    x30_dot = 0;
+
+elseif test_id == 2 || test_id == 3 || test_id == 12
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     
@@ -200,6 +211,7 @@ if test_id == 2 || test_id == 3 || test_id == 12
     
     % Stato 30: Integrale errore Vy (Sideslip) 
     x30_dot = 0 - x(2);
+    
 else
     x27_dot = 0;
     x28_dot = 0;
