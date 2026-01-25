@@ -1,4 +1,4 @@
-function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo, target)
+function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo, target, simbolico)
 
 % check parametri
 
@@ -56,7 +56,7 @@ u = controlloVTOL_v3(t, params, x, test_id, target);
 
 %% dinamica tilt rotor
 
-simbolico = 0;
+% simbolico = 0;
 
 % rotori anteriori
 zeta = 0.8;
@@ -89,17 +89,7 @@ J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,
 
 %% wind frame e forze aerodinamiche
 
-% Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
-% alpha = atan2(x(6),x(4)); % angle of attack   
-% %beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
-% beta = 0;
-% 
-% Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
 F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-% if alpha >= pi/2-0.001
-%     %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
-%     F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
-% end
 F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 
 %% eq. forze BODY FRAME
@@ -112,32 +102,23 @@ F_g_body = F_grav(phi , theta , psi , params.m ,params.g); % body frame
 % disp(F_g_body);
 
 % THRUST 
-
 input_thrust = [params.k*x(21)^2;params.k*x(23)^2;params.k*x(25)^2;x(13);x(15);x(17);x(19)];
-%input_thrust = [params.k*u(1)^2;params.k*u(2)^2;params.k*u(3)^2;x(13);x(15);x(17);x(19)];
-
 F_th_body = F_thrust(input_thrust); % body frame
 
 % disp("F_th_body = ");
 % disp(F_th_body);
 
-% forze aerodinamiche nel body frame (DRAG+LIFT) (VECCHIO)
-% F_aero_body = F_aerodyn_wing(params.C_l,params.C_d,params.C_d_z, params.rho ,x(4),x(6), params.s);
-
-% F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
 F_aero_body = F_aeroWing + F_aeroBody;
-
 % disp("F_aero_body = ");
 % disp(F_aero_body);
 
 % CORIOLIS
-
 F_cor = F_Coriolis(Omega_body,V_body,params.m); % termine di Coriolis , sono nel body frame
-
-F_disturbo = [0; 0; 0]; 
 % disp("F_Coriolis = ");
 % disp(F_cor);
 
+F_disturbo = [0; 0; 0]; 
+% Raffica di vento (impulso)
 if disturbo == 1
     if t > 5.0 && t < 5.5
         F_disturbo = [10; 10; 30]; 
@@ -145,20 +126,14 @@ if disturbo == 1
 end
 
 % FORZE TOTALI
-
 F_tot_body = F_g_body+F_th_body+F_aero_body-F_cor + F_disturbo; % body frame
-
-
 % disp("F_tot_body = ");
 % disp(F_tot_body);
 
 
 %% eq. Momenti
 
-
 M_gyro_body = MomentGyroBody(params.I_body,Omega_body);
-%M_gyro_body = [0;0;0];
-
 % disp("M_gyroBody = ");
 % disp(M_gyro_body);
 
@@ -169,13 +144,10 @@ Iz3 = params.I_rotor_tail(3,3);
 
 
 M_th = M_thrust_2(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
-%M_th = M_thrust_noTorc(input_thrust,params.r_th_w_dx,params.r_th_w_sx,params.r_th_tail,params.b,params.k,x(22),x(24),x(26),Iz1,Iz2,Iz3);
-
 % disp("M_th = ");
 % disp(M_th);
 
 M_aero = MomentAero(params.r_aerodyn_w_dx,params.r_aerodyn_w_sx,params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-
 % disp("M_aero = ");
 % disp(M_aero);
 
@@ -186,8 +158,6 @@ Omega_rotor_tail = [0;x(18);x(20)];
 
 input_thrust_gyro = [x(21);x(23);x(25);x(13);x(15);x(17);x(19)];
 M_gyro_tilt = M_tilt_rotor(input_thrust_gyro,params.I_rotor_w_dx,params.I_rotor_w_sx,params.I_rotor_tail,Omega_rotor_w_dx , Omega_rotor_w_sx , Omega_rotor_tail);
-%M_gyro_tilt =[0;0;0];
-
 % disp("M_gyro_tilt = ");
 % disp(M_gyro_tilt);
 
@@ -199,41 +169,26 @@ alpha0z =1;
 alpha1z =1;
 
 M_stab_pinna = [-x(10)*(alpha0x+alpha1x*x(5)^2);0;-x(12)*(alpha0z+alpha1z*x(5)^2)];
-% con variante in assenza di rotore anteriore
-%[-x(10)*alpha0x-alpha1x*(x(5)^2 +x(6)^2);-x(11)*(alpha0y+alpha1y*x(6)^2);-x(12)*(alpha0z+alpha1z*x(5)^2)];
-% M_stab_pinna = [0;0;0];
-
-%M_tot1 = -M_gyro_body + M_th + M_aero +M_gyro_tilt; 
 M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
 
 % if M_tot(3) ~= 0 || M_tot(2)~=0
 %     debug = 1;
 % end
 
-%===================
-% DA VERIFICRE
-% ==================
 % =========================================================================
-% --- AGGIORNAMENTO DINAMICA INTEGRALI (STATI AGGIUNTIVI 27 e 28) ---
+% --- AGGIORNAMENTO DINAMICA INTEGRALI 
 % =========================================================================
 
 % 1. Ricostruzione variabili globali necessarie per il calcolo errore
 V_global_temp = R * V_body; % R è già calcolata sopra
 vx_global_curr = V_global_temp(1);
-vy_global_curr = V_global_temp(2);
-
-% 2. Definizione dei Setpoint
-% ATTENZIONE: Questi devono coincidere con quelli definiti dentro controlloVTOL_v3!
-% Se nel controller usi logiche adattive (es. if z < -10...), qui dovresti replicarle
-% per avere l'integrale esatto. Per ora usiamo i valori nominali del case 9.
 
 vx_target = target(1);    
 theta_target = target(2);  
 z_target = target(3);
 
-
-% 3. Calcolo delle derivate (Abilitato per Case 12 e Case 10 modificato)
-if test_id == 11 || test_id == 10 || test_id == 12
+% 3. Calcolo delle derivate 
+if test_id == 2 || test_id == 3 || test_id == 12
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     
@@ -243,41 +198,30 @@ if test_id == 11 || test_id == 10 || test_id == 12
     % Stato 29: Integrale errore Quota Z
     x29_dot = z_target - x(3);
     
-    % Stato 30: Integrale errore Vy (Sideslip) [NUOVO]
-    % Target = 0 (vogliamo scivolata nulla), Current = vy_body
-    % Errore = Target - Current = 0 - vy_body
+    % Stato 30: Integrale errore Vy (Sideslip) 
     x30_dot = 0 - x(2);
-    x31_dot = 0 - x(5);
 else
     x27_dot = 0;
     x28_dot = 0;
     x29_dot = 0;
     x30_dot = 0;
-    x31_dot = 0;
 end
 
 % --- Anti-windup simulazione ---
-
-% Velocità X
-if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
-
-% Pitch
-if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
-
-% Quota Z
-if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
-
-% Integrale y (Sideslip) [NUOVO]
-% Verifica se x ha dimensione sufficiente (per evitare crash se x ha solo 29 stati)
-if length(x) >= 30
-    % Limitiamo l'accumulo a un valore ragionevole (es. 15-20)
-    % Se l'integrale diventa troppo alto, il drone rimane inclinato anche senza vento
+if simbolico == 0
+    % Velocità X
+    if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
+    
+    % Pitch
+    if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
+    
+    % Quota Z
+    if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
+    
+    % Integrale y 
     if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
-    if abs(x(31)) > 20.0 && sign(x31_dot) == sign(x(31)); x31_dot = 0; end
-else
-    x30_dot = 0; % Sicurezza
-    x31_dot = 0; 
 end
+
 %=====================================================================
 
 
@@ -321,9 +265,9 @@ x24_dot = -2*zeta_rotor*omega_n_rotor*x(24) -(x(23)-u(2))*omega_n_rotor^2;
 x25_dot = x(26);
 x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2; 
 
-% x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
-
-
-x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot; x31_dot];
-
+if simbolico == 1
+    x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
+else
+    x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
+end
 end

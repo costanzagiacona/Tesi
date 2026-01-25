@@ -1,0 +1,444 @@
+\documentclass[aspectratio=169]{beamer} % Formato widescreen per il diagramma a blocchi
+
+% --- IMPOSTAZIONI TEMA ---
+\usetheme{Madrid}
+\usecolortheme{whale}
+\setbeamertemplate{navigation symbols}{} % Rimuove i simboli di navigazione in basso
+\setbeamertemplate{caption}[numbered]
+
+% --- PACCHETTI STANDARD ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern} % RISOLVE IL WARNING SUI FONT BOLD
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs} % Per tabelle più belle
+\usepackage{caption}
+% --- PACCHETTI PER GRAFICA E SCHEMI (TIKZ) ---
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, fit, calc, positioning}
+
+\usepackage{graphicx}
+\graphicspath{{../../img}}
+\renewcommand{\figurename}{Fig.}
+
+% --- METADATI ---
+\title{Modellazione e Controllo di un Tricottero VTOL}
+\subtitle{Dinamica, Architettura di Controllo e Allocazione}
+\author{Autore}
+\date{}
+
+\begin{document}
+
+% --- SLIDE TITOLO ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- INDICE ---
+\begin{frame}{Sommario}
+    \tableofcontents
+\end{frame}
+
+% ============================================================
+% PARTE 0: INTRODUZIONE
+% ============================================================
+\section{Introduzione}
+
+\begin{frame}{Introduzione}
+    L'interesse per gli UAV è in forte crescita (sorveglianza, agricoltura, search and rescue).
+    Tuttavia, le configurazioni classiche presentano limitazioni:
+
+    \vspace{0.2cm}
+   \begin{columns}[t]
+        \column{0.48\textwidth}
+        \textbf{Multirotori}
+        \begin{itemize}
+            % NOTA: Le parentesi graffe { } extra servono a proteggere il comando nel beamer
+            \item[{\textcolor{green}{\checkmark}}] Semplicità, Hovering stabile.
+            \item[{\textcolor{red}{$\times$}}] Bassa efficienza, Range ridotto.
+        \end{itemize}
+        \centering
+        \begin{figure}
+            \includegraphics[width=0.6\textwidth]{multicopter.png}
+            \caption{multicottero}
+        \end{figure} 
+        
+        \column{0.48\textwidth}
+        \textbf{Ala Fissa}
+        \begin{itemize}
+            \item[{\textcolor{green}{\checkmark}}] Alta efficienza, Lungo raggio.
+            \item[{\textcolor{red}{$\times$}}] Necessità piste, No hovering.
+        \end{itemize}
+        \centering
+        \begin{figure}
+            \includegraphics[width=0.6\textwidth]{fixed_wing.png}
+            \caption{aereo}
+        \end{figure}       
+    \end{columns}
+
+    % \vspace{0.2cm}
+    \centering
+    \textbf{Soluzione:} Configurazione Ibrida (VTOL)
+\end{frame}
+
+\begin{frame}{Il Concept VTOL Tilt-Rotor}
+    Il tricottero \textit{Tilt-Rotor} oggetto di studio combina i benefici delle due architetture:
+    
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item \textbf{Decollo/Atterraggio:} Verticale (come un elicottero), indipendente da infrastrutture.
+            \item \textbf{Crociera:} Volo aerodinamico (come un aereo) ruotando i propulsori.
+        \end{itemize}
+        
+        \vspace{0.5cm}
+        \begin{block}{La Sfida Ingegneristica}
+            Questa versatilità introduce una \textbf{dinamica complessa} e fortemente accoppiata, 
+            \\richiedendo strategie di controllo e allocazione avanzate.
+        \end{block}
+
+        \column{0.4\textwidth}
+        \centering
+        % Qui ci va l'immagine del TUO drone o un render CAD
+        % Usa [draft] se non hai ancora l'immagine per vedere il riquadro vuoto
+        \begin{figure}
+            \includegraphics[width=0.8\textwidth]{VTOL.png}
+            \caption{\footnotesize Rendering del velivolo.}
+        \end{figure}
+        
+    \end{columns}
+\end{frame}
+
+\begin{frame}{La Soluzione: Tricottero Tilt-Rotor VTOL}
+    Il velivolo proposto combina i vantaggi delle due architetture grazie alla capacità di \textbf{orientare i propulsori (Tilt)}.
+        \begin{itemize}
+            \item \textbf{Modalità Elicottero:} Decollo e atterraggio verticale.
+            \item \textbf{Modalità Aereo:} I rotori ruotano per generare spinta orizzontale (transizione).
+        \end{itemize}
+        
+        \vspace{0.4cm}
+        \begin{block}{La Sfida Ingegneristica}
+            Il sistema è \textbf{sottocostretto} in alcune fasi e presenta forti non-linearità e accoppiamenti dinamici (es. momento giroscopico durante il tilt).
+        \end{block}
+\end{frame}
+
+% ============================================================
+% 2. MODELLAZIONE
+% ============================================================
+\section{Modellazione Dinamica}
+
+\begin{frame}{Sistemi di Riferimento}
+    Per descrivere la dinamica si adottano due sistemi destrorsi:
+    \vspace{0.1cm}
+        \begin{itemize}
+            \item \textbf{Sistema Inerziale ($\mathcal{F}_g$):} 
+            Posizione $P_g = [x, y, z]^T$, Angoli $\Theta = [\phi, \theta, \psi]^T$.
+            \vspace{0.3cm}
+            \item \textbf{Sistema Solidale ($\mathcal{F}_b$):}
+            Origine nel CoM. Velocità lineari $V_b = [u, v, w]^T$, Velocità angolari $\Omega_b = [p, q, r]^T$.
+        \end{itemize}    
+        \centering
+        \begin{figure}
+            \includegraphics[width=0.5\textwidth]{sist_rif.png}
+            \caption{Sistemi di riferimento}
+        \end{figure}
+
+\end{frame}
+
+\begin{frame}{Analisi delle Forze e Attuazione}
+    Il tricottero dispone di 3 motori con gradi di libertà di tilt:
+    
+    \vspace{0.2cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Rotori Anteriori}
+        % SOSTITUISCI CON 'rotori_1_2.png'
+        \includegraphics[width=0.7\textwidth]{rotori_1_2.png}
+        \vspace{0.2cm}\\
+        \footnotesize{Tilt attorno all'asse $Y_b$.}
+        
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Rotore di Coda}
+        % SOSTITUISCI CON 'rotore_3.png'
+        \includegraphics[width=0.7\textwidth]{rotore_3.png}
+        \vspace{0.25cm}\\
+        \footnotesize{Tilt su $Y_b$ e $Z_b$ (Yaw control).}
+    \end{columns}
+    
+    \vspace{0.3cm}
+    % La dimensione del font deve avvolgere l'equazione, non starci dentro
+    {\footnotesize 
+    \begin{equation}
+        F_{th} = \sum_{i=1}^{3} R_{tilt,i} \cdot T_i \quad \text{(Forza propulsiva nel body frame)}
+    \end{equation}
+    }
+\end{frame}
+
+% --- Frame 2: Equazioni (Tuo Codice) ---
+\begin{frame}{Equazioni della Dinamica}
+    Modello Newton-Eulero per corpo rigido a 6 gradi di libertà:
+    
+    \begin{block}{Equazioni Vettoriali}
+    \begin{equation}
+        \begin{cases}
+            m \dot{V}_b + \Omega_b \times (m V_b) = F_{\mathrm{tot}} \\
+            I_b \dot{\Omega}_b + \Omega_b \times (I_b \Omega_b) = M_{\mathrm{tot}}
+        \end{cases}
+    \end{equation}
+    \end{block}
+    
+    Dove:
+    \begin{itemize}
+        \item $F_{\mathrm{tot}} = F_{\mathrm{th}} + F_g + F_{\mathrm{aero}}$
+        \item $M_{\mathrm{tot}} = M_{\mathrm{th}} + M_{\mathrm{drag}} + M_{\mathrm{aero}} + M_{\mathrm{gyro}}$
+    \end{itemize}
+\end{frame}
+
+% --- Frame 4: Forze (Tuo Codice) ---
+\begin{frame}{Forza Totale e Componenti}
+    La forza generata dai propulsori nel body frame è:
+    % Uso \footnotesize per far stare tutto nella slide
+    {\footnotesize 
+    \begin{equation}
+        F_{\mathrm{th}} = 
+        \begin{bmatrix}
+        c_{\theta_1} f_1 + c_{\theta_2} f_2 + c_{\theta_3} c_{\theta_4} f_3 \\
+        c_{\theta_3} s_{\theta_4} f_3 \\
+        -s_{\theta_1} f_1 - s_{\theta_2} f_2 - s_{\theta_3} f_3
+        \end{bmatrix}
+    \end{equation}
+    }
+    
+    A cui si aggiungono gravità e aerodinamica:
+    {\footnotesize
+    \begin{equation}
+        F_g = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}, \quad
+        F_{\mathrm{aero}} \approx 
+        \begin{bmatrix}
+            -\frac{1}{2}\rho S C_D v_x |v_x| \\
+            0 \\
+            -\frac{1}{2}\rho S C_L v_x^2
+        \end{bmatrix}
+    \end{equation}
+    }
+    \vspace{0.2cm}
+    \tiny{\textit{Nota: $c_\theta = \cos\theta, s_\theta = \sin\theta$. Angoli $\theta_{1,2}$ tilt frontali, $\theta_{3,4}$ tilt coda.}}
+\end{frame}
+
+% ============================================================
+% 3. ARCHITETTURA DI CONTROLLO (AGGIORNATA)
+% ============================================================
+\section{Architettura di Controllo}
+
+% --- SLIDE 1: Panoramica Strategia ---
+\begin{frame}{Strategia di Controllo Gerarchico}
+    È stata implementata un'architettura **a cascata** che disaccoppia la dinamica lenta (posizione) da quella veloce (assetto).
+    
+    \begin{block}{Logica degli Anelli}
+    \begin{enumerate}
+        \item \textbf{Outer Loop (Posizione $z$):} 
+        Usa \textbf{SMC} per calcolare la spinta $F_{req,z}$ necessaria a compensare la gravità e annullare l'errore di quota.
+        
+        \item \textbf{Inner Loop (Assetto e Posizione Planare):}
+        \begin{itemize}
+            \item \textit{Posizione ($x, y$):} Usa \textbf{SMC} per generare i "comandi virtuali" d'assetto ($\phi_{des}, \theta_{des}$).
+            \item \textit{Assetto ($\phi, \theta, \psi$):} Usa \textbf{PID} per inseguire gli angoli e stabilizzare le velocità angolari, calcolando i momenti ($M_x, M_y, M_z$).
+        \end{itemize}
+    \end{enumerate}
+    \end{block}
+
+    \vspace{0.2cm}
+    \textbf{Vettore di Stato:} $\mathbf{x} = [x, y, z, u, v, w, \phi, \theta, \psi, p, q, r]^T \in \mathbb{R}^{12}$
+\end{frame}
+
+% --- SLIDE 2: Schema a Blocchi (Il tuo TikZ) ---
+\begin{frame}{Schema a Blocchi}
+    \centering
+    % Resizebox adatta il diagramma alla larghezza della slide
+    \resizebox{0.75\textwidth}{!}{
+    \begin{tikzpicture}[auto, node distance=1.5cm, >=latex']
+        % --- STILI ---
+        \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3.5em, align=center, fill=white]
+        \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, node distance=1.5cm]
+        \tikzstyle{input} = [coordinate]
+        \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, black!60]
+    
+        % --- 1. RIGA: QUOTA (Z) ---
+        \node [input] (ref_z) {};
+        \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
+        \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
+        \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
+    
+        % --- 2. RIGA: POSIZIONE Y -> ROLL (PHI) ---
+        \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
+        \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
+        \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
+        \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
+        \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {PID\\ROLL};
+        \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
+    
+        % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
+        \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
+        \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
+        \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
+        \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
+        \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {PID\\PITCH};
+        \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
+    
+        % --- 4. RIGA: YAW (PSI) ---
+        \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
+        \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
+        \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {PID\\YAW}; 
+        \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
+    
+        % --- MIXER E DRONE ---
+        \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MIXER};
+        \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
+    
+        % --- COLLEGAMENTI ---
+        % Z Loop
+        \draw [->] (ref_z) -- (sum_z);
+        \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
+        \draw [->] (smc_z) -- node[above, font=\footnotesize] {$F_{req,z}$} (mixer.west |- smc_z);
+        
+        % Bus spinta
+        \draw [->] (smc_z.south) -- ++(0,-0.3) -| ($(sum_y)!0.5!(smc_phi)$) coordinate (thrust_bus) -- (thrust_bus |- smc_theta.south);
+        \draw [->] (thrust_bus |- smc_phi.north) -- ++(0,-0.2) -| ([xshift=-0.2cm]smc_phi.north);
+        \draw [->] (thrust_bus |- smc_theta.north) -- ++(0,-0.1) -| ([xshift=-0.2cm]smc_theta.north);
+
+        % Y -> Phi Loop
+        \draw [->] (ref_y) -- (sum_y);
+        \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
+        \draw [->] (smc_phi) -- node[above, font=\footnotesize] {$\phi_{des}$} (sum_roll);
+        \draw [->] (sum_roll) -- node[above, font=\footnotesize] {$e_\phi$} (pid_roll);
+        \draw [->] (pid_roll) -- node[above, near end, font=\footnotesize] {$M_x$} (mixer.west |- pid_roll);
+    
+        % X -> Theta Loop
+        \draw [->] (ref_x) -- (sum_x);
+        \draw [->] (sum_x) -- node[above, font=\footnotesize] {$e_x$} (smc_theta);
+        \draw [->] (smc_theta) -- node[above, font=\footnotesize] {$\theta_{des}$} (sum_pitch);
+        \draw [->] (sum_pitch) -- node[above, font=\footnotesize] {$e_\theta$} (pid_pitch);
+        \draw [->] (pid_pitch) -- node[above, near end, font=\footnotesize] {$M_y$} (mixer.west |- pid_pitch);
+    
+        % Yaw Loop
+        \draw [->] (ref_psi) -- (sum_yaw);
+        \draw [->] (sum_yaw) -- node[above, font=\footnotesize] {$e_\psi$} (pid_yaw);
+        \draw [->] (pid_yaw) -- node[above, near end, font=\footnotesize] {$M_z$} (mixer.west |- pid_yaw);
+    
+        % Mixer -> Drone
+        \draw [->] (mixer) -- (drone);
+    
+        % Feedback
+        \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start) -- ++(0,-6.5) coordinate (fb_corner) -- (fb_corner -| sum_z) coordinate (fb_end) -- ++(-1,0); 
+        \draw [->] (fb_end -| sum_z) -- (sum_z.south);
+        \draw [->] (fb_end -| sum_y) -- (sum_y.south);
+        \draw [->] (fb_end -| sum_x) -- (sum_x.south);
+        \draw [->] (fb_end -| sum_roll) -- (sum_roll.south);
+        \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
+        \draw [->] (fb_end -| sum_yaw) -- (sum_yaw.south);
+        \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
+        
+        % Box Label
+        \node [container, fit=(sum_z) (smc_z), label=above:\textbf{Outer Loop}] {};
+        \node [container, fit=(sum_y) (smc_phi) (pid_roll) (sum_roll) (sum_x) (smc_theta) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop}] {};
+    \end{tikzpicture}
+    }
+\end{frame}
+
+% --- SLIDE 3: Equazioni SMC ---
+\begin{frame}{Algoritmi: Sliding Mode Control (SMC)}
+    Il controllo SMC garantisce robustezza utilizzando una legge di switching basata sulla superficie di scorrimento $\sigma = \dot{e} + \lambda e$.
+    
+    \begin{block}{Controllo Verticale ($F_{req,z}$)}
+    \footnotesize
+    \begin{equation}
+        F_{req,z} = m g + F_{aero,z} - m \lambda_z \dot{e}_z - m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)
+    \end{equation}
+    \end{block}
+
+    \vspace{0.2cm}
+    \textbf{Controllo Planare (Inversione Dinamica):}
+    L'accelerazione richiesta dagli SMC di posizione viene convertita in angoli di assetto desiderati:
+    \footnotesize
+    \begin{align}
+        \phi_{des} &= \arcsin\left( \frac{m}{T} \cdot u_y \right) \quad (\text{Rollio $\to$ Spostamento lat.}) \\
+        \theta_{des} &= \arcsin\left( - \frac{m}{T} \cdot u_x \right) \quad (\text{Beccheggio $\to$ Spostamento long.})
+    \end{align}
+\end{frame}
+
+% --- SLIDE 4: Control Allocation (1/2) ---
+\begin{frame}{Control Allocation: Approccio Sequenziale}
+    Il mixer mappa i comandi $[F_{req}, M_x, M_y, M_z]$ sugli attuatori ($\omega_{1,2,3}, \delta$). Il sistema è risolto in modo sequenziale.
+
+    \textbf{1. Equilibrio Longitudinale (Pitch):}
+    Il motore di coda ($T_3$) bilancia il momento $M_y$ e contribuisce al sostentamento.
+    {\footnotesize
+    \begin{equation}
+        \omega_3^2 = \frac{F_{req} d_{mx} - M_y}{K \sin\theta_3 (d_{mx} - d_{tx}) + b \cos\theta_3} \quad \Rightarrow \quad T_3 = K \omega_3^2
+    \end{equation}
+    }
+    
+    La spinta residua necessaria ai motori anteriori è:
+    {\footnotesize
+    \begin{equation}
+        T_{front\_tot} = F_{req} - T_3 \sin\theta_3
+    \end{equation}
+    }
+\end{frame}
+
+% --- SLIDE 5: Control Allocation (2/2) ---
+\begin{frame}{Control Allocation: Roll e Yaw}
+    \textbf{2. Equilibrio Laterale (Roll):}
+    La spinta anteriore $T_{front\_tot}$ viene ripartita per generare $M_x$.
+    Definito $T_i = T_{front\_tot} / 2$:
+    {\footnotesize
+    \begin{equation}
+        T_1 = T_i - \frac{M_x}{2 d_{my}}, \quad T_2 = T_i + \frac{M_x}{2 d_{my}}
+    \end{equation}
+    }
+
+    \textbf{3. Controllo Imbardata (Yaw):}
+    Si calcola l'angolo di tilt $\delta$ del rotore (o meccanismo) di coda.
+    {\footnotesize
+    \begin{equation}
+        \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{F_{thrust} d_{braccio}} \right), \delta_{max} \right)
+    \end{equation}
+    }
+    \vspace{0.2cm}
+    \tiny{\textit{Nota: Le formule sono semplificate per la presentazione. Dettagli completi in tesi.}}
+\end{frame}
+
+% ============================================================
+% 5. CONCLUSIONI
+% ============================================================
+\section{Conclusioni}
+
+\begin{frame}{Conclusioni e Sviluppi Futuri}
+    \textbf{Risultati ottenuti:}
+    \begin{itemize}
+        \item Modellazione completa a 6-DOF per tricottero tilt-rotor.
+        \item Il controllo SMC ha dimostrato robustezza superiore ai PID classici.
+        \item L'algoritmo di allocazione gestisce efficacemente la ridondanza.
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    \textbf{Sviluppi Futuri:}
+    \begin{itemize}
+        \item Validazione sperimentale su prototipo reale (Pixhawk/Ardupilot).
+        \item Studio della fase di transizione completa (hover $\to$ volo alare).
+        \item Ottimizzazione energetica dell'allocazione.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \centering
+    \Huge \textbf{Grazie per l'attenzione}
+    
+    \vspace{1cm}
+    \Large Domande?
+\end{frame}
+
+\end{document}

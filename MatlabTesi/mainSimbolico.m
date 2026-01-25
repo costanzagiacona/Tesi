@@ -117,11 +117,12 @@ syms x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 
 x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;x13;x14;x15;x16;x17;x18;x19;x20;x21 ;x22 ;x23 ;x24; x25; x26];
 
 % variante volo verticale
-x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;pi/2;x14;pi/2;x16;x17;x18;-pi/2;x20;x21 ;x22 ;x23 ;x24; x25; x26];
+% x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;pi/2;x14;pi/2;x16;x17;x18;-pi/2;x20;x21 ;x22 ;x23 ;x24; x25; x26];
 
 % variante in assenza di rotore di coda
 %x = [x1;x2;x3;x4;x5;x6;x7;x8;x9;x10;x11;x12;x13;x14;x15;x16;0;0;0;0;x21 ;x22 ;x23 ;x24; 0; 0];
 
 t = 0;
-x_dot=simulazioneVTOL3(t, x, parametri, -1, 0, [0 0 0]); % nel body frame
+simbolico = 1;
+x_dot=simulazioneVTOL3(t, x, parametri, -1, 0, [0 0 0], simbolico); % nel body frame
 disp(x_dot(1:12));

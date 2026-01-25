@@ -1,7 +1,0 @@
-\babel@toc {italian}{}\relax 
-\babel@toc {italian}{}\relax 
-\beamer@sectionintoc {1}{Sistemi di Riferimento e Dinamica}{3}{0}{1}
-\beamer@sectionintoc {2}{Analisi delle Forze}{5}{0}{2}
-\beamer@sectionintoc {3}{Architettura di Controllo}{7}{0}{3}
-\beamer@sectionintoc {4}{Algoritmi di Controllo}{9}{0}{4}
-\beamer@sectionintoc {5}{Control Allocation}{10}{0}{5}

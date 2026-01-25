@@ -7,25 +7,28 @@ clear functions
 
 % flag print
 paramFlag = 0; % se 1 print del valore dei parametri
-
-tspan = [0 30];              % intervallo di simulazione
-
-fase = 3;       % flag per fase di volo
+% inizializzazione
 test_id = 0;    % flag per cambiare controllo
+disturbo = 0;
 
-test_casi = 1;  % flag per cambiare le condizioni di simulazione
+tspan = [0 100];              % intervallo di simulazione
+
+% flag per fase di volo
+% fase = 1 verticale
+% fase = 3 orizzontale
+fase = 1;       
+
+test_casi = 3;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero
-% test_casi = 4 => disturbo 
+% test_casi = 3 => disturbo 
 
 % CONTROLLO ORIZZONTALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali velocità inferiori a 25 m/s
-% test_casi = 3 => condizioni iniziali quota maggiore di -10 
-% test_casi = 4 => disturbo 
+% test_casi = 3 => disturbo 
 
-disturbo = 0;
 
 % condizioni desiderate volo orizzontale 
 vx_des = 25;
@@ -34,9 +37,9 @@ z_des = -10;
 target = [vx_des theta_des z_des];
 
 if fase == 1
-    test_id = 5;
+    test_id = 1;
 elseif fase == 3
-    test_id = 10;
+    test_id = 3;
 end
 
 new_model = 1;
@@ -236,15 +239,13 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 
 %% SIMULAZIONE
 
-x0 = zeros(31,1);            % stato iniziale 
+x0 = zeros(30,1);            % stato iniziale 
 
 if fase == 1
 
     switch test_casi
         case 1
             x0(4) = 0; % condizione iniziale della velocità lungo X
-            % x0(7) = pi/10;
-            % x0(9) = pi/10;
             x4eq = x0(4);
             x0(3) = 0;
             x0(13)= pi/2;
@@ -265,11 +266,9 @@ if fase == 1
             x0(17) = atan2(-parametri.d_tx*parametri.k, parametri.b);
             x0(19)= -pi/2;
 
-        case 4
+        case 3
             disturbo = 1;
             x0(4) = 0; % condizione iniziale della velocità lungo X
-            % x0(7) = pi/10;
-            % x0(9) = pi/10;
             x4eq = x0(4);
             x0(3) = 0;
             x0(13)= pi/2;
@@ -279,22 +278,6 @@ if fase == 1
             x0(19)= -pi/2;
 
     end
-
-elseif fase == 2
-    
-    % Partiamo già in volo stabile
-    x0(3) = -10;    % 10 metri altezza
-    x0(4) = 0.1;    % Velocità quasi nulla
-    x0(7) = 0; x0(8) = 0; x0(9) = 0; % Assetto piatto
-    
-    % Motori già avviati (circa hover)
-    hover_omega = sqrt((parametri.m * parametri.g / 3) / parametri.k); % stima grezza
-    x0(21) = hover_omega;
-    x0(23) = hover_omega;
-    x0(25) = hover_omega;
-    
-    % Tilt verticali
-    x0(13) = pi/2; x0(15) = pi/2; x0(17) = pi/2;
 
 elseif fase == 3
     
@@ -326,20 +309,7 @@ elseif fase == 3
             x0(23)= x0(21);
 
         case 3
-            % quota maggiore
-            x0(3) = -15;
-            x0(4) = 25;
-            x4eq = x0(4);
-            F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
-            F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
-            F0_x = F_drag + F_drag_ali;
-            T_i = F0_x/2;
-            x0(21)= sqrt(T_i/parametri.k);
-            x0(23)= x0(21);
-
-        case 4
             % disturbi
-            disturbo = 0;
             x0(3) = -10;
             x0(4) = 25;
             x4eq = x0(4);
@@ -354,9 +324,8 @@ elseif fase == 3
             x0(23)= x0(21);
 
     end
-
     
-    %inclinazione iniziale dei rotori anteriori (per il volo verticale)
+    %inclinazione iniziale dei rotori 
     x0(13) = 0;
     x0(15) = 0;
     x0(17) = 0;
@@ -364,8 +333,9 @@ elseif fase == 3
 
 end
 
+simbolico = 0;
 options = odeset('RelTol',1e-3,'AbsTol',1e-6);
-[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo, target), tspan, x0, options);
+[t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo, target, simbolico), tspan, x0, options);
 
 %per plot controllo
 global U_values
@@ -584,63 +554,3 @@ if flagPlot == 1
     set(gca,'FontSize',14)
  
 end
-
-%%
-% figure(5)
-% 
-% subplot(2,1,1)
-% h1 = plot(time, xp, 'r', time, yp, 'b', time, zp, 'g');
-% yline(10,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-% set(h1, 'LineWidth', 2)
-% legend('x_{inertial frame}','y_{inertial frame}','z_{inertial frame}', ...
-%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
-% ylim([-20 50]); 
-% grid on
-% xlabel('Time [s]', 'FontSize', 14)
-% ylabel('Posizione [m]', 'FontSize', 14)
-% % title('Andamento stati (x1,...,x12)','FontSize',16)
-% title('Dinamica Traslazionale (Posizione e Velocità)', 'FontSize', 16, 'FontWeight', 'bold');
-% set(gca, 'FontSize', 14)
-% 
-% 
-% subplot(2,1,2)
-% h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g');
-% if fase == 1
-%     h3 = yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-% elseif fase == 3
-%     h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-% end
-% set(h2, 'LineWidth', 2)
-% legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
-%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
-% ylim([-20 30]); 
-% grid on
-% xlabel('Time [s]', 'FontSize', 14)
-% ylabel('Velocità [m/s]', 'FontSize', 14)
-% set(gca, 'FontSize', 14)
-% 
-% figure(6)
-% 
-% subplot(2,1,1)
-% h3 = plot(time, phi, 'r', time, theta, 'b', time, psi, 'g');
-% set(h3, 'LineWidth', 2)
-% legend('\phi (roll,x)','\theta (pitch,y)','\psi (yaw,z)', ...
-%     'FontSize', 14, 'Interpreter','tex', 'Location','best')
-% ylim([-10 20]);
-% grid on
-% xlabel('Time [s]', 'FontSize', 14)
-% ylabel('Angoli [grad]', 'FontSize', 14)
-% title('Dinamica Rotazionale (Angoli e Vel. Angolari)', 'FontSize', 16, 'FontWeight', 'bold');
-% set(gca, 'FontSize', 14)
-% 
-% subplot(2,1,2)
-% h4 = plot(time, p, 'r', time, q, 'b', time, r, 'g');
-% set(h4, 'LineWidth', 2)
-% legend('p','q','r', 'FontSize', 14, 'Interpreter','tex', 'Location','best')
-% ylim([-1 2]);
-% grid on
-% xlabel('Time [s]', 'FontSize', 14)
-% ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
-% set(gca, 'FontSize', 14)
-
-

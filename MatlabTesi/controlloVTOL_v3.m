@@ -2,7 +2,6 @@ function u = controlloVTOL_v3(t, params, x, test_id, target)
 
 % Preallocazione
 u = zeros(7,1);
-time = 0;
 
 % TEST
 
@@ -10,40 +9,17 @@ time = 0;
 
 % 0 : Nessun controllo (solo gravità)
 
-% 1 : compensazione attrito lungo X 
+% 1 : Controllo verticale
 
-% 2 : controllo velocità lungo X e posizione e velocità lungo Z
+% 2 : Controllo orizzontale 
 
-% 3 : volo verticale (senza momento torcente)  
-% NB: per il test 3:
-% dmx = -(1/2)*dtx (serve a compensare momento di pitch)
-% usare M_thrust_noTorc (tolgo momento torcente)
-% mettere il rotore di coda inclinato verticalmente (x0(17)= pi/2; x0(19)=0)
-
-% 4 : volo verticale (con momento torcente)  
-
-% angoli di roll ,pitch, yaw
-phi = x(7); theta = x(8); psi = x(9);
-p = x(10); q = x(11); r = x(12);
-R = matriceRotazione(phi,theta,psi);
-V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-V_global = R*V_body;
-vx_global = V_global(1); 
-vy_global = V_global(2);
-vz_global = V_global(3);
-   
-persistent integral_error_theta 
-if isempty(integral_error_theta)
-    integral_error_theta = 0;
-end
-persistent err_z_int err_v_int;
+% 3 : Controllo orizzontale con momenti 
 
 switch test_id
 
     case -1
         %debug
         syms u1 u2 u3 u4 u5 u6 u7
-        u = [u1;u2;u3;u4;u5;u6;u7];
         
         % variante in assenza di rotore di coda 
         u = [u1;u2;0;u4;u5;0;0];
@@ -53,167 +29,16 @@ switch test_id
         u = zeros(7,1);
 
     case 1
-
-        u = zeros(7,1);
-
-        x4eq = 25;
-
-        D=(params.rho*params.s*params.C_d*(x4eq)^2);
-  
-        omega1_2 = (0.5)*(D/params.k);
-        omega2_2 = (0.5)*(D/params.k);
-        omega3_2 = (0.0)*(D/params.k);
-
-
-        u(1) = sqrt(omega1_2);
-        u(2) = sqrt(omega2_2);
-        u(3) = sqrt(omega3_2);  
-
-
-
-    case 2
-
-        % per poter considerare azione derivativa devo considerare le velocità nel
-        % frame inerziale e non body frame
-
-        R = matriceRotazione(phi,theta,psi); % matrice di rotazione
-        V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-        V_global = R*V_body ;
-        vx_global = V_global(1);
-        %vy_global = V_global(2);
-        vz_global = V_global(3);
-
-        % controllo 
-
-        u = zeros(7,1);
-        
-        vx_des = 25;
-        kp_x = 5;
-        F_x_des = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
-        F_x_des = F_x_des +kp_x*(vx_des-x(4));
-
-        kp_z = -3;
-        kd_z = -5;
-        z_des = -10; % asse z positivo verso il basso
-        vz_des = 0; % hovering
-
-        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;      
-        F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
-
-
-        % theta_bar = atan2(F_z_des,F_x_des);
-        % 
-        % u(4) = theta_bar;
-        % u(5) =u(4);
-        % u(1) = sqrt((F_z_des/(2*sin(u(4))))/params.k);
-        % u(2)=u(1);
-
-        T_tot = sqrt(F_x_des^2 + F_z_des^2);
-        theta_bar = atan2(F_z_des,F_x_des);
-
-        % Assegna ai due rotori anteriori
-        T_i = T_tot/2;
-
-        u(1) = sqrt(T_i/params.k);   % omega1
-        u(2) = u(1);                 % omega2
-        u(4) = theta_bar;             % tilt rotore 1
-        u(5) = theta_bar;             % tilt rotore 2
-
-    
-    case 3
-
-        % NB: per questo test annullare momento torcente
-        % e dmx = -(1/2)*dtx  (serve a compensare momento di pitch)
-
-        % per poter considerare azione derivativa devo considerare le velocità nel
-        % frame inerziale e non body frame
-
+        % --- CONTROLLO VERTICALE
         % angoli di roll ,pitch, yaw
-        phi = x(7);
-        theta = x(8);
-        psi = x(9);
-
-        R = matriceRotazione(phi,theta,psi); % matrice di rotazione
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10); q = x(11); r = x(12);
+        R = matriceRotazione(phi,theta,psi);
         V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-        V_global = R*V_body ;
-        %vx_global = V_global(1);
-        %vy_global = V_global(2);
+        V_global = R*V_body;
+        vx_global = V_global(1); 
+        vy_global = V_global(2);
         vz_global = V_global(3);
-
-        % controllo
-
-        u = zeros(7,1);
-
-        % durante la fase di volo verticale, i rotori generano thrust verso
-        % l'alto
-
-        u(4)=pi/2;
-        u(5)=pi/2;
-        u(6)=pi/2;
-        u(7)=0;
-
-        kp_z = -5;
-        kd_z = -10;
-        z_des = -10; % asse z positivo verso il basso
-        vz_des = 0; % hovering
-
-        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
-        F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
-
-        T_tot = F_z_des;
-        T_i = T_tot/3;
-
-        u(1) = sqrt(T_i/params.k);   % omega1
-        u(2) = u(1);                 % omega2
-        u(3) = u(1);                 % omega3
-
-    case 4
-
-        % per poter considerare azione derivativa devo considerare le velocità nel
-        % frame inerziale e non body frame  
-
-        % angoli di roll ,pitch, yaw
-        phi = x(7);
-        theta = x(8);
-        psi = x(9);
-
-        R = matriceRotazione(phi,theta,psi); % matrice di rotazione
-        V_body = [x(4);x(5);x(6)]; % velocità nel body frame
-        V_global = R*V_body ;
-        %vx_global = V_global(1);
-        %vy_global = V_global(2);
-        vz_global = V_global(3);
-
-        % controllo
-
-        u = zeros(7,1);
-
-        kp_z = -5;
-        kd_z = -10;
-        z_des = -10; % asse z positivo verso il basso
-        vz_des = 0; % hovering
-
-        % con nuovo modello
-        F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
-        % con vecchio modello
-        % F_z_des = -params.C_l*params.rho*params.s*x(4)^2 +params.m*params.g*cos(x(8))*cos(x(7)) - params.rho*params.s*params.C_d_z*sign(x(6))*x(6)^2;
-        F_z_des = F_z_des +kp_z*(z_des-x(3))+kd_z*(vz_des-vz_global); %PD
-
-        theta3 = atan2(((-params.d_tx*params.k)/params.b),1);
-        omega3_2 = (params.d_mx*F_z_des)/(params.d_mx*params.k*sin(theta3)+params.b*cos(theta3)-params.d_tx*params.k*sin(theta3));
-        omega_2= (F_z_des-omega3_2*params.k*sin(theta3))/(2*params.k);
-
-        u(1)=sqrt(omega_2);
-        u(2)=u(1);
-        u(3)=sqrt(omega3_2);
-        u(4)=pi/2;
-        u(5)=pi/2;
-        u(6)=theta3;
-        u(7)=-pi/2;
-
-    case 5
-        % --- CONTROLLO VERTICALE ROBUSTO + YAW CON TILT (X, Y, Z, PSI) ---
-        u = zeros(7,1);
 
         % 2. Parametri Obiettivo
         z_des = -10;    vz_des = 0;
@@ -234,11 +59,11 @@ switch test_id
         kp_phi = 40;   kd_phi = 8; 
         kp_theta = 40; kd_theta = 8;
 
-        % NUOVO: PD Yaw (Imbardata)
+        % PD Yaw (Imbardata)
         kp_psi = 15;   kd_psi = 5; 
 
         % =========================================================
-        %   LOOP Z (QUOTA) - Invariato
+        %   LOOP Z (QUOTA) 
         % =========================================================
         e_z = z_des - x(3);           
         de_z = vz_des - vz_global;    
@@ -248,11 +73,14 @@ switch test_id
         F_lift = -params.C_l*params.rho*params.s*x(4)^2;
         u_smc_z = params.m * lambda_z * de_z + K_z_smc * tanh(s_z / Phi_z);
         % Thrust_req = F_grav + F_drag_z + F_lift - u_smc_z;
+        
+        % Anche senza conoscere i termini in feedforward, il controllore
+        % stabilizza la quota
         Thrust_req = F_grav - u_smc_z;
         if Thrust_req < 1; Thrust_req = 1; end
 
         % =========================================================
-        %   LOOP Y (LATERALE -> ROLLIO) - Invariato
+        %   LOOP Y (LATERALE -> ROLLIO)
         % =========================================================
         e_y = y_des - x(2);          
         de_y = vy_des - vy_global;   
@@ -267,7 +95,7 @@ switch test_id
         Moment_roll_req = kp_phi * e_phi + kd_phi * de_phi;
 
         % =========================================================
-        %   LOOP X (LONGITUDINALE -> PITCH) - Invariato
+        %   LOOP X (LONGITUDINALE -> PITCH) 
         % =========================================================
         e_x = x_des - x(1);
         de_x = vx_des - vx_global;
@@ -281,12 +109,11 @@ switch test_id
         Moment_pitch_req = kp_theta * e_theta + kd_theta * de_theta;
 
         % =========================================================
-        %   NUOVO LOOP: YAW (IMBARDATA)
+        %   YAW (IMBARDATA)
         % =========================================================
-        % Calcolo errore angolo (gestione wrap -pi/pi opzionale ma consigliata)
+        % Calcolo errore angolo (normalizzazione [-pi,pi] 
         e_psi = psi_des - psi;
         e_psi = atan2(sin(e_psi), cos(e_psi));
-        % Se necessario normalizzare tra -pi e pi: e_psi = atan2(sin(e_psi), cos(e_psi));
         
         de_psi = r_des - r;
         
@@ -294,7 +121,7 @@ switch test_id
         Moment_yaw_req = kp_psi * e_psi + kd_psi * de_psi;
 
         % =========================================================
-        %   MIXING E ALLOCAZIONE AGGIORNATA
+        %   MIXING E ALLOCAZIONE 
         % =========================================================
         theta3_ideal = atan2(((-params.d_tx*params.k)/params.b),1);
         theta3_actual = x(17); 
@@ -325,13 +152,6 @@ switch test_id
         omega_sx_sq = omega_front_sq_base + delta_omega_sq; 
         
         % --- 3. Mixing Yaw (Tilt Differenziale) ---
-        % Per generare Yaw, tiltiamo i motori in direzioni opposte.
-        % Momento Yaw = (F_motore * sin(tilt)) * braccio_y * 2 (circa)
-        % Assumendo piccoli angoli: sin(delta) ~ delta.
-        % Forza orizzontale disponibile = F_front_tot_z (approx, assumendo tilt piccoli)
-        
-        % Calcolo angolo di tilt differenziale richiesto (in radianti)
-        % Nota: F_front_tot_z agisce come guadagno di autorità. Più spinta ho, meno tilt serve.
         delta_tilt_yaw = Moment_yaw_req / (F_front_tot_z * params.d_my);
         
         % Saturazione del tilt per sicurezza (es. max 20 gradi = 0.35 rad)
@@ -339,13 +159,10 @@ switch test_id
         delta_tilt_yaw = max(min(delta_tilt_yaw, max_tilt), -max_tilt);
 
         % Assegnazione Tilt (Partendo da pi/2 verticale)
-        % Segni: Dipendono dalla geometria esatta. 
-        % Logica standard: Per Yaw positivo (naso a sinistra), 
-        % Motore DX spinge indietro (Tilt > 90), Motore SX spinge avanti (Tilt < 90).
         tilt_1 = pi/2 + delta_tilt_yaw; % Motore DX (1)
         tilt_2 = pi/2 - delta_tilt_yaw; % Motore SX (2)
 
-        % Saturazioni Motori
+        % le omega non devono diventare negative
         if omega_dx_sq < 0; omega_dx_sq = 0; end
         if omega_sx_sq < 0; omega_sx_sq = 0; end
         if omega3_sq < 0; omega3_sq = 0; end
@@ -353,425 +170,14 @@ switch test_id
         u(1) = sqrt(omega_dx_sq);    
         u(2) = sqrt(omega_sx_sq);    
         u(3) = sqrt(omega3_sq);      
-        u(4) = tilt_1;  % Tilt Destro Modulato
-        u(5) = tilt_2;  % Tilt Sinistro Modulato
+        u(4) = tilt_1; 
+        u(5) = tilt_2; 
         u(6) = theta3_ideal; 
         u(7) = -pi/2;
-    
-    case 6
 
-        % === RIFERIMENTI ===
-        V_des = 25;    % Manteniamo questa velocità costante
-    
-        % === 1. CONTROLLO DI VELOCITA' (CRUISE CONTROL) ===
-        % Usiamo un PI (Proporzionale-Integrale) per annullare l'errore statico
-        Kp_v = 5;  % Guadagno proporzionale (regola la reattività)
-        Ki_v = 3;   % Guadagno integrale (elimina l'errore a regime dovuto al Drag)
-        
-        % Variabile persistente per l'integratore
-        % persistent err_v_int;
-        if isempty(err_v_int) || x(1) == 0 % Reset all'inizio
-            err_v_int = 0;
-        end
-        
-        % Calcolo errore
-        err_v = V_des - x(4);% vx_global;
-        
-        % Accumulo errore (integrale) 
-        err_v_int = err_v_int + err_v * 0.01; % Assumiamo dt approx
-        err_v_int = max(-50, min(50, err_v_int)); % Saturazione integrale
-        
-        % Feedforward: Calcoliamo la spinta necessaria per vincere il Drag a 25m/s
-        F_drag = 0.5*params.rho*params.s_body_x*params.C_d_x*sign(x(4))*x(4)^2;
-        F_drag_ali = params.rho*params.s*params.C_d*sign(x(4))*x(4)^2;
-        
-        % Comando Totale di Spinta
-        Thrust_cmd = F_drag + F_drag_ali + Kp_v*err_v + Ki_v*err_v_int;
-        Thrust_cmd = max(0, Thrust_cmd); % Non possiamo avere spinta negativa
-    
-        % === 3. ASSEGNAZIONE AI MOTORI ===
-        % Ripartiamo la spinta sui due motori anteriori
-        T_dx = 0.5 * Thrust_cmd;
-        T_sx = 0.5 * Thrust_cmd;
-        
-        % Saturazione fisica (minimo 0)
-        T_dx = max(0, T_dx);
-        T_sx = max(0, T_sx);
-    
-        % Convertiamo Forza in Velocità angolare (rad/s)
-        % T = k * omega^2 -> omega = sqrt(T/k)
-        omega_1 = sqrt(T_dx / params.k); % Motore DX
-        omega_2 = sqrt(T_sx / params.k); % Motore SX
-        omega_3 = 0;                     % Coda SPENTA
-    
-        % === 4. SERVOMOTORI (TILT) ===
-        % Tutto bloccato a 0 gradi (spinta orizzontale)
-        tilt_1 = 0; 
-        tilt_2 = 0;
-        
-        % Coda 
-        tilt_3 = 0;
-        tilt_4 = 0;
-    
-        u = [omega_1; omega_2; omega_3; tilt_1; tilt_2; tilt_3; tilt_4];
-    
-      
-    case 7
-        % =================================
-        %      VOLO ORIZZONTALE STABILE
-        %      SOLO PID - NON ROBUSTO
-        % =================================
-
-        % --- PARAMETRI OBIETTIVO ---
-        V_des = 25; z_des = -10;
-        theta_des = 0;
-        phi_des = 0;
-        psi_des = 0;
-        
-        % --- 1. CONTROLLO QUOTA (Fz richiesta) ---
-        e_z = z_des - x(3);
-        de_z = 0 - vz_global;
-        if t == 0; err_z_int = 0; end
-        err_z_int = err_z_int + e_z * 0.01;
-        err_z_int = max(min(err_z_int, 5), -5);
-
-        % Calcoliamo quanta forza verticale serve per stare a -10m
-        % Usiamo un PID che genera un'accelerazione verticale desiderata
-        kp_z = 12.0; ki_z = 3.0; kd_z = 8.0;
-        az_cmd = kp_z*e_z + ki_z*err_z_int + kd_z*de_z;
-        Fz_req = params.m * (params.g - az_cmd); % Forza in Newton verso l'alto
-
-        % --- 2. CONTROLLO VELOCITÀ (Fx richiesta) ---
-        e_v = V_des - vx_global;
-        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
-        kp_v = 15.0;
-        Fx_req = F_drag + kp_v * e_v;
-
-        % --- 3. VETTORAMENTO (Calcolo Angolo Servo e Spinta Totale) ---
-        % Invece di far beccheggiare il drone, incliniamo i motori
-        % T_tot = sqrt(Fx^2 + Fz^2)
-        Thrust_total = sqrt(Fx_req^2 + Fz_req^2);
-        % alpha_base è l'angolo che i motori DEVONO avere per bilanciare Fx e Fz
-        alpha_base = atan2(Fx_req, Fz_req); 
-
-        alpha_servo = alpha_base - x(8);
-
-        % --- 4. STABILIZZAZIONE ASSETTO (Inner Loop) ---
-        % Teniamo la fusoliera piatta (theta = 0) per ridurre il drag
-        % Se theta > 0 (muso su), i servi devono inclinarsi in avanti (alpha aumenta)
-        kp_pitch = 1.5; kd_pitch = 0.2;
-        u_pitch = kp_pitch * (theta_des - x(8)) - kd_pitch * x(11);
-
-        % --- 5. MIXER FINALE ---
-        T_base = Thrust_total / 2;
-        
-        % Rollio (Differenziale di spinta)
-        kp_roll = 20; kd_roll = 5;
-        u_roll = kp_roll * (phi_des - x(7)) - kd_roll * x(10);
-       
-
-        % Tilt (Base vettoriale + correzione Pitch + correzione Yaw)
-        u_yaw = 1.0 * (psi_des - x(12)); % Yaw damping
-        
-        u(4) = alpha_servo + u_pitch + u_roll; % Servo DX
-        u(5) = alpha_servo + u_pitch - u_roll; % Servo SX
-        T_dx = T_base - u_yaw;
-        T_sx = T_base + u_yaw;
-        
-        % Output Motori
-        u(1) = sqrt(max(0, T_dx) / params.k);
-        u(2) = sqrt(max(0, T_sx) / params.k);
-        u(3) = 0; % Coda off
-
-    case 8
-        % =========================================================
-        %  CONTROLLO VOLO ORIZZONTALE 
-        % =========================================================
-    
-        % --- 0. DATI INIZIALI ---
-        % Estrazione stati
-        phi = x(7); theta = x(8); psi = x(9);
-        p = x(10); q = x(11); r = x(12);
-    
-        % Velocità nel frame inerziale (necessaria per SMC posizionale)
-        R = matriceRotazione(phi,theta,psi);
-        V_body = [x(4);x(5);x(6)];
-        V_glob = R*V_body;
-        vx_global = V_glob(1); 
-        vy_global = V_glob(2);
-        vz_global = V_glob(3);
-    
-    
-        % --- 1. TARGET ---
-        vx_des = 25;       % Velocità crociera
-        z_des  = -10;      % Quota (NED: -10 = 10m altezza)
-        y_des  = 0;        % Centro linea
-        theta_des = 0;
-        phi_des = 0;
-        psi_des = 0;       % Prua
-
-        % --- 1. CONTROLLO QUOTA (Fz richiesta) ---
-        e_z = z_des - x(3);
-        de_z = 0 - vz_global;
-        if time == 0; err_z_int = 0; end
-        err_z_int = err_z_int + e_z * 0.01;
-        err_z_int = max(min(err_z_int, 5), -5);
-
-        % Calcoliamo quanta forza verticale serve per stare a -10m
-        % Usiamo un PID che genera un'accelerazione verticale desiderata
-        kp_z = 10.0; ki_z = 3.0; kd_z = 8.0;
-        az_cmd = kp_z*e_z + ki_z*err_z_int + kd_z*de_z;
-        F_lift = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
-        Fz_req = params.m * (params.g - az_cmd) + F_lift; % Forza in Newton verso l'alto
-
-        % --- 2. CONTROLLO VELOCITÀ (Fx richiesta) ---
-        e_v = vx_des - vx_global;
-        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
-        kp_v = 15.0;
-        Fx_req = F_drag + kp_v * e_v;
-
-        % --- 3. VETTORAMENTO (Calcolo Angolo Servo e Spinta Totale) ---
-        % Invece di far beccheggiare il drone, incliniamo i motori
-        % T_tot = sqrt(Fx^2 + Fz^2)
-        T_total = sqrt(Fx_req^2 + Fz_req^2);
-
-        % =====================================================
-        %   TUNING PARAMETRI
-        % =====================================================
-
-        K_theta = 2.0; Phi_theta = 1.0; lam_theta = 3.0;
-        K_phi = 2.0; Phi_phi = 1.0; lam_phi = 3.0;
-        K_psi = 2.0; Phi_psi = 1.0; lam_psi = 3.0;
-
-        % ==================================================
-        %   PITCH con INTEGRALE PROTETTO
-        % ==================================================
-        
-        % Gestione memoria variabile
-        % persistent integral_error_theta
-        if isempty(integral_error_theta)
-            integral_error_theta = 0;
-        end
-    
-        dt = 0.01; 
-        e_theta = theta_des - theta;
-        de_theta = 0 - q;
-        
-        % --- PROTEZIONE 1: Anti-Windup (Clamping) ---
-        % Impediamo all'integrale di diventare un numero mostruoso
-        max_integral = 10; % Valore di saturazione dell'integrale
-        integral_error_theta = integral_error_theta + e_theta * dt;
-        integral_error_theta = max(-max_integral, min(max_integral, integral_error_theta));
-        
-        % Tuning
-        Ki_theta = 0.5; % Abbassalo un po' all'inizio
-        
-        % Superficie di scorrimento (senza integrale dentro, per ora)
-        s_theta = de_theta + lam_theta * e_theta;
-        
-        % Legge di controllo
-        M_y_req = params.Iyy * lam_theta * de_theta ...
-                + params.Iyy * K_theta * tanh(s_theta/Phi_theta) ...
-                + Ki_theta * integral_error_theta; 
-                
-        u_pitch = M_y_req / (T_total * params.d_mx); 
-    
-
-        % ==================================================
-        %   ROLL
-        % ==================================================
-    
-        e_phi = phi_des - phi;
-        de_phi = 0 - p;
-        s_phi = de_phi + lam_phi * e_phi;
-
-        M_x_req = params.Ixx * lam_phi * de_phi + params.Ixx * K_phi * tanh(s_phi/Phi_phi);
-        u_roll = M_x_req / (T_total * params.d_my); 
-
-        % ==================================================
-        %   Yaw
-        % ==================================================
-    
-        e_psi = psi_des - psi;
-        de_psi = 0 - r;
-        s_psi = de_psi + lam_psi * e_psi;
-
-        M_z_req = params.Izz * lam_psi * de_psi + params.Izz * K_psi * tanh(s_psi/Phi_psi);
-        u_yaw = M_z_req / (2 * params.d_my);
-
-        % 4. MIXER (Configurazione AEREO)
-        % Roll -> Tilt Differenziale
-        % Yaw  -> Spinta Differenziale
-        
-        % Angolo base dei servi (per compensare l'assetto del corpo, come da tuoi appunti)
-        alpha_base = 0; % Angolo di montaggio standard (es. 0 o 90 gradi)
-        alpha_servo = alpha_base; %+ atan2(Fz_req, Fx_req); %- theta; % Compensazione attiva del beccheggio fusoliera
-   
-
-        % Calcolo angoli servi (in radianti)
-        % Motore 1 (destro), Motore 2 (sinistro)
-        theta_servo_1 = alpha_servo + u_pitch + u_roll; 
-        theta_servo_2 = alpha_servo + u_pitch - u_roll; 
-    
-        % --- PROTEZIONE 2: Saturazione Attuatori ---
-        servo_lim = deg2rad(45); % Limite fisico a 45 gradi
-        theta_servo_1 = max(-servo_lim, min(servo_lim, theta_servo_1));
-        theta_servo_2 = max(-servo_lim, min(servo_lim, theta_servo_2));
-    
-        % Calcolo Spinte motori (in Newton)
-        T1 = (T_total / 2) - u_yaw;
-        T2 = (T_total / 2) + u_yaw;
-    
-        % Saturazione minima (i motori non possono girare al contrario o spegnersi in volo)
-        T1 = max(0, T1);
-        T2 = max(0, T2);
-
-        u(1) = sqrt(T1 / params.k);
-        u(2) = sqrt(T2 / params.k);
-        u(3) = 0; 
-        u(4) = theta_servo_1;
-        u(5) = theta_servo_2;
-        u(6) = 0; u(7) = 0;
-
-    
-    case 9
-        % =========================================================
-        %  CONTROLLO CROCIERA VELOCE (30 m/s)
-        %  Fix: Integrale attivo, Tilt sbloccato, Portanza gestita
-        % =========================================================
-        
-        % --- 0. ESTRAZIONE STATI ---
-        phi = x(7); theta = x(8); psi = x(9);
-        p = x(10); q = x(11); r = x(12);
-        
-        R = matriceRotazione(phi,theta,psi);
-        V_glob = R * [x(4);x(5);x(6)];
-        vx_global = V_glob(1); 
-        vz_global = V_glob(3);
-        
-        % --- LETTURA INTEGRALI ---
-        % x(27) = Integrale Velocità
-        % x(28) = Integrale Pitch (Nuovo)
-        if length(x) >= 28
-            int_err_v     = x(27); 
-            int_err_theta = x(28);
-        else
-            int_err_v = 0;
-            int_err_theta = 0;
-        end
-        
-        % --- 1. SETPOINT ---
-        % vx_des = 25;       
-        z_des  = -10;
-        % theta_des = 0; 
-        vx_des = target(1);    % Target velocità
-        theta_des = target(2);  % Target pitch (se fisso a 0)
-        
-        % --- 2. CONTROLLO QUOTA (Loop Z) ---
-        e_z = z_des - x(3);
-        de_z = 0 - vz_global;
-        
-        kp_z = 4.0; 
-        kd_z = 6.0; 
-        az_cmd = kp_z*e_z + kd_z*de_z;
-        
-        % Calcolo portanza ala (negativa nel sistema NED)
-        F_lift_wing = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
-        
-        % Forza verticale richiesta ai motori
-        Fz_req = params.m * (params.g - az_cmd) + F_lift_wing;
-        
-        % FIX PORTANZA ECCESSIVA:
-        % Se l'ala porta troppo (Fz_req diventa negativo), permettiamo
-        % ai motori di spingere verso il basso (fino a -20N) per mantenere la quota.
-        % Prima era bloccato a 0, causando la salita incontrollata.
-        if Fz_req < -40; Fz_req = -40; end 
-        
-        % --- 3. CONTROLLO VELOCITÀ (Loop X) ---
-        e_v = vx_des - vx_global
-        
-        kp_v = 8.0; 
-        ki_v = 3.0; % Guadagno Integrale ATTIVO
-        
-        % FeedForward Drag
-        F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
-        
-        % PID Completo (FF + P + I)
-        Fx_req = F_drag + kp_v * e_v + ki_v * int_err_v;
-        
-        if Fx_req < 0.1; Fx_req = 0.1; end
-        vx_global
-
-        % --- 4. MIXER VETTORIALE (FIX TILT) ---
-        
-        alpha_ideal = atan2(Fz_req, Fx_req);
-        
-        % FIX LIMITATORE:
-        % Aumentato da 12 a 25 gradi. A 30 m/s serve inclinare molto 
-        % i rotori per vincere la resistenza aerodinamica.
-        max_tilt_safe = deg2rad(25); 
-        
-        % Calcolo angolo limitato (Rimosso il "= 0" che bloccava tutto)
-        alpha_limited = max(-max_tilt_safe, min(max_tilt_safe, alpha_ideal));
-        
-        % Sottrazione theta per disaccoppiare rotazione corpo da spinta
-        alpha_servo_base = alpha_limited - theta;
-        % alpha_servo_base = alpha_ideal - theta;
-        
-        % --- 5. CONTROLLO PITCH (PD) ---
-        e_theta = theta_des - theta;
-        de_theta = 0 - q;
-        
-        kp_th = 2.5;   
-        kd_th = 0.8;
-        ki_th = 2.0;
-        
-        u_pitch_angle = kp_th*e_theta + kd_th*de_theta + ki_th*int_err_theta;
-        
-        % --- 6. LATERALI (Roll/Yaw) ---
-        kp_phi = 2; kd_phi = 0.3; 
-        M_x = kp_phi*(0-phi) + kd_phi*(0-p);
-        
-        kp_psi = 1.5; kd_psi = 0.3;
-        M_z = kp_psi*(0-psi) + kd_psi*(0-r);
-
-        % --- 7. ASSEGNAZIONE ATTUATORI ---
-        T_tot = sqrt(Fx_req^2 + Fz_req^2);
-        
-        % Calcolo comandi differenziali
-        u_roll_angle = M_x / (T_tot * params.d_my);
-        u_yaw_thrust = M_z / (2 * params.d_my);
-        
-        % Calcolo angoli finali servi
-        ts1 = alpha_servo_base + u_pitch_angle + u_roll_angle;
-        ts2 = alpha_servo_base + u_pitch_angle - u_roll_angle;
-        
-        % Saturazione fisica servi (-15 a +60 gradi)
-        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
-        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
-        
-        % Calcolo Spinte Motori
-        T1 = (T_tot / 2) - u_yaw_thrust;
-        T2 = (T_tot / 2) + u_yaw_thrust;
-
-        [w1, w2, theta1, theta2] = risolvi_sistema_rotori(M_x, u_pitch_angle, M_z, Fx_req, Fz_req, params);
-        
-        theta1 = theta1 + alpha_servo_base + u_pitch_angle;
-        theta2 = theta2 + alpha_servo_base + u_pitch_angle;
-
-        % Output finale u
-        u(1) = w1;
-        u(2) = w2;
-        u(3) = 0; 
-        
-        u(4) = theta1;
-        u(5) = theta2;
-        u(6) = 0; u(7) = 0;
-
-
-    case 10
+    case 2
         % =========================================================================
-        %  MODO 10: CROCIERA VELOCE - FIXED WING MODE
+        %  Controllo orizzontale
         %  =========================================================================
     
         % ================================================
@@ -790,7 +196,7 @@ switch test_id
         vz_global = V_glob(3);
         
         % =================================================
-        % Lettura Integrali (Anti-windup e gestione memoria)
+        % Lettura Integrali 
         % =================================================
         if length(x) >= 29
             int_err_v     = x(27); % Integrale Velocità
@@ -809,8 +215,7 @@ switch test_id
         theta_des = target(2); % Pitch target (solitamente 0° in crociera)
         phi_des = 0;
         psi_des = 0;
-        
-    
+
         % =================================================
         % 3. CONTROLLO QUOTA (Loop Z - Outer Loop)
         % =================================================
@@ -847,7 +252,7 @@ switch test_id
         
         % PID Velocità
         kp_v = 8.0; 
-        ki_v = 4.0; % Integrale attivo per eliminare errore a regime
+        ki_v = 4.0; 
         
         % --- Feedforward Aerodinamico (DRAG) ---
         % D = 0.5 * rho * S * Cd * V^2
@@ -856,10 +261,9 @@ switch test_id
         % Forza orizzontale richiesta (deve vincere Drag + Inerzia)
         Fx_req = F_drag + kp_v * e_v + ki_v * int_err_v;
         
-        % Saturazione minima per evitare singolarità matematiche
+        % per evitare singolarità matematiche
         if Fx_req < 0.1; Fx_req = 0.1; end
-
-        
+       
         % =================================================
         % 5. STRATEGIA VETTORIALE (Thrust Vectoring)
         % =================================================
@@ -867,11 +271,10 @@ switch test_id
         alpha_ideal = atan2(Fz_req, Fx_req);
         
         % Limitazione dell'angolo di tilt (Safety)
-        % A 30 m/s serve un tilt elevato (es. 25°) per avere componente X forte.
-        max_tilt_safe = deg2rad(25); 
+        % se permettiamo un inclinazione fino a 90°, il drone cade
+        max_tilt_safe = deg2rad(45); 
         alpha_limited = max(-max_tilt_safe, min(max_tilt_safe, alpha_ideal));
         
-        % [DISACCOPPIAMENTO]: Trasformazione Globale -> Body
         % Sottraiamo il pitch corrente (theta) per ottenere l'angolo relativo ai servi.
         % Se il drone alza il naso (theta > 0), i servi ruotano giù per compensare.
         alpha_servo_base = alpha_limited - theta;
@@ -886,43 +289,36 @@ switch test_id
         e_theta  = theta_des - theta;
         de_theta = 0 - q;
         
-        kp_th = 2;  % Reazione proporzionale (bassa)
-        kd_th = 0.3; % Smorzamento (fondamentale ad alta velocità!)
+        kp_th = 2; 
+        kd_th = 0.3; 
         ki_th = 1.5;  
         
         % L'output del PID pitch è un angolo correttivo da sommare al tilt base
-        % (Funziona perché My = dmx * T * sin(theta_tilt))
         u_pitch_angle = kp_th * e_theta + kd_th * de_theta + ki_th * int_err_theta;
         
         % =================================================
         % --- B. ROLL (Rollio) ---
-        % =================================================
-
-        
-        kp_phi = 0.20;  % Abbastanza forza per salire verso i 5 gradi
-        kd_phi = 0.10;  % Freno aerodinamico per non "scivolare" oltre
+        % =================================================  
+        kp_phi = 0.20;  
+        kd_phi = 0.10; 
 
         u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
         
         
         % =================================================
         % --- C. YAW (Imbardata) ---
-        % =================================================
-        
-        kp_psi = 10;  % "Molla": 1 rad di errore -> 2.5 N di spinta differenziale
-        kd_psi = 2.5;  % "Smorzatore": Fondamentale per evitare lo scodinzolamento
+        % =================================================      
+        kp_psi = 10;  
+        kd_psi = 2.5;  
 
         u_yaw_thrust = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
     
         % =================================================
         % 7. MIXER / ALLOCAZIONE ATTUATORI
-        % =================================================
-        % Inversione del modello matematico verificato (con dmz = 0)
-        
+        % =================================================        
         % Spinta Totale richiesta (somma vettoriale)
         T_tot = sqrt(Fx_req^2 + Fz_req^2);
   
-        % 3. CALCOLO FINALE COMANDI
         
         % Angoli Servo (Tilt Collettivo + Pitch Corr + Diff Roll)
         ts1 = alpha_servo_base + u_pitch_angle - u_roll_angle; 
@@ -935,12 +331,12 @@ switch test_id
         % 8. SATURAZIONE E OUTPUT
         
         % Saturazione fisica dei servi (limiti meccanici)
-        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
-        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+        % Non voglio che i rotori si inclinino all'infinito
+        ts1 = max(deg2rad(-30), min(deg2rad(80), ts1));
+        ts2 = max(deg2rad(-30), min(deg2rad(80), ts2));
         
         % =================================================
         % Assegnazione al vettore di controllo u
-        % Conversione Forza -> PWM/Omega (u = sqrt(F/k))
         % =================================================
         u(1) = sqrt(max(0, T1) / params.k);
         u(2) = sqrt(max(0, T2) / params.k);
@@ -951,11 +347,10 @@ switch test_id
         u(6) = 0;   
         u(7) = 0;   
 
-    case 11
+    case 3
         % =========================================================================
-        %  MODO 11: CROCIERA VELOCE - FIXED WING MODE
-        %  =========================================================================
-        %  momenti no angoli diretti
+        %  Controllo orizzontale
+        %  Uscite loop interno: momenti su x, y e z
         % =========================================================================
     
         % ================================================
@@ -974,7 +369,7 @@ switch test_id
         vz_global = V_glob(3);
         
         % =================================================
-        % Lettura Integrali (Anti-windup e gestione memoria)
+        % Lettura Integrali 
         % =================================================
         if length(x) >= 29
             int_err_v     = x(27); % Integrale Velocità
@@ -988,9 +383,9 @@ switch test_id
         % 2. DEFINIZIONE SETPOINT (Guida)
         % =================================================
         % Target operativi per la crociera
-        z_des     = target(3);       % Quota target (negativa in NED)
-        vx_des    = target(1); % Velocità target (es. 30 m/s)
-        theta_des = target(2); % Pitch target (solitamente 0° in crociera)
+        z_des     = target(3);  % -10
+        vx_des    = target(1);  % 25 m/s
+        theta_des = target(2);  % 0°
         phi_des = 0;
         psi_des = 0;
         
@@ -1031,19 +426,18 @@ switch test_id
         
         % PID Velocità
         kp_v = 8.0; 
-        ki_v = 4.0; % Integrale attivo per eliminare errore a regime
+        ki_v = 4.0;
         
         % --- Feedforward Aerodinamico (DRAG) ---
         % D = 0.5 * rho * S * Cd * V^2
         F_drag = 0.5 * params.rho * params.s * params.C_d * vx_global^2;
         
-        % Forza orizzontale richiesta (deve vincere Drag + Inerzia)
+        % Forza orizzontale richiesta 
         Fx_req = F_drag + kp_v * e_v + ki_v * int_err_v;
         
-        % Saturazione minima per evitare singolarità matematiche
+        % per evitare singolarità matematiche
         if Fx_req < 0.1; Fx_req = 0.1; end
-
-        
+  
         % =================================================
         % 5. STRATEGIA VETTORIALE (Thrust Vectoring)
         % =================================================
@@ -1051,11 +445,9 @@ switch test_id
         alpha_ideal = atan2(Fz_req, Fx_req);
         
         % Limitazione dell'angolo di tilt (Safety)
-        % A 30 m/s serve un tilt elevato (es. 25°) per avere componente X forte.
-        max_tilt_safe = deg2rad(25); 
+        max_tilt_safe = deg2rad(45); 
         alpha_limited = max(-max_tilt_safe, min(max_tilt_safe, alpha_ideal));
         
-        % [DISACCOPPIAMENTO]: Trasformazione Globale -> Body
         % Sottraiamo il pitch corrente (theta) per ottenere l'angolo relativo ai servi.
         % Se il drone alza il naso (theta > 0), i servi ruotano giù per compensare.
         alpha_servo_base = alpha_limited - theta;
@@ -1070,42 +462,38 @@ switch test_id
         e_theta  = theta_des - theta;
         de_theta = 0 - q;
         
-        kp_th = 40;  % Reazione proporzionale (bassa)
-        kd_th = 10; % Smorzamento (fondamentale ad alta velocità!)
+        kp_th = 40;
+        kd_th = 10;
         ki_th = 20;  
         
-        % L'output del PID pitch è un angolo correttivo da sommare al tilt base
-        % (Funziona perché My = dmx * T * sin(theta_tilt))
         M_y = kp_th * e_theta + kd_th * de_theta + ki_th * int_err_theta;
         
         % =================================================
         % --- B. ROLL (Rollio) ---
         % =================================================
 
-        kp_phi = 10;  % Abbastanza forza per salire verso i 5 gradi
-        kd_phi = 3;  % Freno aerodinamico per non "scivolare" oltre
+        kp_phi = 10; 
+        kd_phi = 3;  
 
         M_x = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
-        
-        
+             
         % =================================================
         % --- C. YAW (Imbardata) ---
         % =================================================
         
-        kp_psi = 5;  % "Molla": 1 rad di errore -> 2.5 N di spinta differenziale
-        kd_psi = 2;  % "Smorzatore": Fondamentale per evitare lo scodinzolamento
+        kp_psi = 5; 
+        kd_psi = 2;  
 
         M_z = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
     
         % =================================================
-        % 7. MIXER / ALLOCAZIONE ATTUATORI
+        % 7. MIXER
         % =================================================
-        % Inversione del modello matematico verificato (con dmz = 0)
         
-        % Spinta Totale richiesta (somma vettoriale)
+        % Spinta Totale richiesta
         T_tot = sqrt(Fx_req^2 + Fz_req^2);
 
-        % 1. Calcolo Angolo per il Pitch (Inversione formula)
+        % 1. Calcolo Angolo per il Pitch 
         % My = dmx * T * sin(theta)  ->  sin(theta) = My / (dmx * T)
         u_pitch_angle = M_y / (params.d_mx * T_tot);
         
@@ -1130,12 +518,11 @@ switch test_id
         % 8. SATURAZIONE E OUTPUT
         
         % Saturazione fisica dei servi (limiti meccanici)
-        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
-        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+        ts1 = max(deg2rad(-30), min(deg2rad(80), ts1));
+        ts2 = max(deg2rad(-30), min(deg2rad(80), ts2));
         
         % =================================================
         % Assegnazione al vettore di controllo u
-        % Conversione Forza -> PWM/Omega (u = sqrt(F/k))
         % =================================================
         u(1) = sqrt(max(0, T1) / params.k);
         u(2) = sqrt(max(0, T2) / params.k);
@@ -1164,60 +551,37 @@ switch test_id
     R = matriceRotazione(phi, theta, psi);
     V_glob = R * [x(4); x(5); x(6)];
     vx_global = V_glob(1); 
+    vy_body = V_glob(2); 
     vz_global = V_glob(3);
     
-    % Velocità Body (Fondamentale per la logica Wing-Down)
-    V_body = [x(4); x(5); x(6)]; 
-    vy_body = V_body(2); 
-
     % Integrali (Assicurati che x(30) sia inizializzato nel main)
-    if length(x) >= 31
+    if length(x) >= 30
         int_err_v     = x(27); 
         int_err_theta = x(28); 
         int_err_z     = x(29); 
         int_err_y     = x(30); % Integrale per errore velocità laterale
-        int_err_vy     = x(31);
     else
-        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0; int_err_vy = 0;
+        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0;
     end
     
     % --- 2. SETPOINT ---
     vx_des    = target(1);
     theta_des = target(2); 
     z_des     = target(3);
-    
-    % Gestione Heading (Se target(4) esiste, usalo. Altrimenti tieni la prua attuale)
-    if length(target) >= 4
-        psi_des = target(4); 
-    else
-        psi_des = 0; % Modalità "Yaw Damper": resiste alle rotazioni ma non torna a Nord
-    end
 
     % =================================================
     % 3. CONTROLLO LATERALE (TUNING V10 - SILK SMOOTH)
     % =================================================
-    
     y_curr = x(2);
     y_set  = 0; 
     e_y = y_set - y_curr;
     
-    % Recuperiamo la velocità inerziale (reale)
-    vy_inertial = V_glob(2); 
-    
     % --- FINE TUNING ---
+    Kp_y = 0.20; 
+    Kd_y = 0.8; 
+    Ki_y = 0.02;
     
-    % 1. RIDUZIONE AGGRESSIVITÀ (K_steer)
-    % Era 0.15. Lo portiamo a 0.10.
-    % Meno "fame" di arrivare a zero = meno probabilità di superarlo.
-    K_steer = 0.10; 
-    
-    % 2. AUMENTO SMORZAMENTO (K_damp)
-    % Era 0.30. Lo portiamo a 0.45.
-    % Deve "sentire" la velocità laterale e raddrizzare il naso molto prima.
-    K_damp = 0.45; 
-    
-    % --- LEGGE DI GUIDA ---
-    psi_steering = (K_steer * e_y) - (K_damp * vy_inertial);
+    psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_body);
     
     % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
     max_heading_corr = deg2rad(35);
@@ -1243,7 +607,7 @@ switch test_id
     az_cmd = kp_z * e_z + kd_z * de_z + ki_z * int_err_z;
     
     % Feedforward Portanza (Lift)
-    V_tas = norm(V_body);
+    V_tas = norm(V_glob);
     F_lift_wing = -0.5 * params.rho * params.s * params.C_l * V_tas^2;
     
     % Compensazione Bank Angle (Per non perdere quota mentre correggiamo Y)
@@ -1276,12 +640,12 @@ switch test_id
     
     u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
     
-    % --- ROLL (Segue il phi_des calcolato per correggere Y) ---
+    % --- ROLL ---
     kp_phi = 4; 
     kd_phi = 0.8; 
     u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
     
-    % --- YAW (Heading Hold / Damper) ---
+    % --- YAW ---
     diff_psi = psi_des_new - psi;
     e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
     
