@@ -5,7 +5,7 @@ La peculiarità dello schema risiede nell'accoppiamento tra il controllo di quot
 
 \begin{enumerate}
     \item \textbf{Outer Loop (Posizione $x, y, z$):} ìUtilizza la tecnica \textbf{Siling Mode Control (SMC)} per calcolare le forze ($F_{req,x}, F_{req,y}, F_{req,z}$) per annullare l'errore di posizione lungo i tre assi.
-    \\Poiché il drone è un sistema sotto-attuato (non ha attuatori diretti per gli assi $x$ e $y$), l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico: traduce $F_{req,x}$ e $F_{req,y}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
+    \\Poiché il drone è un sistema sotto-attuato, non ha attuatori diretti per gli assi $x$ e $y$, ma per cambiare la posizione deve prima cambiare l'orientamento (\textit{roll e yaw}); dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico: traduce $F_{req,x}$ e $F_{req,y}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
     \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{PID} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
 Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \mathbb{R}^{12} $:
@@ -125,7 +125,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
     \label{fig:control_scheme}
 \end{figure}
 
-\subsection{Controllo di posizione $z$}
+\subsection{Controllo di Posizione $z$}
 Il controllo della quota $z$ è progettato secondo la tecnica dello \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi. 
 Si definisce l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la superficie di scorrimento come:
 \begin{equation}
@@ -148,15 +148,21 @@ invertendo le componenti della forza aerodinamica:
     \item \textbf{Generazione del riferimento di Roll ($\phi_{des}$):} Per compensare l'errore sulla coordinata $y$, 
     il controllore SMC calcola una forza virtuale richiesta $F_{req,y}$. 
     Quando il drone è dritto ($\phi = 0$), i rotori generano una forza che si esprime solo lungo l'assse $z$, con forza laterale netta nulla.
-    Tuttavia, in caso di \textit{side-splip} o errore di posizione lungo l'asse $y$, è necessario imporre
+    Tuttavia, in caso di \textit{side-slip} o errore di posizione lungo l'asse $y$, è necessario imporre
     un angolo di rollio diverso da zero, che permetta al drone di modificare la propria posizione.
-    \begin{equation*}
+    \begin{equation}
         F_{z} = T cos(\phi)
-    \end{equation*}
-    \begin{equation*}
+    \end{equation}
+    \begin{equation}
         F_{y} = T sin(\phi)
-    \end{equation*}
- 
+    \end{equation}
+    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una superficie di scorrimento $\sigma_{y} = \dot{e_{y}} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh(\frac{\sigma_{y}}{\Phi})$,
+    si ottiene:
+    \begin{equation}\begin{split}
+        \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh(\frac{\sigma_{y}}{\Phi})\\
+        \to F_{y,req} = m (\lambda_{y} \dot{e_{y}} + K_{y} tanh(\frac{\sigma_{y}}{\Phi}))
+    \end{split}\end{equation}
+
     L'angolo di rollio necessario è ricavato tramite l'inversione della proiezione della spinta:
     \begin{equation}
         \phi_{des} = \arcsin\left( \frac{F_{req,y}}{T} \right)
@@ -176,6 +182,22 @@ Tuttavia, essa introduce un \textbf{accoppiamento non lineare}: l'autorità di c
 è direttamente proporzionale alla spinta $T$ generata dal loop verticale. Se $T \to 0$ (ad esempio in caduta libera), 
 il sistema perde la capacità di comandare spostamenti orizzontali.
 
+\subsection{Controllo  di Assetto}
+Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
+Tali quantità sono calcolate come uscite di tre PID.
+\begin{itemize}
+    \item \textbf{Roll: } è stato applicato un controllo Proporzionale-Derivativo
+    \begin{equation}
+        M_{x,req} = k_{p} (\phi_{des}) + k_{d} (\dot{\phi_{des}} - p)
+    \end{equation}
+    con $\dot{\phi_{des}} = 0$.
+    \item \textbf{Pitch: } è stato applicato un controllo Proporzionale-Integrale-Derivativo. La scelta di inserire un termine integrale è stata dettata dall'incapacità del solo PD di riportare a zero
+    l'errore in presenza di disturbi a gradino. 
+    \begin{equation}
+        M_{y,req} = k_{p} (\theta_{des}) + k_{d} (\dot{\theta_{des}} - q)
+    \end{equation}
+    con $\dot{\theta_{des}} = 0$.
+\end{itemize}
 \subsection{Control Allocation (Mixing)}
 Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi $\mathbf[F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$), la spinta differenziale per il rollio e l'angolo di inclinazione del meccanismo di imbardata.
 \\A causa della geometria del tricottero e dell'accoppiamento tra le forze, il sistema non viene risolto tramite una singola matrice pseudoinversa, ma attraverso una risoluzione algebrica sequenziale che rispetta i vincoli di equilibrio meccanico derivati dal modello dinamico.

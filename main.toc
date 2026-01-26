@@ -28,11 +28,12 @@
 \contentsline {subsubsection}{Fase 2: Transizione}{21}{subsubsection*.4}%
 \contentsline {subsubsection}{Fase 3: Volo Orizzontale (Crociera)}{21}{subsubsection*.5}%
 \contentsline {section}{\numberline {5.2}Controllo Verticale}{23}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Controllo di posizione $z$}{23}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.1}Controllo di Posizione $z$}{23}{subsection.5.2.1}%
 \contentsline {subsection}{\numberline {5.2.2}Controllo Planare e Mapping di Assetto}{24}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}Control Allocation (Mixing)}{25}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.3}Controllo di Assetto}{26}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Control Allocation (Mixing)}{26}{subsection.5.2.4}%
 \contentsline {subsubsection}{Equilibrio Longitudinale (Pitch) e Motore di Coda}{26}{subsubsection*.6}%
-\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{26}{subsubsection*.7}%
+\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{27}{subsubsection*.7}%
 \contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{27}{subsubsection*.8}%
 \contentsline {section}{\numberline {5.3}Controllo Orizzontale}{28}{section.5.3}%
 \contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{28}{subsection.5.3.1}%
