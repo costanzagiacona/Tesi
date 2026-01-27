@@ -14,6 +14,7 @@
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{booktabs} % Per tabelle più belle
 \usepackage{caption}
+\usepackage{bm}
 % --- PACCHETTI PER GRAFICA E SCHEMI (TIKZ) ---
 \usepackage{tikz}
 \usetikzlibrary{shapes, arrows, fit, calc, positioning}
@@ -83,7 +84,7 @@
 \end{frame}
 
 \begin{frame}{Il Concept VTOL Tilt-Rotor}
-    Il tricottero \textit{Tilt-Rotor} oggetto di studio combina i benefici delle due architetture:
+    Il tricottero \textit{Tilt-Rotor} combina i benefici delle due architetture:
     
     \begin{columns}
         \column{0.6\textwidth}
@@ -95,7 +96,7 @@
         \vspace{0.5cm}
         \begin{block}{La Sfida Ingegneristica}
             Questa versatilità introduce una \textbf{dinamica complessa} e fortemente accoppiata, 
-            \\richiedendo strategie di controllo e allocazione avanzate.
+            richiedendo strategie di controllo e allocazione avanzate.
         \end{block}
 
         \column{0.4\textwidth}
@@ -119,7 +120,7 @@
         
         \vspace{0.4cm}
         \begin{block}{La Sfida Ingegneristica}
-            Il sistema è \textbf{sottocostretto} in alcune fasi e presenta forti non-linearità e accoppiamenti dinamici (es. momento giroscopico durante il tilt).
+            Il sistema è \textbf{sottoattuato} in alcune fasi e presenta forti non-linearità e accoppiamenti dinamici (es. momento giroscopico durante il tilt).
         \end{block}
 \end{frame}
 
@@ -135,7 +136,7 @@
             \item \textbf{Sistema Inerziale ($\mathcal{F}_g$):} 
             Posizione $P_g = [x, y, z]^T$, Angoli $\Theta = [\phi, \theta, \psi]^T$.
             \vspace{0.3cm}
-            \item \textbf{Sistema Solidale ($\mathcal{F}_b$):}
+            \item \textbf{Sistema Solidale al corpo ($\mathcal{F}_b$):}
             Origine nel CoM. Velocità lineari $V_b = [u, v, w]^T$, Velocità angolari $\Omega_b = [p, q, r]^T$.
         \end{itemize}    
         \centering
@@ -143,7 +144,33 @@
             \includegraphics[width=0.5\textwidth]{sist_rif.png}
             \caption{Sistemi di riferimento}
         \end{figure}
+\end{frame}
 
+\begin{frame}{Sistemi di Riferimento}
+    Equazioni che legano velocità lineari e angolari nei due sistemi di riferimento:
+    \begin{equation}
+        \bm{\dot{P}}_{g} = R_{b \to g} \bm{V}_{b}
+    \end{equation}
+    \begin{equation}
+        \bm{\dot{\Theta}}_{g} = J_{b \to g} \bm{\Omega}_{b}
+    \end{equation}
+    % Assicurati di avere \usepackage{bm} nel preambolo
+
+    \begin{gather}
+        \begin{bmatrix}
+            \bm{\dot{P}}_g \\    % Il punto sopra rimane, il simbolo diventa bold
+            \bm{\dot{\Theta}}_g
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            R_{b \to g} & 0 \\    % Nota: ho aggiunto & per separare le colonne
+            0 & J_{b \to g}
+        \end{bmatrix}
+        \begin{bmatrix}
+            \bm{V}_b \\
+            \bm{\Omega}_b
+        \end{bmatrix}
+    \end{gather}
 \end{frame}
 
 \begin{frame}{Analisi delle Forze e Attuazione}
@@ -165,7 +192,7 @@
         % SOSTITUISCI CON 'rotore_3.png'
         \includegraphics[width=0.7\textwidth]{rotore_3.png}
         \vspace{0.25cm}\\
-        \footnotesize{Tilt su $Y_b$ e $Z_b$ (Yaw control).}
+        \footnotesize{Tilt su $Y_b$ e $Z_b$.}
     \end{columns}
     
     \vspace{0.3cm}
@@ -215,12 +242,12 @@
     A cui si aggiungono gravità e aerodinamica:
     {\footnotesize
     \begin{equation}
-        F_g = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}, \quad
+        F_g = \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix} mg, \quad
         F_{\mathrm{aero}} \approx 
         \begin{bmatrix}
-            -\frac{1}{2}\rho S C_D v_x |v_x| \\
+            -\frac{1}{2}\rho S (C_D + C_D) v_x |v_x| \\
             0 \\
-            -\frac{1}{2}\rho S C_L v_x^2
+            -\frac{1}{2}\rho S (C_L + C_L) v_x^2
         \end{bmatrix}
     \end{equation}
     }
@@ -229,9 +256,21 @@
 \end{frame}
 
 % ============================================================
-% 3. ARCHITETTURA DI CONTROLLO (AGGIORNATA)
+% 3. ARCHITETTURA DI CONTROLLO
 % ============================================================
 \section{Architettura di Controllo}
+
+\begin{frame}{Configurazione fase di decollo}
+    La prima fase di volo è quella di decollo verticale, durante la quale i motori sono posizionati verticalmente per generare una propulsione in grado di far sollevare il drone.
+    
+    \vspace{0.3cm}
+    Si assume che in tale posizione gli angoli di tilt siano i seguenti:
+    \begin{itemize}
+        \item $\theta_1 = \theta_2 = \pi/2$ (Rotori anteriori verticali).
+        \item $\theta_4 = -\pi/2$ (Braccio di coda orientato lateralmente).
+        \item $\theta_3 = \theta_{3,eq}$: tale angolo permette di contrastare il momento torcente attorno all'asse $z$ causato dalla coppia di reazione del motore posteriore, non essendo presente un secondo rotore controrotante per il bilanciamento.
+    \end{itemize}
+\end{frame}
 
 % --- SLIDE 1: Panoramica Strategia ---
 \begin{frame}{Architettura Gerarchica a Cascata}
@@ -424,8 +463,64 @@
     L'autorità di controllo su $x$ e $y$ dipende direttamente da $T$. Se $T \to 0$ (es. caduta libera), il controllo planare perde efficacia.
     \end{alertblock}
 \end{frame}
+\begin{frame}{Controllo di Assetto (Inner Loop)}
+Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
+Tali quantità sono calcolate come uscite di tre PID.
+\begin{itemize}
+    \item \textbf{Roll:} è stato applicato un controllo Proporzionale-Derivativo
+    \begin{equation}
+        M_{x,req} = k_{p} (\phi_{des} - \phi) + k_{d} (\dot{\phi}_{des} - p)
+    \end{equation}
+    \item \textbf{Pitch:} è stato applicato un controllo Proporzionale-Integrale-Derivativo. La scelta di inserire un termine integrale è stata dettata dall'incapacità del solo PD di riportare a zero
+    l'errore in presenza di disturbi a gradino. 
+    \begin{equation}
+        M_{y,req} = k_{p} (\theta_{des} - \theta) + k_{i} \int (\theta_{des} - \theta) \,dt\ + k_{d} (\dot{\theta}_{des} - q)
+    \end{equation}
+    \item \textbf{Yaw:} è stato applicato un controllo Proporzionale-Derivativo
+    \begin{equation}
+        M_{z,req} = k_{p} (\psi_{des} - \psi) + k_{d} (\dot{\psi}_{des} - r)
+    \end{equation}
+\end{itemize}
+\end{frame}
 
-% --- SLIDE 5: Control Allocation (2/2) ---
+\begin{frame}{Control Allocation: Quota e Pitch}
+    Il controllo dell'equilibrio longitudinale richiede la risoluzione di un sistema accoppiato: ogni variazione di spinta per la quota ($F_{req,z}$) induce un momento di beccheggio, e viceversa.
+    
+    \vspace{0.2cm}
+    Tramite il mixer si determina la ripartizione ottima della spinta tra i rotori anteriori ($T_{front}$) e il rotore posteriore ($T_{tail}$):
+    \begin{equation}
+        \begin{cases}
+        T_{front} + k \omega_{3}^2 \sin(\theta_{3}) = F_{req,z} \\
+        T_{front} d_{mx} + k \omega_{3}^2 \sin(\theta_{3}) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_y
+        \end{cases}
+    \end{equation}
+    
+    \vspace{0.2cm}
+    Esprimendo $T_{front}$ come $2 k \omega_{i}^2$ (con $i=1,2$):
+    \begin{equation}
+        \begin{cases}
+        2 k \omega_{i}^2 + k \omega_{3}^2 \sin(\theta_3) = F_{req,z} \\
+        2 k \omega_{i}^2 d_{mx} + k \omega_{3}^2 \sin(\theta_3) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_{y}
+        \end{cases}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Control Allocation: Quota e Pitch}
+    Risolvendo il sistema per l'incognita $\omega_{3}^2$, si ricava la velocità angolare del rotore di coda:
+    \begin{equation}
+        \omega_3^2 = \frac{M_y - F_{req,z} d_{mx}}{k \sin(\theta_3) (d_{tx} - d_{mx}) + b \cos(\theta_3) \sin(\theta_4)}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    Una volta determinato $T_3 = k \omega_3^2$, si calcola la spinta necessaria per il gruppo propulsivo anteriore ($T_{front}$) per garantire il sostentamento e l'assetto richiesto:
+    \begin{equation}
+        T_{front} = F_{req,z} - T_3 \sin(\theta_3)
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \footnotesize{\textit{Nota: La stabilità numerica è garantita finché il denominatore (legato alla distanza tra i rotori) è non nullo.}}
+\end{frame}
+
 \begin{frame}{Control Allocation: Roll}
     \textbf{2. Equilibrio Laterale (Roll):}
     Il rollio viene raggiunto attraverso la spinta differenziale dei rotori anteriori.\\
@@ -445,23 +540,26 @@
     Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 \end{frame}
 
-\begin{frame}{Control Allocation: Quota e Pitch}
-    
-\end{frame}
-
 \begin{frame}{Control Allocation: Yaw}
     \textbf{3. Controllo Imbardata (Yaw):}
-    L'imbardada è controllata attraverso il tilt differenziale dei rotori anteriori. 
-    La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
-\begin{equation}
-    M_z \approx T_{front} d_{my} \sin(\delta)
-\end{equation}
-Invertendo questa relazione, si calcola l'angolo di tilt necessario, applicando una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale:
-\begin{equation}
-    \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right), \delta_{max} \right)
-\end{equation}
+    L'imbardata è controllata attraverso il tilt differenziale dei rotori anteriori ($\delta$). 
+    La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione è approssimabile come:
+    \begin{equation}
+        M_z \approx T_{front} d_{my} \sin(\delta)
+    \end{equation}
+    
     \vspace{0.2cm}
-    \tiny{\textit{Nota: Le formule sono semplificate per la presentazione. Dettagli completi in tesi.}}
+    Invertendo la relazione, si calcola l'angolo di tilt desiderato con saturazione di sicurezza ($\delta_{max}$):
+    \begin{equation}
+        \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right), \delta_{max} \right)
+    \end{equation}
+    
+    \vspace{0.4cm}
+    \tiny{\textit{Nota: Per la stabilità, il controllo compensa la coppia residua del rotore 3 calcolata in precedenza tramite l'angolo $\theta_{3,eq}$.}}
+\end{frame}
+
+\begin{frame}{Simulazioni}
+    
 \end{frame}
 
 % ============================================================
@@ -474,15 +572,13 @@ Invertendo questa relazione, si calcola l'angolo di tilt necessario, applicando 
     \begin{itemize}
         \item Modellazione completa a 6-DOF per tricottero tilt-rotor.
         \item Il controllo SMC ha dimostrato robustezza superiore ai PID classici.
-        \item L'algoritmo di allocazione gestisce efficacemente la ridondanza.
     \end{itemize}
     
     \vspace{0.8cm}
     \textbf{Sviluppi Futuri:}
     \begin{itemize}
-        \item Validazione sperimentale su prototipo reale (Pixhawk/Ardupilot).
-        \item Studio della fase di transizione completa (hover $\to$ volo alare).
-        \item Ottimizzazione energetica dell'allocazione.
+        \item Sintesi controllore per il volo orizzontale.
+        \item Studio della fase di transizione (hover $\to$ volo alare).
     \end{itemize}
 \end{frame}
 

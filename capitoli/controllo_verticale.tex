@@ -125,6 +125,9 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
     \label{fig:control_scheme_vertical}
 \end{figure}
 
+% =========================================================
+%   OUTER LOOP
+% =========================================================
 \subsection{Controllo di Posizione $z$}
 Il controllo della quota $z$ è progettato secondo la tecnica dello \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi. 
 Si definisce l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la superficie di scorrimento come:
@@ -182,22 +185,25 @@ Tuttavia, essa introduce un \textbf{accoppiamento non lineare}: l'autorità di c
 è direttamente proporzionale alla spinta $T$ generata dal loop verticale. Se $T \to 0$ (ad esempio in caduta libera), 
 il sistema perde la capacità di comandare spostamenti orizzontali.
 
+% =========================================================
+%   INNER LOOP
+% =========================================================
 \subsection{Controllo  di Assetto}
 Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
 Tali quantità sono calcolate come uscite di tre PID.
 \begin{itemize}
-    \item \textbf{Roll: } è stato applicato un controllo Proporzionale-Derivativo
+    \item \textbf{Roll:} è stato applicato un controllo Proporzionale-Derivativo
     \begin{equation}
         M_{x,req} = k_{p} (\phi_{des} - \phi) + k_{d} (\dot{\phi}_{des} - p)
     \end{equation}
     con $\dot{\phi}_{des} = 0$.
-    \item \textbf{Pitch: } è stato applicato un controllo Proporzionale-Integrale-Derivativo. La scelta di inserire un termine integrale è stata dettata dall'incapacità del solo PD di riportare a zero
+    \item \textbf{Pitch:} è stato applicato un controllo Proporzionale-Integrale-Derivativo. La scelta di inserire un termine integrale è stata dettata dall'incapacità del solo PD di riportare a zero
     l'errore in presenza di disturbi a gradino. 
     \begin{equation}
         M_{y,req} = k_{p} (\theta_{des} - \theta) + k_{i} \int (\theta_{des} - \theta) \,dt\ + k_{d} (\dot{\theta}_{des} - q)
     \end{equation}
     con $\dot{\theta}_{des} = 0$.
-    \item \textbf{Yaw: } è stato applicato un controllo Proporzionale-Derivativo
+    \item \textbf{Yaw:} è stato applicato un controllo Proporzionale-Derivativo
     \begin{equation}
         M_{z,req} = k_{p} (\psi_{des} - \psi) + k_{d} (\dot{\psi}_{des} - r)
     \end{equation}
@@ -205,6 +211,9 @@ Tali quantità sono calcolate come uscite di tre PID.
     in questo caso, l'obiettivo è mantenere il drone orientato in avanti, motivo per cui si richiede un angolo nullo.
 \end{itemize}
 
+% ==============================================================
+%   MIXER
+% ==============================================================
 \subsection{Control Allocation (Mixing)}
 Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e l'angolo di inclinazione del servo di coda ($\theta_3$).
 \\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema di allocazione non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
