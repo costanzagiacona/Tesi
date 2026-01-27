@@ -122,7 +122,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
     \end{tikzpicture}
     } % Chiusura resizebox
     \caption{Schema a blocchi del controllo con loop di retroazione espliciti.}
-    \label{fig:control_scheme}
+    \label{fig:control_scheme_vertical}
 \end{figure}
 
 \subsection{Controllo di Posizione $z$}
@@ -160,7 +160,7 @@ invertendo le componenti della forza aerodinamica:
     si ottiene:
     \begin{equation}\begin{split}
         \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh(\frac{\sigma_{y}}{\Phi})\\
-        \to F_{y,req} = m (\lambda_{y} \dot{e_{y}} + K_{y} tanh(\frac{\sigma_{y}}{\Phi}))
+        \to F_{req,y} = m (\lambda_{y} \dot{e_{y}} + K_{y} tanh(\frac{\sigma_{y}}{\Phi}))
     \end{split}\end{equation}
 
     L'angolo di rollio necessario è ricavato tramite l'inversione della proiezione della spinta:
@@ -188,41 +188,88 @@ Tali quantità sono calcolate come uscite di tre PID.
 \begin{itemize}
     \item \textbf{Roll: } è stato applicato un controllo Proporzionale-Derivativo
     \begin{equation}
-        M_{x,req} = k_{p} (\phi_{des}) + k_{d} (\dot{\phi_{des}} - p)
+        M_{x,req} = k_{p} (\phi_{des} - \phi) + k_{d} (\dot{\phi}_{des} - p)
     \end{equation}
-    con $\dot{\phi_{des}} = 0$.
+    con $\dot{\phi}_{des} = 0$.
     \item \textbf{Pitch: } è stato applicato un controllo Proporzionale-Integrale-Derivativo. La scelta di inserire un termine integrale è stata dettata dall'incapacità del solo PD di riportare a zero
     l'errore in presenza di disturbi a gradino. 
     \begin{equation}
-        M_{y,req} = k_{p} (\theta_{des}) + k_{d} (\dot{\theta_{des}} - q)
+        M_{y,req} = k_{p} (\theta_{des} - \theta) + k_{i} \int (\theta_{des} - \theta) \,dt\ + k_{d} (\dot{\theta}_{des} - q)
     \end{equation}
-    con $\dot{\theta_{des}} = 0$.
+    con $\dot{\theta}_{des} = 0$.
+    \item \textbf{Yaw: } è stato applicato un controllo Proporzionale-Derivativo
+    \begin{equation}
+        M_{z,req} = k_{p} (\psi_{des} - \psi) + k_{d} (\dot{\psi}_{des} - r)
+    \end{equation}
+    con $\phi_{des} = 0$ e $\dot{\phi}_{des} = 0$. Al contrario di quanto avviene per gli altri due angoli di assetto,
+    in questo caso, l'obiettivo è mantenere il drone orientato in avanti, motivo per cui si richiede un angolo nullo.
 \end{itemize}
+
 \subsection{Control Allocation (Mixing)}
-Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi $\mathbf[F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$), la spinta differenziale per il rollio e l'angolo di inclinazione del meccanismo di imbardata.
-\\A causa della geometria del tricottero e dell'accoppiamento tra le forze, il sistema non viene risolto tramite una singola matrice pseudoinversa, ma attraverso una risoluzione algebrica sequenziale che rispetta i vincoli di equilibrio meccanico derivati dal modello dinamico.
+Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e l'angolo di inclinazione del servo di coda ($\theta_3$).
+\\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema di allocazione non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
+\\In condizioni di \textit{hovering}, assumiamo la seguente configurazione nominale:
+\begin{itemize}
+    \item I rotori anteriori sono fissi in posizione verticale ($\theta_{1} = \theta_{2} = \pi/2$) e, essendo controrotanti, compensano reciprocamente le coppie di reazione.
+    \item Il rotore posteriore è orientato lateralmente ($\theta_{4} = -\pi/2$), ma il suo angolo di tilt $\theta_{3}$ possiede un valore di equilibrio non nullo ($\theta_{3,eq}$).
+\end{itemize}
+Tale inclinazione $\theta_{3,eq}$ è necessaria per generare una componente laterale di spinta capace di contrastare il momento torcente di reazione (yaw torque) del motore stesso, che altrimenti indurrebbe una rotazione indesiderata attorno all'asse $z$ (imbardata), non essendo presente un secondo rotore posteriore per il bilanciamento.
 
-\subsubsection{Equilibrio Longitudinale (Pitch) e Motore di Coda}
-Il primo passo consiste nel determinare la spinta necessaria al rotore posteriore ($T_3$) per soddisfare contemporaneamente la richiesta di spinta verticale totale ($F_{req}$) e il momento di beccheggio ($M_y$).
-Imponendo l'equilibrio alla rotazione attorno all'asse $y$ e considerando le distanze geometriche dal baricentro ($d_{mx}$ per i motori anteriori, $d_{tx}$ per il posteriore), si ottiene il sistema:
+\subsubsection{Angolo di Equilibrio $\theta_{3}$}
+L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorno all'asse $z$.
+\begin{gather*}
+    M_{th,z} = d_{my} k \omega_{2}^2 \cos(\theta_{2}) - d_{my} k \omega_{1}^2 \cos(\theta_{1}) \\ 
+    - d_{ty} k \omega_{3}^2 \cos(\theta_{3}) \cos(\theta_{4}) + d_{tx} k \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) \\[1ex]
+    M_{tor,z} = -(b \omega_{1}^2 + I_{rot_{12_{z}}} \dot{\omega}_{1}) \sin(\theta_{1}) + (b \omega_{2}^2 + I_{rot_{12_{z}}} \dot{\omega}_{2}) \sin(\theta_{2}) \\
+    - (b \omega_{3}^2 + I_{rot_{3_{z}}} \dot{\omega}_{3}) \sin(\theta_{3}) \\[1ex]
+    M_{th,z} + M_{tor,z} = 0 \\[1ex]
+    - d_{tx} k \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) - b \omega_{3}^2 \sin(\theta_{3}) = 0 \\[1ex]
+\end{gather*}
+\begin{equation}
+    \theta_{3} = \arctan\left(-\frac{k d_{tx}}{b}\right)
+\end{equation}
 
+\subsubsection{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}
+Il controllo dell'equilibrio longitudinale richiede la risoluzione di un sistema accoppiato, poiché i rotori non sono posizionati sul baricentro del velivolo. Di conseguenza, ogni variazione di spinta per il controllo di quota ($F_{req,z}$) induce un momento di beccheggio, e viceversa.\\
+Il mixing deve quindi determinare la ripartizione ottima della spinta tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema lineare di due equazioni in due incognite:
+\begin{enumerate}
+    \item \textbf{Equilibrio alla traslazione verticale:} La somma delle componenti verticali delle spinte deve eguagliare la richiesta del controllore di quota ($F_{req,z}$).
+    \item \textbf{Equilibrio alla rotazione (Beccheggio):} La somma dei momenti generati dalle spinte rispetto all'asse $y$ deve essere nulla (in hovering) o pari al momento di controllo richiesto.
+\end{enumerate}
+Considerando i bracci di leva rispetto al baricentro ($d_{mx}$ per i motori anteriori e $d_{tx}$ per il posteriore) e l'angolo di tilt del motore di coda ($\theta_3$), il sistema si formalizza come:
 \begin{equation}
     \begin{cases}
-    T_{front} + T_3 \sin\theta_3 = F_{req} \\
-    T_{front} d_{mx} \sin\theta_3 + T_3 \sin\theta_3 d_{tx} + M_{drag,3} = M_y
+    T_{front} + k \omega_{3} \sin(\theta_{3}) = F_{req,z} \\
+    T_{front} d_{mx} + k \omega_{3} \sin(\theta_{3}) d_{tx} + M_{tor,3} = M_y
     \end{cases}
 \end{equation}
-dove $\theta_3$ rappresenta l'angolo strutturale del braccio posteriore e $T_{front} = 2T{i}$ ($i = {1,2}$) è la componente di spinta media dei rotori anteriori ($T_1 \approx T_2$). Risolvendo per $T_3$ e sostituendo la relazione costitutiva del motore $T = K \omega^2$ e del momento resistivo $M_{drag} = b \omega^2$, si ricava la velocità angolare del rotore 3:
-
+dove $\theta_3$ rappresenta l'angolo strutturale del braccio posteriore, $T_{front} = 2T{i}$ ($i = {1,2}$) è la componente di spinta media dei rotori anteriori ($T_1 \approx T_2$).
 \begin{equation}
-    \omega_3^2 = \frac{F_{req} d_{mx} - M_y}{K \sin\theta_3 (d_{mx} - d_{tx}) + b \cos\theta_3}
+    \begin{cases}
+    2 k \omega_{i}^2 + k \omega_{3}^2 \sin(\theta_3) = F_{req,z} \\
+    2 k \omega_{i}^2 d_{mx} + k \omega_{3}^2 \sin(\theta_3) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_{y}
+    \end{cases}
 \end{equation}
-\\Una volta determinato $T_3 = K \omega_3^2$, è possibile calcolare la spinta che deve essere fornita complessivamente dalla coppia di motori anteriori ($T_{front}$) per garantire il sostentamento del drone:
+Risolvendo per $\omega_{3}$, si ricava la velocità angolare del rotore 3:
 \begin{equation}
-    T_{front} = F_{req} - T_3 \sin\theta_3
+    \omega_3^2 = \frac{M_y - F_{req,z} d_{mx}}{K \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)}
 \end{equation}
+Una volta determinato $T_3 = k \omega_3^2$, è possibile calcolare la spinta che deve essere fornita complessivamente dalla coppia di motori anteriori ($T_{front}$) per garantire il sostentamento del drone:
+\begin{equation}
+    T_{front} = F_{req,z} - T_3 \sin(\theta_3)
+\end{equation}
+L'imposizione del vincolo $M_y = 0$ all'interno delle equazioni di equilibrio è finalizzata alla determinazione delle condizioni 
+di \textit{hovering} stazionario, ovvero lo stato nominale in cui il velivolo mantiene la quota e l'assetto senza necessità di manovre 
+correttive. In questa configurazione, il sistema di \textit{mixing} garantisce che la spinta dei tre rotori sia ripartita in modo da 
+bilanciare esattamente il peso e i momenti parassiti dovuti alla geometria asimmetrica e alle coppie di reazione dei motori.
+\\Tuttavia, l'architettura del \textit{mixing} qui derivata mantiene validità generale per qualsiasi condizione di volo: quando il controllore 
+di assetto richiede un momento $M_y \neq 0$, il blocco di allocazione traduce tale comando in una variazione differenziale della spinta tra i rotori anteriori e quello posteriore. 
+In particolare, un valore di $M_y$ positivo (momento a cabrare) comporterà un incremento relativo della velocità angolare dei motori 
+anteriori $\omega_{1,2}$ e una contestuale riduzione della componente verticale della spinta del rotore di coda, permettendo così al 
+tricottero di variare il proprio angolo di \textit{pitch} pur mantenendo l'equilibrio delle altre forze.
 
 \subsubsection{Equilibrio Laterale (Roll) e Motori Anteriori}
+Il rollio viene raggiunto attraverso la spinta differenziale dei rotori anteriori.\\
 La spinta totale anteriore $T_{front}$ viene ripartita tra il motore sinistro (2) e destro (1) per generare il momento di rollio richiesto ($M_x$).
 Il sistema da risolvere è:
 \begin{equation}
@@ -236,11 +283,11 @@ Definendo la spinta media anteriore come $T_i = T_{front} / 2$, le spinte dei si
 \begin{equation}
     T_1 = T_i - \frac{M_x}{2 d_{my}}, \quad T_2 = T_i + \frac{M_x}{2 d_{my}}
 \end{equation}
-
-Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/K}$.
+Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 
 \subsubsection{Controllo di Imbardata (Yaw)}
-Il controllo dell'imbardata è gestito tramite il tilt dei rotori. La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
+Il controllo dell'imbardata è gestito tramite il tilt differenziale dei rotori anteriori.\\ 
+La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
 \begin{equation}
     M_z \approx T_{front} d_{my} \sin(\delta)
 \end{equation}

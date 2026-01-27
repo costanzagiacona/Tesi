@@ -32,17 +32,18 @@
 \contentsline {subsection}{\numberline {5.2.2}Controllo Planare e Mapping di Assetto}{24}{subsection.5.2.2}%
 \contentsline {subsection}{\numberline {5.2.3}Controllo di Assetto}{26}{subsection.5.2.3}%
 \contentsline {subsection}{\numberline {5.2.4}Control Allocation (Mixing)}{26}{subsection.5.2.4}%
-\contentsline {subsubsection}{Equilibrio Longitudinale (Pitch) e Motore di Coda}{26}{subsubsection*.6}%
-\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{27}{subsubsection*.7}%
-\contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{27}{subsubsection*.8}%
-\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{28}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{28}{subsection.5.3.1}%
-\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{28}{subsubsection*.9}%
-\contentsline {subsubsection}{Controllo della Quota (Verticale)}{29}{subsubsection*.10}%
-\contentsline {subsubsection}{Generazione della Spinta Totale}{29}{subsubsection*.11}%
-\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{29}{subsubsection*.12}%
-\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}{30}{subsection.5.3.2}%
-\contentsline {subsubsection}{Formulazione Matematica}{30}{subsubsection*.13}%
-\contentsline {subsubsection}{Gestione del Trim tramite Feedforward Statico}{30}{subsubsection*.14}%
-\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing}{31}{subsection.5.3.3}%
-\contentsline {subsection}{\numberline {5.3.4}Elementi di Innovazione della Strategia Proposta}{32}{subsection.5.3.4}%
+\contentsline {subsubsection}{Angolo di Equilibrio $\theta _{3}$}{27}{subsubsection*.6}%
+\contentsline {subsubsection}{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}{27}{subsubsection*.7}%
+\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{29}{subsubsection*.8}%
+\contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{29}{subsubsection*.9}%
+\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{30}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{30}{subsection.5.3.1}%
+\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{30}{subsubsection*.10}%
+\contentsline {subsubsection}{Controllo della Quota (Verticale)}{31}{subsubsection*.11}%
+\contentsline {subsubsection}{Generazione della Spinta Totale}{31}{subsubsection*.12}%
+\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{31}{subsubsection*.13}%
+\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}{32}{subsection.5.3.2}%
+\contentsline {subsubsection}{Formulazione Matematica}{32}{subsubsection*.14}%
+\contentsline {subsubsection}{Gestione del Trim tramite Feedforward Statico}{32}{subsubsection*.15}%
+\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing}{33}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Elementi di Innovazione della Strategia Proposta}{34}{subsection.5.3.4}%

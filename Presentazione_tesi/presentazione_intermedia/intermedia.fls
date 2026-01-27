@@ -536,7 +536,6 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr8.t
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr6.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr9.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr5.tfm
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmsso10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\rm-lmss10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\rm-lmss8.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr10.tfm
@@ -550,8 +549,8 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\sym
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm7.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmss8.tfm
+INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmsso10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmsso8.tfm
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmssbx10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmssbx10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmssbx10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmssbx10.tfm
@@ -612,5 +611,3 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy9.p
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy9.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msam10.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msam10.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msbm10.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msbm10.pfb

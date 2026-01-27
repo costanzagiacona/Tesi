@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  26 JAN 2026 11:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  27 JAN 2026 13:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -624,11 +624,7 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 ) (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count344
-) (main.aux
-
-LaTeX Warning: Label `fig:control_scheme' multiply defined.
-
-)
+) (main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
@@ -869,34 +865,30 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [23
 
-] [24] [25] [26]) [27] (capitoli/controllo_PID.tex [28
+] [24] [25] [26] [27] [28]) [29] (capitoli/controllo_PID.tex [30
 
-] [29] [30] [31]) (main.bbl [32]) [33
+] [31] [32] [33]) (main.bbl [34]) [35
 
 ] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
-
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 9AACF7AF2107767589F779E90ABD9401;8530.
  ) 
 Here is how much of TeX's memory you used:
- 28158 strings out of 467871
- 542962 string characters out of 5418375
- 1003405 words of memory out of 5000000
- 56047 multiletter control sequences out of 15000+600000
- 744761 words of font info for 257 fonts, out of 8000000 for 9000
+ 28173 strings out of 467871
+ 543177 string characters out of 5418375
+ 1003457 words of memory out of 5000000
+ 56050 multiletter control sequences out of 15000+600000
+ 744987 words of font info for 259 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,17n,104p,1038b,985s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (37 pages, 901970 bytes).
+Output written on main.pdf (39 pages, 909772 bytes).
 PDF statistics:
- 609 PDF objects out of 1000 (max. 8388607)
- 172 named destinations out of 1000 (max. 500000)
+ 624 PDF objects out of 1000 (max. 8388607)
+ 180 named destinations out of 1000 (max. 500000)
  65831 words of extra memory for PDF output out of 74296 (max. 10000000)
 

@@ -150,7 +150,7 @@ switch test_id
         % --- 1. Mixing Longitudinale (Z + Pitch) ---
         denom_mix = params.d_mx*params.k*sin(theta3_actual) ...
                   - params.d_tx*params.k*sin(theta3_actual) ...
-                  + params.b*cos(theta3_actual)*sin(theta4);
+                  + params.b*cos(theta3_actual);
         if abs(denom_mix) < 1e-6; denom_mix = 1e-6; end
         
         numeratore_coda = (params.d_mx * Thrust_req) - Moment_pitch_req;
