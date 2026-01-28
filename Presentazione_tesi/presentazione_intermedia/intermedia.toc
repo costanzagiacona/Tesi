@@ -2,5 +2,5 @@
 \babel@toc {italian}{}\relax 
 \beamer@sectionintoc {1}{Introduzione}{3}{0}{1}
 \beamer@sectionintoc {2}{Modellazione Dinamica}{6}{0}{2}
-\beamer@sectionintoc {3}{Architettura di Controllo}{11}{0}{3}
-\beamer@sectionintoc {4}{Conclusioni}{22}{0}{4}
+\beamer@sectionintoc {3}{Architettura di Controllo}{16}{0}{3}
+\beamer@sectionintoc {4}{Conclusioni}{29}{0}{4}

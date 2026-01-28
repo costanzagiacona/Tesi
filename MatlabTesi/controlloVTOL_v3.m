@@ -51,9 +51,10 @@ switch test_id
         % Lettura Integrali 
         % =================================================
         if length(x) >= 29
+            int_err_x = x(27);
             int_err_theta = x(28); % Integrale Pitch
         else
-            int_err_theta = 0; 
+            int_err_x = 0; int_err_theta = 0; 
         end
 
         %% OUTER LOOP
@@ -97,7 +98,11 @@ switch test_id
         e_x = x_des - x(1);
         de_x = vx_des - vx_global;
         s_x = de_x + lambda_x * e_x;
-        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x);
+        % Dentro il loop di controllo
+        fprintf('Integrale X: %f\n', int_err_x);
+        Ki_x = 2.0;
+        u_int_x = Ki_x * int_err_x;
+        F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x) + u_int_x;
 
         sin_theta_des = -F_x_req / Thrust_req;
         sin_theta_des = max(min(sin_theta_des, 0.5), -0.5);
@@ -195,6 +200,8 @@ switch test_id
         u(5) = tilt_2; 
         u(6) = theta3_ideal; 
         u(7) = -pi/2;
+        fprintf('Theta_Des: %.2f deg | Theta_Real: %.2f deg | Omega_Tail: %.2f\n', ...
+    rad2deg(theta_des), rad2deg(x(8)), u(3));
 
     case 2
         % =========================================================================

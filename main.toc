@@ -14,36 +14,55 @@
 \contentsline {section}{\numberline {2.8}Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}{10}{section.2.8}%
 \contentsline {section}{\numberline {2.9}Allocazione del Controllo tramite Spinta Differenziale}{11}{section.2.9}%
 \contentsline {chapter}{\numberline {3}Modello Matematico}{12}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Dimostrazione SMC}{15}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Modellazione della Dinamica Verticale}{15}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Definizione della Superficie di Scorrimento}{15}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Sintesi della Legge di Controllo}{16}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Analisi di Stabilità (Metodo di Lyapunov)}{17}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}Regolarizzazione e Chattering}{17}{subsection.4.1.4}%
-\contentsline {chapter}{\numberline {5}Architettura di Controllo del Drone}{19}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Modello Dinamico e Architettura di Controllo}{19}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}Modellazione delle Forze e dei Momenti}{19}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Strategia di Controllo per Fasi di Volo}{20}{subsection.5.1.2}%
-\contentsline {subsubsection}{Fase 1: Volo Verticale (Hovering)}{20}{subsubsection*.3}%
-\contentsline {subsubsection}{Fase 2: Transizione}{21}{subsubsection*.4}%
-\contentsline {subsubsection}{Fase 3: Volo Orizzontale (Crociera)}{21}{subsubsection*.5}%
-\contentsline {section}{\numberline {5.2}Controllo Verticale}{23}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Controllo di Posizione $z$}{23}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Controllo Planare e Mapping di Assetto}{24}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}Controllo di Assetto}{26}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}Control Allocation (Mixing)}{26}{subsection.5.2.4}%
-\contentsline {subsubsection}{Angolo di Equilibrio $\theta _{3}$}{27}{subsubsection*.6}%
-\contentsline {subsubsection}{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}{27}{subsubsection*.7}%
-\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{29}{subsubsection*.8}%
-\contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{29}{subsubsection*.9}%
-\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{30}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{30}{subsection.5.3.1}%
-\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{30}{subsubsection*.10}%
-\contentsline {subsubsection}{Controllo della Quota (Verticale)}{31}{subsubsection*.11}%
-\contentsline {subsubsection}{Generazione della Spinta Totale}{31}{subsubsection*.12}%
-\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{31}{subsubsection*.13}%
-\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}{32}{subsection.5.3.2}%
-\contentsline {subsubsection}{Formulazione Matematica}{32}{subsubsection*.14}%
-\contentsline {subsubsection}{Gestione del Trim tramite Feedforward Statico}{32}{subsubsection*.15}%
-\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing}{33}{subsection.5.3.3}%
-\contentsline {subsection}{\numberline {5.3.4}Elementi di Innovazione della Strategia Proposta}{34}{subsection.5.3.4}%
+\contentsline {section}{\numberline {3.1}Sistemi di Riferimento}{12}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Equazioni della Dinamica}{12}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Analisi delle Forze}{13}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Thrust}{13}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Gravità e Aerodinamica}{14}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Analisi dei Momenti}{14}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Momenti generati dai Rotori}{14}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Effetti Aerodinamici e Giroscopici}{15}{subsection.3.4.2}%
+\contentsline {chapter}{\numberline {4}Dimostrazione SMC}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Modellazione della Dinamica Verticale}{18}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Definizione della Superficie di Scorrimento}{18}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Sintesi della Legge di Controllo}{19}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Analisi di Stabilità (Metodo di Lyapunov)}{20}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Regolarizzazione e Chattering}{20}{subsection.4.1.4}%
+\contentsline {chapter}{\numberline {5}Architettura di Controllo del Drone}{22}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Modello Dinamico e Architettura di Controllo}{22}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Modellazione delle Forze e dei Momenti}{22}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Strategia di Controllo per Fasi di Volo}{23}{subsection.5.1.2}%
+\contentsline {subsubsection}{Fase 1: Volo Verticale (Hovering)}{23}{subsubsection*.3}%
+\contentsline {subsubsection}{Fase 2: Transizione}{24}{subsubsection*.4}%
+\contentsline {subsubsection}{Fase 3: Volo Orizzontale (Crociera)}{24}{subsubsection*.5}%
+\contentsline {section}{\numberline {5.2}Controllo Verticale}{26}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Controllo di Posizione $z$}{26}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Controllo Planare e Mapping di Assetto}{27}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Controllo di Assetto}{29}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Control Allocation (Mixing)}{29}{subsection.5.2.4}%
+\contentsline {subsubsection}{Angolo di Equilibrio $\theta _{3}$}{30}{subsubsection*.6}%
+\contentsline {subsubsection}{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}{30}{subsubsection*.7}%
+\contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{32}{subsubsection*.8}%
+\contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{32}{subsubsection*.9}%
+\contentsline {section}{\numberline {5.3}Controllo Orizzontale}{33}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{33}{subsection.5.3.1}%
+\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{33}{subsubsection*.10}%
+\contentsline {subsubsection}{Controllo della Quota (Verticale)}{34}{subsubsection*.11}%
+\contentsline {subsubsection}{Generazione della Spinta Totale}{34}{subsubsection*.12}%
+\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{34}{subsubsection*.13}%
+\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}{35}{subsection.5.3.2}%
+\contentsline {subsubsection}{Formulazione Matematica}{35}{subsubsection*.14}%
+\contentsline {subsubsection}{Gestione del Trim tramite Feedforward Statico}{35}{subsubsection*.15}%
+\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing}{36}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Elementi di Innovazione della Strategia Proposta}{37}{subsection.5.3.4}%
+\contentsline {chapter}{\numberline {6}Analisi di Stabilità}{38}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Modellazione del Sistema}{38}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Dinamica degli Attuatori}{38}{subsection.6.1.1}%
+\contentsline {section}{\numberline {6.2}Fase 1: Hovering (Volo Stazionario)}{38}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Anelli Interni (Assetto)}{38}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Anelli Esterni (Posizione)}{39}{subsection.6.2.2}%
+\contentsline {section}{\numberline {6.3}Fase 2: Cruise (Volo Traslato)}{40}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Anelli Interni (Assetto)}{40}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Anelli Esterni (Navigazione)}{40}{subsection.6.3.2}%
+\contentsline {section}{\numberline {6.4}Conclusioni}{41}{section.6.4}%
+\contentsline {section}{\numberline {.1}Codice di Analisi MATLAB}{42}{section.Alph0.1}%

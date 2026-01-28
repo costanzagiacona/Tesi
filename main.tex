@@ -19,6 +19,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,fit,positioning,calc}
 \usepackage{setspace}
+\usepackage{listings}
 \onehalfspacing
 
 % Percorso immagini
@@ -104,7 +105,7 @@
 % CAPITOLO 3
 \chapter{Modello Matematico}
 \label{ch:modello}
-\input{capitoli/modello_aggiornato.tex} % Qui andrebbero le equazioni di moto (Thrust, Gravità)
+\input{capitoli/modello.tex} % Qui andrebbero le equazioni di moto (Thrust, Gravità)
 
 % CAPITOLO 4
 \chapter{Dimostrazione SMC}
@@ -131,10 +132,10 @@
 \input{capitoli/controllo_PID.tex}
 % \input{capitoli/controllo_orizzonale.tex} 
 
-% % CAPITOLO 5
-% \chapter{Proposta di variazione strutturale del tricottero}
-% \label{ch:variazione}
-% % \input{capitoli/5_variazione}
+% CAPITOLO 5
+\chapter{Analisi di Stabilità}
+\label{ch:stabilita}
+\input{capitoli/analisi_stabilita.tex}
 
 % % CAPITOLO 6 - Qui inseriamo il tuo controllo SMC
 % \chapter{Simulazioni}

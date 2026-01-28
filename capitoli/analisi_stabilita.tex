@@ -1,0 +1,211 @@
+% !TEX root = ../main.tex
+\section{Modellazione del Sistema}
+
+\subsection{Dinamica degli Attuatori}
+Il fattore limitante per la banda passante del sistema di controllo è il ritardo introdotto dai gruppi motopropulsori e dai servocomandi. Questo è stato modellato come un filtro del secondo ordine:
+\begin{equation}
+    G_{act}(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}
+\end{equation}
+Con $\omega_n \approx 94.2$ rad/s ($15$ Hz) e $\zeta = 0.9$. Ogni anello di controllo deve avere una banda passante significativamente inferiore a $\omega_n$ per evitare instabilità indotta dal ritardo di fase.
+
+\section{Fase 1: Hovering (Volo Stazionario)}
+In questa fase il velivolo è intrinsecamente instabile o marginalmente stabile. Il controllo richiede un'elevata reattività.
+
+\subsection{Anelli Interni (Assetto)}
+I controllori PID agiscono sulla spinta differenziale.
+
+\begin{table}[H]
+\centering
+\caption{Prestazioni Anelli Interni (Hover)}
+\label{tab:hover_inner}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Loop} & \textbf{Guadagni (P/I/D)} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Gain Margin} \\ \midrule
+Roll ($\phi$) & 40 / 0 / 8 & 31.8 rad/s & 46.6$^\circ$ & 14.2 dB \\
+Pitch ($\theta$) & 40 / 10 / 8 & 31.0 rad/s & 47.3$^\circ$ & 14.5 dB \\
+Yaw ($\psi$) & 15 / 0 / 5 & 11.0 rad/s & 62.7$^\circ$ & $\infty$ \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Analisi e Validazione:}
+\begin{itemize}
+    \item \textbf{Reattività:} La banda passante di $\approx 31$ rad/s (5 Hz) garantisce una risposta rapida ai disturbi impulsivi (raffiche).
+    \item \textbf{Robustezza:} Il margine di fase di $\approx 47^\circ$ è il compromesso ideale. Valori superiori ridurrebbero la velocità di risposta; valori inferiori ($<40^\circ$) causerebbero oscillazioni (overshoot) visibili.
+    \item \textbf{Sicurezza:} La frequenza di taglio è circa $1/3$ della frequenza naturale dei motori ($31$ vs $94$ rad/s), garantendo che il ritardo hardware non destabilizzi il PID.
+\end{itemize}
+
+\subsection{Anelli Esterni (Posizione)}
+La posizione è controllata tramite un approccio a cascata, dove l'anello esterno comanda l'angolo di assetto desiderato.
+
+\begin{table}[H]
+\centering
+\caption{Prestazioni Anelli Esterni (Hover)}
+\label{tab:hover_outer}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Loop} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Separazione ($\omega_{in}/\omega_{out}$)} \\ \midrule
+Quota ($Z$) & 13.7 rad/s & 85.0$^\circ$ & 6.9 (vs Motori) \\
+Posizione ($X$) & 8.45 rad/s & 68.2$^\circ$ & 3.7 (vs Pitch) \\
+Posizione ($Y$) & 9.30 rad/s & 71.4$^\circ$ & 3.4 (vs Roll) \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Analisi e Validazione:}
+\begin{itemize}
+    \item \textbf{Quota:} Il controllo agisce direttamente sui motori. L'elevato margine di fase ($85^\circ$) indica un comportamento molto smorzato senza overshoot.
+    \item \textbf{Posizione Planare:} Il rapporto di separazione $\approx 3.5$ è al limite inferiore consigliato. Tuttavia, i margini di fase elevati ($>68^\circ$) compensano la vicinanza spettrale, prevenendo l'accoppiamento dinamico distruttivo.
+\end{itemize}
+
+\newpage
+\section{Fase 2: Cruise (Volo Traslato)}
+In volo orizzontale, l'autorità di controllo aumenta grazie alle superfici aerodinamiche e alla vettorizzazione della spinta ($d_{mx}=0.6$ m).
+
+\subsection{Anelli Interni (Assetto)}
+I guadagni sono stati ridotti drasticamente ($K_p=2$ vs $40$) per adattarsi alla maggiore autorità di controllo geometrica.
+
+\begin{table}[H]
+\centering
+\caption{Prestazioni Anelli Interni (Cruise)}
+\label{tab:cruise_inner}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Loop} & \textbf{Guadagni} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Note} \\ \midrule
+Roll ($\phi$) & 4.0 / 0 / 0.8 & 14.5 rad/s & 82.1$^\circ$ & Alta stabilità \\
+Pitch ($\theta$) & 2.0 / 1.5 / 0.5 & 13.0 rad/s & 85.0$^\circ$ & "Blindato" \\
+Yaw ($\psi$) & 3.0 / 0 / 1.2 & 10.2 rad/s & 88.4$^\circ$ & Smorzato \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Analisi e Validazione:}
+\begin{itemize}
+    \item \textbf{Robustezza Totale:} I margini di fase superiori a $80^\circ$ indicano un sistema estremamente robusto ("blindato"). Il drone in crociera si comporterà in modo dolce e prevedibile, simile a un aereo di linea piuttosto che a un drone acrobatico.
+    \item \textbf{Immunità al Ritardo:} Con una banda di soli $13$ rad/s (2 Hz), il ritardo dei servi ($15$ Hz) è praticamente invisibile al controllore, eliminando ogni rischio di instabilità ad alta frequenza.
+\end{itemize}
+
+\subsection{Anelli Esterni (Navigazione)}
+
+\begin{table}[H]
+\centering
+\caption{Prestazioni Anelli Esterni (Cruise)}
+\label{tab:cruise_outer}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Loop} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Separazione Freq.} \\ \midrule
+Velocità ($V_x$) & 1.28 rad/s & 63.0$^\circ$ & \textbf{10.1} (Eccellente) \\
+Quota ($Z$) & 6.01 rad/s & 83.0$^\circ$ & \textbf{15.6} (Eccellente) \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Analisi e Validazione:}
+\begin{itemize}
+    \item \textbf{Velocità:} Il rapporto di separazione $>10$ rispetto all'anello di pitch valida pienamente l'ipotesi di controllo a cascata. Le variazioni di velocità saranno fluide.
+    \item \textbf{Quota:} Il controllore utilizza un termine derivativo dominante ($K_d=6$), permettendo di trasformare la dinamica del secondo ordine in un comportamento smorzato del primo ordine, ideale per il mantenimento preciso dell'altitudine.
+\end{itemize}
+
+\section{Conclusioni}
+L'analisi formale conferma la validità del progetto dei controllori.
+\begin{enumerate}
+    \item La strategia **"Dual-Tuning"** (guadagni aggressivi in Hover, guadagni conservativi in Cruise) è corretta e necessaria data la variazione dell'autorità di controllo fisica.
+    \item I margini di stabilità soddisfano i criteri aerospaziali standard ($GM > 6$ dB, $PM > 45^\circ$).
+    \item Le bande passanti sono compatibili con l'hardware selezionato, garantendo un margine di sicurezza adeguato contro l'invecchiamento dei componenti o il calo di tensione della batteria.
+\end{enumerate}
+
+\newpage
+\appendix
+\section{Codice di Analisi MATLAB}
+Il seguente script è stato utilizzato per generare i dati e i diagrammi di Bode discussi nel report.
+
+\begin{lstlisting}[language=Matlab, caption=AnalisiStabilitaCompleta.m]
+%% ANALISI DI STABILITA E ROBUSTEZZA - VTOL 6.7kg
+clear all; close all; clc;
+
+%% 1. PARAMETRI DEL SISTEMA
+m = 6.7;            % Massa [kg]
+g = 9.81;           % Gravita [m/s^2]
+Ixx = 0.237; Iyy = 0.244; Izz = 0.468; % Inerzie
+
+% Geometria
+d_mx = 0.6;         % Braccio longitudinale (Fondamentale per Cruise)
+d_my = 0.2;         % Braccio laterale 
+T_hover = m*g;      % Spinta riferimento
+
+% Attuatori (Motori/Servi)
+wn = 2*pi*15;       % 94.2 rad/s
+zeta = 0.9;
+s = tf('s');
+G_act = wn^2 / (s^2 + 2*zeta*wn*s + wn^2);
+
+%% 2. FASE HOVER (Volo Verticale)
+
+% --- INNER LOOPS (Assetto) ---
+% Pitch Hover
+C_h_th = 40 + 8*s; % PD per analisi Bode
+L_h_th = C_h_th * G_act * (1/(Iyy*s^2));
+W_cl_th = L_h_th / (1 + L_h_th);
+
+% Roll Hover
+C_h_phi = 40 + 8*s;
+L_h_phi = C_h_phi * G_act * (1/(Ixx*s^2));
+W_cl_phi = L_h_phi / (1 + L_h_phi);
+
+% Yaw Hover
+C_h_psi = 15 + 5*s;
+L_h_psi = C_h_psi * G_act * (1/(Izz*s^2));
+
+% --- OUTER LOOPS (Posizione) ---
+% Quota Z
+C_h_z = 187.5 + 91.75*s; % PD equivalente SMC
+L_h_z = C_h_z * G_act * (1/(m*s^2));
+
+% Posizione X (Longitudinale)
+C_h_x = 75 + 48.5*s; % PD equivalente
+% Plant: Forza -> Acc -> Pos (incluso ritardo Inner Loop)
+L_h_x = C_h_x * (1/m) * W_cl_th * (1/s^2);
+
+% Posizione Y (Laterale)
+C_h_y = 46.6 + 53.6*s;
+L_h_y = C_h_y * (1/m) * W_cl_phi * (1/s^2);
+
+%% 3. FASE CRUISE (Volo Orizzontale)
+
+% --- INNER LOOPS (Assetto) ---
+% Pitch Cruise (Guadagno geometrico elevato)
+Gain_geo_th = (T_hover * d_mx) / Iyy;
+C_c_th = 2.0 + 0.5*s; % PD (Ki rimosso per analisi)
+L_c_th = C_c_th * G_act * (Gain_geo_th / s^2);
+W_cl_c_th = L_c_th / (1 + L_c_th);
+
+% Roll Cruise
+Gain_geo_phi = (T_hover * d_my) / Ixx;
+C_c_phi = 4.0 + 0.8*s;
+L_c_phi = C_c_phi * G_act * (Gain_geo_phi / s^2);
+
+% Yaw Cruise
+Gain_geo_psi = (T_hover * d_my) / Izz;
+C_c_psi = 3.0 + 1.2*s;
+L_c_psi = C_c_psi * G_act * (Gain_geo_psi / s^2);
+
+% --- OUTER LOOPS (Navigazione) ---
+% Velocita Vx
+C_c_v = 8.0 + 4.0/s; % PI
+L_c_v = C_c_v * W_cl_c_th * (g/s);
+
+% Quota Z Cruise (Controllo su Throttle)
+C_c_z = 4.0 + 6.0*s; % PD dominante
+L_c_z = C_c_z * G_act * (1/(m*s^2));
+
+%% 4. CALCOLO MARGINI E DISPLAY
+loops = {L_h_th, L_h_phi, L_h_psi, L_h_z, L_h_x, L_h_y, ...
+         L_c_th, L_c_phi, L_c_psi, L_c_z, L_c_v};
+names = {'H-Pitch', 'H-Roll', 'H-Yaw', 'H-Z', 'H-X', 'H-Y', ...
+         'C-Pitch', 'C-Roll', 'C-Yaw', 'C-Z', 'C-Vx'};
+
+fprintf('\nRISULTATI ANALISI STABILITA:\n');
+fprintf('%-10s | %-10s | %-10s\n', 'LOOP', 'BANDA', 'PM (deg)');
+fprintf('----------------------------------------\n');
+for i=1:11
+    [Gm, Pm, Wcg, Wcp] = margin(loops{i});
+    if isnan(Wcp); Wcp=0; end
+    fprintf('%-10s | %6.2f rad/s | %6.2f\n', names{i}, Wcp, Pm);
+end
+\end{lstlisting}

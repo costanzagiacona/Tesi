@@ -125,7 +125,7 @@ if disturbo == 1
     end
 elseif disturbo == 2
     if t > 2.0
-        F_disturbo = [10; 10; 30]; 
+        F_disturbo = [5; 10; 30]; 
     end
 end
 
@@ -195,7 +195,7 @@ z_target = target(3);
 if test_id == 1
     % Stato 28: Integrale errore Pitch
     x28_dot = theta_target - theta;
-    x27_dot = 0;
+    x27_dot = 0 - x(1);
     x29_dot = 0;
     x30_dot = 0;
 

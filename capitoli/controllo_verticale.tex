@@ -64,19 +64,24 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
         \draw [->] (ref_z) -- (sum_z);
         \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
         
-        % CONNESSIONE THRUST MIGLIORATA (BUS VERTICALE)
-        % 1. Linea principale verso il Mixer
-        \draw [->] (smc_z) -- node[above, font=\footnotesize] {$F_{req,z}$} (mixer.west |- smc_z);
+        % --- CONNESSIONE THRUST (Correzione Rigorosa) ---
         
-        % 2. Derivazione che scende nello spazio vuoto tra Sommatori e SMC
-        \draw [->] (smc_z.south) -- ++(0,-0.3) 
-            -| ($(sum_y)!0.5!(smc_phi)$) coordinate (thrust_bus_top) % Calcola il centro tra le colonne
-            -- (thrust_bus_top |- smc_theta.south); % Disegna la linea verticale fino in basso
-            
-        % 3. Collegamenti ai blocchi SMC interni
-        \draw [->] (thrust_bus_top |- smc_phi.north) -- ++(0,-0.2) -| ([xshift=-0.2cm]smc_phi.north);
-        \draw [->] (thrust_bus_top |- smc_theta.north) -- ++(0,-0.1) -| ([xshift=-0.2cm]smc_theta.north);
+        % 1. Definiamo una "x" sicura per il bus verticale (a metà precisa tra le colonne)
+        \coordinate (bus_x) at ($(sum_y.east)!0.5!(smc_phi.west)$);
+        
+        % 2. Disegniamo la linea principale che scende
+        % Parte da SMC_Z, va giù un po', gira a sinistra fino al bus_x, poi scende fino all'ultimo blocco
+        \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
+        
+        % Etichetta F_req,z posizionata meglio (sopra il primo tratto orizzontale)
+        \node[above, font=\footnotesize] at ($(smc_z.south) + (-1, -0.2)$) {$F_{req,z}$};
 
+        % 3. Collegamento a SMC Phi (Ingresso dall'alto pulito)
+        % Partiamo dal bus all'altezza del blocco -> SALIAMO -> ENTRIAMO da sopra
+        \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
+
+        % 4. Collegamento a SMC Theta (Ingresso dall'alto pulito)
+        \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
         % Y -> Phi Loop
         \draw [->] (ref_y) -- (sum_y);
         \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
@@ -121,7 +126,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
     
     \end{tikzpicture}
     } % Chiusura resizebox
-    \caption{Schema a blocchi del controllo con loop di retroazione espliciti.}
+    \caption{Schema a blocchi del controllo verticale.}
     \label{fig:control_scheme_vertical}
 \end{figure}
 
