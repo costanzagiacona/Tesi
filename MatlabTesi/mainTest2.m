@@ -327,8 +327,8 @@ elseif fase == 3
             x0(3) = -10;
             x0(4) = 25;
             x4eq = x0(4);
-            % x0(7) = deg2rad(5);
-            % x0(8) = deg2rad(2);
+            x0(7) = deg2rad(5);
+            x0(8) = deg2rad(2);
             x0(9) = deg2rad(15);
             F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
             F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
@@ -361,7 +361,7 @@ elseif fase == 3
 end
 
 simbolico = 0;
-options = odeset('RelTol',1e-3,'AbsTol',1e-6);
+options = odeset('RelTol',1e-6,'AbsTol',1e-6);
 [t, x] = ode45( @(t, x) simulazioneVTOL3(t, x,parametri, test_id, disturbo, target, simbolico), tspan, x0, options);
 
 %per plot controllo

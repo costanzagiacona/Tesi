@@ -1,6 +1,7 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
 \beamer@sectionintoc {1}{Introduzione}{3}{0}{1}
-\beamer@sectionintoc {2}{Modellazione Dinamica}{6}{0}{2}
-\beamer@sectionintoc {3}{Architettura di Controllo}{16}{0}{3}
-\beamer@sectionintoc {4}{Conclusioni}{29}{0}{4}
+\beamer@sectionintoc {2}{Modellazione Dinamica}{8}{0}{2}
+\beamer@sectionintoc {3}{Architettura di Controllo}{20}{0}{3}
+\beamer@sectionintoc {4}{Controllo Volo Orizzontale}{35}{0}{4}
+\beamer@sectionintoc {5}{Conclusioni}{42}{0}{5}

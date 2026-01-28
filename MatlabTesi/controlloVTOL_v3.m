@@ -123,7 +123,7 @@ switch test_id
         % =========================================================
         %   PITCH
         % =========================================================
-        kp_theta = 40; kd_theta = 8; ki_theta = 10;
+        kp_theta = 40; kd_theta = 8; ki_theta = 0;%10;
 
         theta_des = asin(sin_theta_des);
         e_theta = theta_des - theta;
@@ -200,8 +200,8 @@ switch test_id
         u(5) = tilt_2; 
         u(6) = theta3_ideal; 
         u(7) = -pi/2;
-        fprintf('Theta_Des: %.2f deg | Theta_Real: %.2f deg | Omega_Tail: %.2f\n', ...
-    rad2deg(theta_des), rad2deg(x(8)), u(3));
+        % fprintf('Theta_Des: %.2f deg | Theta_Real: %.2f deg | Omega_Tail: %.2f\n', ...
+    % rad2deg(theta_des), rad2deg(x(8)), u(3));
 
     case 2
         % =========================================================================
@@ -660,7 +660,7 @@ switch test_id
     % --- PITCH ---
     kp_theta = 2; 
     kd_theta = 0.5; 
-    ki_theta = 1.5;
+    ki_theta = 0;%1.5;
     
     u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
     
