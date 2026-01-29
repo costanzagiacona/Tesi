@@ -81,7 +81,7 @@ switch test_id
         % =========================================================
         %   LOOP Y 
         % =========================================================
-        lambda_y = 7; K_y_smc = 20; Phi_y = 3.0;
+        lambda_y = 0.8; K_y_smc = 15; Phi_y = 3.0;
 
         e_y = y_des - x(2);          
         de_y = vy_des - vy_global;   
@@ -93,13 +93,13 @@ switch test_id
         % =========================================================
         %   LOOP X
         % =========================================================
-        lambda_x = 5; K_x_smc = 15; Phi_x = 1.0;
+        lambda_x = 0.8; K_x_smc = 8; Phi_x = 1.0;
 
         e_x = x_des - x(1);
         de_x = vx_des - vx_global;
         s_x = de_x + lambda_x * e_x;
         % Dentro il loop di controllo
-        fprintf('Integrale X: %f\n', int_err_x);
+        % fprintf('Integrale X: %f\n', int_err_x);
         Ki_x = 2.0;
         u_int_x = Ki_x * int_err_x;
         F_x_req = params.m * lambda_x * de_x + K_x_smc * tanh(s_x / Phi_x) + u_int_x;
@@ -123,7 +123,7 @@ switch test_id
         % =========================================================
         %   PITCH
         % =========================================================
-        kp_theta = 40; kd_theta = 8; ki_theta = 0;%10;
+        kp_theta = 40; kd_theta = 8; ki_theta = 1;
 
         theta_des = asin(sin_theta_des);
         e_theta = theta_des - theta;

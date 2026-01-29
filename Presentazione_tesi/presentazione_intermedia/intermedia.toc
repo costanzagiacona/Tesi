@@ -1,7 +1,8 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
 \beamer@sectionintoc {1}{Introduzione}{3}{0}{1}
-\beamer@sectionintoc {2}{Modellazione Dinamica}{8}{0}{2}
-\beamer@sectionintoc {3}{Architettura di Controllo}{20}{0}{3}
-\beamer@sectionintoc {4}{Controllo Volo Orizzontale}{35}{0}{4}
-\beamer@sectionintoc {5}{Conclusioni}{42}{0}{5}
+\beamer@sectionintoc {2}{Descrizione VTOL}{5}{0}{2}
+\beamer@sectionintoc {3}{Modello Matematico}{8}{0}{3}
+\beamer@sectionintoc {4}{Architettura di Controllo Verticale}{22}{0}{4}
+\beamer@sectionintoc {5}{Simulazioni controllo verticale}{36}{0}{5}
+\beamer@sectionintoc {6}{Conclusioni}{42}{0}{6}

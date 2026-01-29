@@ -21,13 +21,12 @@
 \usetikzlibrary{shapes, arrows, fit, calc, positioning}
 
 \usepackage{graphicx}
-\graphicspath{{../../img}}
+\graphicspath{{../../img/}{../../img/controllo_verticale/}}
 \renewcommand{\figurename}{Fig.}
 
 % --- METADATI ---
-\title{Modellazione e Controllo di un Tricottero VTOL}
-\subtitle{Dinamica, Architettura di Controllo e Allocazione}
-\author{Autore}
+\title{Modellazione dinamica e design del controllo per un innovativo VTOL}
+\author{Maria Costanza Giacona}
 \date{}
 
 \begin{document}
@@ -35,6 +34,11 @@
 % --- SLIDE TITOLO ---
 \begin{frame}
     \titlepage
+    \begin{center}
+        Università degli Studi di Roma Tor Vergata\\
+    Dipartimento di Ingegneria
+    \end{center}
+    
 \end{frame}
 
 % --- INDICE ---
@@ -91,6 +95,8 @@
     \textbf{Soluzione:} Configurazione Ibrida (VTOL)
 \end{frame}
 
+\section{Descrizione VTOL}
+
 \begin{frame}
     \vfill
     \centering
@@ -98,7 +104,7 @@
     \vfill
 \end{frame}
 
-\begin{frame}{Il Concept VTOL tilting-rotor}
+\begin{frame}{VTOL tilting-rotor}
     Il tricottero \textit{tilting-rotor} combina i benefici delle due architetture:
     
     \begin{columns}
@@ -124,15 +130,21 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Il nostro Tricottero}
-    Inserire immagine dragon fly
+\begin{frame}{Tricottero tilting-rotor}
+    Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici geometriche variabili.
+    Questa configurazione rappresenta una criticità in fase di crociera perché è necessario gestire sia assetto che posizione 
+    solo tramite la vettorizzazione della spinta.
+    \begin{figure}
+        \includegraphics[width=0.4\textwidth]{dragonfly.png}
+        \caption{Dragonfly.}
+    \end{figure}
 
 \end{frame}
 
 % ============================================================
 % 2. MODELLAZIONE
 % ============================================================
-\section{Modellazione Dinamica}
+\section{Modello Matematico}
 
 \begin{frame}
     \vfill
@@ -178,7 +190,7 @@
 \end{frame}
 
 \begin{frame}{Cinematica: Trasformazioni tra sistemi}
-    Le equazioni cinematiche legano le variazioni temporali delle coordinate inerziali alle velocità misurate nel sistema body:
+    Le equazioni cinematiche legano le variazioni temporali delle coordinate inerziali alle velocità misurate nel sistema solidale al corpo:
     
     \begin{equation}
         \bm{\dot{P}}_{g} = \mathbf{R}_{b \to g}(\bm{\Theta}_g) \bm{V}_{b}
@@ -195,8 +207,8 @@
         \end{bmatrix}
         =
         \begin{bmatrix}
-            \mathbf{R}_{b \to g} & \mathbf{0}_{3 \times 3} \\ 
-            \mathbf{0}_{3 \times 3} & \mathbf{J}_{b \to g}
+            \mathbf{R}_{b \to g} & \mathbf{0} \\ 
+            \mathbf{0} & \mathbf{J}_{b \to g}
         \end{bmatrix}
         \begin{bmatrix}
             \bm{V}_b \\
@@ -226,7 +238,7 @@
         \begin{column}{0.45\textwidth}
             \centering
             \includegraphics[width=\linewidth]{tricopter_2D.png}
-            \captionof{figure}{\tiny Configurazione rotori avanzati.}
+            \captionof{figure}{Configurazione rotori avanzati.}
         \end{column}
     \end{columns}
 \end{frame}
@@ -253,16 +265,9 @@
         \footnotesize{Tilt su $Y_b$ e $Z_b$.}
     \end{columns}
     
-    \vspace{0.3cm}
-    % La dimensione del font deve avvolgere l'equazione, non starci dentro
-    {\footnotesize 
-    \begin{equation}
-        F_{th} = \sum_{i=1}^{3} R_{tilt,i} \cdot T_i \quad \text{(Forza propulsiva nel body frame)}
-    \end{equation}
-    }
 \end{frame}
 
-\begin{frame}{Equazioni della Dinamica (Newton-Eulero)}
+\begin{frame}{Equazioni della Dinamica: Newton-Eulero}
     Modello a 6 gradi di libertà per corpo rigido soggetto a forze e momenti esterni:
     
     \begin{block}{Equazioni del Moto nel Body Frame}
@@ -277,23 +282,31 @@
     Scomposizione dei contributi:
     \begin{itemize}
         \item $\bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}$
-        \item $\bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{pinna}}$
+        \item $\bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{pinna}}$
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Scomposizione della Forza Totale ($F_{TOT}$)}
+\begin{frame}{Scomposizione della Forza Totale}
     La forza totale agente sul tricottero è la risultante di tre contributi principali:
     \begin{equation}
-        F_{TOT} = F_{TH} + F_{GRAV} + F_{AERO}
+        \bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}
     \end{equation}
 
     \begin{itemize}
-        \item \textbf{Spinta ($F_{TH}$):} Generata dai tre rotori.
-        \item \textbf{Gravità ($F_{GRAV}$):} Proiettata dal sistema inerziale al body frame tramite la matrice $R_{b \to g}$:
+        \item \textbf{Spinta ($\bm{F}_{\text{th}}$):} Generata dai tre rotori.
         \begin{equation}
-            F_{GRAV} = \begin{bmatrix} -\sin(\theta) \\ \cos(\theta)\sin(\phi) \\ \cos(\theta)\cos(\phi) \end{bmatrix} mg
+            \bm{F}_{\text{th}} = 
+            \begin{bmatrix}
+                k\omega_1^2 \cos\theta_1 + k\omega_2^2 \cos\theta_2 + k\omega_3^2 \cos\theta_3 \cos\theta_4 \\
+                k\omega_3^2 \cos\theta_3 \sin\theta_4 \\
+                -k\omega_1^2 \sin\theta_1 - k\omega_2^2 \sin\theta_2 - k\omega_3^2 \sin\theta_3
+            \end{bmatrix}
         \end{equation}
-        \item \textbf{Aerodinamica ($F_{AERO}$):} Include Lift e Drag, dipendenti dal quadrato della velocità $v^2$ e dalla funzione segno $\text{sgn}(v)$ per la direzione.
+        \item \textbf{Gravità ($\bm{F}_g$):} Proiettata dal sistema inerziale al body frame tramite la matrice $R_{b \to g}^T$:
+        \begin{equation}
+            \bm{F}_g = \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix} mg
+        \end{equation}
+        \item \textbf{Aerodinamica ($\bm{F}_{\text{aero}}$):} Include Lift e Drag, dipendenti dal quadrato della velocità $v^2$ e dalla funzione segno $\text{sgn}(v)$ per la direzione.
     \end{itemize}
 \end{frame}
 
@@ -313,7 +326,7 @@
             
             Le ali generano Lift ($L$) e Drag ($D$):
             \begin{equation}
-                \bm{F}_{aero,wing} \approx 
+                \bm{F}_{aero,wing} = 
                 \begin{bmatrix}
                     -\frac{1}{2}\rho s_x C_D(v_x) v_x |v_x| \\
                     0 \\
@@ -325,105 +338,189 @@
         \begin{column}{0.4\textwidth}
             \centering
             \includegraphics[width=\linewidth]{forze_x.jpg}
-            \captionof{figure}{\tiny Scomposizione: Lift e Drag.}
+            \captionof{figure}{Scomposizione: Lift e Drag.}
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 1: COMPONENTI DELLE FORZE ---
-\begin{frame}{3.3 Analisi delle Forze Esterne ($\bm{F}_{\text{tot}}$)}
-    La dinamica traslazionale nel \textit{body frame} è determinata dalla risultante delle forze:
+\begin{frame}{Momento di Thrust}
+    \begin{equation}
+        \bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{pinna}}
+    \end{equation}
+    Il momento totale di thrust $\bm{M}_{\text{th}}$ è calcolato come somma dei momenti prodotti dai tre rotori rispetto al baricentro:
+    
     \begin{equation*}
-        m \bm{\dot{V}}_b = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}} - \bm{\Omega}_b \times (m \bm{V}_b)
+        \bm{M}_{\text{th}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{th_{i}})
     \end{equation*}
 
-    \begin{itemize}
-        \item \textbf{Forza di Gravità ($\bm{F}_g$):} Proiezione del peso tramite la matrice di rotazione trasposta.
-        \begin{equation*}
-            \bm{F}_g = \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix} mg
-        \end{equation*}
-        \item \textbf{Spinta Propulsiva ($\bm{F}_{\text{th}}$):} Risultante dei tre rotori, dove per i rotori anteriori si considera il tilt $\theta_1, \theta_2$:
-        \begin{equation*}
-            \bm{F}_{\text{th}} = \begin{bmatrix} 
-                k\omega_1^2 \sin\theta_1 + k\omega_2^2 \sin\theta_2 \\ 
-                k\omega_3^2 \cos\theta_3 \sin\theta_4 \\ 
-                -(k\omega_1^2 \cos\theta_1 + k\omega_2^2 \cos\theta_2 + k\omega_3^2 \cos\theta_3 \cos\theta_4) 
-            \end{bmatrix}
-        \end{equation*}
-    \end{itemize}
-\end{frame}
+    Utilizzando i bracci forniti e le componenti della forza di spinta, otteniamo:
 
-% --- SLIDE 2: MATRICE DEI MOMENTI (PARTE 1) ---
-\begin{frame}[allowframebreaks]{3.4.7 Il Momento Totale ($\bm{M}_{\text{tot}}$)}
-    Il momento totale è la chiave del controllo d'assetto. Di seguito la scomposizione analitica dei contributi propulsivi e torcenti:
-
-    \begin{block}{Momento dei Thrust ($M_{\text{th}}$) e Torcente ($M_{\text{tor}}$)}
-        \scalebox{0.68}{$
-        \begin{aligned}
-        \bm{M}_{\text{th}} &= \begin{bmatrix}
-            d_{m_y} k\omega_2^2 \sin\theta_2 - d_{m_y} k\omega_1^2 \sin\theta_1 - d_{t_y} k\omega_3^2 \sin\theta_3 - d_{t_z} k\omega_3^2 \cos\theta_3 \sin\theta_4 \\
-            d_{m_z} k\omega_1^2 \cos\theta_1 + d_{m_z} k\omega_2^2 \cos\theta_2 + d_{m_x} k\omega_1^2 \sin\theta_1 + d_{m_x} k\omega_2^2 \sin\theta_2 + d_{t_x} k\omega_3^2 \sin\theta_3 + d_{t_z} k\omega_3^2 \cos\theta_3 \cos\theta_4 \\
-            d_{m_y} k\omega_2^2 \cos\theta_2 - d_{m_y} k\omega_1^2 \cos\theta_1 - d_{t_y} k\omega_3^2 \cos\theta_3 \cos\theta_4 + d_{t_x} k\omega_3^2 \cos\theta_3 \sin\theta_4
-        \end{bmatrix} \\
-        \bm{M}_{\text{tor}} &= \begin{bmatrix}
-            (b\omega_1^2 + I_{r12z} \dot{\omega}_1) \cos\theta_1 - (b\omega_2^2 + I_{r12z} \dot{\omega}_2) \cos\theta_2 + (b\omega_3^2 + I_{r3z} \dot{\omega}_3) \cos\theta_3 \cos\theta_4 \\
-            (b\omega_3^2 + I_{r3z} \dot{\omega}_3) \cos\theta_3 \sin\theta_4 \\
-            -(b\omega_1^2 + I_{r12z} \dot{\omega}_1) \sin\theta_1 + (b\omega_2^2 + I_{r12z} \dot{\omega}_2) \sin\theta_2 - (b\omega_3^2 + I_{r3z} \dot{\omega}_3) \sin\theta_3
+    \begin{equation}
+        \bm{M}_{\text{th}} = 
+        \begin{bmatrix} 
+        -d_{my} (k\omega_1^2 \sin\theta_1) + d_{my} (k\omega_2^2 \sin\theta_2) \\ 
+        d_{mx} (k\omega_1^2 \sin\theta_1) + d_{mx} (k\omega_2^2 \sin\theta_2) + d_{tx} (k\omega_3^2 \sin\theta_3) \\ 
+        -d_{my} (k\omega_1^2 \cos\theta_1) + d_{my} (k\omega_2^2 \cos\theta_2) + d_{tx} (k\omega_3^2 \cos\theta_3 \sin\theta_4)
         \end{bmatrix}
-        \end{aligned}$}
-    \end{block}
-
-    \framebreak
-
-    \begin{block}{Momento Aerodinamico ($\bm{M}_{\text{aero}}$) e Giroscopico ($\bm{M}_{\text{gyro}}$)}
-        Il termine aerodinamico modella lo sfasamento tra Centro di Pressione e CoM, mentre quello giroscopico descrive le coppie indotte dalla variazione del tilt delle eliche.
-    \end{block}
-
-    \scalebox{0.7}{$
-    \begin{aligned}
-    \bm{M}_{\text{aero}} &\approx \begin{bmatrix}
-        (l_{sx_y} + l_{dx_y}) \left( -\frac{1}{2} C_l \rho s v_x^2 - \frac{1}{2} C_{d_z} \rho s v_z^2 \text{sgn}(v_z) \right) \\
-        -\left[ (l_{sx_x} + l_{dx_x}) \text{Lift} - (l_{sx_z} + l_{dx_z}) \text{Drag}_x \right] \\
-        (l_{sx_y} + l_{dx_y}) \frac{1}{2} C_d \rho s v_x^2 \text{sgn}(v_x)
-    \end{bmatrix} \\
-    \bm{M}_{\text{gyro}} &= \begin{bmatrix}
-        -I_{rz} \omega_{t1} \sin\theta_1 \omega_1 + I_{rz} \omega_{t2} \sin\theta_2 \omega_2 - I_{rz} \omega_{t3,xz} \sin\theta_3 \omega_3 - I_{ry} \omega_{t3,xy} \cos\theta_3 \sin\theta_4 \omega_3 \\
-        I_{rx} \omega_{t3,xy} \cos\theta_3 \cos\theta_4 \omega_3 \\
-        -I_{rz} \omega_{t1} \cos\theta_1 \omega_1 + I_{rz} \omega_{t2} \cos\theta_2 \omega_2 - I_{rz} \omega_{t3,xz} \cos\theta_3 \cos\theta_4 \omega_3
-    \end{bmatrix}
-    \end{aligned}$}
+    \end{equation}
 \end{frame}
 
-% --- SLIDE 3: STABILIZZAZIONE PASSIVA ---
-\begin{frame}{3.4.6 Stabilizzazione della Pinna e Accoppiamenti}
-    Il modello si chiude con i termini di smorzamento passivo e i termini non lineari di Eulero:
+\begin{frame}{Momento Torcente dei Rotori}
+    Il momento torcente totale è la somma vettoriale dei momenti generati da ciascun rotore, dovuti alla resistenza aerodinamica e all'inerzia del rotore stesso:
+    
+    \begin{equation*}
+        \bm{M}_{\text{tor}} = \sum_{i=1}^{3} \bm{\tau}_i = \sum_{i=1}^{3} (b \omega_i^2 + I_{rot_{i,z}} \dot{\omega}_i) \hat{e}_{thrust,i}
+    \end{equation*}
+
+    Espandendo i termini secondo l'orientamento dei rotori ($\theta_i$):
+
+    \begin{equation}
+        \bm{M}_{\text{tor}} = 
+        \begin{bmatrix} 
+        \tau_{1_x} - \tau_{2_x} + \tau_{3_x} \\ 
+        \tau_{3_y} \\ 
+        -\tau_{1_z} + \tau_{2_z} - \tau_{3_z} 
+        \end{bmatrix} =
+        \begin{bmatrix} 
+        (b\omega_1^2 + I_{r}\dot{\omega}_1) c_{\theta_1} - (b\omega_2^2 + I_{r}\dot{\omega}_2) c_{\theta_2} + (b\omega_3^2 + I_{r}\dot{\omega}_3) c_{\theta_3} c_{\theta_4} \\ 
+        (b\omega_3^2 + I_{r}\dot{\omega}_3) \cos\theta_3 \sin\theta_4 \\ 
+        -(b\omega_1^2 + I_{r}\dot{\omega}_1) s_{\theta_1} + (b\omega_2^2 + I_{r}\dot{\omega}_2) s_{\theta_2} - (b\omega_3^2 + I_{r}\dot{\omega}_3) \sin\theta_3
+        \end{bmatrix}
+    \end{equation}
 
     \begin{itemize}
-        \item \textbf{Momento della Pinna ($\bm{M}_{\text{pinna}}$):} Modella la deriva di coda che stabilizza il drone in volo avanzato (funzione di $v_y^2$).
-        \begin{equation*}
-            \bm{M}_{\text{pinna}} = \begin{bmatrix} -p \alpha_{0x} - \alpha_{1x} v_y^2 \\ 0 \\ -r (\alpha_{0z} + \alpha_{1z} v_y^2) \end{bmatrix}
-        \end{equation*}
-        \item \textbf{Termini d'Inerzia (Coriolis):} Coppie dovute alla rotazione del corpo rigido.
-        \begin{equation*}
-            \bm{M}_{\text{inerz}} = \begin{bmatrix} (I_{zz} - I_{yy})qr \\ (I_{xx} - I_{zz})pr \\ (I_{yy} - I_{xx})pq \end{bmatrix}
-        \end{equation*}
+        \item $b$: Coefficiente di resistenza aerodinamica dell'elica.
+        \item $I_{rot_{i,z}}$: Momento d'inerzia del rotore rispetto all'asse di rotazione.
+        \item $\hat{e}_{thrust,i}$: Versore dell'asse del rotore inclinato.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Momento Aerodinamico}
+    Il momento aerodinamico totale $\bm{M}_{\text{aero}}$ rispetto al baricentro è la somma dei momenti generati dalle ali e dalla resistenza del corpo:
+    
+    \begin{equation*}
+        \bm{M}_{\text{aero}} = \sum_{i \in \{dx, sx\}} (\mathbf{r}_{ala_i} \times \mathbf{F}_{aero, wing}) + (\mathbf{r}_{body} \times \mathbf{D}_{Body})
+    \end{equation*}
+
+    \begin{equation}
+        \bm{M}_{\text{aero}} = 
+        \underbrace{
+        \sum_{i \in \{dx, sx\}} 
+        \begin{bmatrix} 
+        r_{i_y} F_{z} \\ 
+        r_{i_z} F_{x} - r_{i_x} F_{z} \\ 
+        -r_{i_y} F_{x} 
+        \end{bmatrix}
+        }_{\text{Contributo Ali}}
+        + 
+        \underbrace{
+        \begin{bmatrix} 
+        r_{b_y} D_z - r_{b_z} D_y \\ 
+        r_{b_z} D_x - r_{b_x} D_z \\ 
+        r_{b_x} D_y - r_{b_y} D_x 
+        \end{bmatrix}
+        }_{\text{Contributo Corpo}}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Momento Giroscopico dovuto al tilting dei rotori}
+    Il momento giroscopico nasce dalla variazione dell'asse di rotazione dei propulsori (tilting). È definito dal prodotto vettoriale tra la velocità di tilting e il momento angolare del rotore:
+
+    \begin{equation}
+        \bm{M}_{\text{giro}} = \sum_{i=1}^{3} \mathbf{J}_{r} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{r,i})
+    \end{equation}
+
+    % Il resizebox adatta automaticamente l'equazione alla larghezza del testo
+    \begin{equation}
+    \resizebox{0.95\textwidth}{!}{%
+        $
+        \mathbf{M}_{\text{giro}} = 
+        \begin{bmatrix}
+            -I_{\text{rot}_{12_z}} \omega_{\text{tilt}_1} \sin(\theta_1)\omega_1 
+            + I_{\text{rot}_{12_z}} \omega_{\text{tilt}_2} \sin(\theta_2)\omega_2 
+            - I_{\text{rot}_{3_z}} \omega_{\text{tilt}_{3,xz}} \sin(\theta_3)\omega_3 
+            - I_{\text{rot}_{3_y}} \omega_{\text{tilt}_{3,xy}} \cos(\theta_3) \sin(\theta_4)\omega_3 
+            \\[1em] % Spaziatura extra tra le righe
+            + I_{\text{rot}_{3_x}} \omega_{\text{tilt}_{3,xy}} \cos(\theta_3) \cos(\theta_4)\omega_3 
+            \\[1em]
+            -I_{\text{rot}_{12_x}} \omega_{\text{tilt}_1} \cos(\theta_1)\omega_1 
+            + I_{\text{rot}_{12_x}} \omega_{\text{tilt}_2} \cos(\theta_2)\omega_2 
+            - I_{\text{rot}_{3_x}} \omega_{\text{tilt}_{3,xz}} \cos(\theta_3) \cos(\theta_4)\omega_3
+        \end{bmatrix}
+        $
+    }
+    \end{equation}
+
+    \vspace{0.2cm}
+    \footnotesize
+    Dove:
+    \begin{itemize}
+        \item $I_{\text{rot}_{12}}$ e $I_{\text{rot}_{3}}$: Momenti d'inerzia dei rotori anteriori e posteriore.
+        \item $\omega_{\text{tilt}}$: Velocità angolari di attuazione dei servomotori.
+        \item $\omega_{1,2,3}$: Velocità angolari delle eliche.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Momento Giroscopico dovuto al tricottero}
+    Il momento giroscopico $\bm{M}_{\text{body}}$ rappresenta le coppie derivanti dalla rotazione del velivolo nel sistema di riferimento solidale (\textit{Body Frame}):
+    
+    \begin{equation*}
+        \bm{M}_{\text{body}} = \bm{\Omega}_{B} \times (I_{B} \bm{\Omega}_{B})
+    \end{equation*}
+
+    Espandendo il prodotto vettoriale con la velocità angolare $\bm{\Omega}_{B} = [p, q, r]^\top$ e la matrice d'inerzia del tricottero $I_{B}$:
+
+    \begin{equation}
+        \bm{M}_{\text{body}} = 
+        \begin{bmatrix} p \\ q \\ r \end{bmatrix} \times 
+        \begin{bmatrix} I_{xx} & 0 & 0 \\ 0 & I_{yy} & 0 \\ 0 & 0 & I_{zz} \end{bmatrix}
+        \begin{bmatrix} p \\ q \\ r \end{bmatrix} =
+        \begin{bmatrix} 
+        (I_{zz} - I_{yy}) qr \\ 
+        (I_{xx} - I_{zz}) pr \\ 
+        (I_{yy} - I_{xx}) pq 
+        \end{bmatrix}
+    \end{equation}
+
+    \begin{itemize}
+        \item Queste componenti rappresentano le coppie di accoppiamento giroscopico dovute alla distribuzione della massa del velivolo.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Momento della Pinna in Coda}
+    Il momento generato dalla pinna di coda $\bm{M}_{pinna}$ agisce come contributo stabilizzante e smorzante, dipendente dalle velocità angolari e dalla velocità longitudinale:
+    
+    \begin{equation}
+        \bm{M}_{pinna} = 
+        \begin{bmatrix} M_{pinna,x} \\ M_{pinna,y} \\ M_{pinna,z} \end{bmatrix} =
+        \begin{bmatrix} 
+        -p \, \alpha_{0x} - \alpha_{1x} \, v_y^2 \\ 
+        0 \\ 
+        -r \, (\alpha_{0z} + \alpha_{1z} \, v_y^2) 
+        \end{bmatrix}
+    \end{equation}
+
+    \begin{itemize}
+        \item $p, r$: Velocità angolari rispettivamente di rollio ($X_B$) e imbardata ($Z_B$).
+        \item $v_y$: Velocità longitudinale lungo l'asse $Y_B$.
+        \item $\alpha_{0x}, \alpha_{1x}, \alpha_{0z}, \alpha_{1z}$: Coefficienti aerodinamici specifici della pinna.
     \end{itemize}
 
-    \begin{alertblock}{Conclusione sulla Dinamica}
-        La presenza di termini proporzionali al quadrato della velocità ($v^2$) e funzioni discontinue ($\text{sgn}$) rende il sistema fortemente non lineare, richiedendo strategie di controllo robuste.
-    \end{alertblock}
+    \begin{block}{Osservazioni}
+        La pinna non genera momento di beccheggio ($M_{pinna,y} = 0$) e i segni negativi indicano che il momento si oppone al moto rotatorio, garantendo stabilità direzionale.
+    \end{block}
 \end{frame}
 
 
 % ============================================================
 % 3. ARCHITETTURA DI CONTROLLO
 % ============================================================
-\section{Architettura di Controllo}
+\section{Architettura di Controllo Verticale}
 
 \begin{frame}
     \vfill
     \centering
-    {\Huge \textbf{Volo Verticale}}
+    {\Huge \textbf{Controllo Verticale}}
     \vfill
 \end{frame}
 
@@ -433,8 +530,8 @@
     \vspace{0.3cm}
     Si assume che in tale fase gli angoli di tilt siano i seguenti:
     \begin{itemize}
-        \item $\theta_1 = \theta_2 = \pi/2$ (Rotori anteriori verticali).
-        \item $\theta_4 = -\pi/2$ (Braccio di coda orientato lateralmente).
+        \item $\theta_1 = \theta_2 = \pi/2$
+        \item $\theta_4 = -\pi/2$
         \item $\theta_3 = \theta_{3,eq}$: tale angolo permette di contrastare il momento torcente attorno all'asse $z$ causato dalla coppia di reazione del motore posteriore, non essendo presente un secondo rotore controrotante per il bilanciamento.
     \end{itemize}
 \end{frame}
@@ -487,7 +584,7 @@
     \end{block}
     
     \vspace{0.2cm}
-    \textbf{Peculiarità:} Il controllo di quota e quello planare sono \textbf{accoppiati}. La spinta totale $T$ (loop $z$) funge da termine di normalizzazione per determinare l'inclinazione del vettore spinta.
+    \textbf{Peculiarità:} Il controllo di quota e quello planare sono \textbf{accoppiati}. La spinta totale $T$ (loop $z$) determina l'inclinazione del vettore spinta.
 \end{frame}
 
 % --- SLIDE 2: Schema a Blocchi (Codice TikZ fornito) ---
@@ -721,7 +818,7 @@
 
 \begin{frame}{Gestione dei Disturbi e Tuning del Guadagno}
     
-    Il vantaggio principale dello SMC è che non richiede la conoscenza puntuale del disturbo $d(t)$, ma solo del suo inviluppo massimo (Upper Bound).
+    Il vantaggio principale dello SMC è che non richiede la conoscenza puntuale del disturbo $d(t)$, ma solo del suo upper bound.
     
     \begin{columns}[c]
         \begin{column}{0.5\textwidth}
@@ -832,7 +929,7 @@ Tali quantità sono calcolate come uscite di tre PID.
     \begin{equation}
         \begin{cases}
         T_{front} + k \omega_{3}^2 \sin(\theta_{3}) = F_{z,req} \\
-        T_{front} d_{mx} + k \omega_{3}^2 \sin(\theta_{3}) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_y
+        T_{front} d_{mx} - k \omega_{3}^2 \sin(\theta_{3}) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_y
         \end{cases}
     \end{equation}
     
@@ -841,7 +938,7 @@ Tali quantità sono calcolate come uscite di tre PID.
     \begin{equation}
         \begin{cases}
         2 k \omega_{i}^2 + k \omega_{3}^2 \sin(\theta_3) = F_{z,req} \\
-        2 k \omega_{i}^2 d_{mx} + k \omega_{3}^2 \sin(\theta_3) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_{y}
+        2 k \omega_{i}^2 d_{mx} - k \omega_{3}^2 \sin(\theta_3) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_{y}
         \end{cases}
     \end{equation}
 \end{frame}
@@ -862,7 +959,7 @@ Tali quantità sono calcolate come uscite di tre PID.
 \end{frame}
 
 \begin{frame}{Mixer: Roll}
-    \textbf{2. Equilibrio Laterale (Roll):}
+    \textbf{Equilibrio Laterale (Roll):}
     Il rollio viene raggiunto attraverso la spinta differenziale dei rotori anteriori.\\
     La spinta totale anteriore $T_{front}$ viene ripartita tra il motore sinistro (2) e destro (1) per generare il momento di rollio richiesto ($M_x$).
     Il sistema da risolvere è:
@@ -881,7 +978,7 @@ Tali quantità sono calcolate come uscite di tre PID.
 \end{frame}
 
 \begin{frame}{Mixer: Yaw}
-    \textbf{3. Controllo Imbardata (Yaw):}
+    \textbf{Controllo Imbardata (Yaw):}
     L'imbardata è controllata attraverso il tilt differenziale dei rotori anteriori ($\delta$).
     La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione è approssimabile come:
     \begin{equation}
@@ -889,18 +986,16 @@ Tali quantità sono calcolate come uscite di tre PID.
     \end{equation}
     
     \vspace{0.2cm}
-    Invertendo la relazione, si calcola l'angolo di tilt desiderato con saturazione di sicurezza ($\delta_{max}$):
+    Invertendo la relazione, si calcola l'angolo di tilt desiderato:
     \begin{equation}
         \delta_{des} = \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right)
     \end{equation}
-    
-    \vspace{0.3cm}
-    \footnotesize
-    \begin{itemize}
-        \item \textit{Compensazione:} Il controllo bilancia la coppia residua del rotore 3 ($\theta_{3,eq}$).
-        \item \textbf{Gestione Saturazione:} Se il controllo richiede $\delta > \delta_{max}$, l'imbardata perde priorità per non compromettere la stabilità di rollio e beccheggio (sicurezza del volo).
-    \end{itemize}
 \end{frame}
+
+% ===========================================================
+% SIMULAZIONI
+% ==========================================================
+\section{Simulazioni controllo verticale}
 
 \begin{frame}
     \vfill
@@ -909,159 +1004,215 @@ Tali quantità sono calcolate come uscite di tre PID.
     \vfill
 \end{frame}
 
-% ============================================================
-% CONTROLLO ORIZZONTALE (CASE 12)
-% ============================================================
-\section{Controllo Volo Orizzontale}
+% --- SLIDE 1: ASSETTO (STABILITÀ) ---
+\begin{frame}{Analisi Prestazionale: Controllo di Assetto}
+ 
+    \begin{figure}
+        \centering
+        % Sostituisci con il nome del file rinominato: sim_assetto.png
+        \includegraphics[width=0.9\textwidth]{angoli.png}
+    \end{figure}
 
-\begin{frame}
-    \vfill
-    \centering
-    {\Huge \textbf{Volo Orizzontale}}
-    \vfill
 \end{frame}
 
-\begin{frame}{Strategia di Controllo Orizzontale}
-    Nella fase di volo orizzontale (Fase 3), il rotore di coda viene disattivato ($T_{rear} = 0$). 
-    Il sostentamento è affidato alla portanza alare e il controllo avviene tramite \textbf{Thrust Vectoring} dei rotori anteriori.
-    
-    \vspace{0.3cm}
-    \begin{block}{Obiettivi del Controllore (Case 12)}
-        \begin{itemize}
-            \item \textbf{Longitudinale:} Inseguimento velocità $v_{x,des}$ e quota $z_{des}$.
-            \item \textbf{Laterale:} Mantenimento rotta ($y=0$) tramite correzione dell'imbardata (Yaw-steering).
-            \item \textbf{Assetto:} Stabilizzazione attiva di Roll e Pitch a $0^\circ$.
-        \end{itemize}
-    \end{block}
+\begin{frame}{Analisi Prestazionale: Controllo di Posizione}
+ 
+    \begin{figure}
+        \centering
+        % Sostituisci con il nome del file rinominato: sim_assetto.png
+        \includegraphics[width=0.9\textwidth]{pos_vel.png}
+    \end{figure}
+
 \end{frame}
 
-\begin{frame}{Architettura a Cascata e Feedforward}
-    Il controllo utilizza un approccio vettoriale: i loop esterni calcolano le forze richieste ($F_x, F_z$), che vengono convertite in intensità di spinta e angolo di tilt.
+% --- SLIDE 2: SPINTA (THRUST) ---
+\begin{frame}{Analisi degli Attuatori: Thrust}
+ 
+    \begin{figure}
+        \centering
+        % Sostituisci con il nome del file rinominato: sim_thrust.png
+        \includegraphics[width=0.9\textwidth]{thrust.png}
+    \end{figure}
 
-    \vspace{0.2cm}
-    \textbf{Feedforward Aerodinamico:}
-    Per migliorare la risposta, il controllore compensa le forze aerodinamiche note:
+\end{frame}
+
+% --- SLIDE 3: TILT (VALIDAZIONE TEORICA) ---
+\begin{frame}{Analisi degli Attuatori: Angoli di Tilt}
+
+    \begin{figure}
+        \centering
+        % Sostituisci con il nome del file rinominato: sim_tilt.png
+        \includegraphics[width=0.9\textwidth]{tilt.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Conclusioni}
     \begin{itemize}
-        \item \textbf{Lift (Ala):} $L_{ff} = \frac{1}{2} \rho S C_L v^2$. Riduce lo sforzo verticale dei motori all'aumentare della velocità.
-        \item \textbf{Drag:} $D_{ff} = \frac{1}{2} \rho (S C_D + S_{body} C_{D_{body}}) v^2$. Anticipa la spinta necessaria per mantenere la velocità.
+        \item Nelle simulazioni, il drone parte da una condizione di equilibrio per raggiungere quota $z = -10$ metri. 
+        \item A circa 12 secondi si nota una lieve oscillazione degli angoli. Questo non è un errore di stabilità, 
+        ma un normale effetto fisico della frenata: quando i motori rallentano bruscamente, generano una forza inerziale 
+        che il Mixer non può prevedere, essendo basato su un modello statico. 
+        \item Il controllore, tuttavia, rileva subito questa variazione e la corregge efficacemente, riportando il 
+        drone stabile con errore nullo.
     \end{itemize}
     
-    \begin{equation}
-        \begin{cases}
-            F_{z,req} = m(g - a_{z,PID}) - L_{ff} \\
-            F_{x,req} = D_{ff} + F_{x,PID}
-        \end{cases}
-    \end{equation}
+    
+    
 \end{frame}
 
-\begin{frame}{Schema a Blocchi: Volo Orizzontale}
-    \begin{figure} % AGGIUNTO FIGURE
-        \centering
-        \resizebox{0.95\textwidth}{!}{
-        \begin{tikzpicture}[auto, node distance=2cm, >=latex']
-            % Stili
-            \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3em, align=center, fill=white]
-            \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm]
-            \tikzstyle{input} = [coordinate] % AGGIUNTO STILE INPUT MANCANTE
-            
-            % Nodi
-            \node [input] (ref) {};
-            \node [block, right of=ref, node distance=2.5cm] (guidance) {Guidance\\PID ($z, v_x, y$)};
-            \node [sum, right of=guidance, node distance=2.5cm] (sum_ff) {$\Sigma$};
-            \node [block, above of=sum_ff, node distance=2cm] (feedforward) {Modello Aero\\(Lift \& Drag)};
-            \node [block, right of=sum_ff, node distance=3cm] (vectoring) {Thrust\\Vectoring};
-            \node [block, right of=vectoring, node distance=3.5cm] (mixer) {Mixer \&\\Servo};
-            \node [block, below of=vectoring, node distance=2.5cm] (attitude) {PID Assetto\\($\phi, \theta, \psi$)};
-            
-            % Collegamenti
-            \draw [->] (ref) -- node {Target} (guidance);
-            \draw [->] (guidance) -- node {$F_{PID}$} (sum_ff);
-            \draw [->] (feedforward) -- node {$F_{Aero}$} (sum_ff);
-            \draw [->] (sum_ff) -- node {$F_{req}$} (vectoring);
-            \draw [->] (vectoring) -- node [name=vec_out] {$\alpha_{tilt}, T_{tot}$} (mixer);
-            \draw [->] (attitude) -| node [pos=0.1] {$\delta_{tilt}, \delta_{T}$} (mixer);
-            
-            % Feedback (concettuale)
-            \node [below of=guidance, node distance=1.5cm] (measure) {Stati ($x, v, \Theta$)};
-            \draw [->] (measure) -- (guidance);
-            \draw [->] (measure) -- (feedforward);
-            \draw [->] (measure) -| (attitude);
-            \draw [dashed] (vectoring) -- (attitude); 
-            
-        \end{tikzpicture}
-        }
-        \caption{Schema logico del controllo Case 12.}
-    \end{figure} % CHIUSURA FIGURE
-\end{frame}
+% % ============================================================
+% % CONTROLLO ORIZZONTALE (CASE 12)
+% % ============================================================
+% \section{Controllo Volo Orizzontale}
 
-\begin{frame}{Strategia di Thrust Vectoring}
-    La peculiarità del case 12 è il disaccoppiamento tra l'orientamento del vettore spinta e l'assetto del drone.
-    
-    \begin{columns}
-        \column{0.55\textwidth}
-        \textbf{1. Calcolo Vettore Ideale:}
-        L'angolo di spinta richiesto nel sistema globale è:
-        \begin{equation}
-            \alpha_{ideal} = \arctan\left(\frac{F_{z,req}}{F_{x,req}}\right)
-        \end{equation}
-        
-        \textbf{2. Compensazione Pitch:}
-        L'angolo effettivo dei servomotori deve tener conto dell'inclinazione corrente del corpo ($\theta$):
-        \begin{equation}
-            \alpha_{servo} = \text{sat}(\alpha_{ideal}) - \theta
-        \end{equation}
-        
-        \column{0.45\textwidth}
-        \centering
-        % Qui potresti mettere un'immagine vettoriale se ce l'hai, altrimenti descrittivo
-        \begin{alertblock}{Nota Bene}
-            Se il drone alza il muso ($\theta > 0$), i servi ruotano verso il basso per mantenere il vettore spinta orizzontale e garantire la propulsione.
-        \end{alertblock}
-    \end{columns}
-\end{frame}
+% \begin{frame}
+%     \vfill
+%     \centering
+%     {\Huge \textbf{Volo Orizzontale}}
+%     \vfill
+% \end{frame}
 
-\begin{frame}{Mixer e Allocazione Attuatori}
-    I comandi di assetto (Inner Loop) vengono miscelati con il vettore di spinta principale:
+% \begin{frame}{Strategia di Controllo Orizzontale}
+%     Nella fase di volo orizzontale (Fase 3), il rotore di coda viene disattivato ($T_{rear} = 0$). 
+%     Il sostentamento è affidato alla portanza alare e il controllo avviene tramite \textbf{Thrust Vectoring} dei rotori anteriori.
     
-    \begin{itemize}
-        \item \textbf{Motori (Spinta Differenziale):} Gestiscono l'imbardata ($M_z$).
-        \begin{equation*}
-            T_{1,2} = \frac{T_{tot}}{2} \mp u_{yaw}
-        \end{equation*}
-        \item \textbf{Servi (Tilt Differenziale):} Gestiscono il Rollio ($M_x$) e correggono il Pitch ($M_y$).
-        \begin{equation*}
-            \begin{cases}
-                \delta_{servo,1} = \alpha_{servo} + u_{pitch} - u_{roll} \\
-                \delta_{servo,2} = \alpha_{servo} + u_{pitch} + u_{roll}
-            \end{cases}
-        \end{equation*}
-    \end{itemize}
-    
-    \footnotesize
-    \textit{*Il rotore di coda è spento ($u_3 = 0$) per massimizzare l'efficienza.}
-\end{frame}
+%     \vspace{0.3cm}
+%     \begin{block}{Obiettivi del Controllore (Case 12)}
+%         \begin{itemize}
+%             \item \textbf{Longitudinale:} Inseguimento velocità $v_{x,des}$ e quota $z_{des}$.
+%             \item \textbf{Laterale:} Mantenimento rotta ($y=0$) tramite correzione dell'imbardata (Yaw-steering).
+%             \item \textbf{Assetto:} Stabilizzazione attiva di Roll e Pitch a $0^\circ$.
+%         \end{itemize}
+%     \end{block}
+% \end{frame}
 
-\begin{frame}{Scenari di Simulazione (Test Cases)}
-    Il controllore è stato validato in tre scenari operativi distinti:
+% \begin{frame}{Architettura a Cascata e Feedforward}
+%     Il controllo utilizza un approccio vettoriale: i loop esterni calcolano le forze richieste ($F_x, F_z$), che vengono convertite in intensità di spinta e angolo di tilt.
+
+%     \vspace{0.2cm}
+%     \textbf{Feedforward Aerodinamico:}
+%     Per migliorare la risposta, il controllore compensa le forze aerodinamiche note:
+%     \begin{itemize}
+%         \item \textbf{Lift (Ala):} $L_{ff} = \frac{1}{2} \rho S C_L v^2$. Riduce lo sforzo verticale dei motori all'aumentare della velocità.
+%         \item \textbf{Drag:} $D_{ff} = \frac{1}{2} \rho (S C_D + S_{body} C_{D_{body}}) v^2$. Anticipa la spinta necessaria per mantenere la velocità.
+%     \end{itemize}
     
-    \vspace{0.3cm}
-    \begin{columns}[T]
-        \column{0.32\textwidth}
-        \textbf{Case 1: Ideale} \\
-        \footnotesize
-        Condizioni di trim ($v=25$ m/s). Verifica la capacità di mantenimento quota e rotta in assenza di disturbi.
+%     \begin{equation}
+%         \begin{cases}
+%             F_{z,req} = m(g - a_{z,PID}) - L_{ff} \\
+%             F_{x,req} = D_{ff} + F_{x,PID}
+%         \end{cases}
+%     \end{equation}
+% \end{frame}
+
+% \begin{frame}{Schema a Blocchi: Volo Orizzontale}
+%     \begin{figure} % AGGIUNTO FIGURE
+%         \centering
+%         \resizebox{0.95\textwidth}{!}{
+%         \begin{tikzpicture}[auto, node distance=2cm, >=latex']
+%             % Stili
+%             \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3em, align=center, fill=white]
+%             \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm]
+%             \tikzstyle{input} = [coordinate] % AGGIUNTO STILE INPUT MANCANTE
+            
+%             % Nodi
+%             \node [input] (ref) {};
+%             \node [block, right of=ref, node distance=2.5cm] (guidance) {Guidance\\PID ($z, v_x, y$)};
+%             \node [sum, right of=guidance, node distance=2.5cm] (sum_ff) {$\Sigma$};
+%             \node [block, above of=sum_ff, node distance=2cm] (feedforward) {Modello Aero\\(Lift \& Drag)};
+%             \node [block, right of=sum_ff, node distance=3cm] (vectoring) {Thrust\\Vectoring};
+%             \node [block, right of=vectoring, node distance=3.5cm] (mixer) {Mixer \&\\Servo};
+%             \node [block, below of=vectoring, node distance=2.5cm] (attitude) {PID Assetto\\($\phi, \theta, \psi$)};
+            
+%             % Collegamenti
+%             \draw [->] (ref) -- node {Target} (guidance);
+%             \draw [->] (guidance) -- node {$F_{PID}$} (sum_ff);
+%             \draw [->] (feedforward) -- node {$F_{Aero}$} (sum_ff);
+%             \draw [->] (sum_ff) -- node {$F_{req}$} (vectoring);
+%             \draw [->] (vectoring) -- node [name=vec_out] {$\alpha_{tilt}, T_{tot}$} (mixer);
+%             \draw [->] (attitude) -| node [pos=0.1] {$\delta_{tilt}, \delta_{T}$} (mixer);
+            
+%             % Feedback (concettuale)
+%             \node [below of=guidance, node distance=1.5cm] (measure) {Stati ($x, v, \Theta$)};
+%             \draw [->] (measure) -- (guidance);
+%             \draw [->] (measure) -- (feedforward);
+%             \draw [->] (measure) -| (attitude);
+%             \draw [dashed] (vectoring) -- (attitude); 
+            
+%         \end{tikzpicture}
+%         }
+%         \caption{Schema logico del controllo Case 12.}
+%     \end{figure} % CHIUSURA FIGURE
+% \end{frame}
+
+% \begin{frame}{Strategia di Thrust Vectoring}
+%     La peculiarità del case 12 è il disaccoppiamento tra l'orientamento del vettore spinta e l'assetto del drone.
+    
+%     \begin{columns}
+%         \column{0.55\textwidth}
+%         \textbf{1. Calcolo Vettore Ideale:}
+%         L'angolo di spinta richiesto nel sistema globale è:
+%         \begin{equation}
+%             \alpha_{ideal} = \arctan\left(\frac{F_{z,req}}{F_{x,req}}\right)
+%         \end{equation}
         
-        \column{0.32\textwidth}
-        \textbf{Case 2: Recupero Velocità} \\
-        \footnotesize
-        Velocità iniziale bassa ($20$ m/s). Il controllore deve saturare il tilt in avanti per accelerare senza perdere quota (Lift insufficiente).
+%         \textbf{2. Compensazione Pitch:}
+%         L'angolo effettivo dei servomotori deve tener conto dell'inclinazione corrente del corpo ($\theta$):
+%         \begin{equation}
+%             \alpha_{servo} = \text{sat}(\alpha_{ideal}) - \theta
+%         \end{equation}
         
-        \column{0.32\textwidth}
-        \textbf{Case 3: Disturbi} \\
-        \footnotesize
-        Angoli iniziali errati ($\phi, \theta, \psi \neq 0$). Verifica la capacità del PID di assetto di stabilizzare il drone e portarlo in volo livellato.
-    \end{columns}
-\end{frame}
+%         \column{0.45\textwidth}
+%         \centering
+%         % Qui potresti mettere un'immagine vettoriale se ce l'hai, altrimenti descrittivo
+%         \begin{alertblock}{Nota Bene}
+%             Se il drone alza il muso ($\theta > 0$), i servi ruotano verso il basso per mantenere il vettore spinta orizzontale e garantire la propulsione.
+%         \end{alertblock}
+%     \end{columns}
+% \end{frame}
+
+% \begin{frame}{Mixer e Allocazione Attuatori}
+%     I comandi di assetto (Inner Loop) vengono miscelati con il vettore di spinta principale:
+    
+%     \begin{itemize}
+%         \item \textbf{Motori (Spinta Differenziale):} Gestiscono l'imbardata ($M_z$).
+%         \begin{equation*}
+%             T_{1,2} = \frac{T_{tot}}{2} \mp u_{yaw}
+%         \end{equation*}
+%         \item \textbf{Servi (Tilt Differenziale):} Gestiscono il Rollio ($M_x$) e correggono il Pitch ($M_y$).
+%         \begin{equation*}
+%             \begin{cases}
+%                 \delta_{servo,1} = \alpha_{servo} + u_{pitch} - u_{roll} \\
+%                 \delta_{servo,2} = \alpha_{servo} + u_{pitch} + u_{roll}
+%             \end{cases}
+%         \end{equation*}
+%     \end{itemize}
+    
+%     \footnotesize
+%     \textit{*Il rotore di coda è spento ($u_3 = 0$) per massimizzare l'efficienza.}
+% \end{frame}
+
+% \begin{frame}{Scenari di Simulazione (Test Cases)}
+%     Il controllore è stato validato in tre scenari operativi distinti:
+    
+%     \vspace{0.3cm}
+%     \begin{columns}[T]
+%         \column{0.32\textwidth}
+%         \textbf{Case 1: Ideale} \\
+%         \footnotesize
+%         Condizioni di trim ($v=25$ m/s). Verifica la capacità di mantenimento quota e rotta in assenza di disturbi.
+        
+%         \column{0.32\textwidth}
+%         \textbf{Case 2: Recupero Velocità} \\
+%         \footnotesize
+%         Velocità iniziale bassa ($20$ m/s). Il controllore deve saturare il tilt in avanti per accelerare senza perdere quota (Lift insufficiente).
+        
+%         \column{0.32\textwidth}
+%         \textbf{Case 3: Disturbi} \\
+%         \footnotesize
+%         Angoli iniziali errati ($\phi, \theta, \psi \neq 0$). Verifica la capacità del PID di assetto di stabilizzare il drone e portarlo in volo livellato.
+%     \end{columns}
+% \end{frame}
 
 % ============================================================
 % 5. CONCLUSIONI
@@ -1079,23 +1230,23 @@ Tali quantità sono calcolate come uscite di tre PID.
     \textbf{Risultati ottenuti:}
     \begin{itemize}
         \item Modellazione completa a 6-DOF per tricottero tilting-rotor.
-        \item Il controllo SMC ha dimostrato robustezza superiore ai PID classici.
+        \item Sintesi del controllore per il volo verticale.
     \end{itemize}
     
     \vspace{0.8cm}
     \textbf{Sviluppi Futuri:}
     \begin{itemize}
         \item Sintesi controllore per il volo orizzontale.
-        \item Studio della fase di transizione (hover $\to$ volo alare).
+        \item Analisi di stabilità.
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    \centering
-    \Huge \textbf{Grazie per l'attenzione}
+% \begin{frame}
+%     \centering
+%     \Huge \textbf{Grazie per l'attenzione}
     
-    \vspace{1cm}
-    \Large Domande?
-\end{frame}
+%     \vspace{1cm}
+%     \Large Domande?
+% \end{frame}
 
 \end{document}
