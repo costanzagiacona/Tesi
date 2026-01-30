@@ -45,24 +45,15 @@
 \contentsline {subsubsection}{Equilibrio Laterale (Roll) e Motori Anteriori}{32}{subsubsection*.8}%
 \contentsline {subsubsection}{Controllo di Imbardata (Yaw)}{32}{subsubsection*.9}%
 \contentsline {section}{\numberline {5.3}Controllo Orizzontale}{33}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Outer Loop: Controllo di Posizione e Velocità}{33}{subsection.5.3.1}%
-\contentsline {subsubsection}{Controllo della Velocità (Longitudinale)}{33}{subsubsection*.10}%
-\contentsline {subsubsection}{Controllo della Quota (Verticale)}{34}{subsubsection*.11}%
-\contentsline {subsubsection}{Generazione della Spinta Totale}{34}{subsubsection*.12}%
-\contentsline {subsubsection}{Scelta del Controllo PID per il Loop Esterno}{34}{subsubsection*.13}%
-\contentsline {subsection}{\numberline {5.3.2}Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}{35}{subsection.5.3.2}%
-\contentsline {subsubsection}{Formulazione Matematica}{35}{subsubsection*.14}%
-\contentsline {subsubsection}{Gestione del Trim tramite Feedforward Statico}{35}{subsubsection*.15}%
-\contentsline {subsection}{\numberline {5.3.3}Strategia di Mixing}{36}{subsection.5.3.3}%
-\contentsline {subsection}{\numberline {5.3.4}Elementi di Innovazione della Strategia Proposta}{37}{subsection.5.3.4}%
-\contentsline {chapter}{\numberline {6}Analisi di Stabilità}{38}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Modellazione del Sistema}{38}{section.6.1}%
-\contentsline {subsection}{\numberline {6.1.1}Dinamica degli Attuatori}{38}{subsection.6.1.1}%
-\contentsline {section}{\numberline {6.2}Fase 1: Hovering (Volo Stazionario)}{38}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Anelli Interni (Assetto)}{38}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Anelli Esterni (Posizione)}{39}{subsection.6.2.2}%
-\contentsline {section}{\numberline {6.3}Fase 2: Cruise (Volo Traslato)}{40}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Anelli Interni (Assetto)}{40}{subsection.6.3.1}%
-\contentsline {subsection}{\numberline {6.3.2}Anelli Esterni (Navigazione)}{40}{subsection.6.3.2}%
-\contentsline {section}{\numberline {6.4}Conclusioni}{41}{section.6.4}%
-\contentsline {section}{\numberline {.1}Codice di Analisi MATLAB}{42}{section.Alph0.1}%
+\contentsline {section}{\numberline {5.4}Introduzione e Configurazione di Crociera}{33}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Architettura di Controllo}{33}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Outer Loop: Guida e Navigazione}{34}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Controllo Longitudinale: Quota e Velocità}{34}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Controllo Laterale: Yaw Steering}{35}{subsection.5.6.2}%
+\contentsline {section}{\numberline {5.7}Inner Loop: Stabilizzazione dell'Assetto}{36}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Motor Mixing Algorithm}{36}{section.5.8}%
+\contentsline {subsection}{\numberline {5.8.1}1. Sintesi del Vettore Spinta Inerziale}{36}{subsection.5.8.1}%
+\contentsline {subsection}{\numberline {5.8.2}2. Trasformazione di Coordinate (Disaccoppiamento)}{36}{subsection.5.8.2}%
+\contentsline {subsection}{\numberline {5.8.3}3. Distribuzione agli Attuatori}{37}{subsection.5.8.3}%
+\contentsline {section}{\numberline {5.9}Scenari di Validazione}{37}{section.5.9}%
+\contentsline {chapter}{\numberline {6}Analisi di Stabilità}{39}{chapter.6}%

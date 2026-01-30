@@ -575,7 +575,7 @@ switch test_id
     R = matriceRotazione(phi, theta, psi);
     V_glob = R * [x(4); x(5); x(6)];
     vx_global = V_glob(1); 
-    vy_body = V_glob(2); 
+    vy_global = V_glob(2); 
     vz_global = V_glob(3);
     
     % Integrali (Assicurati che x(30) sia inizializzato nel main)
@@ -605,7 +605,7 @@ switch test_id
     Kd_y = 0.8; 
     Ki_y = 0.02;
     
-    psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_body);
+    psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_global);
     
     % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
     max_heading_corr = deg2rad(35);
@@ -643,8 +643,8 @@ switch test_id
     e_v = vx_des - vx_global;
     F_drag = 0.5 * params.rho * params.s * params.C_d * V_tas^2;
 
-    kp_x = 8.0;
-    ki_x = 4.0;
+    kp_x = 6.0;
+    ki_x = 2.0;
     Fx_req = F_drag+ kp_x * e_v + ki_x * int_err_v;
     if Fx_req < 0.1; Fx_req = 0.1; end
     
@@ -658,14 +658,14 @@ switch test_id
     % =================================================
     
     % --- PITCH ---
-    kp_theta = 2; 
-    kd_theta = 0.5; 
-    ki_theta = 0;%1.5;
+    kp_theta = 1.2; 
+    kd_theta = 0.2; 
+    ki_theta = 1;
     
     u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
     
     % --- ROLL ---
-    kp_phi = 4; 
+    kp_phi = 1.6; 
     kd_phi = 0.8; 
     u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
     
@@ -674,8 +674,8 @@ switch test_id
     e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
     
     % Guadagni BASSI per evitare conflitti con il rollio
-    kp_psi = 3.0;   
-    kd_psi = 1.2;  % Smorzamento alto per stabilità
+    kp_psi = 2.5;   
+    kd_psi = 1.6;  % Smorzamento alto per stabilità
     u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
 
     % =================================================

@@ -5,4 +5,5 @@
 \beamer@sectionintoc {3}{Modello Matematico}{8}{0}{3}
 \beamer@sectionintoc {4}{Architettura di Controllo Verticale}{22}{0}{4}
 \beamer@sectionintoc {5}{Simulazioni controllo verticale}{36}{0}{5}
-\beamer@sectionintoc {6}{Conclusioni}{42}{0}{6}
+\beamer@sectionintoc {6}{Controllo Volo Orizzontale}{42}{0}{6}
+\beamer@sectionintoc {7}{Conclusioni}{54}{0}{7}

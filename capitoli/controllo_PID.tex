@@ -1,244 +1,209 @@
-\subsection{Outer Loop: Controllo di Posizione e Velocità}
-Il loop esterno è responsabile della gestione energetica del velivolo e del mantenimento della traiettoria di riferimento.
-In configurazione di volo orizzontale ("Fixed-Wing Mode"), il controllo è disaccoppiato in due canali principali: il mantenimento della velocità di crociera (Longitudinale) e il mantenimento della quota (Verticale).
+\section{Introduzione e Configurazione di Crociera}
+La fase di volo orizzontale (\textit{Forward Flight} o \textit{Fixed-Wing Mode}) rappresenta la condizione operativa di crociera del drone. In questa configurazione, il velivolo si comporta aerodinamicamente come un convertiplano ad ala fissa: la portanza necessaria al sostentamento è generata principalmente dalle superfici alari, mentre la propulsione è garantita dalla componente orizzontale della spinta dei rotori.
+
+Durante questa fase, la configurazione degli attuatori subisce una variazione sostanziale rispetto all'hovering:
+\begin{itemize}
+    \item I \textbf{rotori anteriori} sono posizionati orizzontalmente (o quasi) per massimizzare la spinta propulsiva ($T_x$).
+    \item Il \textbf{rotore posteriore} viene disattivato ($T_{tail} = 0$). Questa scelta è dettata dalla necessità di ridurre i consumi energetici e di evitare instabilità dinamiche indotte dalla coppia di reazione del motore di coda, che in questa fase non è necessario per il bilanciamento.
+\end{itemize}
+
+Si assume che, in condizioni nominali di crociera, gli angoli di tilt dei rotori anteriori siano prossimi allo zero:
+\begin{equation}
+    \theta_1 \approx \theta_2 \approx 0
+\end{equation}
+Una delle sfide principali di questa configurazione risiede nella **sotto-attuazione** e nell'assenza di superfici di controllo aerodinamico tradizionali (alettoni, equilibratori, timone). Il controllo dell'assetto e della traiettoria è affidato interamente al \textit{Thrust Vectoring} e alla modulazione differenziale della spinta dei rotori anteriori.
+
+\section{Architettura di Controllo}
+Per gestire la complessità del sistema e garantire stabilità e prestazioni, è stata adottata un'architettura di controllo a **loop in cascata**. Questa strategia permette di disaccoppiare la dinamica traslazionale (lenta) da quella rotazionale (veloce), semplificando la sintesi dei controllori.
+
+L'architettura, illustrata nello schema a blocchi di Figura \ref{fig:control_scheme}, si suddivide in tre blocchi funzionali principali:
+\begin{enumerate}
+    \item \textbf{Outer Loop (Guidance):} Opera a bassa frequenza e ha il compito di calcolare le forze inerziali ($F_{x,req}, F_{z,req}$) e i riferimenti di rotta necessari per annullare gli errori di posizione e velocità. Include termini di \textit{feedforward} aerodinamico.
+    \item \textbf{Inner Loop (Attitude):} Opera ad alta frequenza e stabilizza l'assetto del drone ($\phi, \theta, \psi$) inseguendo i riferimenti generati dal loop esterno o imposti per il volo livellato.
+    \item \textbf{Motor Mixing Algorithm (MMA):} È il cuore dell'allocazione di controllo. Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
+\end{enumerate}
 
 \begin{figure}[htbp]
     \centering
-    % Resizebox per adattare il diagramma alla larghezza della pagina
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[auto, node distance=2cm, >=latex']
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tikzpicture}[auto, node distance=1.3cm, >=Stealth, thick]
         % --- STILI ---
-        % Stile base per i blocchi
-        \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=4em, align=center, fill=white, thick]
-        % Stile per i sommatori
-        \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, thick]
-        % Punti di input/output invisibili
-        \tikzstyle{input} = [coordinate]
-        \tikzstyle{output} = [coordinate]
-        % Stile per i contenitori colorati (Outer/Inner loop)
-        \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, thick]
+        \tikzset{
+            block/.style={draw, rectangle, minimum height=3em, minimum width=4.5em, align=center, fill=white},
+            sum/.style={draw, circle, inner sep=0pt, minimum size=6mm},
+            input/.style={coordinate},
+            output/.style={coordinate},
+            container/.style={draw, rectangle, rounded corners, dashed, inner sep=0.4cm}
+        }
 
-        % --- POSIZIONAMENTO DEI NODI ---
-
-        % --- COLONNA 1 & 2: Riferimenti e Sommatori (OUTER LOOP) ---
-        % Riga Z (Top)
+        % --- COLONNA 1: OUTER LOOP ---
         \node [input] (ref_z) {};
-        \node [sum, right of=ref_z, node distance=1.5cm] (sum_z) {$\Sigma$};
-        \node [block, right of=sum_z, node distance=2.5cm] (pid_z) {PID\\$z$};
-        \node [left of=ref_z, node distance=0.8cm] {$z_{ref}$};
+        \node [sum, right=0.8cm of ref_z] (sum_z) {$\Sigma$};
+        \node [block, right=1cm of sum_z] (pid_z) {PID\\$z$};
+        \node [left=0.1cm of ref_z] {$z_{des}$};
 
-        % Riga Vx (Bottom) - Posizionata sotto Z
-        \node [input, below of=ref_z, node distance=3cm] (ref_vx) {};
-        \node [sum, right of=ref_vx, node distance=1.5cm] (sum_vx) {$\Sigma$};
-        \node [block, right of=sum_vx, node distance=2.5cm] (pid_vx) {PID\\$v_x$};
-        \node [left of=ref_vx, node distance=0.8cm] {$v_{ref}$};
+        \node [input, below=1.5cm of ref_z] (ref_vx) {};
+        \node [sum, right=0.8cm of ref_vx] (sum_vx) {$\Sigma$};
+        \node [block, right=1cm of sum_vx] (pid_vx) {PID\\$v_x$};
+        \node [left=0.1cm of ref_vx] {$v_{x,des}$};
 
-        % --- COLONNA 3: Blocco THRUST Centrale ---
-        % Posizionato a metà altezza tra i due PID
-        \node [block, right of=pid_z, xshift=1cm, yshift=-1.5cm, minimum height=5cm ] (thrust) {Thrust};
+        \node [input, below=4.5cm of ref_vx] (ref_y) {};
+        \node [sum, right=0.8cm of ref_y] (sum_y) {$\Sigma$};
+        \node [block, right=1cm of sum_y] (pid_y) {PID\\$y$};
+        \node [left=0.1cm of ref_y] {$y_{des}$};
 
-        % --- COLONNA 4: INNER LOOP (PIDs) ---
-        % PID Pitch (Top)
-        \node [block, right of=thrust, xshift=2cm, yshift=1.5cm] (pid_pitch) {PID\\PITCH};
-        % PID Roll (Middle)
-        \node [block, below of=pid_pitch, node distance=2.5cm] (pid_roll) {PID\\ROLL};
-        % PID Yaw (Bottom)
-        \node [block, below of=pid_roll, node distance=2.5cm] (pid_yaw) {PID\\YAW};
+        % --- COLONNA 2: INNER LOOP ---
+        % Spaziatura aumentata a 3cm per evitare sovrapposizioni con le etichette WEST
+        \node [sum, right=3cm of pid_vx, yshift=-1cm] (sum_theta) {$\Sigma$};
+        \node [block, right=0.8cm of sum_theta] (pid_theta) {PID\\$\theta$};
+        
+        \node [sum, below=1.5cm of sum_theta] (sum_phi) {$\Sigma$};
+        \node [block, right=0.8cm of sum_phi] (pid_phi) {PID\\$\phi$};
 
-        % --- COLONNA 5 & 6: MIXER e DRONE ---
-        % Mixer: Alto per coprire tutti gli ingressi
-        \node [block, right of=pid_roll, xshift=2cm, minimum height=8cm] (mixer) {MIXER};
-        % Drone: A destra del mixer
-        \node [block, right of=mixer, node distance=3cm, minimum height=6cm] (drone) {DRONE};
-        % Output finale del drone
-        \node [output, right of=drone, node distance=2cm] (drone_out) {};
+        \node [sum, right=3cm of pid_y] (sum_psi) {$\Sigma$};
+        \node [block, right=0.8cm of sum_psi] (pid_psi) {PID\\$\psi$};
 
+        % --- COLONNA 3: MIXER E DRONE ---
+        \node [block, right=8cm of pid_vx, minimum height=10.5cm, yshift=-2cm] (mixer) {MIXER};
+        \node [block, right=1.5cm of mixer, minimum height=8.5cm] (drone) {DRONE};
+        \node [output, right=1cm of drone] (drone_out) {};
 
-        % --- COLLEGAMENTI ---
+    
+        % --- CONNESSIONI E INPUT LATERALI (WEST) ---
+        
+        % Ingressi Theta e Phi da SINISTRA (WEST)
+        % Definiamo dei punti di partenza espliciti per evitare errori di parsing
+        \draw [->] ($(sum_theta.west)-(0.8,0)$) -- node[above, pos=0] {$\theta_{des}$} (sum_theta.west);
+        \draw [->] ($(sum_phi.west)-(0.8,0)$) -- node[above, pos=0] {$\phi_{des}$} (sum_phi.west);
 
-        % 1. Riferimenti ai Sommatori
-        \draw [->] (ref_z) -- node[above, near start] {$+$} (sum_z);
-        \draw [->] (ref_vx) -- node[above, near start] {$+$} (sum_vx);
+        % Connessioni PID -> Mixer (Perfettamente orizzontali)
+        \draw [->] (pid_z.east) -- (mixer.west |- pid_z.east) node[above, pos=0.15] {$F_{z,req}$};
+        \draw [->] (pid_vx.east) -- (mixer.west |- pid_vx.east) node[above, pos=0.15] {$F_{x,req}$};
+        \draw [->] (pid_theta.east) -- (mixer.west |- pid_theta.east) node[above, pos=0.5] {$\theta_{pitch}$};
+        \draw [->] (pid_phi.east) -- (mixer.west |- pid_phi.east) node[above, pos=0.5] {$\delta$};
+        \draw [->] (pid_psi.east) -- (mixer.west |- pid_psi.east) node[above, pos=0.5] {$\Delta T$};
 
-        % 2. Sommatori ai PID Outer Loop
-        \draw [->] (sum_z) -- (pid_z);
-        \draw [->] (sum_vx) -- (pid_vx);
-
-        % 3. PID Outer Loop al blocco THRUST
-        % Usiamo gli anchor .east e .west per collegamenti orizzontali puliti
-        \draw [->] (pid_z.east) -- (thrust.west |- pid_z.east);
-        \draw [->] (pid_vx.east) -- (thrust.west |- pid_vx.east);
-
-        % 4. Uscita THRUST -> Diramazione verso PIDs e Mixer
-        % Creiamo un punto intermedio (tap) a destra del blocco Thrust
-        \draw (thrust.east) -- ++(1,0) coordinate (thrust_tap);
-
-        % Collegamento principale Thrust -> Mixer (input superiore)
-        \draw [->] (thrust_tap) -- (mixer.west |- thrust.east);
-
-        % Diramazioni Thrust -> Ingressi PID Inner Loop
-        \draw [->] (thrust_tap) |- (pid_pitch.west);
-        \draw [->] (thrust_tap) |- (pid_roll.west);
-        \draw [->] (thrust_tap) |- (pid_yaw.west);
-
-        % 5. Uscite PID Inner Loop -> Mixer
-        \draw [->] (pid_pitch) -- (mixer.west |- pid_pitch);
-        \draw [->] (pid_roll) -- (mixer.west |- pid_roll);
-        \draw [->] (pid_yaw) -- (mixer.west |- pid_yaw);
-
-        % 6. Mixer -> Drone -> Output
+        % Flussi standard
+        \draw [->] (ref_z) -- (sum_z); \draw [->] (sum_z) -- (pid_z);
+        \draw [->] (ref_vx) -- (sum_vx); \draw [->] (sum_vx) -- (pid_vx);
+        \draw [->] (ref_y) -- (sum_y); \draw [->] (sum_y) -- (pid_y);
+        \draw [->] (pid_y.east) -- node[above] {$\psi_{des}$} (sum_psi.west);
+        \draw [->] (sum_theta) -- (pid_theta);
+        \draw [->] (sum_phi) -- (pid_phi);
+        \draw [->] (sum_psi) -- (pid_psi);
         \draw [->] (mixer) -- (drone);
         \draw [->] (drone) -- (drone_out);
 
-
-        % --- FEEDBACK LOOP ---
-        % Percorso unico che parte dal drone, scende e torna all'inizio
-        \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start)
-            -- ++(0,-5.5) coordinate (fb_corner_right) % Scende nell'angolo in basso a destra
-            -- (fb_corner_right -| sum_z) coordinate (fb_corner_left) % Va a sinistra sotto i sommatori
-            -- ++(-0.5,0); % Estetico: prolunga leggermente la linea a sinistra
-
-        % Risalite dal bus di feedback ai sommatori (con segno meno)
-        \draw [->] (fb_corner_left -| sum_z) -- node[left, near end] {$-$} (sum_z.south);
-        \draw [->] (fb_corner_left -| sum_vx) -- node[left, near end] {$-$} (sum_vx.south);
-
-        % Etichetta sul bus di feedback
-        \node [above] at ($(fb_corner_left)!0.5!(fb_corner_right)$) {Stato $\mathbf{x}$ (Feedback)};
-
-
-        % --- RIQUADRI LOGICI (CONTAINERS) ---
-        % Outer Loop (Blu)
-        \node [container, fit=(sum_z) (pid_z) (sum_vx) (pid_vx) (ref_z) (ref_vx), label={above:\textbf{OUTER LOOP}}] {};
-
-        % Inner Loop (Rosso)
-        \node [container, fit=(pid_pitch) (pid_roll) (pid_yaw), label={above:\textbf{INNER LOOP}}] {};
+        % --- FEEDBACK BUS ---
+        \coordinate (fb_start) at ($(drone.east)+(0.5,0)$);
+        \coordinate (fb_line) at (0,-9.5);
+        \draw [->] (fb_start) |- (fb_line) -| (sum_z.south) node[left, pos=0.98] {$-$};
+        \draw [->] (fb_line -| sum_vx.south) -- (sum_vx.south) node[left, pos=0.98] {$-$};
+        \draw [->] (fb_line -| sum_y.south) -- (sum_y.south) node[left, pos=0.98] {$-$};
+        % --- CONTAINERS ---
+        \begin{scope}[on background layer]
+            \node [container, draw, fit=(sum_z) (pid_z) (sum_y) (pid_y), label={above:\textbf{Outer Loop}}] {};
+            \node [container, draw, fit=(sum_theta) (pid_theta) (sum_psi) (pid_psi), label={below:\textbf{Inner Loop}}] {};
+        \end{scope}
 
     \end{tikzpicture}
-    } % Fine resizebox
-\caption{Schema di controllo a cascata aggiornato con architettura PID-Feedforward.}
-\label{fig:control_scheme}
+    }
+    \caption{Schema a blocchi del controllo orizzontale.}
+    \label{fig:control_scheme}
 \end{figure}
 
+\section{Outer Loop: Guida e Navigazione}
+Il controllore esterno implementa leggi di controllo PID arricchite da termini di compensazione (Feedforward) basati sul modello aerodinamico del drone. Questo approccio ibrido permette di linearizzare il comportamento del velivolo attorno al punto di lavoro.
 
-\subsubsection{Controllo della Velocità (Longitudinale)}
-L'obiettivo è mantenere una velocità di avanzamento costante $v_{x,des}$ (fissata a 25 m/s) per garantire la generazione della portanza necessaria.
-L'errore di velocità è definito come $e_v = v_{x,des} - v_x$.
-%
-La forza propulsiva richiesta lungo l'asse $X$ ($F_{x,req}$) è calcolata sommando un termine di feed-forward per la compensazione della resistenza aerodinamica ($D$) e un'azione proporzionale sull'errore:
-%
-\begin{equation}
-    F_{drag} = \frac{1}{2} \rho S C_D v_x^2
-\end{equation}
-\begin{equation}
-    F_{x,req} = F_{drag} + K_{P,v} e_v
-\end{equation}
-dove $K_{P,v}$ è il guadagno proporzionale del regolatore. Questo assicura che il velivolo fornisca esattamente la spinta necessaria a vincere l'attrito dell'aria alla velocità di equilibrio.
+\subsection{Controllo Longitudinale: Quota e Velocità}
+La dinamica longitudinale controlla l'altitudine $z$ e la velocità di avanzamento $v_x$.
 
-\subsubsection{Controllo della Quota (Verticale)}
-Il controllo di quota mira a stabilizzare il velivolo all'altitudine desiderata $z_{des}$.
-Definito l'errore di quota $e_z = z_{des} - z$, un controllore PID calcola l'accelerazione verticale richiesta $a_{z,cmd}$ per annullare l'errore:
-%
+Per il \textbf{mantenimento della quota}, definito l'errore $e_z = z_{des} - z$, il controllore calcola un'accelerazione verticale correttiva $a_{z,cmd}$ tramite un PID. La forza verticale richiesta $F_{z,req}$ è ottenuta dal bilancio delle forze sull'asse $z$:
 \begin{equation}
-    a_{z,cmd} = K_{P,z} e_z + K_{D,z} \dot{e}_z
+    F_{z,req} = m (g - a_{z,cmd}) - L_{wing}(v)
+    \label{eq:fz_req}
 \end{equation}
-%
-Per determinare la forza verticale che i motori devono effettivamente generare ($F_{z,req}$), è necessario considerare il bilancio delle forze sull'asse $Z$.
-A differenza del volo in hovering, dove i motori sostengono l'intero peso, in questa fase la portanza alare ($L$) fornisce il contributo principale al sostentamento.
-Stimando la portanza come $F_{lift} = -\frac{1}{2} \rho S C_L v_x^2$ (segno negativo perché diretta verso l'alto nel sistema NED), la forza richiesta ai motori è:
-%
+dove $L_{wing}$ rappresenta la stima della portanza generata dall'ala:
 \begin{equation}
-    F_{z,req} = m(g - a_{z,cmd}) + F_{lift}
+    L_{wing} = \frac{1}{2}\rho S C_L v_x^2
 \end{equation}
-%
-A regime, se la velocità è quella di progetto ($v_x \approx 25$ m/s), il termine $F_{lift}$ bilancia quasi perfettamente la forza peso $mg$, rendendo la richiesta ai motori $F_{z,req}$ prossima allo zero.
-%
-\subsubsection{Generazione della Spinta Totale}
-Una volta ottenute le componenti di forza ortogonali richieste, il modulo della spinta totale $T_{tot}$ da inviare al mixer è calcolato come la risultante vettoriale:
-%
-\begin{equation}
-    T_{tot} = \sqrt{F_{x,req}^2 + F_{z,req}^2}
-\end{equation}
-%
-% ============= SCELTA PID CONTRO SMC ==================
-%
-\subsubsection{Scelta del Controllo PID per il Loop Esterno}
-A differenza della fase di hovering (Capitolo \ref{sec:controllo_verticale}), dove il controllo di quota è stato affidato a una strategia \textit{Sliding Mode} (SMC) per garantire la massima reiezione dei disturbi, per la fase di volo orizzontale si è preferito adottare un classico regolatore PID con Feed-Forward.
-\\Questa scelta deriva dai risultati osservati in fase di simulazione preliminare. L'applicazione di un controllore SMC al loop esterno in configurazione \textit{fixed-wing} ha evidenziato criticità significative, dovute principalmente alla dinamica intrinsecamente più lenta rispetto ai rotori in hovering. Comandi troppo aggressivi generati dall'SMC tendevano a saturare gli attuatori e indurre oscillazioni.
-Il PID, grazie alla sua azione più progressiva e combinato con un termine di Feed-Forward per le forze note (Drag e Lift), si è rivelato la soluzione più stabile.
+Il termine $L_{wing}$ agisce come feedforward: alla velocità di crociera di progetto ($v_x = 25$ m/s), la portanza compensa quasi interamente la forza peso ($mg$), riducendo drasticamente lo sforzo richiesto ai motori per il sostentamento verticale e lasciando al PID il solo compito di correggere i disturbi.
 
-% ============= INNER LOOP ===============
-%
-\subsection{Inner Loop: Controllo d'Assetto Stabilizzato (PID + Feedforward)}
-%
-Il loop interno ha il compito di stabilizzare la dinamica rotazionale del velivolo, garantendo l'inseguimento dei riferimenti d'assetto ($\theta_{des}, \phi_{des}, \psi_{des}$).
-Inizialmente ipotizzato come un controllo robusto ISMC, durante la fase di validazione sperimentale simulata si è osservato che tale approccio introduceva un eccessivo "chattering" (vibrazione ad alta frequenza) sui servocomandi, dannoso per gli attuatori e destabilizzante per la dinamica di volo.
-Si è quindi optato per un'architettura **PID con Feedforward Statico (Trim)**, che garantisce stabilità asintotica senza sollecitare impulsivamente la meccanica.
+Analogamente, per il \textbf{controllo di velocità}, definito l'errore $e_v = v_{x,des} - v_x$, la forza propulsiva richiesta è:
+\begin{equation}
+    F_{x,req} = D_{tot}(v) + \left( K_{P,v} e_v + K_{I,v} \int e_v dt + K_{D,v} \dot{e}_v \right)
+    \label{eq:fx_req}
+\end{equation}
+Anche in questo caso, il termine di resistenza aerodinamica $D_{tot}$ viene compensato in anello aperto, migliorando la reattività del sistema alle variazioni di setpoint.
 
-\subsubsection{Formulazione Matematica}
-Prendendo in esame la dinamica di beccheggio (Pitch), definiamo l'errore di tracciamento come:
+\subsection{Controllo Laterale: Yaw Steering}
+Il controllo della posizione laterale $y$ differisce dai precedenti in quanto non genera direttamente una forza laterale, bensì un riferimento di assetto. Il mantenimento della rotta ($y \to 0$) è ottenuto tramite la strategia di \textit{Yaw Steering}, ovvero orientando il muso del velivolo verso la traiettoria desiderata.
+
+Definito l'errore laterale $e_y = y_{des} - y$, il controllore calcola una correzione sull'angolo di imbardata $\psi_{corr}$:
 \begin{equation}
-    e_\theta(t) = \theta_{des}(t) - \theta(t)
+    \psi_{des} = \psi_{path} + \underbrace{K_{P,y} e_y + K_{I,y} \int e_y dt + K_{D,y} \dot{e}_y}_{\psi_{corr}}
 \end{equation}
-La legge di controllo per l'angolo di comando dei servi $u_{pitch}$ è costituita da un'azione Proporzionale-Derivativa per la stabilizzazione dinamica e un termine di Feedforward statico per l'equilibrio:
-\begin{equation}
-    u_{pitch} = K_P e_\theta + K_D \dot{e}_\theta + u_{trim}
-\end{equation}
-Dove:
+dove:
 \begin{itemize}
-    \item $K_P$: Determina la reattività del sistema agli errori d'assetto.
-    \item $K_D$: Fornisce lo smorzamento necessario per evitare sovraelongazioni e oscillazioni.
-    \item $u_{trim}$: È un valore costante calcolato a priori o determinato empiricamente.
+    \item Il termine proporzionale allinea il drone alla rotta.
+    \item Il termine derivativo ($K_D \dot{e}_y$) introduce uno smorzamento sulla velocità laterale $v_y$, essenziale per prevenire oscillazioni (Dutch roll).
+    \item Il segnale $\psi_{corr}$ è saturato per evitare manovre di virata eccessivamente aggressive.
 \end{itemize}
 
-\subsubsection{Gestione del Trim tramite Feedforward Statico}
-Una sfida critica nel controllo di questo velivolo è la gestione del momento di beccheggio statico. A causa della configurazione geometrica con i rotori anteriori avanzati rispetto al baricentro ($d_{mx} > 0$), in assenza di superfici di coda, i motori generano un momento cabrante naturale quando forniscono portanza.
-\\Inizialmente si era tentato di compensare tale momento tramite l'azione integrale ($K_I$) di un PID. Tuttavia, le simulazioni hanno evidenziato che l'integrale, accumulando errore durante i transitori veloci (wind-up), tendeva a destabilizzare il sistema in presenza di solver a passo variabile, causando divergenze nell'assetto.
-\\La soluzione adottata consiste nella rimozione dell'azione integrale ($K_I=0$) in favore di un termine di **Trim Statico ($u_{trim}$)**.
-Imponendo un valore costante $u_{trim} \approx -0.05$ rad (corrispondente a circa -3 gradi di inclinazione dei servi), si fornisce al sistema il comando "base" necessario a contrastare il momento naturale dei motori. In questo modo:
-\begin{equation}
-    \theta_{des} = 0
-\end{equation}
-Il controllore PD lavora quindi attorno a questo punto di equilibrio forzato, dovendo compensare solo le perturbazioni dinamiche e non lo sforzo statico di sostentamento, garantendo una stabilità robusta e priva di derive.
+\section{Inner Loop: Stabilizzazione dell'Assetto}
+Il loop interno è costituito da tre controllori PID indipendenti che agiscono sui momenti $M_x, M_y, M_z$ (Roll, Pitch, Yaw) per inseguire gli angoli desiderati.
+\begin{itemize}
+    \item \textbf{Pitch ($\theta$):} Mantiene l'incidenza nulla ($\theta_{des} = 0$) per minimizzare la resistenza aerodinamica della fusoliera. L'uscita del controller è il momento $u_\theta$.
+    \item \textbf{Roll ($\phi$):} Mantiene le ali livellate ($\phi_{des} = 0$) per garantire la massima efficienza della portanza. L'uscita è il momento $u_\phi$.
+    \item \textbf{Yaw ($\psi$):} Insegue il riferimento $\psi_{des}$ generato dall'Outer Loop laterale. L'uscita è il momento $u_\psi$.
+\end{itemize}
 
-\subsection{Strategia di Mixing}
-Una volta calcolati i comandi di assetto e la spinta totale $T_{tot}$, il mixer distribuisce i comandi agli attuatori. Per garantire la sicurezza in volo traslato, è stato introdotto un limitatore di autorità ("Safety Clamp") nel calcolo del vettore spinta.
-\\L'angolo di inclinazione base dei motori $\alpha_{base}$, necessario per generare la ripartizione di forze $F_x$ e $F_z$ richiesta dal loop esterno, viene calcolato come:
-\begin{equation}
-    \alpha_{ideal} = \text{atan2}(F_{z,req}, F_{x,req})
-\end{equation}
-Tuttavia, per evitare che richieste eccessive di forza verticale inducano momenti di ribaltamento non controllabili, l'angolo viene saturato:
-\begin{equation}
-    \alpha_{limited} = \max(-\alpha_{max}, \min(\alpha_{max}, \alpha_{ideal}))
-\end{equation}
-Con $\alpha_{max}$ impostato a circa 15 gradi.
-\\L'allocazione finale segue la logica a "superfici virtuali":
+\section{Motor Mixing Algorithm}
+Il modulo Mixer rappresenta l'elemento critico per la gestione del \textit{Thrust Vectoring}. Esso converte le richieste vettoriali ($F_{req}, \mathbf{u}_{momenti}$) nei comandi scalari per i motori (Left/Right) e per i servomotori di tilt.
 
-\begin{enumerate}
-    \item \textbf{Beccheggio (Pitch) $\rightarrow$ Tilt Collettivo:}
-    Entrambi i rotori ruotano solidalmente per generare momento o seguire il trim.
-    
-    \item \textbf{Rollio (Roll) $\rightarrow$ Tilt Differenziale:}
-    I rotori ruotano in direzioni opposte per generare coppia di rollio.
-    
-    \item \textbf{Imbardata (Yaw) $\rightarrow$ Spinta Differenziale:}
-    La spinta viene sbilanciata tra destra e sinistra.
-\end{enumerate}
-%
-I comandi finali inviati ai servocomandi ($\theta_{s1}, \theta_{s2}$) e ai motori ($T_1, T_2$) sono:
+Il processo di allocazione avviene in tre fasi sequenziali.
+
+\subsection{1. Sintesi del Vettore Spinta Inerziale}
+Dalle forze richieste $F_{x,req}$ e $F_{z,req}$, si calcola il modulo della spinta totale $T_{tot}$ e il suo angolo di inclinazione $\alpha_{inertial}$ rispetto all'orizzonte terrestre:
 \begin{align}
-    \theta_{s1} &= (\alpha_{limited} - \theta) + u_{pitch} + u_{roll} \\
-    \theta_{s2} &= (\alpha_{limited} - \theta) + u_{pitch} - u_{roll} \\
-    T_1 &= \frac{T_{tot}}{2} - u_{yaw} \\
-    T_2 &= \frac{T_{tot}}{2} + u_{yaw}
+    T_{tot} &= \sqrt{F_{x,req}^2 + F_{z,req}^2} \\
+    \alpha_{inertial} &= \arctan2\left( F_{z,req}, F_{x,req} \right)
 \end{align}
+L'uso della funzione $\arctan2$ è fondamentale per risolvere correttamente l'orientamento del vettore in tutti i quadranti.
 
-\subsection{Elementi di Innovazione della Strategia Proposta} 
-L'architettura di controllo sviluppata si distingue per un approccio pragmatico alla stabilità di piattaforme VTOL senza coda (\textit{tailless}).
-\\Mentre la letteratura spesso propone controllori adattivi complessi o osservatori non lineari per gestire le incertezze, la strategia qui presentata dimostra che è possibile ottenere prestazioni robuste tramite una combinazione di:
-\begin{enumerate} 
-    \item \textbf{Semplificazione del Controllo:} L'uso di un PID con Feedforward statico rimuove le complessità numeriche e i problemi di wind-up tipici dei controllori integrali su sistemi instabili, offrendo una soluzione "Safety-Critical" deterministica.
-    
-    \item \textbf{Vettoramento Protetto:} L'integrazione di limiti di saturazione intelligenti ("Safety Clamp") direttamente nel mixer vettoriale impedisce al velivolo di entrare in assetti irrecuperabili, priorizzando la stabilità d'assetto rispetto al mantenimento rigoroso della quota in condizioni estreme.
-    
-    \item \textbf{Assenza di Superfici Mobili:} Il sistema conferma la fattibilità del "Total Propulsive Control" anche in crociera, eliminando la necessità di alettoni ed elevatori e riducendo drasticamente la complessità meccanica.
+\subsection{2. Trasformazione di Coordinate (Disaccoppiamento)}
+Poiché i servomotori sono solidali al telaio del drone, l'angolo di spinta effettivo deve tenere conto dell'assetto istantaneo del velivolo. Si applica la trasformazione dal sistema inerziale al sistema corpo (\textit{Body Frame}):
+\begin{equation}
+    \alpha_{base} = \alpha_{inertial} - \theta_{body}
+    \label{eq:decoupling}
+\end{equation}
+L'Equazione \ref{eq:decoupling} esprime il principio di disaccoppiamento geometrico: se il drone subisce una perturbazione di beccheggio ($\theta \neq 0$), i servi ruotano automaticamente in direzione opposta per mantenere il vettore spinta fisso nello spazio inerziale, garantendo che la propulsione e il sostentamento non vengano influenzati dalle oscillazioni dell'assetto.
+
+\subsection{3. Distribuzione agli Attuatori}
+Infine, i comandi di stabilizzazione ($u_\phi, u_\theta, u_\psi$) vengono miscelati al vettore base.
+
+La **spinta dei motori** gestisce la propulsione totale e il controllo di imbardata tramite spinta differenziale:
+\begin{equation}
+    \begin{cases}
+        T_{Right} = \frac{T_{tot}}{2} - u_{\psi} \\
+        T_{Left}  = \frac{T_{tot}}{2} + u_{\psi}
+    \end{cases}
+\end{equation}
+Da cui si ricavano le velocità angolari di riferimento: $\omega_{i} = \sqrt{T_{i}/K_T}$.
+
+Gli **angoli dei servomotori** gestiscono l'orientamento del vettore spinta. Il controllo di beccheggio ($u_\theta$) è sommato in modo collettivo, mentre il controllo di rollio ($u_\phi$) agisce in modo differenziale (tilt differenziale):
+\begin{equation}
+    \begin{cases}
+        \delta_{Right} = \alpha_{base} + u_{\theta} - u_{\phi} \\
+        \delta_{Left}  = \alpha_{base} + u_{\theta} + u_{\phi}
+    \end{cases}
+\end{equation}
+Questa configurazione permette di controllare tutti i gradi di libertà necessari utilizzando solo due gruppi propulsori vettorizzabili.
+
+\section{Scenari di Validazione}
+La strategia di controllo è stata verificata in simulazione considerando tre scenari operativi distinti, scelti per stressare specifiche funzionalità dell'architettura:
+\begin{enumerate}
+    \item \textbf{Nominal Cruise:} Volo stazionario a $v_x = 25$ m/s. Si verifica la capacità di mantenere quota e rotta con errore nullo in condizioni ideali.
+    \item \textbf{Low Speed Recovery:} Volo a bassa velocità ($v_x = 20$ m/s). In questa condizione, la portanza alare è insufficiente a sostenere il drone ($L_{wing} < mg$). Il controllore deve automaticamente saturare il tilt in avanti o aumentare la spinta verticale (aumentando $\alpha_{inertial}$) per compensare il deficit di portanza.
+    \item \textbf{Attitude Recovery:} Iniezione di disturbi impulsivi sugli angoli di assetto ($\phi, \theta, \psi$). Si verifica la reiezione dei disturbi da parte dell'Inner Loop e l'efficacia del disaccoppiamento nel mantenere la traiettoria invariata nonostante le oscillazioni del corpo.
 \end{enumerate}
