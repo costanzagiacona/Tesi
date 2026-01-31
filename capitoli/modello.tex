@@ -8,7 +8,7 @@ Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di rifer
 \end{itemize}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{sist_rif_global.png}
+    \includegraphics[width=0.8\textwidth]{sist_rif.png}
     \caption{Sistemi di riferimento.}
     \label{fig:sist_rif}
 \end{figure}
@@ -98,7 +98,7 @@ Si assume per semplicità che il moto laterale non generi forze aerodinamiche si
 \section{Analisi dei Momenti}
 Il momento totale agente sul baricentro è la somma di diverse componenti:
 \begin{equation}
-    M_{\mathrm{tot}} = M_{\mathrm{th}} + M_{\mathrm{drag}} + M_{\mathrm{aero}} + M_{\mathrm{gyro}} + M_{\mathrm{fin}}
+    M_{\mathrm{tot}} = M_{\mathrm{th}} + M_{\mathrm{tor}} + M_{\mathrm{aero}} + M_{\mathrm{gyro}} + M_{\mathrm{fin}}
 \end{equation}
 
 \subsection{Momenti generati dai Rotori}
@@ -106,7 +106,7 @@ Il contributo principale è dato dal momento generato dalla spinta dei rotori, c
 \begin{equation}
     M_{\mathrm{th}} = \sum_{i=1}^{3} (r_i \times F_{\mathrm{th},i})
 \end{equation}
-Inoltre, la rotazione delle eliche genera un momento torcente ($M_{\mathrm{drag}}$) opposto al verso di rotazione, proporzionale al quadrato della velocità angolare ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, anche questo momento viene proiettato sugli assi del body frame in funzione degli angoli di tilt.
+Inoltre, la rotazione delle eliche genera un momento torcente ($M_{\mathrm{tor}}$) opposto al verso di rotazione, proporzionale al quadrato della velocità angolare ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, anche questo momento viene proiettato sugli assi del body frame in funzione degli angoli di tilt.
 
 \subsection{Effetti Aerodinamici e Giroscopici}
 \begin{itemize}

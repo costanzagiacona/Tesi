@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  30 JAN 2026 12:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  31 JAN 2026 12:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1707,7 +1707,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [48
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1176--1176
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1185--1185
  [][][][]  
  []
 
@@ -1719,7 +1719,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [49
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1200--1200
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1208--1208
  [][][][]  
  []
 
@@ -1731,8 +1731,12 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [50
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1219--1219
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1243--1243
  [][][][]  
+ []
+
+
+Overfull \vbox (11.52539pt too high) detected at line 1243
  []
 
 
@@ -1743,7 +1747,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [51
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1248--1248
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1264--1264
  [][][][]  
  []
 
@@ -1755,7 +1759,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [52
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1276--1276
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1283--1283
  [][][][]  
  []
 
@@ -1767,7 +1771,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [53
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1288--1288
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1312--1312
  [][][][]  
  []
 
@@ -1779,7 +1783,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [54
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1303--1303
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1340--1340
  [][][][]  
  []
 
@@ -1789,6 +1793,30 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  []
 
 [55
+
+]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1352--1352
+ [][][][]  
+ []
+
+
+Overfull \hbox (35.1286pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[56
+
+]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1367--1367
+ [][][][]  
+ []
+
+
+Overfull \hbox (35.1286pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[57
 
 ]
 \tf@nav=\write6
@@ -1809,17 +1837,17 @@ Package rerunfilecheck Info: File `intermedia.out' has not changed.
 (rerunfilecheck)             Checksum: FEC63842C21B37CB080D2D7751A49FBC;1073.
  ) 
 Here is how much of TeX's memory you used:
- 30297 strings out of 467871
- 611778 string characters out of 5418375
- 998974 words of memory out of 5000000
- 58435 multiletter control sequences out of 15000+600000
+ 30319 strings out of 467871
+ 612340 string characters out of 5418375
+ 999046 words of memory out of 5000000
+ 58453 multiletter control sequences out of 15000+600000
  806507 words of font info for 154 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,16n,123p,466b,1069s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 128i,18n,123p,466b,1069s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi5.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbo10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy5.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on intermedia.pdf (55 pages, 5787413 bytes).
+Output written on intermedia.pdf (57 pages, 5799762 bytes).
 PDF statistics:
- 762 PDF objects out of 1000 (max. 8388607)
- 123 named destinations out of 1000 (max. 500000)
- 534 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 789 PDF objects out of 1000 (max. 8388607)
+ 127 named destinations out of 1000 (max. 500000)
+ 570 words of extra memory for PDF output out of 10000 (max. 10000000)
 

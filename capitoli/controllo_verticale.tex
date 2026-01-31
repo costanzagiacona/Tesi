@@ -219,8 +219,8 @@ Tali quantità sono calcolate come uscite di tre PID.
 % ==============================================================
 %   MIXER
 % ==============================================================
-\subsection{Control Allocation (Mixing)}
-Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e l'angolo di inclinazione del servo di coda ($\theta_3$).
+\subsection{Motor Mixing Algorithm}
+Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servi.
 \\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema di allocazione non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
 \\In condizioni di \textit{hovering}, assumiamo la seguente configurazione nominale:
 \begin{itemize}

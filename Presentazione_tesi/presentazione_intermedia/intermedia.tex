@@ -1146,38 +1146,102 @@ Tali quantità sono calcolate come uscite di tre PID.
 % ============================================================
 % INNER LOOP
 % ============================================================
-\begin{frame}{Inner Loop: Stabilizzazione dell'Assetto}
-    Il loop interno controlla i momenti attorno agli assi corpo tramite tre controllori PID indipendenti.
+\begin{frame}{Inner Loop: Controllo d'Assetto (Crociera)}
+    \framesubtitle{Regime: Forward Flight ($V \approx 25$ m/s)}
     
+    In configurazione di crociera, i rotori generano spinta propulsiva (asse $X_B$). Il controllo dei momenti avviene tramite \textbf{Thrust Vectoring}, emulando le superfici aerodinamiche classiche.
+
     \begin{columns}[T]
-        \column{0.5\textwidth}
-        \textbf{Pitch ($\theta$)}
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Pitch ($\theta$)} \\
+        \textit{"Elevator"}
         \begin{itemize}
-            \item Obiettivo: $\theta_{des} = 0$ (volo livellato).
-            \item Output: $u_{\theta}$ (momento di beccheggio).
-            \item Attuazione: Tilt collettivo dei motori anteriori.
+            \item \small{Azione: Tilt Collettivo}
+            \item \small{Eq: $\theta_1 = \theta_2$}
+            \item \small{Effetto: Modula la componente $F_z$ globale per alzare/abbassare il muso.}
         \end{itemize}
-        
-        \column{0.5\textwidth}
-        \textbf{Roll ($\phi$)}
+
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Roll ($\phi$)} \\
+        \textit{"Ailerons"}
         \begin{itemize}
-            \item Obiettivo: $\phi_{des} = 0$.
-            \item Output: $u_{\phi}$ (momento di rollio).
-            \item Attuazione: Tilt differenziale ($\delta$) dei servi.
+            \item \small{Azione: Tilt Differenziale}
+            \item \small{Eq: $\theta_1 = -\theta_2$}
+            \item \small{Effetto: Genera una coppia di forze verticali opposte ($\tau_x$).}
+        \end{itemize}
+
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Yaw ($\psi$)} \\
+        \textit{"Rudder"}
+        \begin{itemize}
+            \item \small{Azione: Spinta Differenziale}
+            \item \small{Eq: $T_1 \neq T_2$}
+            \item \small{Effetto: Genera una coppia di trazione asimmetrica ($\tau_z$).}
         \end{itemize}
     \end{columns}
+\end{frame}
 
-    \vspace{0.4cm}
-    \textbf{Yaw ($\psi$) - Steering} \\
-    Il controllo di imbardata è critico per il mantenimento della rotta ($y=0$):
-    \begin{equation}
-        u_{\psi} = K_{P,\psi} e_\psi + K_{D,\psi} \dot{e}_\psi + K_{I,\psi} \int e_\psi
-    \end{equation}
+\begin{frame}{Validità dell'Approssimazione Lineare}
+    \framesubtitle{Perché un modello semplificato è efficace in crociera}
+
+    L'uso di un mixer statico lineare ($u_{PID} \propto \alpha_{servo}$) è legittimato da tre fattori chiave:
+
+    \vspace{0.5cm} % Spazio per far respirare il testo
+
+    \begin{itemize}
+        \setlength\itemsep{1.5em} % Distanzia i punti elenco
+
+        \item \textbf{1. Ipotesi dei Piccoli Angoli} \\
+        In volo livellato le correzioni sono minime ($\alpha < 15^\circ$). \\
+        L'errore di linearizzazione è trascurabile: \quad $\sin(\alpha) \approx \alpha$.
+
+        \item \textbf{2. Compensazione Integrale} \\
+        Il termine \textbf{Integrale} del PID ($K_I \int e$) assorbe automaticamente le incertezze del modello e gli errori statici residui.
+
+        \item \textbf{3. Efficienza Computazionale} \\
+        Un modello algebrico semplice (senza trigonometria inversa) riduce il carico sulla CPU, garantendo frequenze di loop più elevate.
+    \end{itemize}
+
 \end{frame}
 
 % ============================================================
 % MIXER E ALLOCAZIONE
 % ============================================================
+
+\begin{frame}{Formalizzazione del Control Allocation (Mixer)}
+    
+    La strategia di controllo adotta un approccio \textbf{SISO disaccoppiato}. I PID calcolano comandi virtuali ($u_\theta, u_\phi, u_\psi$) che vengono mappati sugli attuatori fisici tramite una \textbf{Matrice di Miscelazione Statica} ($M$).
+    
+    \begin{block}{Legge di Miscelazione (Mixing Law)}
+    Definito il vettore degli attuatori $\mathbf{A} = [T_1, T_2, \alpha_1, \alpha_2]^T$ e il vettore dei comandi virtuali $\mathbf{U} = [T_{req}, u_\psi, u_\theta, u_\phi]^T$, la relazione lineare valida per piccoli angoli attorno al punto di lavoro ($\alpha \approx 0^\circ$) è:
+    
+    \begin{equation}
+        \begin{bmatrix}
+        T_1 \\ T_2 \\ \alpha_1 \\ \alpha_2
+        \end{bmatrix}
+        = 
+        \underbrace{
+        \begin{bmatrix}
+            0.5 & -1 & 0 & 0 \\
+            0.5 & +1 & 0 & 0 \\
+            0 & 0 & +1 & -1 \\
+            0 & 0 & +1 & +1
+        \end{bmatrix}
+        }_{\text{Static Mixing Matrix } M}
+        \cdot
+        \begin{bmatrix}
+        T_{req} \\ u_{\psi} \text{ (Diff. Thrust)} \\ u_{\theta} \text{ (Coll. Tilt)} \\ u_{\phi} \text{ (Diff. Tilt)}
+        \end{bmatrix}
+    \end{equation}
+    \end{block}
+
+    \footnotesize
+    \textit{Nota: Questa matrice inverte la logica rispetto all'hovering. In volo avanzato, il tilt differenziale genera rollio (non imbardata) e la spinta differenziale genera imbardata (non rollio).}
+\end{frame}
+
 \begin{frame}{MMA 1: Sintesi del Vettore Spinta}
     Il primo compito del Mixer è combinare le richieste di forza cartesiane ($F_{x,req}, F_{z,req}$) provenienti dall'Outer Loop in un unico vettore di spinta intensiva e direzionale.
 

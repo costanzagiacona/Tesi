@@ -83,7 +83,7 @@ I vantaggi principali di questa formulazione includono:
 \end{itemize}
 
 \clearpage
-\section{Strategie di Volo e Allocazione del Controllo per Tricotteri Tilt-Rotor}
+\section{Strategie di Volo e Controllo per Tricotteri Tilt-Rotor}
 In \cite{chen2017}, l'attenzione si sposta sulla realizzazione pratica di un volo autonomo "full-mode" per un UAV tilt-rotor in configurazione tricottero compatta. L'obiettivo è superare le limitazioni di costo associate all'ottenimento di modelli dinamici precisi, proponendo una strategia robusta che non dipenda da dati aerodinamici ad alta fedeltà.
 \\La gestione del volo è affidata a una strategia basata su una macchina a stati finiti che coordina le diverse fasi: \textit{Rotor mode} (decollo verticale), \textit{Conversion} (transizione accelerata), \textit{Fixed-wing mode} (crociera) e \textit{Reconversion} (ritorno all'hovering).
 Un elemento centrale è il sistema di \textbf{Control Allocation (Mixer)}. Poiché il sistema è sovra-attuato e non affine durante la transizione, il mixer distribuisce i pesi di controllo tra modalità rotore e ala fissa in base all'efficienza degli attuatori e all'angolo di tilt corrente. Una peculiarità è il controllo dell'imbardata in hovering tramite tilt differenziale dei rotori anteriori, che viene disattivato progressivamente durante la transizione.
@@ -96,7 +96,7 @@ I test di volo reali hanno validato la capacità del velivolo di eseguire l'inte
 \end{figure}
 
 \clearpage
-\section{Controllo Sliding Mode a Tempo Fisso (Fixed-Time)}
+\section{Controllo Sliding Mode a Tempo Fisso}
 La problematica della convergenza rapida e garantita è affrontata in \cite{yu2022}, dove viene proposto uno schema per la stabilizzazione dell'assetto di un \textit{Tilt Trirotor UAV} basato sulla stabilità a tempo fisso (\textit{Fixed-Time Stability}). A differenza della stabilità asintotica o a tempo finito, questo approccio garantisce che il sistema raggiunga l'equilibrio entro un tempo limitato, noto a priori e indipendente dallo stato iniziale.
 \\Il contributo teorico principale è la formulazione di un \textit{Novel Fixed-Time Stable System} che dimostra un tasso di convergenza superiore rispetto ai metodi esistenti. Basandosi su questo, è stato sviluppato uno schema \textit{Nonsingular Fixed-Time Sliding Mode Control} (NFTSMC) che include:
 \begin{itemize}
@@ -106,7 +106,7 @@ La problematica della convergenza rapida e garantita è affrontata in \cite{yu20
 La validazione sperimentale su prototipo reale ha confermato una convergenza degli errori di assetto in meno di 0,3 secondi e una notevole reiezione dei disturbi \cite{yu2022}.
 
 \clearpage
-\section{Allocazione del Controllo tramite Spinta Differenziale}
+\section{Controllo tramite Spinta Differenziale}
 Un aspetto tecnologico cruciale esplorato in \cite{riboldi2023} è la completa sostituzione delle superfici di controllo aerodinamiche convenzionali (alettoni, elevatori, timoni) con una logica di controllo basata esclusivamente sulla modulazione della spinta (\textit{Differential Thrust}).
 Questa architettura richiede l'impiego di propulsori in grado di fornire spinta reversibile (positiva e negativa), permettendo la generazione di momenti di controllo anche a velocità nulla, una capacità preclusa ai sistemi aerodinamici tradizionali.
 \\La strategia di allocazione del controllo (\textit{Control Allocation}) mappa i comandi di assetto desiderati (Rollio, Beccheggio, Imbardata) direttamente sulle coppie di motori, secondo lo schema seguente (riferito a una configurazione a quattro propulsori disposti a "X"):

@@ -563,142 +563,142 @@ switch test_id
         
     case 12
     
-    % =========================================================================
-    % CONTROLLO ORIZZONTALE: PID 
-    % YAW: Mantiene la prua (Nord o Target) impedendo la virata spontanea.
-    % =========================================================================
-
-    % --- 1. ESTRAZIONE STATI ---
-    phi = x(7); theta = x(8); psi = x(9);
-    p = x(10);  q = x(11);    r = x(12);
+        % =========================================================================
+        % CONTROLLO ORIZZONTALE: PID 
+        % YAW: Mantiene la prua (Nord o Target) impedendo la virata spontanea.
+        % =========================================================================
     
-    R = matriceRotazione(phi, theta, psi);
-    V_glob = R * [x(4); x(5); x(6)];
-    vx_global = V_glob(1); 
-    vy_global = V_glob(2); 
-    vz_global = V_glob(3);
+        % --- 1. ESTRAZIONE STATI ---
+        phi = x(7); theta = x(8); psi = x(9);
+        p = x(10);  q = x(11);    r = x(12);
+        
+        R = matriceRotazione(phi, theta, psi);
+        V_glob = R * [x(4); x(5); x(6)];
+        vx_global = V_glob(1); 
+        vy_global = V_glob(2); 
+        vz_global = V_glob(3);
+        
+        % Integrali (Assicurati che x(30) sia inizializzato nel main)
+        if length(x) >= 30
+            int_err_v     = x(27); 
+            int_err_theta = x(28); 
+            int_err_z     = x(29); 
+            int_err_y     = x(30); % Integrale per errore velocità laterale
+        else
+            int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0;
+        end
+        
+        % --- 2. SETPOINT ---
+        vx_des    = target(1);
+        theta_des = target(2); 
+        z_des     = target(3);
     
-    % Integrali (Assicurati che x(30) sia inizializzato nel main)
-    if length(x) >= 30
-        int_err_v     = x(27); 
-        int_err_theta = x(28); 
-        int_err_z     = x(29); 
-        int_err_y     = x(30); % Integrale per errore velocità laterale
-    else
-        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0;
-    end
+        % =================================================
+        % 3. CONTROLLO LATERALE (TUNING V10 - SILK SMOOTH)
+        % =================================================
+        y_curr = x(2);
+        y_set  = 0; 
+        e_y = y_set - y_curr;
+        
+        % --- FINE TUNING ---
+        Kp_y = 0.20; 
+        Kd_y = 0.8; 
+        Ki_y = 0.02;
+        
+        psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_global);
+        
+        % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
+        max_heading_corr = deg2rad(35);
+        psi_correction = max(-max_heading_corr, min(max_heading_corr, psi_steering));
+        
+        if length(target) >= 4; psi_base = target(4); else; psi_base = 0; end
+        psi_des_new = psi_base + psi_correction;
     
-    % --- 2. SETPOINT ---
-    vx_des    = target(1);
-    theta_des = target(2); 
-    z_des     = target(3);
-
-    % =================================================
-    % 3. CONTROLLO LATERALE (TUNING V10 - SILK SMOOTH)
-    % =================================================
-    y_curr = x(2);
-    y_set  = 0; 
-    e_y = y_set - y_curr;
+        % Rollio sempre zero
+        phi_des = 0;
     
-    % --- FINE TUNING ---
-    Kp_y = 0.20; 
-    Kd_y = 0.8; 
-    Ki_y = 0.02;
+        % =================================================
+        % 4. CONTROLLO LONGITUDINALE (Quota e Velocità X)
+        % =================================================
+        % Quota Z
+        e_z  = z_des - x(3);
+        de_z = 0 - vz_global;
     
-    psi_steering = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_global);
+        kp_z = 4.0;
+        kd_z = 6.0;
+        ki_z = 0.5;
     
-    % Saturazione (Ridotta leggermente per evitare scatti eccessivi)
-    max_heading_corr = deg2rad(35);
-    psi_correction = max(-max_heading_corr, min(max_heading_corr, psi_steering));
+        az_cmd = kp_z * e_z + kd_z * de_z + ki_z * int_err_z;
+        
+        % Feedforward Portanza (Lift)
+        V_tas = norm(V_glob);
+        F_lift_wing = -0.5 * params.rho * params.s * params.C_l * V_tas^2;
+        
+        % Compensazione Bank Angle (Per non perdere quota mentre correggiamo Y)
+        bank_factor = 1 / max(0.7, cos(phi)); 
+        Fz_req = (params.m * (params.g - az_cmd) + F_lift_wing) * bank_factor;
+        if Fz_req < -80; Fz_req = -80; end 
     
-    if length(target) >= 4; psi_base = target(4); else; psi_base = 0; end
-    psi_des_new = psi_base + psi_correction;
-
-    % Rollio sempre zero
-    phi_des = 0;
-
-    % =================================================
-    % 4. CONTROLLO LONGITUDINALE (Quota e Velocità X)
-    % =================================================
-    % Quota Z
-    e_z  = z_des - x(3);
-    de_z = 0 - vz_global;
-
-    kp_z = 4.0;
-    kd_z = 6.0;
-    ki_z = 0.5;
-
-    az_cmd = kp_z * e_z + kd_z * de_z + ki_z * int_err_z;
+        % Velocità X
+        e_v = vx_des - vx_global;
+        F_drag = 0.5 * params.rho * params.s * params.C_d * V_tas^2;
     
-    % Feedforward Portanza (Lift)
-    V_tas = norm(V_glob);
-    F_lift_wing = -0.5 * params.rho * params.s * params.C_l * V_tas^2;
+        kp_x = 6.0;
+        ki_x = 2.0;
+        Fx_req = F_drag+ kp_x * e_v + ki_x * int_err_v;
+        if Fx_req < 0.1; Fx_req = 0.1; end
+        
+        % Vectoring
+        alpha_ideal = atan2(Fz_req, Fx_req);
+        alpha_lim = max(deg2rad(-25), min(deg2rad(25), alpha_ideal));
+        alpha_servo_base = alpha_lim - theta;
     
-    % Compensazione Bank Angle (Per non perdere quota mentre correggiamo Y)
-    bank_factor = 1 / max(0.7, cos(phi)); 
-    Fz_req = (params.m * (params.g - az_cmd) + F_lift_wing) * bank_factor;
-    if Fz_req < -80; Fz_req = -80; end 
-
-    % Velocità X
-    e_v = vx_des - vx_global;
-    F_drag = 0.5 * params.rho * params.s * params.C_d * V_tas^2;
-
-    kp_x = 6.0;
-    ki_x = 2.0;
-    Fx_req = F_drag+ kp_x * e_v + ki_x * int_err_v;
-    if Fx_req < 0.1; Fx_req = 0.1; end
+        % =================================================
+        % 5. CONTROLLO ASSETTO (INNERMOST LOOP)
+        % =================================================
+        
+        % --- PITCH ---
+        kp_theta = 1.2; 
+        kd_theta = 0.2; 
+        ki_theta = 1;
+        
+        u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
+        
+        % --- ROLL ---
+        kp_phi = 1.6; 
+        kd_phi = 0.8; 
+        u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
+        
+        % --- YAW ---
+        diff_psi = psi_des_new - psi;
+        e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
+        
+        % Guadagni BASSI per evitare conflitti con il rollio
+        kp_psi = 2.5;   
+        kd_psi = 1.6;  % Smorzamento alto per stabilità
+        u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
     
-    % Vectoring
-    alpha_ideal = atan2(Fz_req, Fx_req);
-    alpha_lim = max(deg2rad(-25), min(deg2rad(25), alpha_ideal));
-    alpha_servo_base = alpha_lim - theta;
-
-    % =================================================
-    % 5. CONTROLLO ASSETTO (INNERMOST LOOP)
-    % =================================================
-    
-    % --- PITCH ---
-    kp_theta = 1.2; 
-    kd_theta = 0.2; 
-    ki_theta = 1;
-    
-    u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
-    
-    % --- ROLL ---
-    kp_phi = 1.6; 
-    kd_phi = 0.8; 
-    u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
-    
-    % --- YAW ---
-    diff_psi = psi_des_new - psi;
-    e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
-    
-    % Guadagni BASSI per evitare conflitti con il rollio
-    kp_psi = 2.5;   
-    kd_psi = 1.6;  % Smorzamento alto per stabilità
-    u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
-
-    % =================================================
-    % 6. MIXER & OUTPUT
-    % =================================================
-    T_tot = sqrt(Fx_req^2 + Fz_req^2);
-    
-    ts1 = alpha_servo_base + u_pitch_angle - u_roll_angle; 
-    ts2 = alpha_servo_base + u_pitch_angle + u_roll_angle; 
-    
-    T1 = (T_tot / 2) - u_yaw_thrust; 
-    T2 = (T_tot / 2) + u_yaw_thrust; 
-    
-    % Saturazione Fisica
-    ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
-    ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
-    
-    u(1) = sqrt(max(0, T1) / params.k);
-    u(2) = sqrt(max(0, T2) / params.k);
-    u(3) = 0; % Coda OFF
-    u(4) = ts1; 
-    u(5) = ts2;
-    u(6) = 0; u(7) = 0;
+        % =================================================
+        % 6. MIXER & OUTPUT
+        % =================================================
+        T_tot = sqrt(Fx_req^2 + Fz_req^2);
+        
+        ts1 = alpha_servo_base + u_pitch_angle - u_roll_angle; 
+        ts2 = alpha_servo_base + u_pitch_angle + u_roll_angle; 
+        
+        T1 = (T_tot / 2) - u_yaw_thrust; 
+        T2 = (T_tot / 2) + u_yaw_thrust; 
+        
+        % Saturazione Fisica
+        ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
+        ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+        
+        u(1) = sqrt(max(0, T1) / params.k);
+        u(2) = sqrt(max(0, T2) / params.k);
+        u(3) = 0; % Coda OFF
+        u(4) = ts1; 
+        u(5) = ts2;
+        u(6) = 0; u(7) = 0;
 
     otherwise
         fprintf("Controllo selezionato non trovato\n");
