@@ -1,10 +1,15 @@
 % !TEX root = ../main.tex
+\section{Configurazione di Hovering}
+In questa configurazione i rotori anteriori sono orientati verticalmente ($\theta_{1,2} \approx 90^\circ$). La criticità principale di questa fase per un tricottero è il bilanciamento del momento di imbardata. Poiché i rotori anteriori sono controrotanti, il momento torcente residuo è dominato dal rotore di coda.
+\\Per garantire l'heading senza indurre rotazioni indesiderate, si sfrutta il grado di libertà $\theta_3$ del rotore posteriore. L'obiettivo è generare una componente laterale di spinta che crei un momento opposto e uguale alla coppia di reazione del motore stesso.
+
+\section{Architettura di Controllo}
 Sulla base delle specifiche di progetto e dell'analisi dinamica svolta, è stata implementata un'architettura di controllo gerarchica a cascata. 
 La peculiarità dello schema risiede nell'accoppiamento tra il controllo di quota e quello planare: la spinta totale ($T$), calcolata per sostenere il drone, funge da termine di normalizzazione per determinare l'inclinazione necessaria del vettore spinta.
 \\La suddivisione logica degli anelli è la seguente:
 
 \begin{enumerate}
-    \item \textbf{Outer Loop (Posizione $x, y, z$):} ìUtilizza la tecnica \textbf{Siling Mode Control (SMC)} per calcolare le forze ($F_{req,x}, F_{req,y}, F_{req,z}$) per annullare l'errore di posizione lungo i tre assi.
+    \item \textbf{Outer Loop (Posizione $x, y, z$):} Utilizza la tecnica \textbf{Siling Mode Control (SMC)} per calcolare le forze ($F_{req,x}, F_{req,y}, F_{req,z}$) per annullare l'errore di posizione lungo i tre assi.
     \\Poiché il drone è un sistema sotto-attuato, non ha attuatori diretti per gli assi $x$ e $y$, ma per cambiare la posizione deve prima cambiare l'orientamento (\textit{roll e yaw}); dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico: traduce $F_{req,x}$ e $F_{req,y}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
     \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{PID} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
@@ -140,7 +145,7 @@ Si definisce l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la superficie
 \begin{equation}
     \sigma_z = \dot{e}_z + \lambda_z e_z
 \end{equation}
-Si impone una dinamica di raggiungimento $\dot{\sigma}_z = -K_z \tanh(\sigma_z / \Phi)$, con l'uso di una funzione continua, in questo caso la funzione tangente iperbolica, 
+Si impone una dinamica di raggiungimento $\dot{\sigma}_z = -K_z \tanh \left(\sigma_z / \Phi \right)$, con l'uso di una funzione continua, in questo caso la funzione tangente iperbolica, 
 al posto della funzione segno per evitare il fenomeno del \textit{chattering}. Questo consente di rimanere entro uno strato limite $\Phi$ attorno alla superficie di scorrimento, anziché imporre
 alla traiettoria di rimanere precisamente sulla superficie stessa.
 \\Risolvendo l'equazione dinamica lungo $z$ ($m\ddot{z} = mg - F_{thrust} + F_{aero}$), la legge di controllo risultante per la spinta richiesta è:
@@ -165,11 +170,11 @@ invertendo le componenti della forza aerodinamica:
     \begin{equation}
         F_{y} = T sin(\phi)
     \end{equation}
-    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una superficie di scorrimento $\sigma_{y} = \dot{e_{y}} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh(\frac{\sigma_{y}}{\Phi})$,
+    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una superficie di scorrimento $\sigma_{y} = \dot{e_{y}} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)$,
     si ottiene:
     \begin{equation}\begin{split}
-        \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh(\frac{\sigma_{y}}{\Phi})\\
-        \to F_{req,y} = m (\lambda_{y} \dot{e_{y}} + K_{y} tanh(\frac{\sigma_{y}}{\Phi}))
+        \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)\\
+        \to F_{req,y} = m \left(\lambda_{y} \dot{e_{y}} + K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right) \right)
     \end{split}\end{equation}
 
     L'angolo di rollio necessario è ricavato tramite l'inversione della proiezione della spinta:
@@ -214,7 +219,7 @@ Tali quantità sono calcolate come uscite di tre PID.
     \begin{equation}
         M_{z,req} = k_{p} (\psi_{des} - \psi) + k_{d} (\dot{\psi}_{des} - r)
     \end{equation}
-    con $\phi_{des} = 0$ e $\dot{\phi}_{des} = 0$. Al contrario di quanto avviene per gli altri due angoli di assetto,
+    con $\psi_{des} = 0$ e $\dot{\psi}_{des} = 0$. Al contrario di quanto avviene per gli altri due angoli di assetto,
     in questo caso, l'obiettivo è mantenere il drone orientato in avanti, motivo per cui si richiede un angolo nullo.
 \end{itemize}
 \clearpage
@@ -246,7 +251,7 @@ L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorn
     \theta_{3} = \arctan\left(-\frac{k d_{tx}}{b}\right)
 \end{equation}
 
-\subsection{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}
+\subsection{Quota e Beccheggio}
 Il controllo dell'equilibrio longitudinale richiede la risoluzione di un sistema accoppiato, poiché i rotori non sono posizionati sul baricentro del velivolo. Di conseguenza, ogni variazione di spinta per il controllo di quota ($F_{req,z}$) induce un momento di beccheggio, e viceversa.\\
 Il mixing deve quindi determinare la ripartizione ottima della spinta tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema lineare di due equazioni in due incognite:
 \begin{enumerate}
@@ -285,7 +290,7 @@ In particolare, un valore di $M_y$ positivo (momento a cabrare) comporterà un i
 anteriori $\omega_{1,2}$ e una contestuale riduzione della componente verticale della spinta del rotore di coda, permettendo così al 
 tricottero di variare il proprio angolo di \textit{pitch} pur mantenendo l'equilibrio delle altre forze.
 
-\subsection{Equilibrio Laterale (Roll) e Motori Anteriori}
+\subsection{Rollio e Motori Anteriori}
 Il rollio viene raggiunto attraverso la spinta differenziale dei rotori anteriori.\\
 La spinta totale anteriore $T_{front}$ viene ripartita tra il motore sinistro (2) e destro (1) per generare il momento di rollio richiesto ($M_x$).
 Il sistema da risolvere è:
@@ -302,29 +307,61 @@ Definendo la spinta media anteriore come $T_i = T_{front} / 2$, le spinte dei si
 \end{equation}
 Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 
-\subsection{Controllo di Imbardata (Yaw)}
+\subsection{Controllo di Imbardata}
 Il controllo dell'imbardata è gestito tramite il tilt differenziale dei rotori anteriori.\\ 
 La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
 \begin{equation}
     M_z \approx T_{front} d_{my} \sin(\delta)
 \end{equation}
-Invertendo questa relazione, si calcola l'angolo di tilt necessario, applicando una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale:
+Invertendo questa relazione, si calcola l'angolo di tilt necessario:
 \begin{equation}
-    \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right), \delta_{max} \right)
+    \delta_{des} = \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right)
 \end{equation}
+È prevista una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale.
 \clearpage
 
 \section{Sotto-attuazione in Assetto di Hovering}
-Nonostante la configurazione meccanica preveda tre unità propulsive e la capacità di inclinazione (tilt) dei rotori anteriori, il velivolo in fase di hovering si comporta come un sistema \textbf{sotto-attuato}. 
+Nonostante la configurazione meccanica preveda tre unità propulsive e la capacità di tilting dei rotori anteriori, il velivolo in fase di hovering si comporta come un sistema \textbf{sotto-attuato}. 
 \\Un sistema è sotto-attuato quando il numero di movimenti indipendenti che può compiere (6 gradi di libertà: tre traslazioni e tre rotazioni) è superiore al numero di "comandi" indipendenti 
 che il software può inviare contemporaneamente ai motori. 
 \\Nel caso in esame, il controllo è mappato su 4 variabili principali: 
 la spinta totale per la quota e i tre momenti per il rollio, il beccheggio e l'imbardata. 
 Anche se i rotori anteriori hanno la capacità meccanica di inclinarsi, tale funzione è vincolata 
-nel controllo alla gestione della prua (yaw) o alla propulsione orizzontale in crociera, mentre il rotore posteriore rimane fissato 
+nel controllo alla gestione dell'imbardata, mentre il rotore posteriore rimane fissato 
 a un angolo calcolato analiticamente per bilanciare la coppia rotazionale.
 \\Di conseguenza, il drone non possiede un attuatore dedicato esclusivamente 
 allo spostamento laterale o longitudinale che non influenzi anche l'orientamento del corpo. 
 Per spostarsi orizzontalmente, il velivolo deve necessariamente inclinarsi (cambiando l'assetto di rollio o beccheggio) per proiettare una parte della sua spinta totale nella direzione desiderata. 
 Questa dipendenza forzata tra la posizione e l'inclinazione del corpo è la prova fisica della sotto-attuazione del sistema, che si manifesta nei risultati della linearizzazione attraverso 
 un forte accoppiamento tra i moti traslazionali e quelli rotazionali.
+\clearpage
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_verticale/pos_vel.png}
+    \caption{Andamento velocità.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_verticale/angoli.png}
+    \caption{Andamento angoli di Eulero e velocità angolari.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_verticale/thrust.png}
+    \caption{Thrust generato dai rotori.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_verticale/tilt_1_2.png}
+    \caption{Andamento degli angoli $\theta_1$ e $\theta_2$.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_verticale/tilt_3.png}
+    \caption{Andamento degli angoli $\theta_3$ e $\theta_4$.}
+\end{figure}

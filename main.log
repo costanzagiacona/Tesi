@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  1 FEB 2026 12:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  1 FEB 2026 17:57
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -600,6 +600,8 @@ Package: subfigure 2002/07/30 v2.1.4 subfigure package
 (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/subfigure\subfigure.cfg)
 \subfig@top=\skip62
 \subfig@bottom=\skip63
+) (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty
+Package: placeins 2005/04/18  v 2.2
 ) (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
 ) (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
@@ -682,26 +684,26 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Info: Redefining \it@ocap on input line 50.
-LaTeX Info: Redefining \it@ccap on input line 50.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Info: Redefining \it@ocap on input line 51.
+LaTeX Info: Redefining \it@ccap on input line 51.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count359
@@ -755,15 +757,15 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \microtypecontext on input line 50.
-Package microtype Info: Applying patch `item' on input line 50.
-Package microtype Info: Applying patch `toc' on input line 50.
-Package microtype Info: Applying patch `eqnum' on input line 50.
+LaTeX Info: Redefining \microtypecontext on input line 51.
+Package microtype Info: Applying patch `item' on input line 51.
+Package microtype Info: Applying patch `toc' on input line 51.
+Package microtype Info: Applying patch `eqnum' on input line 51.
 
-Package microtype Warning: Unable to apply patch `footnote' on input line 50.
+Package microtype Warning: Unable to apply patch `footnote' on input line 51.
 
-Package microtype Info: Applying patch `verbatim' on input line 50.
-LaTeX Info: Redefining \microtypesetup on input line 50.
+Package microtype Info: Applying patch `verbatim' on input line 51.
+LaTeX Info: Redefining \microtypesetup on input line 51.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -777,7 +779,7 @@ Package microtype Info: No adjustment of character kerning.
 (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman (RS)
 )
-Package hyperref Info: Link coloring OFF on input line 50.
+Package hyperref Info: Link coloring OFF on input line 51.
  (main.out) (main.out)
 \@outlinefile=\write4
 \openout4 = `main.out'.
@@ -855,7 +857,7 @@ Capitolo 2.
 ] [7
 
 {C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-<./img/coaxial.png, id=483, 376.40625pt x 226.59656pt>
+<./img/coaxial.png, id=507, 376.40625pt x 226.59656pt>
 File: ./img/coaxial.png Graphic file (type png)
 <use ./img/coaxial.png>
 Package pdftex.def Info: ./img/coaxial.png  used on input line 56.
@@ -863,7 +865,7 @@ Package pdftex.def Info: ./img/coaxial.png  used on input line 56.
  [8
 
  <./img/coaxial.png>]
-<./img/paper5.png, id=493, 586.44093pt x 447.17062pt>
+<./img/paper5.png, id=517, 586.44093pt x 447.17062pt>
 File: ./img/paper5.png Graphic file (type png)
 <use ./img/paper5.png>
 Package pdftex.def Info: ./img/paper5.png  used on input line 75.
@@ -877,7 +879,7 @@ Package pdftex.def Info: ./img/paper5.png  used on input line 75.
 ]
 Capitolo 3.
 (capitoli/modello_completo.tex
-<./img/sist_rif.png, id=514, 1983.41pt x 822.07124pt>
+<./img/sist_rif.png, id=538, 1983.41pt x 822.07124pt>
 File: ./img/sist_rif.png Graphic file (type png)
 <use ./img/sist_rif.png>
 Package pdftex.def Info: ./img/sist_rif.png  used on input line 12.
@@ -887,12 +889,12 @@ Package pdftex.def Info: ./img/sist_rif.png  used on input line 12.
  <./img/sist_rif.png (PNG copy)>] [13{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}] [14
 
 ]
-<./img/rotori_1_2.png, id=537, 525.46312pt x 421.575pt>
+<./img/rotori_1_2.png, id=561, 525.46312pt x 421.575pt>
 File: ./img/rotori_1_2.png Graphic file (type png)
 <use ./img/rotori_1_2.png>
 Package pdftex.def Info: ./img/rotori_1_2.png  used on input line 83.
 (pdftex.def)             Requested size: 204.85802pt x 164.35568pt.
-<./img/rotore_3.png, id=538, 461.47406pt x 356.0803pt>
+<./img/rotore_3.png, id=562, 461.47406pt x 356.0803pt>
 File: ./img/rotore_3.png Graphic file (type png)
 <use ./img/rotore_3.png>
 Package pdftex.def Info: ./img/rotore_3.png  used on input line 91.
@@ -917,98 +919,132 @@ Capitolo 4.
 Capitolo 5.
 (capitoli/panoramica_controllo.tex [25
 
-] [26]) [27] [28]
+]
+Overfull \hbox (1.27057pt too wide) in paragraph at lines 24--25
+[]\T1/lmr/bx/n/12 (-20) Imbardata: \T1/lmr/m/n/12 (-20) Ge-sti-ta tra-mi-te mo-du-la-zio-ne dif-fe-ren-zia-le del-la spin-ta ($\OT1/lmr/m/n/12 (-20) ^^A\OML/lmm/m/it/12 ![]$\T1/lmr/m/n/12 (-20) ). 
+ []
+
+) [26]
 Capitolo 6.
-(capitoli/controllo_verticale.tex
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 128.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 128.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 128.
- [29
-
-] [30]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <17.28> on input line 137.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 137.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 137.
-
-[31
-
-] [32] [33
+(capitoli/controllo_verticale.tex [27
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 235.
+(Font)              <10> on input line 133.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 133.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 133.
+ [28]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <17.28> on input line 142.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 235.
+(hyperref)                removing `math shift' on input line 142.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\theta' on input line 235.
+(hyperref)                removing `math shift' on input line 142.
 
+[29
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 235.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 235.
-
-[34
-
-] [35] [36] [37]) [38
+] [30] [31
 
 ]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <14.4> on input line 240.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 240.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\theta' on input line 240.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 240.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 240.
+
+[32
+
+] [33] [34] [35] [36
+
+]
+<./img/../img/controllo_verticale/pos_vel.png, id=723, 1245.9047pt x 683.55376pt>
+File: ./img/../img/controllo_verticale/pos_vel.png Graphic file (type png)
+<use ./img/../img/controllo_verticale/pos_vel.png>
+Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 341.
+(pdftex.def)             Requested size: 426.79135pt x 234.15747pt.
+<./img/../img/controllo_verticale/angoli.png, id=724, 1236.87094pt x 680.5425pt>
+File: ./img/../img/controllo_verticale/angoli.png Graphic file (type png)
+<use ./img/../img/controllo_verticale/angoli.png>
+Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 347.
+(pdftex.def)             Requested size: 426.79135pt x 234.82895pt.
+<./img/../img/controllo_verticale/thrust.png, id=725, 1228.59pt x 668.4975pt>
+File: ./img/../img/controllo_verticale/thrust.png Graphic file (type png)
+<use ./img/../img/controllo_verticale/thrust.png>
+Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 353.
+(pdftex.def)             Requested size: 426.79135pt x 232.22314pt.
+ [37
+
+ <./img/../img/controllo_verticale/pos_vel.png> <./img/../img/controllo_verticale/angoli.png>]
+<./img/../img/controllo_verticale/tilt_1_2.png, id=732, 1263.97218pt x 684.30656pt>
+File: ./img/../img/controllo_verticale/tilt_1_2.png Graphic file (type png)
+<use ./img/../img/controllo_verticale/tilt_1_2.png>
+Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 359.
+(pdftex.def)             Requested size: 426.79135pt x 231.05313pt.
+<./img/../img/controllo_verticale/tilt_3.png, id=733, 1252.68pt x 682.80093pt>
+File: ./img/../img/controllo_verticale/tilt_3.png Graphic file (type png)
+<use ./img/../img/controllo_verticale/tilt_3.png>
+Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_3.png  used on input line 365.
+(pdftex.def)             Requested size: 426.79135pt x 232.6285pt.
+) [38 <./img/../img/controllo_verticale/thrust.png> <./img/../img/controllo_verticale/tilt_1_2.png>] [39 <./img/../img/controllo_verticale/tilt_3.png>]
 Capitolo 7.
-(capitoli/controllo_PID.tex [39
+(capitoli/controllo_PID.tex [40
 
-] [40] [41
+] [41] [42
 
-] [42] [43
+] [43] [44
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10.95> on input line 220.
- [44] [45
+ [45] [46
 
 ]
 Overfull \hbox (1.4342pt too wide) in paragraph at lines 266--267
 \T1/lmr/m/n/10.95 (-20) Il le-ga-me tra i co-man-di vir-tua-li $\OT1/lmr/bx/n/10.95 (-20) u \OT1/lmr/m/n/10.95 (-20) = [\OML/lmm/m/it/10.95 T[]; u[]; u[]; u[]\OT1/lmr/m/n/10.95 (-20) ][]$ \T1/lmr/m/n/10.95 (-20) e gli at-tua-to-ri fi-si-ci $\OT1/lmr/bx/n/10.95 (-20) y \OT1/lmr/m/n/10.95 (-20) = [\OML/lmm/m/it/10.95 T[]; T[]; ^^R[]; ^^R[]\OT1/lmr/m/n/10.95 (-20) ][]$
  []
 
-[46]) [47
+[47]) [48
 
 ]
 Capitolo 8.
-(capitoli/dimostrazione_SMC.tex [48
+(capitoli/dimostrazione_SMC.tex [49
 
-] [49]) [50]
+] [50]) [51]
 Capitolo 9.
 (capitoli/analisi_stabilita.tex
 
-LaTeX Warning: Citation `simulazioneVTOL3.m' on page 51 undefined on input line 3.
+LaTeX Warning: Citation `simulazioneVTOL3.m' on page 52 undefined on input line 3.
 
-[51
+[52
 
-] [52
+] [53
 
 ]
 
-LaTeX Warning: Citation `simulazioneVTOL3.m' on page 53 undefined on input line 32.
+LaTeX Warning: Citation `simulazioneVTOL3.m' on page 54 undefined on input line 32.
 
-[53
+[54
 
-]) (main.bbl [54]) [55
+]) (main.bbl [55]) [56
 
 ] (main.aux)
  ***********
@@ -1020,20 +1056,20 @@ L3 programming layer <2025-11-06>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: C679094D4261075D79EB8581D73570F8;17945.
+(rerunfilecheck)             Checksum: A9935AE5EDE1ABD180BDED69B9D7D4E8;18013.
  ) 
 Here is how much of TeX's memory you used:
- 29461 strings out of 467871
- 544905 string characters out of 5418375
- 983052 words of memory out of 5000000
- 57087 multiletter control sequences out of 15000+600000
- 782018 words of font info for 356 fonts, out of 8000000 for 9000
+ 29536 strings out of 467871
+ 547826 string characters out of 5418375
+ 983340 words of memory out of 5000000
+ 57158 multiletter control sequences out of 15000+600000
+ 782003 words of font info for 356 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,24n,104p,1038b,1067s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (60 pages, 1532960 bytes).
+Output written on main.pdf (61 pages, 1783501 bytes).
 PDF statistics:
- 1007 PDF objects out of 1200 (max. 8388607)
+ 1036 PDF objects out of 1200 (max. 8388607)
  271 named destinations out of 1000 (max. 500000)
- 82574 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 82623 words of extra memory for PDF output out of 89155 (max. 10000000)
 
