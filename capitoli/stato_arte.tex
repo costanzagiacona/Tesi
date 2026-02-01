@@ -65,24 +65,6 @@ Il modello dinamico a sei gradi di libertà è derivato utilizzando le formule d
 Le simulazioni dimostrano che l'approccio proposto garantisce una robustezza superiore rispetto ai controllori backstepping tradizionali.
 
 \clearpage
-\section{Controllo Sliding Mode "Smoothed" e Non-Overshooting}
-Un'evoluzione recente per affrontare simultaneamente il problema del \textit{chattering} e quello delle sovraelongazioni (\textit{overshoot}) nella risposta dinamica degli UAV è presentata in \cite{Wang2024}.
-Gli autori propongono una strategia di controllo robusta denominata \textit{Smoothed Non-overshooting Sliding Mode Control}, progettata per garantire la stabilità esponenziale globale anche in presenza di disturbi stocastici limitati.
-
-A differenza degli approcci classici discusso nelle sezioni precedenti, che utilizzano una funzione di saturazione lineare a tratti ($\text{sat}(s)$) per mitigare il chattering, questo metodo impiega una funzione basata sulla tangente iperbolica ($\tanh(\cdot)$).
-La legge di controllo assume la forma generale:
-\begin{equation}
-    u(t) = -k \cdot \tanh(\rho \cdot s(t))
-\end{equation}
-dove $\rho$ è un parametro di sintonizzazione che determina la pendenza della funzione.
-I vantaggi principali di questa formulazione includono:
-\begin{itemize}
-    \item \textbf{Continuità e Derivabilità:} L'uso della $\tanh(\cdot)$ rende il segnale di controllo una funzione liscia (\textit{smooth}) e ovunque differenziabile. Questo elimina le discontinuità nella derivata che si verificano ai bordi dello strato limite nella funzione $\text{sat}(\cdot)$, riducendo lo stress meccanico sugli attuatori e migliorando la precisione di tracciamento.
-    \item \textbf{Approssimazione Universale:} Viene dimostrato che per valori sufficientemente elevati di $\rho$, la funzione $\tanh(\rho \cdot s)$ approssima la funzione $\text{sign}(s)$ ideale, permettendo di recuperare le proprietà di robustezza dello SMC puro pur mantenendo un comportamento continuo.
-    \item \textbf{Assenza di Overshoot:} La struttura del controllore è progettata con due sottosistemi sequenziali (raggiungibilità e stabilità) che garantiscono che la variabile di errore converga a zero senza mai superare il target, una caratteristica critica per la sicurezza nelle manovre UAV in ambienti ostili.
-\end{itemize}
-
-\clearpage
 \section{Strategie di Volo e Controllo per Tricotteri Tilt-Rotor}
 In \cite{chen2017}, l'attenzione si sposta sulla realizzazione pratica di un volo autonomo "full-mode" per un UAV tilt-rotor in configurazione tricottero compatta. L'obiettivo è superare le limitazioni di costo associate all'ottenimento di modelli dinamici precisi, proponendo una strategia robusta che non dipenda da dati aerodinamici ad alta fedeltà.
 \\La gestione del volo è affidata a una strategia basata su una macchina a stati finiti che coordina le diverse fasi: \textit{Rotor mode} (decollo verticale), \textit{Conversion} (transizione accelerata), \textit{Fixed-wing mode} (crociera) e \textit{Reconversion} (ritorno all'hovering).

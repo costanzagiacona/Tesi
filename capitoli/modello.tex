@@ -8,7 +8,7 @@ Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di rifer
 \end{itemize}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{sist_rif.png}
+    \includegraphics[width=0.95\textwidth]{sist_rif.png}
     \caption{Sistemi di riferimento.}
     \label{fig:sist_rif}
 \end{figure}
@@ -20,6 +20,7 @@ Analogamente, la relazione cinematica tra le velocità angolari del corpo e le d
 \begin{equation}
     \dot{\Theta}_g = J_{b \to g}(\Theta_g) \Omega_b
 \end{equation}
+\clearpage
 
 \section{Equazioni della Dinamica}
 Il modello dinamico è derivato utilizzando la formulazione di Newton-Eulero per un corpo rigido a 6 gradi di libertà. Le equazioni vettoriali che descrivono il moto traslazionale e rotazionale sono:
@@ -37,6 +38,7 @@ Il modello dinamico è derivato utilizzando la formulazione di Newton-Eulero per
     \item $F_{\mathrm{tot}}$ e $M_{\mathrm{tot}}$ sono rispettivamente la somma delle forze e dei momenti esterni agenti sul corpo, espressi nel \textit{body frame}.
 
 \end{itemize} 
+\clearpage
 
 \section{Analisi delle Forze}
 Le forze agenti sul tricottero sono la risultante della spinta dei motori ($F_{\mathrm{th}}$), della forza di gravità ($F_g$) e delle forze aerodinamiche ($F_{\mathrm{aero}}$):
@@ -94,6 +96,7 @@ Le forze aerodinamiche (Portanza $L$ e Resistenza $D$) agenti sulle superfici al
     \end{bmatrix}
 \end{equation}
 Si assume per semplicità che il moto laterale non generi forze aerodinamiche significative sulle ali principali.
+\clearpage
 
 \section{Analisi dei Momenti}
 Il momento totale agente sul baricentro è la somma di diverse componenti:

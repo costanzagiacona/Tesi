@@ -1,211 +1,61 @@
 % !TEX root = ../main.tex
-\section{Modellazione del Sistema}
+\section{Introduzione all'Analisi Lineare}
+L'obiettivo di questo capitolo è dimostrare la stabilità asintotica locale del velivolo VTOL nelle sue configurazioni operative critiche. La dinamica del sistema, intrinsecamente non lineare e tempo-variante, è descritta da un vettore di stato $\mathbf{x} \in \mathbb{R}^{30}$, che include posizioni, velocità, assetti angolari, ratei e gli stati integrativi dei regolatori PID \cite{simulazioneVTOL3.m}.
 
-\subsection{Dinamica degli Attuatori}
-Il fattore limitante per la banda passante del sistema di controllo è il ritardo introdotto dai gruppi motopropulsori e dai servocomandi. Questo è stato modellato come un filtro del secondo ordine:
-\begin{equation}
-    G_{act}(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}
-\end{equation}
-Con $\omega_n \approx 94.2$ rad/s ($15$ Hz) e $\zeta = 0.9$. Ogni anello di controllo deve avere una banda passante significativamente inferiore a $\omega_n$ per evitare instabilità indotta dal ritardo di fase.
+\section{Metodologia di Linearizzazione e Criterio di Lyapunov}
+Per ogni punto di equilibrio $(\mathbf{x}_e, \mathbf{u}_e)$, il sistema è stato linearizzato tramite il calcolo della matrice Jacobiana $\mathbf{A}$:
+\[ \mathbf{A} = \left. \frac{\partial \mathbf{f}(\mathbf{x}, \mathbf{u})}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \]
 
-\section{Fase 1: Hovering (Volo Stazionario)}
-In questa fase il velivolo è intrinsecamente instabile o marginalmente stabile. Il controllo richiede un'elevata reattività.
+Secondo il \textbf{Primo Metodo di Lyapunov}, la stabilità asintotica del punto di equilibrio è garantita se tutti gli autovalori $\lambda_i = \sigma_i \pm j\omega_i$ della matrice $\mathbf{A}$ presentano una parte reale $\sigma_i < 0$. Per ogni modo complesso coniugato, definiamo lo smorzamento $\zeta$ come la capacità del sistema di dissipare l'energia delle perturbazioni:
+\[ \zeta = \frac{-\sigma}{\sqrt{\sigma^2 + \omega^2}} \]
 
-\subsection{Anelli Interni (Assetto)}
-I controllori PID agiscono sulla spinta differenziale.
+\clearpage
+\section{Analisi dell'Assetto di Hovering}
+In fase di hovering ($V_x \approx 0$), il velivolo opera in un regime quasi-statico dove la portanza alare è nulla. Il sostentamento e il controllo del posizionamento sono affidati interamente alla spinta vettoriale dei tre rotori principali.
 
-\begin{table}[H]
-\centering
-\caption{Prestazioni Anelli Interni (Hover)}
-\label{tab:hover_inner}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Loop} & \textbf{Guadagni (P/I/D)} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Gain Margin} \\ \midrule
-Roll ($\phi$) & 40 / 0 / 8 & 31.8 rad/s & 46.6$^\circ$ & 14.2 dB \\
-Pitch ($\theta$) & 40 / 10 / 8 & 31.0 rad/s & 47.3$^\circ$ & 14.5 dB \\
-Yaw ($\psi$) & 15 / 0 / 5 & 11.0 rad/s & 62.7$^\circ$ & $\infty$ \\ \bottomrule
-\end{tabular}
-\end{table}
+\subsection{Sintesi del Controllore}
+Il sistema di controllo per l'hovering adotta una struttura gerarchica a doppio loop. Il loop esterno (\textit{Outer Loop}) implementa una strategia di \textbf{Sliding Mode Control (SMC)} per la regolazione della quota $z$ e delle posizioni $x, y$. L'utilizzo della funzione di commutazione $\tanh(s/\Phi)$ permette di gestire le non-linearità del modello garantendo robustezza alle perturbazioni esterne.
 
-\textbf{Analisi e Validazione:}
+Il loop interno (\textit{Inner Loop}) riceve i riferimenti di assetto ($\phi_{des}, \theta_{des}$) calcolati dal controllo SMC e utilizza regolatori di tipo \textbf{PID} per stabilizzare gli angoli di Eulero. In questa fase, il momento di imbardata è controllato tramite il tilt differenziale dei rotori anteriori ($\delta_{tilt, yaw}$), mentre il rotore di coda è mantenuto all'angolo ideale $\theta_{3,ideal}$ per bilanciare la coppia residua del sistema.
+
+\subsection{Interpretazione dei Risultati e Modi Dominanti}
+L'analisi degli autovalori nel punto di equilibrio ($V_x \approx 0, z = -10$ m) conferma la stabilità asintotica locale del sistema. I risultati possono essere raggruppati secondo la separazione delle scale temporali:
+
 \begin{itemize}
-    \item \textbf{Reattività:} La banda passante di $\approx 31$ rad/s (5 Hz) garantisce una risposta rapida ai disturbi impulsivi (raffiche).
-    \item \textbf{Robustezza:} Il margine di fase di $\approx 47^\circ$ è il compromesso ideale. Valori superiori ridurrebbero la velocità di risposta; valori inferiori ($<40^\circ$) causerebbero oscillazioni (overshoot) visibili.
-    \item \textbf{Sicurezza:} La frequenza di taglio è circa $1/3$ della frequenza naturale dei motori ($31$ vs $94$ rad/s), garantendo che il ritardo hardware non destabilizzi il PID.
+    \item \textbf{Modi ad Alta Frequenza (85.49 rad/s, $\zeta = 0.815$):} Questi autovalori sono associati alla dinamica veloce degli attuatori e ai loop interni di assetto. L'elevato smorzamento ($\zeta > 0.8$) indica che i regolatori PID sono stati correttamente tarati per prevenire risonanze strutturali e oscillazioni nei comandi di spinta.
+    \item \textbf{Modi di Traiettoria (2.32 - 3.01 rad/s, $\zeta > 0.8$):} Questi modi descrivono la risposta del sistema SMC nel controllo della posizione. L'assenza di accoppiamenti aerodinamici significativi tipica del volo stazionario permette una regolazione quasi "morta" (deadbeat), dove il drone ritorna al setpoint di posizione senza sovraelongazioni apprezzabili.
+    \item \textbf{Modo di Traslazione Lenta (0.44 rad/s):} Rappresenta la dinamica di deriva dovuta alla sotto-attuazione intrinseca del velivolo. Nonostante la frequenza ridotta, lo smorzamento ($\zeta = 0.578$) è sufficiente a garantire una correzione stabile della posizione orizzontale tramite il beccheggio e il rollio.
 \end{itemize}
 
-\subsection{Anelli Esterni (Posizione)}
-La posizione è controllata tramite un approccio a cascata, dove l'anello esterno comanda l'angolo di assetto desiderato.
+\clearpage
+\section{Analisi dell'Assetto di Crociera (Cruise)}
+La transizione al volo orizzontale ($V_x = 25$ m/s) sposta il sistema in un regime dominato dalle forze aerodinamiche \cite{simulazioneVTOL3.m}. Qui, la stabilità è influenzata dalla sotto-attuazione: il drone non può variare la quota senza influenzare il beccheggio e la velocità.
 
-\begin{table}[H]
-\centering
-\caption{Prestazioni Anelli Esterni (Hover)}
-\label{tab:hover_outer}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Loop} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Separazione ($\omega_{in}/\omega_{out}$)} \\ \midrule
-Quota ($Z$) & 13.7 rad/s & 85.0$^\circ$ & 6.9 (vs Motori) \\
-Posizione ($X$) & 8.45 rad/s & 68.2$^\circ$ & 3.7 (vs Pitch) \\
-Posizione ($Y$) & 9.30 rad/s & 71.4$^\circ$ & 3.4 (vs Roll) \\ \bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Analisi e Validazione:}
+\subsection{Sintesi del Controllore}
+Il controllo adottato è un \textit{Coordinated Bank-to-Turn}. La sfida principale è stata smorzare il modo di \textbf{Phugoid}, ovvero lo scambio energetico tra quota e velocità. Per farlo, si è agito massicciamente sui loop esterni:
 \begin{itemize}
-    \item \textbf{Quota:} Il controllo agisce direttamente sui motori. L'elevato margine di fase ($85^\circ$) indica un comportamento molto smorzato senza overshoot.
-    \item \textbf{Posizione Planare:} Il rapporto di separazione $\approx 3.5$ è al limite inferiore consigliato. Tuttavia, i margini di fase elevati ($>68^\circ$) compensano la vicinanza spettrale, prevenendo l'accoppiamento dinamico distruttivo.
+    \item Il guadagno $K_{p,x} = 12.0$ vincola rigidamente la velocità orizzontale, impedendo le oscillazioni energetiche.
+    \item Il termine $K_{d,z} = 10.0$ agisce come uno smorzatore sintetico sulla velocità verticale $V_z$, "frenando" i moti oscillatori lenti.
 \end{itemize}
 
-\newpage
-\section{Fase 2: Cruise (Volo Traslato)}
-In volo orizzontale, l'autorità di controllo aumenta grazie alle superfici aerodinamiche e alla vettorizzazione della spinta ($d_{mx}=0.6$ m).
-
-\subsection{Anelli Interni (Assetto)}
-I guadagni sono stati ridotti drasticamente ($K_p=2$ vs $40$) per adattarsi alla maggiore autorità di controllo geometrica.
-
-\begin{table}[H]
-\centering
-\caption{Prestazioni Anelli Interni (Cruise)}
-\label{tab:cruise_inner}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Loop} & \textbf{Guadagni} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Note} \\ \midrule
-Roll ($\phi$) & 4.0 / 0 / 0.8 & 14.5 rad/s & 82.1$^\circ$ & Alta stabilità \\
-Pitch ($\theta$) & 2.0 / 1.5 / 0.5 & 13.0 rad/s & 85.0$^\circ$ & "Blindato" \\
-Yaw ($\psi$) & 3.0 / 0 / 1.2 & 10.2 rad/s & 88.4$^\circ$ & Smorzato \\ \bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Analisi e Validazione:}
-\begin{itemize}
-    \item \textbf{Robustezza Totale:} I margini di fase superiori a $80^\circ$ indicano un sistema estremamente robusto ("blindato"). Il drone in crociera si comporterà in modo dolce e prevedibile, simile a un aereo di linea piuttosto che a un drone acrobatico.
-    \item \textbf{Immunità al Ritardo:} Con una banda di soli $13$ rad/s (2 Hz), il ritardo dei servi ($15$ Hz) è praticamente invisibile al controllore, eliminando ogni rischio di instabilità ad alta frequenza.
-\end{itemize}
-
-\subsection{Anelli Esterni (Navigazione)}
-
-\begin{table}[H]
-\centering
-\caption{Prestazioni Anelli Esterni (Cruise)}
-\label{tab:cruise_outer}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Loop} & \textbf{Banda ($ \omega_{bw} $)} & \textbf{Phase Margin} & \textbf{Separazione Freq.} \\ \midrule
-Velocità ($V_x$) & 1.28 rad/s & 63.0$^\circ$ & \textbf{10.1} (Eccellente) \\
-Quota ($Z$) & 6.01 rad/s & 83.0$^\circ$ & \textbf{15.6} (Eccellente) \\ \bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Analisi e Validazione:}
-\begin{itemize}
-    \item \textbf{Velocità:} Il rapporto di separazione $>10$ rispetto all'anello di pitch valida pienamente l'ipotesi di controllo a cascata. Le variazioni di velocità saranno fluide.
-    \item \textbf{Quota:} Il controllore utilizza un termine derivativo dominante ($K_d=6$), permettendo di trasformare la dinamica del secondo ordine in un comportamento smorzato del primo ordine, ideale per il mantenimento preciso dell'altitudine.
-\end{itemize}
-
-\section{Conclusioni}
-L'analisi formale conferma la validità del progetto dei controllori.
+\subsection{Discussione critica dei modi al limite}
+L'analisi ha evidenziato due modi con smorzamento ridotto ($\zeta \approx 0.24$):
 \begin{enumerate}
-    \item La strategia **"Dual-Tuning"** (guadagni aggressivi in Hover, guadagni conservativi in Cruise) è corretta e necessaria data la variazione dell'autorità di controllo fisica.
-    \item I margini di stabilità soddisfano i criteri aerospaziali standard ($GM > 6$ dB, $PM > 45^\circ$).
-    \item Le bande passanti sono compatibili con l'hardware selezionato, garantendo un margine di sicurezza adeguato contro l'invecchiamento dei componenti o il calo di tensione della batteria.
+    \item \textbf{Modo Traiettoria/Dutch Roll ($2.59$ rad/s):} Rappresenta l'oscillazione accoppiata tra imbardata e rollio. Nonostante la coordinazione implementata ($K_{coord} = 0.2$), lo smorzamento rimane limitato dall'autorità dei rotori anteriori in fase di crociera.
+    \item \textbf{Modo Longitudinale ($2.53$ rad/s):} È il residuo del modo di periodo corto. 
 \end{enumerate}
 
-\newpage
-\appendix
-\section{Codice di Analisi MATLAB}
-Il seguente script è stato utilizzato per generare i dati e i diagrammi di Bode discussi nel report.
+\subsection{Vincoli di Attuazione e Trade-off dello Smorzamento}
+L'analisi sperimentale condotta in regime non lineare ha evidenziato un limite fondamentale nella sintesi del guadagno derivativo $k_{d,\theta}$. Sebbene la teoria lineare suggerisca un incremento di tale parametro per migliorare lo smorzamento del modo di periodo corto, le simulazioni mostrano l'insorgere di vibrazioni ad alta frequenza sia nell'angolo di beccheggio ($\theta$) che negli angoli di tilt dei rotori anteriori.
+\\Tale fenomeno è riconducibile alla natura della componente derivativa, che agisce come un amplificatore delle alte frequenze. Quando il guadagno $k_{d,\theta}$ eccede una soglia critica, il sistema di controllo tenta di rispondere a variazioni più rapide della larghezza di banda degli attuatori (fissati a circa $15$ Hz nel modello dinamico). Il risultato è un'instabilità numerica che evolve in un \textbf{ciclo limite}, dove i rotori oscillano tra i propri limiti di saturazione, degradando la stabilità globale del velivolo invece di migliorarla.
+\\Lo smorzamento del modo longitudinale a valori prossimi a $\zeta = 0.25$ per l'assetto di crociera rappresenta la massima autorità di controllo esercitabile senza innescare risonanze distruttive negli attuatori.
 
-\begin{lstlisting}[language=Matlab, caption=AnalisiStabilitaCompleta.m]
-%% ANALISI DI STABILITA E ROBUSTEZZA - VTOL 6.7kg
-clear all; close all; clc;
+\section{Separazione delle Scale Temporali}
+L'architettura di controllo implementata si basa sul principio della separazione delle scale temporali, fondamentale per la stabilità di sistemi sotto-attuati. Tale approccio permette di decomporre il problema del controllo in due sottosistemi gerarchici:
 
-%% 1. PARAMETRI DEL SISTEMA
-m = 6.7;            % Massa [kg]
-g = 9.81;           % Gravita [m/s^2]
-Ixx = 0.237; Iyy = 0.244; Izz = 0.468; % Inerzie
+\begin{enumerate}
+    \item \textbf{Inner Loop (Dinamica Veloce):} Preposto alla stabilizzazione dei momenti e degli assetti angolari ($\phi, \theta, \psi$). I risultati della linearizzazione mostrano frequenze proprie comprese tra $60$ e $95$ rad/s, garantendo una risposta quasi istantanea alle richieste di coppia.
+    \item \textbf{Outer Loop (Dinamica Lenta):} Preposto alla navigazione e al mantenimento della quota e velocità. Le frequenze dominanti in questa scala sono significativamente inferiori ($0.1 - 3$ rad/s).
+\end{enumerate}
 
-% Geometria
-d_mx = 0.6;         % Braccio longitudinale (Fondamentale per Cruise)
-d_my = 0.2;         % Braccio laterale 
-T_hover = m*g;      % Spinta riferimento
-
-% Attuatori (Motori/Servi)
-wn = 2*pi*15;       % 94.2 rad/s
-zeta = 0.9;
-s = tf('s');
-G_act = wn^2 / (s^2 + 2*zeta*wn*s + wn^2);
-
-%% 2. FASE HOVER (Volo Verticale)
-
-% --- INNER LOOPS (Assetto) ---
-% Pitch Hover
-C_h_th = 40 + 8*s; % PD per analisi Bode
-L_h_th = C_h_th * G_act * (1/(Iyy*s^2));
-W_cl_th = L_h_th / (1 + L_h_th);
-
-% Roll Hover
-C_h_phi = 40 + 8*s;
-L_h_phi = C_h_phi * G_act * (1/(Ixx*s^2));
-W_cl_phi = L_h_phi / (1 + L_h_phi);
-
-% Yaw Hover
-C_h_psi = 15 + 5*s;
-L_h_psi = C_h_psi * G_act * (1/(Izz*s^2));
-
-% --- OUTER LOOPS (Posizione) ---
-% Quota Z
-C_h_z = 187.5 + 91.75*s; % PD equivalente SMC
-L_h_z = C_h_z * G_act * (1/(m*s^2));
-
-% Posizione X (Longitudinale)
-C_h_x = 75 + 48.5*s; % PD equivalente
-% Plant: Forza -> Acc -> Pos (incluso ritardo Inner Loop)
-L_h_x = C_h_x * (1/m) * W_cl_th * (1/s^2);
-
-% Posizione Y (Laterale)
-C_h_y = 46.6 + 53.6*s;
-L_h_y = C_h_y * (1/m) * W_cl_phi * (1/s^2);
-
-%% 3. FASE CRUISE (Volo Orizzontale)
-
-% --- INNER LOOPS (Assetto) ---
-% Pitch Cruise (Guadagno geometrico elevato)
-Gain_geo_th = (T_hover * d_mx) / Iyy;
-C_c_th = 2.0 + 0.5*s; % PD (Ki rimosso per analisi)
-L_c_th = C_c_th * G_act * (Gain_geo_th / s^2);
-W_cl_c_th = L_c_th / (1 + L_c_th);
-
-% Roll Cruise
-Gain_geo_phi = (T_hover * d_my) / Ixx;
-C_c_phi = 4.0 + 0.8*s;
-L_c_phi = C_c_phi * G_act * (Gain_geo_phi / s^2);
-
-% Yaw Cruise
-Gain_geo_psi = (T_hover * d_my) / Izz;
-C_c_psi = 3.0 + 1.2*s;
-L_c_psi = C_c_psi * G_act * (Gain_geo_psi / s^2);
-
-% --- OUTER LOOPS (Navigazione) ---
-% Velocita Vx
-C_c_v = 8.0 + 4.0/s; % PI
-L_c_v = C_c_v * W_cl_c_th * (g/s);
-
-% Quota Z Cruise (Controllo su Throttle)
-C_c_z = 4.0 + 6.0*s; % PD dominante
-L_c_z = C_c_z * G_act * (1/(m*s^2));
-
-%% 4. CALCOLO MARGINI E DISPLAY
-loops = {L_h_th, L_h_phi, L_h_psi, L_h_z, L_h_x, L_h_y, ...
-         L_c_th, L_c_phi, L_c_psi, L_c_z, L_c_v};
-names = {'H-Pitch', 'H-Roll', 'H-Yaw', 'H-Z', 'H-X', 'H-Y', ...
-         'C-Pitch', 'C-Roll', 'C-Yaw', 'C-Z', 'C-Vx'};
-
-fprintf('\nRISULTATI ANALISI STABILITA:\n');
-fprintf('%-10s | %-10s | %-10s\n', 'LOOP', 'BANDA', 'PM (deg)');
-fprintf('----------------------------------------\n');
-for i=1:11
-    [Gm, Pm, Wcg, Wcp] = margin(loops{i});
-    if isnan(Wcp); Wcp=0; end
-    fprintf('%-10s | %6.2f rad/s | %6.2f\n', names{i}, Wcp, Pm);
-end
-\end{lstlisting}
+La validità di questa decomposizione è confermata dal rapporto tra le frequenze dei modi dominanti, che risulta superiore a un fattore 10 in ogni condizione di volo analizzata. Questa separazione garantisce che le correzioni di assetto avvengano a una velocità tale da poter essere considerate "stazionarie" dal punto di vista del controllo di traiettoria, minimizzando le interferenze dinamiche tra i loop e prevenendo l'insorgere di instabilità dovute all'accoppiamento dei guadagni.

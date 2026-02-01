@@ -2,14 +2,18 @@
 \babel@toc {italian}{}\relax 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Coaxial tilt rotor UAV.}}{7}{figure.2.1}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Coaxial tilt rotor UAV.}}{8}{figure.2.1}%
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{9}{figure.2.2}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Direzione (in rosso) del thrust per i rotori 1 e 2 nel piano $(X_{b}, Z_{b})$.}}{14}{figure.3.2}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Direzione (in rosso) del thrust per il rotore 3 nei piani $(X_{b}, Z_{b})$ e $(X_{b}, Y_{b})$.}}{14}{figure.3.3}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{15}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Tilt rotore coda ($X_b, Y_b, Z_b$)}}{15}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Configurazione di tilt dei propulsori e vettori spinta.}}{15}{figure.3.4}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo verticale.}}{26}{figure.5.1}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{33}{figure.5.2}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Schema a blocchi del controllo verticale.}}{30}{figure.6.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{40}{figure.7.1}%
+\addvspace {10\p@ }
 \addvspace {10\p@ }

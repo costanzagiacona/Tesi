@@ -665,7 +665,7 @@ switch test_id
         u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
         
         % --- ROLL ---
-        kp_phi = 1.6; 
+        kp_phi = 1; 
         kd_phi = 0.8; 
         u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
         
@@ -674,8 +674,8 @@ switch test_id
         e_psi = atan2(sin(diff_psi), cos(diff_psi)); % Gestione -pi/pi
         
         % Guadagni BASSI per evitare conflitti con il rollio
-        kp_psi = 2.5;   
-        kd_psi = 1.6;  % Smorzamento alto per stabilità
+        kp_psi = 1.5;   
+        kd_psi = 0.6;  % Smorzamento alto per stabilità
         u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
     
         % =================================================
@@ -699,6 +699,134 @@ switch test_id
         u(4) = ts1; 
         u(5) = ts2;
         u(6) = 0; u(7) = 0;
+
+    case 13
+    % =========================================================================
+    % CONTROLLO ORIZZONTALE: COORDINATED BANK-TO-TURN
+    % Obiettivo: Utilizzare il rollio per la traslazione e lo yaw per 
+    % minimizzare lo scivolamento laterale (Coordinazione).
+    % =========================================================================
+
+    % --- 1. ESTRAZIONE STATI E VELOCITÀ ---
+    phi = x(7); theta = x(8); psi = x(9);
+    p = x(10);  q = x(11);    r = x(12);
+    
+    R = matriceRotazione(phi, theta, psi);
+    V_glob = R * [x(4); x(5); x(6)];
+    vx_global = V_glob(1); 
+    vy_global = V_glob(2); 
+    vz_global = V_glob(3);
+    V_tas = max(1.0, norm(V_glob)); % Airspeed (clamp a 1 per evitare divisioni per zero)
+    V_ground_speed = sqrt(vx_global^2 + vy_global^2);
+    
+    % Integrali
+    if length(x) >= 30
+        int_err_v = x(27); int_err_theta = x(28); 
+        int_err_z = x(29); int_err_y = x(30); 
+    else
+        int_err_v = 0; int_err_theta = 0; int_err_z = 0; int_err_y = 0;
+    end
+
+    % --- 2. SETPOINT ---
+    vx_des    = target(1);
+    theta_des = target(2); 
+    z_des     = target(3);
+    y_set     = 0;
+    e_y       = y_set - x(2);
+
+    % =================================================
+    % 3. CONTROLLO LATERALE (OUTER LOOP)
+    % =================================================
+    % Tuning per smorzare il "weaving" (oscillazione di traiettoria)
+    Kp_y = 0.05;   
+    Kd_y = 0.50;   % Aumentato per frenare la velocità laterale
+    
+    % Integrale intelligente
+    if V_ground_speed > 10 && abs(e_y) < 5
+        Ki_y = 0.01; % Molto basso per non destabilizzare
+    else
+        Ki_y = 0.0;
+    end
+    
+    phi_cmd_raw = (Kp_y * e_y) + (Ki_y * int_err_y) - (Kd_y * vy_global);
+    max_bank = deg2rad(30);
+    phi_des = max(-max_bank, min(max_bank, phi_cmd_raw));
+
+    % =================================================
+    % 4. CONTROLLO LONGITUDINALE (Invariato)
+    % =================================================
+    e_z  = z_des - x(3);
+    de_z = 0 - vz_global;
+    kp_z = 4.0;
+    kd_z = 10.0; % Aumentato da 6.0
+    ki_z = 1;
+    az_cmd = kp_z * e_z + kd_z * de_z + ki_z * int_err_z;
+    
+    F_lift_wing = -0.5 * params.rho * params.s * params.C_l * V_tas^2;
+    bank_factor = 1 / max(0.7, cos(phi)); 
+    Fz_req = (params.m * (params.g - az_cmd) + F_lift_wing) * bank_factor;
+    Fz_req = max(-80, Fz_req);
+
+    e_v = vx_des - vx_global;
+    F_drag = 0.5 * params.rho * params.s * params.C_d * V_tas^2;
+    
+    kp_x = 12.0; % Raddoppiato da 6.0 per "bloccare" la Vx
+    ki_x = 0.2;  % Ridotto drasticamente
+    Fx_req = F_drag + kp_x * e_v + ki_x * int_err_v;
+    Fx_req = max(0.1, Fx_req);
+    
+    alpha_ideal = atan2(Fz_req, Fx_req);
+    alpha_lim = max(deg2rad(-25), min(deg2rad(25), alpha_ideal));
+    alpha_servo_base = alpha_lim - theta;
+
+
+    % =================================================
+    % 5. CONTROLLO ASSETTO (COMPROMESSO DI STABILITÀ)
+    % =================================================
+    
+    % --- PITCH (Il punto di equilibrio) ---
+    % Cerchiamo di tenere lo smorzamento senza eccitare i motori
+    kp_theta = 1.2; 
+    kd_theta = 0.2; % Valore cautelativo: più di 0.2, molto meno di 1.5
+    ki_theta = 0.5;
+    u_pitch_angle = kp_theta*(theta_des - theta) + kd_theta*(0 - q) + ki_theta*int_err_theta;
+    % Limita l'azione del PID di assetto (es. max 15 gradi di correzione)
+    % max_pitch_corr = deg2rad(15);
+    % u_pitch_angle = max(-max_pitch_corr, min(max_pitch_corr, u_pitch_angle));
+        
+    % --- ROLL (Stabile nel test precedente) ---
+    kp_phi = 1.2;  
+    kd_phi = 0.8;
+    u_roll_angle = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
+    
+    % --- YAW (Coordinazione leggera) ---
+    % Manteniamo una coordinazione minima per non disturbare il pitch
+    K_coord = 0.2; 
+    psi_des = K_coord * (vy_global / V_tas); 
+    diff_psi = psi_des - psi;
+    e_psi = atan2(sin(diff_psi), cos(diff_psi));
+    
+    kp_psi = 0.8; 
+    kd_psi = 1.5;
+    u_yaw_thrust = kp_psi * e_psi + kd_psi * (0 - r);
+
+    % =================================================
+    % 6. MIXER & OUTPUT
+    % =================================================
+    T_tot = sqrt(Fx_req^2 + Fz_req^2);
+    ts1 = alpha_servo_base + u_pitch_angle - u_roll_angle; 
+    ts2 = alpha_servo_base + u_pitch_angle + u_roll_angle; 
+    T1 = (T_tot / 2) - u_yaw_thrust; 
+    T2 = (T_tot / 2) + u_yaw_thrust; 
+    
+    % Saturazioni fisiche
+    ts1 = max(deg2rad(-15), min(deg2rad(60), ts1));
+    ts2 = max(deg2rad(-15), min(deg2rad(60), ts2));
+    
+    u(1) = sqrt(max(0, T1) / params.k);
+    u(2) = sqrt(max(0, T2) / params.k);
+    u(3) = 0; u(4) = ts1; u(5) = ts2; u(6) = 0; u(7) = 0;
+
 
     otherwise
         fprintf("Controllo selezionato non trovato\n");

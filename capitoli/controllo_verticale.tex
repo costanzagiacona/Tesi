@@ -55,7 +55,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
         \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
     
         % --- MIXER E DRONE ---
-        \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MIXER};
+        \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MMA};
         \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
     
         % --- COLLEGAMENTI FORWARD ---
@@ -129,11 +129,12 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
     \caption{Schema a blocchi del controllo verticale.}
     \label{fig:control_scheme_vertical}
 \end{figure}
+\clearpage
 
 % =========================================================
 %   OUTER LOOP
 % =========================================================
-\subsection{Controllo di Posizione $z$}
+\section{Controllo di Posizione $z$}
 Il controllo della quota $z$ è progettato secondo la tecnica dello \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi. 
 Si definisce l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la superficie di scorrimento come:
 \begin{equation}
@@ -148,7 +149,7 @@ alla traiettoria di rimanere precisamente sulla superficie stessa.
 \end{equation}
 dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 
-\subsection{Controllo Planare e Mapping di Assetto}Il sistema è \textbf{sottoattuato}: le accelerazioni sui gradi di libertà traslazionali orizzontali ($x, y$) 
+\section{Controllo Planare e Mapping di Assetto}Il sistema è \textbf{sottoattuato}: le accelerazioni sui gradi di libertà traslazionali orizzontali ($x, y$) 
 non sono generate da attuatori diretti, ma dipendono dall'orientamento del vettore spinta totale $T$ (Thrust) rispetto al frame inerziale. Assumendo che la dinamica dell'anello 
 interno sia sufficientemente veloce da poter considerare l'assetto istantaneo rispetto alla posizione (\textit{Time-scale separation}), è possibile calcolare gli angoli di riferimento 
 invertendo le componenti della forza aerodinamica:
@@ -189,11 +190,12 @@ alla linearizzazione classica $\sin\theta \approx \theta$, specialmente durante 
 Tuttavia, essa introduce un \textbf{accoppiamento non lineare}: l'autorità di controllo sugli assi planari 
 è direttamente proporzionale alla spinta $T$ generata dal loop verticale. Se $T \to 0$ (ad esempio in caduta libera), 
 il sistema perde la capacità di comandare spostamenti orizzontali.
+\clearpage
 
 % =========================================================
 %   INNER LOOP
 % =========================================================
-\subsection{Controllo  di Assetto}
+\section{Controllo  di Assetto}
 Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
 Tali quantità sono calcolate come uscite di tre PID.
 \begin{itemize}
@@ -215,11 +217,12 @@ Tali quantità sono calcolate come uscite di tre PID.
     con $\phi_{des} = 0$ e $\dot{\phi}_{des} = 0$. Al contrario di quanto avviene per gli altri due angoli di assetto,
     in questo caso, l'obiettivo è mantenere il drone orientato in avanti, motivo per cui si richiede un angolo nullo.
 \end{itemize}
+\clearpage
 
 % ==============================================================
 %   MIXER
 % ==============================================================
-\subsection{Motor Mixing Algorithm}
+\section{Motor Mixing Algorithm}
 Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servi.
 \\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema di allocazione non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
 \\In condizioni di \textit{hovering}, assumiamo la seguente configurazione nominale:
@@ -229,7 +232,7 @@ Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi vir
 \end{itemize}
 Tale inclinazione $\theta_{3,eq}$ è necessaria per generare una componente laterale di spinta capace di contrastare il momento torcente di reazione (yaw torque) del motore stesso, che altrimenti indurrebbe una rotazione indesiderata attorno all'asse $z$ (imbardata), non essendo presente un secondo rotore posteriore per il bilanciamento.
 
-\subsubsection{Angolo di Equilibrio $\theta_{3}$}
+\subsection{Angolo di Equilibrio $\theta_{3}$}
 L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorno all'asse $z$.
 \begin{gather*}
     M_{th,z} = d_{my} k \omega_{2}^2 \cos(\theta_{2}) - d_{my} k \omega_{1}^2 \cos(\theta_{1}) \\ 
@@ -243,7 +246,7 @@ L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorn
     \theta_{3} = \arctan\left(-\frac{k d_{tx}}{b}\right)
 \end{equation}
 
-\subsubsection{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}
+\subsection{Ripartizione della Spinta Longitudinale (Mixing di Quota e Beccheggio)}
 Il controllo dell'equilibrio longitudinale richiede la risoluzione di un sistema accoppiato, poiché i rotori non sono posizionati sul baricentro del velivolo. Di conseguenza, ogni variazione di spinta per il controllo di quota ($F_{req,z}$) induce un momento di beccheggio, e viceversa.\\
 Il mixing deve quindi determinare la ripartizione ottima della spinta tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema lineare di due equazioni in due incognite:
 \begin{enumerate}
@@ -282,7 +285,7 @@ In particolare, un valore di $M_y$ positivo (momento a cabrare) comporterà un i
 anteriori $\omega_{1,2}$ e una contestuale riduzione della componente verticale della spinta del rotore di coda, permettendo così al 
 tricottero di variare il proprio angolo di \textit{pitch} pur mantenendo l'equilibrio delle altre forze.
 
-\subsubsection{Equilibrio Laterale (Roll) e Motori Anteriori}
+\subsection{Equilibrio Laterale (Roll) e Motori Anteriori}
 Il rollio viene raggiunto attraverso la spinta differenziale dei rotori anteriori.\\
 La spinta totale anteriore $T_{front}$ viene ripartita tra il motore sinistro (2) e destro (1) per generare il momento di rollio richiesto ($M_x$).
 Il sistema da risolvere è:
@@ -299,7 +302,7 @@ Definendo la spinta media anteriore come $T_i = T_{front} / 2$, le spinte dei si
 \end{equation}
 Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 
-\subsubsection{Controllo di Imbardata (Yaw)}
+\subsection{Controllo di Imbardata (Yaw)}
 Il controllo dell'imbardata è gestito tramite il tilt differenziale dei rotori anteriori.\\ 
 La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
 \begin{equation}
@@ -309,3 +312,19 @@ Invertendo questa relazione, si calcola l'angolo di tilt necessario, applicando 
 \begin{equation}
     \delta_{des} = \text{sat}\left( \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right), \delta_{max} \right)
 \end{equation}
+\clearpage
+
+\section{Sotto-attuazione in Assetto di Hovering}
+Nonostante la configurazione meccanica preveda tre unità propulsive e la capacità di inclinazione (tilt) dei rotori anteriori, il velivolo in fase di hovering si comporta come un sistema \textbf{sotto-attuato}. 
+\\Un sistema è sotto-attuato quando il numero di movimenti indipendenti che può compiere (6 gradi di libertà: tre traslazioni e tre rotazioni) è superiore al numero di "comandi" indipendenti 
+che il software può inviare contemporaneamente ai motori. 
+\\Nel caso in esame, il controllo è mappato su 4 variabili principali: 
+la spinta totale per la quota e i tre momenti per il rollio, il beccheggio e l'imbardata. 
+Anche se i rotori anteriori hanno la capacità meccanica di inclinarsi, tale funzione è vincolata 
+nel controllo alla gestione della prua (yaw) o alla propulsione orizzontale in crociera, mentre il rotore posteriore rimane fissato 
+a un angolo calcolato analiticamente per bilanciare la coppia rotazionale.
+\\Di conseguenza, il drone non possiede un attuatore dedicato esclusivamente 
+allo spostamento laterale o longitudinale che non influenzi anche l'orientamento del corpo. 
+Per spostarsi orizzontalmente, il velivolo deve necessariamente inclinarsi (cambiando l'assetto di rollio o beccheggio) per proiettare una parte della sua spinta totale nella direzione desiderata. 
+Questa dipendenza forzata tra la posizione e l'inclinazione del corpo è la prova fisica della sotto-attuazione del sistema, che si manifesta nei risultati della linearizzazione attraverso 
+un forte accoppiamento tra i moti traslazionali e quelli rotazionali.

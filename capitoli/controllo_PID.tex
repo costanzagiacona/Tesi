@@ -1,3 +1,4 @@
+% !TEX root = ../main.tex
 \section{Introduzione e Configurazione di Crociera}
 La fase di volo orizzontale (\textit{Forward Flight} o \textit{Fixed-Wing Mode}) rappresenta la condizione operativa di crociera del drone. In questa configurazione, il velivolo si comporta aerodinamicamente come un convertiplano ad ala fissa: la portanza necessaria al sostentamento è generata principalmente dalle superfici alari, mentre la propulsione è garantita dalla componente orizzontale della spinta dei rotori.\\
 Durante questa fase, la configurazione degli attuatori subisce una variazione sostanziale rispetto all'hovering:
@@ -114,7 +115,11 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
     \caption{Schema a blocchi del controllo orizzontale.}
     \label{fig:control_scheme_horizontal}
 \end{figure}
+\clearpage
 
+% =========================================
+% OUTER LOOP
+% =========================================
 \section{Outer Loop: Guida e Navigazione}
 Il controllore esterno implementa leggi di controllo PID arricchite da termini di feedforward basati sul modello aerodinamico del drone. Questo approccio ibrido permette di migliorare le prestazioni del controllore, compensado le non linearità note.
 
@@ -154,7 +159,7 @@ dove:
     \item Il segnale $\psi_{corr}$ è saturato per evitare manovre di virata eccessivamente aggressive.
     \item $\psi_{path}$ rappresenta il riferimento per l'angolo imposto dalla traiettoria, che in questo caso è nullo per mantenere il drone allineato all'asse $x$ del sistema inerziale.
 \end{itemize}
-
+\clearpage
 
 % ==========================================================================
 % INNER LOOP
@@ -213,7 +218,7 @@ Sebbene la relazione fisica tra l'angolo del servo e la forza generata sia non l
 \end{itemize}
 \vspace{0.5cm}
 \small{\textit{Nota sulla nomenclatura: Nel testo, $\theta$ indica l'angolo di beccheggio del corpo del velivolo (variabile di stato), mentre $\theta_1$ e $\theta_2$ indicano gli angoli di rotazione dei servomotori (variabili di controllo).}}
-
+\clearpage
 
 % ================================================
 % MIXER 
@@ -271,7 +276,7 @@ Il legame tra i comandi virtuali $\mathbf{u} = [T_{req}, u_\psi, u_\theta, u_\ph
     \cdot 
     \begin{bmatrix} T_{req} \\ u_\psi \\ u_\theta \\ u_\phi \end{bmatrix}
 \end{equation}
-
+\clearpage
 
 
 % =========================================

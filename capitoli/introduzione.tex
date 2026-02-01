@@ -1,0 +1,21 @@
+L'evoluzione tecnologica nel settore degli aeromobili a pilotaggio remoto (UAV) ha portato all'emergere di configurazioni ibride capaci di coniugare i vantaggi operativi dei multirotori con l'efficienza aerodinamica dei velivoli ad ala fissa. In questo scenario, i velivoli a decollo e atterraggio verticale (VTOL) rappresentano una frontiera critica dell'ingegneria aerospaziale e dell'automazione, offrendo la versatilità necessaria per operare in ambienti confinati senza rinunciare a lunghe autonomie di volo.
+
+\section{Il Problema Ingegneristico}
+La progettazione di sistemi di controllo per UAV VTOL ibridi presenta sfide non banali, derivanti principalmente dalla natura fortemente non lineare e tempo-variante della loro dinamica. Durante la transizione tra il volo verticale (hovering) e quello orizzontale (crociera), il velivolo attraversa regimi aerodinamici complessi in cui le forze di portanza, resistenza e i momenti giroscopici risultano strettamente accoppiati.
+
+In particolare, la configurazione oggetto di questo studio --- un tricottero asimmetrico con rotori anteriori inclinabili e rotore di coda a due gradi di libertà --- introduce ulteriori gradi di complessità rispetto ai modelli standard:
+\begin{itemize}
+    \item \textbf{Sotto-attuazione intrinseca:} La necessità di variare l'assetto del corpo per indurre traslazioni orizzontali in hovering.
+    \item \textbf{Asimmetria strutturale:} Il bilanciamento del momento di imbardata e beccheggio richiede una gestione raffinata del mixing dei motori.
+    \item \textbf{Vincoli fisici:} La banda passante degli attuatori limita l'autorità di controllo, imponendo trade-off critici tra smorzamento e stabilità numerica.
+\end{itemize}
+
+\section{Obiettivo della Tesi}
+Il presente lavoro si propone di derivare un modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'intero inviluppo di volo.
+
+La strategia proposta si articola su un sistema di controllo gerarchico a cascata:
+\begin{enumerate}
+    \item Un \textit{Outer Loop} per la guida del drone, con scelte di controllori differenti tra la fase di hovering e quella di crociera.
+    \item Un \textit{Inner Loop} di assetto che utilizza regolatori PID per la stabilizzazione veloce dei momenti.
+    \item Un algoritmo di \textit{Motor Mixing} sequenziale che traduce i comandi virtuali in riferimenti fisici per i rotori e i servomotori, rispettando i vincoli di equilibrio meccanico del sistema.
+\end{enumerate}

@@ -1,0 +1,187 @@
+% !TEX root = ../main.tex
+
+\section{Sistemi di Riferimento}
+Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di riferimento principali, entrambi destrorsi:
+\begin{itemize}
+    \item \textbf{Sistema Inerziale (Earth Frame) $\mathcal{F}_g$}: Fisso rispetto al terreno, definito dalla terna $(O_g, X_g, Y_g, Z_g)$. La posizione del velivolo è indicata dal vettore $\bm{P}_g = [x_g, y_g, z_g]^T$ e l'orientamento dagli angoli di Eulero $\bm{\Theta}_g = [\phi, \theta, \psi]^T$ (Roll, Pitch, Yaw).
+    \item \textbf{Sistema Solidale (Body Frame) $\mathcal{F}_b$}: Con origine nel centro di massa (CoM) del velivolo e assi $(X_b, Y_b, Z_b)$ solidali alla struttura. Le velocità lineari e angolari sono definite rispettivamente come $\bm{V}_b = [u, v, w]^T$ e $\bm{\Omega}_b = [p, q, r]^T$.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{sist_rif.png}
+    \caption{Sistemi di riferimento.}
+    \label{fig:sist_rif}
+\end{figure}
+
+La trasformazione delle velocità lineari dal sistema solidale al corpo a quello inerziale avviene tramite la matrice di rotazione $\mathbf{R}_{b \to g}$ (secondo la convenzione standard Z-Y-X):
+\begin{equation}
+    \bm{\dot{P}}_g = \mathbf{R}_{b \to g}(\bm{\Theta}_g) \bm{V}_b
+\end{equation}
+
+In forma esplicita, utilizzando la notazione abbreviata $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot}=\sin(\cdot)$:
+\begin{equation}
+    \mathbf{R}_{b \to g} = 
+    \begin{bmatrix}
+        c_\psi c_\theta & c_\psi s_\theta s_\phi - s_\psi c_\phi & c_\psi s_\theta c_\phi + s_\psi s_\phi \\
+        s_\psi c_\theta & s_\psi s_\theta s_\phi + c_\psi c_\phi & s_\psi s_\theta c_\phi - c_\psi s_\phi \\
+        -s_\theta       & c_\theta s_\phi                        & c_\theta c_\phi
+    \end{bmatrix}
+\end{equation}
+
+Analogamente, la relazione cinematica tra le velocità angolari del corpo e le derivate degli angoli di Eulero è data dalla matrice di trasformazione Jacobiana $\mathbf{J}_{b \to g}$:
+\begin{equation}
+    \bm{\dot{\Theta}}_g = \mathbf{J}_{b \to g}(\bm{\Theta}_g) \bm{\Omega}_b = 
+    \begin{bmatrix}
+        1 & s_\phi \tan\theta & c_\phi \tan\theta \\
+        0 & c_\phi            & -s_\phi \\
+        0 & s_\phi \sec\theta & c_\phi \sec\theta
+    \end{bmatrix} \bm{\Omega}_b
+\end{equation}
+\clearpage
+
+\section{Equazioni della Dinamica}
+Il modello dinamico è derivato utilizzando la formulazione di Newton-Eulero per un corpo rigido a 6 gradi di libertà. Le equazioni vettoriali che descrivono il moto traslazionale e rotazionale sono:
+
+\begin{equation}
+    \begin{cases}
+        m \bm{\dot{V}}_b + \bm{\Omega}_b \times (m \bm{V}_b) = \bm{F}_{\text{tot}} \\
+        \mathbf{I}_b \bm{\dot{\Omega}}_b + \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b) = \bm{M}_{\text{tot}}
+    \end{cases}
+    \label{eq:newton_euler}
+\end{equation}
+
+Dove:
+\begin{itemize}
+    \item $m$ è la massa totale del velivolo;
+    \item $\mathbf{I}_b$ è il tensore d'inerzia (assunto diagonale per simmetria strutturale sugli assi principali);
+    \item $\bm{F}_{\text{tot}}$ e $\bm{M}_{\text{tot}}$ sono rispettivamente la somma delle forze e dei momenti esterni agenti sul corpo, espressi nel \textit{body frame}.
+\end{itemize} 
+\clearpage
+
+\section{Analisi delle Forze}
+Le forze agenti sul tricottero sono la risultante della spinta dei motori ($\bm{F}_{\text{th}}$), della forza di gravità ($\bm{F}_g$) e delle forze aerodinamiche ($\bm{F}_{\text{aero}}$):
+\begin{equation}
+    \bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}
+\end{equation}
+
+\subsection{Configurazione Geometrica e Thrust}
+Il velivolo presenta una configurazione a tre rotori asimmetrica. I bracci dei rotori sono definiti nel sistema body dai vettori posizione $\bm{r}_i$:
+\begin{itemize}
+    \item \textbf{Rotori Anteriori (1 DX, 2 SX):} $\bm{r}_{1,2} = [d_{mx}, \pm d_{my}, 0]^T$; possono inclinarsi (\textit{tilt}) attorno all'asse $Y_b$ di un angolo $\theta_1$ e $\theta_2$.
+    \item \textbf{Rotore di Coda (3):} $\bm{r}_3 = [-d_{tx}, 0, 0]^T$; possiede due gradi di libertà, potendo ruotare attorno a $Y_b$ ($\theta_3$) e $Z_b$ ($\theta_4$).
+\end{itemize}
+
+Ogni rotore genera una spinta $f_i = k \omega_i^2$. Il vettore forza totale si ottiene sommando i contributi dei tre rotori ruotati dalle rispettive matrici di tilt.
+
+% CORREZIONE: Uso di minipage al posto di subfigure per evitare errori di pacchetti
+\begin{figure}[ht]
+    \centering
+    % Prima immagine (sinistra)
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{rotori_1_2.png}
+        \caption{Tilt rotori anteriori ($X_b, Z_b$)}
+        \label{fig:rotori_ant}
+    \end{minipage}
+    \hfill % Spazio flessibile in mezzo
+    % Seconda immagine (destra)
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{rotore_3.png}
+        \caption{Tilt rotore coda ($X_b, Y_b, Z_b$)}
+        \label{fig:rotore_post}
+    \end{minipage}
+    \caption{Configurazione di tilt dei propulsori e vettori spinta.}
+    \label{fig:rotori_tilt}
+\end{figure}
+
+Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{th}}$ assume la forma:
+\begin{equation}
+    \bm{F}_{\text{th}} = 
+    \begin{bmatrix}
+    k\omega_1^2 c_{\theta_1} + k\omega_2^2 c_{\theta_2} + k\omega_3^2 c_{\theta_3} c_{\theta_4} \\
+    k\omega_3^2 c_{\theta_3} s_{\theta_4} \\
+    -k\omega_1^2 s_{\theta_1} - k\omega_2^2 s_{\theta_2} - k\omega_3^2 s_{\theta_3}
+    \end{bmatrix}
+\end{equation}
+
+
+\subsection{Gravità e Aerodinamica}
+La forza peso viene ruotata nel sistema solidale al corpo tramite la trasposta della matrice di rotazione:
+\begin{equation}
+    \bm{F}_g = \mathbf{R}_{b \to g}^T \begin{bmatrix} 0 \\ 0 \\ mg \end{bmatrix} = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}
+\end{equation}
+
+Le forze aerodinamiche includono il contributo delle ali ($\bm{F}_{\text{wing}}$) e la resistenza parassita della fusoliera ($\bm{D}_{\text{body}}$):
+\begin{equation}
+    \bm{F}_{\text{aero}} = \bm{F}_{\text{wing}} + \bm{D}_{\text{body}}
+\end{equation}
+
+La resistenza del corpo fusoliera è modellata lungo gli assi principali in funzione del segno della velocità ($\text{sgn}(v)$) per garantire coerenza fisica:
+\begin{equation}
+    \bm{D}_{\text{body}} = -\frac{1}{2} \rho 
+    \begin{bmatrix}
+        \text{sgn}(u) u^2 S_{x} C_{Dx} \\
+        \text{sgn}(v) v^2 S_{y} C_{Dy} \\
+        \text{sgn}(w) w^2 S_{z} C_{Dz}
+    \end{bmatrix}
+\end{equation}
+
+Per le superfici alari, si considerano Portanza ($L$) e Resistenza ($D$):
+\begin{equation}
+    \bm{F}_{\text{wing}} \approx 
+    \begin{bmatrix}
+        -\frac{1}{2}\rho S C_D(u) u |u| \\
+        0 \\
+        -\frac{1}{2}\rho S C_L(u) u^2
+    \end{bmatrix}
+\end{equation}
+\clearpage
+
+\section{Analisi dei Momenti}
+Il momento totale agente sul baricentro è la somma vettoriale delle seguenti componenti:
+\begin{equation}
+    \bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{fin}}
+\end{equation}
+
+\subsection{Momento di Thrust e Torcente}
+Il contributo principale $\bm{M}_{\text{th}}$ deriva dal prodotto vettoriale tra i bracci $\bm{r}_i$ e le forze di spinta. Utilizzando le coordinate geometriche definite in precedenza:
+\begin{equation}
+    \bm{M}_{\text{th}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{\text{th},i}) =
+    \begin{bmatrix} 
+    -d_{my} (k\omega_1^2 s_{\theta_1}) + d_{my} (k\omega_2^2 s_{\theta_2}) \\ 
+    d_{mx} (k\omega_1^2 s_{\theta_1}) + d_{mx} (k\omega_2^2 s_{\theta_2}) + d_{tx} (k\omega_3^2 s_{\theta_3}) \\ 
+    -d_{my} (k\omega_1^2 c_{\theta_1}) + d_{my} (k\omega_2^2 c_{\theta_2}) + d_{tx} (k\omega_3^2 c_{\theta_3} s_{\theta_4})
+    \end{bmatrix}
+\end{equation}
+
+Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, questo momento deve essere proiettato sugli assi del body frame:
+\begin{equation}
+    \bm{M}_{\text{tor}} = 
+    \begin{bmatrix} 
+    b\omega_1^2 c_{\theta_1} - b\omega_2^2 c_{\theta_2} + b\omega_3^2 c_{\theta_3} c_{\theta_4} \\ 
+    b\omega_3^2 c_{\theta_3} s_{\theta_4} \\ 
+    -b\omega_1^2 s_{\theta_1} + b\omega_2^2 s_{\theta_2} - b\omega_3^2 s_{\theta_3}
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Effetti Aerodinamici e Giroscopici}
+\begin{itemize}
+    \item \textbf{Momento Aerodinamico ($\bm{M}_{\text{aero}}$):} Include le coppie generate dal disallineamento tra il Centro di Pressione (CP) delle ali e il CoM, oltre ai momenti di resistenza aerodinamica della fusoliera.
+    
+    \item \textbf{Momento Giroscopico ($\bm{M}_{\text{gyro}}$):} Dovuto all'interazione tra la velocità angolare di rotazione dell'elica $\omega_i$ e la velocità di tilting dei servomotori ($\bm{\omega}_{\text{tilt}}$). Questo termine è critico durante le transizioni rapide:
+    \begin{equation}
+        \bm{M}_{\text{gyro}} \approx \sum_{i=1}^{3} \mathbf{J}_{rot} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{i})
+    \end{equation}
+    
+    \item \textbf{Momento della Pinna ($\bm{M}_{\text{fin}}$):} La superficie verticale di coda stabilizza l'imbardata. Il modello matematico assume un comportamento di smorzamento proporzionale alle velocità angolari $p$ (roll) e $r$ (yaw) e al quadrato della velocità longitudinale $v$:
+    \begin{equation}
+        \bm{M}_{\text{fin}} = 
+        \begin{bmatrix} 
+        -p \, \alpha_{0x} - \alpha_{1x} \, v^2 \\ 
+        0 \\ 
+        -r \, (\alpha_{0z} + \alpha_{1z} \, v^2) 
+        \end{bmatrix}
+    \end{equation}
+\end{itemize}

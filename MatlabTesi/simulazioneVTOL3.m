@@ -125,7 +125,7 @@ if disturbo == 1
     end
 elseif disturbo == 2
     if t > 2.0
-        F_disturbo = [5; 10; 30]; 
+        F_disturbo = [15; 10; 30]; 
     end
 end
 
@@ -199,7 +199,7 @@ if test_id == 1
     x29_dot = 0;
     x30_dot = 0;
 
-elseif test_id == 2 || test_id == 3 || test_id == 12
+elseif test_id == 13 || test_id == 3 || test_id == 12
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     

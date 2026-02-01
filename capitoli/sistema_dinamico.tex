@@ -1,0 +1,184 @@
+\section{Sistema Dinamico}
+
+Una volta definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentano l'evoluzione temporale dello stato.
+
+Le equazioni di stato sono formulate come:
+\begin{equation}
+    \dot{x}(t) = f(x(t), u(t), t)
+\end{equation}
+dove $x(t)$ è il vettore di stato, $u(t)$ è il vettore degli ingressi di controllo e $f(\cdot)$ rappresenta la dinamica non lineare del sistema.
+\clearpage
+
+
+\subsection{Variabili di Stato}
+
+Il vettore di stato $x \in \mathbb{R}^{26}$ è definito come segue:
+
+\begin{equation}
+    x = \begin{bmatrix} x_1 & x_2 & \dots & x_{26} \end{bmatrix}^T
+\end{equation}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3} % Spaziatura verticale leggermente ridotta per compattezza
+    \begin{tabular}{|c|c|l|}
+        \hline
+        \textbf{Variabile} & \textbf{Simbolo} & \multicolumn{1}{c|}{\textbf{Descrizione}} \\ \hline
+        $x_{1}$ & $p_{x}$ & Posizione lungo l'asse X del frame inerziale \\
+        $x_{2}$ & $p_{y}$ & Posizione lungo l'asse Y del frame inerziale \\
+        $x_{3}$ & $p_{z}$ & Posizione lungo l'asse Z del frame inerziale \\
+        $x_{4}$ & $v_{bodyX}$ & Velocità lungo X nel body frame \\
+        $x_{5}$ & $v_{bodyY}$ & Velocità lungo Y nel body frame \\
+        $x_{6}$ & $v_{bodyZ}$ & Velocità lungo Z nel body frame \\
+        $x_{7}$ & $\phi$ & Angolo di rollio (roll) \\
+        $x_{8}$ & $\theta$ & Angolo di beccheggio (pitch) \\
+        $x_{9}$ & $\psi$ & Angolo di imbardata (yaw) \\
+        $x_{10}$ & $p$ & Velocità angolare (roll rate) \\
+        $x_{11}$ & $q$ & Velocità angolare (pitch rate) \\
+        $x_{12}$ & $r$ & Velocità angolare (yaw rate) \\
+        $x_{13}$ & $\theta_{1}$ & Angolo di tilt del rotore 1 intorno asse $Y_{B}$ \\
+        $x_{14}$ & $\dot{\theta}_{1}$ & Velocità di tilt del rotore 1 \\
+        $x_{15}$ & $\theta_{2}$ & Angolo di tilt del rotore 2 intorno asse $Y_{B}$ \\
+        $x_{16}$ & $\dot{\theta}_{2}$ & Velocità di tilt del rotore 2 \\
+        $x_{17}$ & $\theta_{3}$ & Angolo di tilt del rotore 3 intorno asse $Y_{B}$ \\
+        $x_{18}$ & $\dot{\theta}_{3}$ & Velocità di tilt del rotore 3 \\
+        $x_{19}$ & $\theta_{4}$ & Angolo di tilt del rotore 3 intorno asse $Z_{B}$ \\
+        $x_{20}$ & $\dot{\theta}_{4}$ & Velocità di tilt del rotore 3 (asse Z) \\
+        $x_{21}$ & $\omega_{1}$ & Velocità angolare del rotore 1 \\
+        $x_{22}$ & $\dot{\omega}_{1}$ & Accelerazione angolare del rotore 1 \\
+        $x_{23}$ & $\omega_{2}$ & Velocità angolare del rotore 2 \\
+        $x_{24}$ & $\dot{\omega}_{2}$ & Accelerazione angolare del rotore 2 \\
+        $x_{25}$ & $\omega_{3}$ & Velocità angolare del rotore 3 \\
+        $x_{26}$ & $\dot{\omega}_{3}$ & Accelerazione angolare del rotore 3 \\ \hline
+    \end{tabular}
+    \caption{Variabili di stato e significato fisico}
+    \label{tab:variabili_stato}
+\end{table}
+\clearpage
+
+\subsection{Ingressi di Controllo}
+
+Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5} % Aumenta lo spazio interno alle celle per leggibilità
+    \begin{tabular}{|c|l|}
+        \hline
+        \textbf{Ingresso} & \multicolumn{1}{c|}{\textbf{Descrizione}} \\ \hline
+        $u_{1}$ & Velocità angolare desiderata per il rotore anteriore 1 \\ 
+        $u_{2}$ & Velocità angolare desiderata per il rotore anteriore 2 \\ 
+        $u_{3}$ & Velocità angolare desiderata per il rotore 3 (coda) \\ 
+        $u_{4}$ & Angolo di tilt desiderato del rotore 1 intorno a $Y_{B}$ \\ 
+        $u_{5}$ & Angolo di tilt desiderato del rotore 2 intorno a $Y_{B}$ \\ 
+        $u_{6}$ & Angolo di tilt desiderato del rotore 3 intorno a $Y_{B}$ \\ 
+        $u_{7}$ & Angolo di tilt desiderato del rotore 3 intorno a $Z_{B}$ \\ \hline
+    \end{tabular}
+    \caption{ingressi di controllo del tricottero UAV VTOL}
+    \label{tab:ingressi_controllo}
+\end{table}
+\clearpage
+
+\section{Dinamica del Sistema}
+
+\subsection{Equazioni relative alle velocità lineari (Cinematica)}
+Le derivate delle posizioni nel sistema inerziale sono legate alle velocità espresse nel body frame tramite la matrice di rotazione $R_{b\rightarrow g}$:
+
+\begin{equation}
+    \begin{bmatrix} \dot{x}_{1} \\ \dot{x}_{2} \\ \dot{x}_{3} \end{bmatrix} = R_{b\rightarrow g} \begin{bmatrix} x_{4} \\ x_{5} \\ x_{6} \end{bmatrix}
+\end{equation}
+
+La matrice di rotazione (utilizzando la sequenza standard Yaw-Pitch-Roll) è espressa come:
+\begin{equation}
+    R_{b\rightarrow g} = \begin{bmatrix}
+    c_8 c_9 & s_7 s_8 c_9 - c_7 s_9 & c_7 s_8 c_9 + s_7 s_9 \\
+    c_8 s_9 & s_7 s_8 s_9 + c_7 c_9 & c_7 s_8 s_9 - s_7 c_9 \\
+    -s_8    & s_7 c_8               & c_7 c_8
+    \end{bmatrix}
+\end{equation}
+\textit{Nota: Si utilizza la notazione abbreviata $c_i = \cos(x_i)$ e $s_i = \sin(x_i)$.}
+
+\subsection{Equazioni relative alle accelerazioni lineari (Dinamica Traslazionale)}
+Dalle leggi di Newton, le accelerazioni lineari nel body frame sono date da:
+
+\begin{equation}
+    \begin{bmatrix} \dot{x}_{4} \\ \dot{x}_{5} \\ \dot{x}_{6} \end{bmatrix} = \frac{1}{m} \left( F_{TOT} - \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix} \times m \begin{bmatrix} x_{4} \\ x_{5} \\ x_{6} \end{bmatrix} \right)
+\end{equation}
+
+Dove la forza totale $F_{TOT}$ è la somma delle componenti di spinta ($F_{TH}$), gravità ($F_{GRAV}$) e aerodinamica ($F_{AERO}$):
+
+\begin{align}
+    F_{TOT} &= 
+    \underbrace{
+    \begin{bmatrix} 
+    \cos(x_{13}) & \cos(x_{15}) & \cos(x_{17})\cos(x_{19}) \\
+    0 & 0 & \cos(x_{17})\sin(x_{19}) \\
+    -\sin(x_{13}) & -\sin(x_{15}) & -\sin(x_{17})
+    \end{bmatrix} 
+    \begin{bmatrix} k x_{21}^2 \\ k x_{23}^2 \\ k x_{25}^2 \end{bmatrix}
+    }_{F_{TH}} \notag \\
+    &+ \underbrace{
+    \begin{bmatrix} -\sin(x_8) \\ \cos(x_8)\sin(x_7) \\ \cos(x_8)\cos(x_7) \end{bmatrix} mg
+    }_{F_{GRAV}} 
+    + \underbrace{
+    \begin{bmatrix} 
+    -\text{sgn}(x_4)\frac{1}{2}\rho x_4^2 S (C_{dx}) \\
+    -\text{sgn}(x_5)\frac{1}{2}\rho x_5^2 S (C_{dy}) \\
+    -\text{sgn}(x_6)\frac{1}{2}\rho x_6^2 S (C_{dz})
+    \end{bmatrix}
+    }_{F_{AERO}}
+\end{align}
+
+\subsection{Equazioni relative alle velocità angolari (Cinematica Rotazionale)}
+La relazione tra le derivate degli angoli di Eulero e le velocità angolari del corpo è definita dalla matrice cinematica:
+
+\begin{equation}
+    \begin{bmatrix} \dot{x}_{7} \\ \dot{x}_{8} \\ \dot{x}_{9} \end{bmatrix} = 
+    \begin{bmatrix}
+    1 & \sin(x_7)\tan(x_8) & \cos(x_7)\tan(x_8) \\
+    0 & \cos(x_7) & -\sin(x_7) \\
+    0 & \frac{\sin(x_7)}{\cos(x_8)} & \frac{\cos(x_7)}{\cos(x_8)}
+    \end{bmatrix}
+    \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix}
+\end{equation}
+
+\subsection{Equazioni relative alle accelerazioni angolari (Dinamica Rotazionale)}
+Le accelerazioni angolari nel body frame derivano dall'equazione di Eulero per i corpi rigidi:
+
+\begin{equation}
+    \begin{bmatrix} \dot{x}_{10} \\ \dot{x}_{11} \\ \dot{x}_{12} \end{bmatrix} = 
+    I_B^{-1} \left( M_{TOT} - \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix} \times (I_B \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix}) \right)
+\end{equation}
+
+Il momento totale $M_{TOT}$ include i contributi di spinta, effetti giroscopici e momenti aerodinamici/di attrito. La struttura generale derivata dal testo è:
+
+\begin{equation}
+    M_{TOT} = M_{thrust} + M_{gyro} + M_{drag}
+\end{equation}
+\clearpage
+
+\subsection{Dinamica degli Attuatori (Tilting e Rotori)}
+
+La dinamica dei servomotori per il tilting dei rotori è modellata come sistemi del secondo ordine:
+
+\begin{align}
+    \dot{x}_{13} &= x_{14} \\
+    \dot{x}_{14} &= -2\zeta_1 \omega_{n,1} x_{14} + \omega_{n,1}^2 (u_4 - x_{13}) \\
+    \dot{x}_{15} &= x_{16} \\
+    \dot{x}_{16} &= -2\zeta_2 \omega_{n,2} x_{16} + \omega_{n,2}^2 (u_5 - x_{15}) \\
+    \dot{x}_{17} &= x_{18} \\
+    \dot{x}_{18} &= -2\zeta_3 \omega_{n,3} x_{18} + \omega_{n,3}^2 (u_6 - x_{17}) \\
+    \dot{x}_{19} &= x_{20} \\
+    \dot{x}_{20} &= -2\zeta_4 \omega_{n,4} x_{20} + \omega_{n,4}^2 (u_7 - x_{19})
+\end{align}
+
+Analogamente, la dinamica dei motori (rotori) è modellata come:
+
+\begin{align}
+    \dot{x}_{21} &= x_{22} \\
+    \dot{x}_{22} &= -2\zeta_{m1} \omega_{m,1} x_{22} + \omega_{m,1}^2 (u_1 - x_{21}) \\
+    \dot{x}_{23} &= x_{24} \\
+    \dot{x}_{24} &= -2\zeta_{m2} \omega_{m,2} x_{24} + \omega_{m,2}^2 (u_2 - x_{23}) \\
+    \dot{x}_{25} &= x_{26} \\
+    \dot{x}_{26} &= -2\zeta_{m3} \omega_{m,3} x_{26} + \omega_{m,3}^2 (u_3 - x_{25})
+\end{align}
