@@ -372,9 +372,9 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmmib7.tf
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmbsy10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmbsy10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmbsy7.tfm
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri12.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathit.enc
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-rm.enc
+INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri12.tfm
 OUTPUT main.toc
 INPUT .\main.lof
 INPUT .\main.lof
@@ -511,9 +511,9 @@ INPUT .\img\..\img\controllo_verticale\tilt_3.png
 INPUT .\img\..\img\controllo_verticale\tilt_3.png
 INPUT .\img\..\img\controllo_verticale\tilt_3.png
 INPUT .\img\..\img\controllo_verticale\tilt_3.png
-INPUT .\capitoli\controllo_PID.tex
-INPUT .\capitoli\controllo_PID.tex
-INPUT capitoli\controllo_PID.tex
+INPUT .\capitoli\controllo_orizzontale.tex
+INPUT .\capitoli\controllo_orizzontale.tex
+INPUT capitoli\controllo_orizzontale.tex
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri10.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\rm-lmr10.tfm

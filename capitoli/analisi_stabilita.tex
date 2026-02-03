@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 \section{Introduzione all'Analisi Lineare}
-L'obiettivo di questo capitolo è dimostrare la stabilità asintotica locale del velivolo VTOL nelle sue configurazioni operative critiche. La dinamica del sistema, intrinsecamente non lineare e tempo-variante, è descritta da un vettore di stato $\mathbf{x} \in \mathbb{R}^{30}$, che include posizioni, velocità, assetti angolari, ratei e gli stati integrativi dei regolatori PID \cite{simulazioneVTOL3.m}.
+L'obiettivo di questo capitolo è dimostrare la stabilità asintotica locale del velivolo VTOL nelle sue configurazioni operative critiche. La dinamica del sistema, intrinsecamente non lineare e tempo-variante, è descritta da un vettore di stato $\mathbf{x} \in \mathbb{R}^{30}$, che include posizioni, velocità, assetti angolari, ratei e gli stati integrativi dei regolatori PID.
 
 \section{Metodologia di Linearizzazione e Criterio di Lyapunov}
 Per ogni punto di equilibrio $(\mathbf{x}_e, \mathbf{u}_e)$, il sistema è stato linearizzato tramite il calcolo della matrice Jacobiana $\mathbf{A}$:
@@ -28,8 +28,9 @@ L'analisi degli autovalori nel punto di equilibrio ($V_x \approx 0, z = -10$ m) 
 \end{itemize}
 
 \clearpage
+
 \section{Analisi dell'Assetto di Crociera (Cruise)}
-La transizione al volo orizzontale ($V_x = 25$ m/s) sposta il sistema in un regime dominato dalle forze aerodinamiche \cite{simulazioneVTOL3.m}. Qui, la stabilità è influenzata dalla sotto-attuazione: il drone non può variare la quota senza influenzare il beccheggio e la velocità.
+La transizione al volo orizzontale ($V_x = 25$ m/s) sposta il sistema in un regime dominato dalle forze aerodinamiche. Qui, la stabilità è influenzata dalla sotto-attuazione: il drone non può variare la quota senza influenzare il beccheggio e la velocità.
 
 \subsection{Sintesi del Controllore}
 Il controllo adottato è un \textit{Coordinated Bank-to-Turn}. La sfida principale è stata smorzare il modo di \textbf{Phugoid}, ovvero lo scambio energetico tra quota e velocità. Per farlo, si è agito massicciamente sui loop esterni:

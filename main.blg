@@ -5,10 +5,9 @@ Reallocating 'name_of_file' (item size: 1) to 6 items.
 The style file: plain.bst
 Reallocating 'name_of_file' (item size: 1) to 13 items.
 Database file #1: bibliografia.bib
-Warning--I didn't find a database entry for "simulazioneVTOL3.m"
 You've used 7 entries,
             2118 wiz_defined-function locations,
-            544 strings with 5261 characters,
+            542 strings with 5225 characters,
 and the built_in function-call counts, 2572 in all, are:
 = -- 251
 > -- 126
@@ -47,4 +46,3 @@ warning$ -- 0
 while$ -- 23
 width$ -- 8
 write$ -- 80
-(There was 1 warning)

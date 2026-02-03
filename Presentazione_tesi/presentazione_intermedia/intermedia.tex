@@ -27,7 +27,7 @@
 
 % --- METADATI ---
 \title{Modellazione dinamica e design del controllo per un innovativo VTOL}
-\author{Maria Costanza Giacona}
+\author{}
 \date{}
 
 \begin{document}
@@ -244,10 +244,10 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Analisi delle Forze e Attuazione}
+\begin{frame}{Configurazione dei rotori}
     Il tricottero dispone di 3 motori con gradi di libertà di tilt:
     
-    \vspace{0.2cm}
+    \vspace{0.5cm}
     \begin{columns}
         \column{0.5\textwidth}
         \centering
@@ -307,39 +307,43 @@
         \begin{equation}
             \bm{F}_g = \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix} mg
         \end{equation}
-        \item \textbf{Aerodinamica ($\bm{F}_{\text{aero}}$):} Include Lift e Drag, dipendenti dal quadrato della velocità $v^2$ e dalla funzione segno $\text{sgn}(v)$ per la direzione.
+        \item \textbf{Aerodinamica ($\bm{F}_{\text{aero}}$):} Include Lift e Drag, dipendenti dal quadrato della velocità $v^2$ e dalla funzione $\text{sgn}(v)$ per la direzione.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Dinamica Traslazionale: Forze Aerodinamiche}
+
+\begin{frame}{Forze Aerodinamiche}
     \begin{columns}[c]
         \begin{column}{0.6\textwidth}
             \footnotesize
-            Il Drag del corpo ($\mathbf{D}_{\text{Body}}$) agisce lungo gli assi principali:
+            La resistenza della fusoliera ($\bm{D}_{\text{body}}$) è modellata lungo gli assi principali del \textit{Body Frame}:
             \begin{equation}
-                \mathbf{D}_{\text{Body}} = -\frac{1}{2} \rho 
+                \bm{D}_{\text{body}} = -\frac{1}{2} \rho 
                 \begin{bmatrix}
-                    \text{sgn}(v_x) v_x^2 s_{b_x} C_{d_{b_x}} \\
-                    \text{sgn}(v_y) v_y^2 s_{b_y} C_{d_{b_y}} \\
-                    \text{sgn}(v_z) v_z^2 s_{b_z} C_{d_{b_z}}
+                    \text{sgn}(u) v_x^2 s_{body,x} C_{Dx} \\
+                    \text{sgn}(v) v_y^2 s_{body,y} C_{Dy} \\
+                    \text{sgn}(w) v_x^2 s_{body,z} C_{Dz}
                 \end{bmatrix}
             \end{equation}
             
-            Le ali generano Lift ($L$) e Drag ($D$):
+            Il contributo alare ($\bm{F}_{\text{wing}}$) in crociera è espresso in funzione della velocità longitudinale $u$:
             \begin{equation}
-                \bm{F}_{aero,wing} = 
+                \bm{F}_{\text{wing}} \approx 
                 \begin{bmatrix}
-                    -\frac{1}{2}\rho s_x C_D(v_x) v_x |v_x| \\
+                    -\frac{1}{2}\rho S C_D(v_x) v_x |v_x| \\
                     0 \\
-                    -\frac{1}{2}\rho s_z C_L(v_x) v_x^2
+                    -\frac{1}{2}\rho S C_L(v_x) v_x^2
                 \end{bmatrix}
             \end{equation}
+            
+            \vspace{0.2cm}
+            \textcolor{red}{\textbf{Nota di rigore:}} I coefficienti $C_L$ e $C_D$ sono funzioni non lineari dell'angolo d'attacco $\alpha = \arctan(v_z/v_x)$.
         \end{column}
 
         \begin{column}{0.4\textwidth}
             \centering
             \includegraphics[width=\linewidth]{forze_x.jpg}
-            \captionof{figure}{Scomposizione: Lift e Drag.}
+            \captionof{figure}{Convenzione delle forze aerodinamiche nel piano longitudinale.}
         \end{column}
     \end{columns}
 \end{frame}
@@ -488,28 +492,26 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Momento della Pinna in Coda}
-    Il momento generato dalla pinna di coda $\bm{M}_{pinna}$ agisce come contributo stabilizzante e smorzante, dipendente dalle velocità angolari e dalla velocità longitudinale:
+\begin{frame}{Stabilità Direzionale: Momento della Pinna}
+    La superficie verticale di coda è modellata per garantire la \textit{Weathercock stability}:
     
     \begin{equation}
-        \bm{M}_{pinna} = 
-        \begin{bmatrix} M_{pinna,x} \\ M_{pinna,y} \\ M_{pinna,z} \end{bmatrix} =
+        \bm{M}_{\text{fin}} = 
         \begin{bmatrix} 
-        -p \, \alpha_{0x} - \alpha_{1x} \, v_y^2 \\ 
+        -p K_{d,roll} - \beta K_{s,roll} \\ 
         0 \\ 
-        -r \, (\alpha_{0z} + \alpha_{1z} \, v_y^2) 
+        -r K_{d,yaw} - \beta K_{s,yaw} 
         \end{bmatrix}
     \end{equation}
 
     \begin{itemize}
-        \item $p, r$: Velocità angolari rispettivamente di rollio ($X_B$) e imbardata ($Z_B$).
-        \item $v_y$: Velocità longitudinale lungo l'asse $Y_B$.
-        \item $\alpha_{0x}, \alpha_{1x}, \alpha_{0z}, \alpha_{1z}$: Coefficienti aerodinamici specifici della pinna.
+        \item \textbf{Stabilità Statica ($K_s$):} Coppia raddrizzante proporzionale allo scivolamento laterale $\beta$.
+        \item \textbf{Smorzamento ($K_d$):} Opposizione alle velocità angolari $p$ e $r$.
     \end{itemize}
-
-    \begin{block}{Osservazioni}
-        La pinna non genera momento di beccheggio ($M_{pinna,y} = 0$) e i segni negativi indicano che il momento si oppone al moto rotatorio, garantendo stabilità direzionale.
-    \end{block}
+    \vspace{0.2cm}
+    \centering
+    \footnotesize
+    \textit{Fondamentale per la dinamica Bank-to-Turn in fase di crociera.}
 \end{frame}
 
 
@@ -1104,28 +1106,56 @@ Tali quantità sono calcolate come uscite di tre PID.
     compensi quasi completamente la gravità; il controllore agisce in caso di variazioni sulla velocità o di disturbi. 
 \end{frame}
 
-\begin{frame}{Outer Loop: Controllo di Posizione Laterale}
-    \textbf{Controllo di Deriva ($y$)} \\
-    Il mantenimento della rotta ($y_{des} = 0$) è garantito agendo sull'angolo di imbardata. Il controllore deve compensare eventuali errori laterali e reiezione di disturbi.
-    
-    \vspace{0.2cm}
-    Definito l'errore laterale $e_y = y_{des} - y$, il loop esterno calcola una correzione di rotta $\psi_{corr}$ da sommare all'imbardata base:
-    
-    \begin{equation}
-        \psi_{des} = \psi_{path} + \underbrace{K_{P,y} e_y + K_{I,y} \int e_y dt + K_{D,y} \dot{e}_y}_{\psi_{corr}}
-        \label{eq:psi_corr}
-    \end{equation}
-    
-    \vspace{0.1cm}
-    \begin{itemize}
-        \item \textbf{Azione Proporzionale ($K_P$):} Sterza il drone verso la traiettoria di riferimento (Heading correction).
-        \item \textbf{Azione Derivativa ($K_D$):} Smorza la velocità laterale $v_y = \dot{e}_y$, contrastando oscillazioni e scivolate indotte da disturbi esterni.
-        \item \textbf{Saturazione:} Il termine $\psi_{corr}$ è saturato per evitare manovre di imbardata eccessivamente brusche.
-    \end{itemize}
-    
-    \vspace{0.2cm}
+% ============================================================
+% BANK-TO-TURN (BTT) - FISICA E CINEMATICA
+% ============================================================
+\begin{frame}{Strategia di Virata: Bank-to-Turn (BTT)}
+    \small
+    Il BTT è la strategia primaria in crociera: sfrutta l'inclinazione della portanza ($L$) per generare forza centripeta, ovviando alla bassa autorità di imbardata del tricottero.
+    \vspace{0.5cm}\\
+        \textbf{Principi Fisici:}
+        In virata coordinata, la componente orizzontale di $L$ sostiene l'accelerazione radiale:
+        \begin{equation}
+            L \sin(\phi) = m V_{tas} \dot{\psi}
+        \end{equation}
+        
+        Dall'equilibrio verticale ($L \cos\phi = mg$), si ricava l'angolo di rollio necessario:
+        \begin{equation}
+            \phi_{des} = \arctan \left( \frac{V_{tas} \dot{\psi}}{g} \right)
+        \end{equation}
+
+        \textbf{Fattore di Carico ($n$):}
+        Per mantenere la quota, la spinta deve compensare l'aumento del peso apparente:
+        \begin{equation}
+            n = \frac{1}{\cos\phi} \implies F_{z,req} \propto \frac{mg}{\cos\phi}
+        \end{equation}
+
+\end{frame}
+
+% ============================================================
+% BTT - ARCHITETTURA DI CONTROLLO
+% ============================================================
+\begin{frame}{Controllo Laterale e Coordinazione}
+    \small
+    L'obiettivo è minimizzare lo scivolamento laterale ($\beta \approx 0$) durante il cambio di rotta.
+
+    \begin{block}{Outer Loop: Controllo di Traiettoria}
+        L'errore di cross-track $e_y$ genera il comando di rollio $\phi_{cmd}$:
+        \begin{equation}
+            \phi_{cmd} = \text{PID}(e_y) \quad \text{con } |\phi| < 30^\circ
+        \end{equation}
+    \end{block}
+
+    \begin{block}{Inner Loop: Coordinazione dell'Imbardata}
+        Per evitare lo "skidding", il rateo di imbardata desiderato $r_{req}$ è vincolato cinematicamente all'assetto:
+        \begin{equation}
+            r_{req} = \frac{g}{V_{tas}} \sin(\phi) \cos(\theta)
+        \end{equation}
+        Il controllo agisce tramite \textbf{spinta differenziale} dei motori anteriori e \textbf{tilt} del rotore di coda.
+    \end{block}
+
     \footnotesize
-    \textit{Nota: Questa correzione di imbardata viene poi inseguita dal PID dell'Inner Loop tramite spinta differenziale dei motori.}
+    \textcolor{red}{\textbf{Vantaggio:}} Questa architettura permette virate ad alta velocità senza saturare i servomotori di coda, tipicamente limitati in forza.
 \end{frame}
 
 \begin{frame}{Outer Loop: Controllo di Velocità}
@@ -1146,8 +1176,7 @@ Tali quantità sono calcolate come uscite di tre PID.
 % ============================================================
 % INNER LOOP
 % ============================================================
-\begin{frame}{Inner Loop: Controllo d'Assetto (Crociera)}
-    \framesubtitle{Regime: Forward Flight ($V \approx 25$ m/s)}
+\begin{frame}{Inner Loop: Controllo d'Assetto}
     
     In configurazione di crociera, i rotori generano spinta propulsiva (asse $X_B$). Il controllo dei momenti avviene tramite \textbf{Thrust Vectoring}, emulando le superfici aerodinamiche classiche.
 
@@ -1169,7 +1198,7 @@ Tali quantità sono calcolate come uscite di tre PID.
         \begin{itemize}
             \item \small{Azione: Tilt Differenziale}
             \item \small{Eq: $\theta_1 = -\theta_2$}
-            \item \small{Effetto: Genera una coppia di forze verticali opposte ($\tau_x$).}
+            \item \small{Effetto: Genera una coppia di forze verticali opposte.}
         \end{itemize}
 
         \column{0.33\textwidth}
@@ -1179,7 +1208,7 @@ Tali quantità sono calcolate come uscite di tre PID.
         \begin{itemize}
             \item \small{Azione: Spinta Differenziale}
             \item \small{Eq: $T_1 \neq T_2$}
-            \item \small{Effetto: Genera una coppia di trazione asimmetrica ($\tau_z$).}
+            \item \small{Effetto: Genera una coppia di trazione asimmetrica.}
         \end{itemize}
     \end{columns}
 \end{frame}
@@ -1211,11 +1240,11 @@ Tali quantità sono calcolate come uscite di tre PID.
 % MIXER E ALLOCAZIONE
 % ============================================================
 
-\begin{frame}{Formalizzazione del Control Allocation (Mixer)}
+\begin{frame}{Formalizzazione del Mixer}
     
     La strategia di controllo adotta un approccio \textbf{SISO disaccoppiato}. I PID calcolano comandi virtuali ($u_\theta, u_\phi, u_\psi$) che vengono mappati sugli attuatori fisici tramite una \textbf{Matrice di Miscelazione Statica} ($M$).
     
-    \begin{block}{Legge di Miscelazione (Mixing Law)}
+    \begin{block}{Mixing Law}
     Definito il vettore degli attuatori $\mathbf{A} = [T_1, T_2, \alpha_1, \alpha_2]^T$ e il vettore dei comandi virtuali $\mathbf{U} = [T_{req}, u_\psi, u_\theta, u_\phi]^T$, la relazione lineare valida per piccoli angoli attorno al punto di lavoro ($\alpha \approx 0^\circ$) è:
     
     \begin{equation}
@@ -1337,6 +1366,130 @@ Tali quantità sono calcolate come uscite di tre PID.
             \bottomrule
         \end{tabular}
     \end{table}
+\end{frame}
+
+
+% ===========================================================
+% ANALISI DI STABILITA
+% ===========================================================
+\begin{frame}{Analisi di Stabilità Lineare}
+    \small
+    L'obiettivo è dimostrare la \textbf{stabilità asintotica locale} nei punti di equilibrio critici (Hover e Cruise).
+    
+    \begin{block}{Metodologia: Linearizzazione di Lyapunov}
+        Il sistema non lineare $\mathbf{\dot{x}} = \mathbf{f}(\mathbf{x, u})$ viene approssimato nell'intorno di $(\mathbf{x}_e, \mathbf{u}_e)$:
+        \begin{equation*}
+            \mathbf{A} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \in \mathbb{R}^{30 \times 30}
+        \end{equation*}
+    \end{block}
+
+    \begin{itemize}
+        \item \textbf{Criterio di Stabilità:} Tutti gli autovalori $\lambda_i = \sigma_i \pm j\omega_i$ devono avere $\text{Re}(\lambda_i) < 0$.
+        \item \textbf{Smorzamento ($\zeta$):} Definisce la capacità di dissipare perturbazioni:
+        \begin{equation*}
+            \zeta = \frac{-\sigma}{\sqrt{\sigma^2 + \omega^2}}
+        \end{equation*}
+    \end{itemize}
+    
+    \centering
+    
+\end{frame}
+
+\begin{frame}{Analisi dei Modi: Assetto di Hovering}
+    \small
+    In hovering ($V_x \approx 0$), il sostentamento è puramente vettoriale. L'analisi degli autovalori conferma la stabilità locale:
+
+    \begin{table}[]
+        \footnotesize
+        \centering
+        \begin{tabular}{l|c|c|l}
+            \textbf{Modo} & \textbf{Freq. [rad/s]} & \textbf{Smorzamento ($\zeta$)} & \textbf{Descrizione} \\ \hline
+            Alta Freq. & 85.49 & 0.815 & Dinamica attuatori e Inner Loop \\
+            Traiettoria & 2.32 -- 3.01 & $> 0.8$ & Risposta SMC (posizionamento) \\
+            Traslazione & 0.44 & 0.578 & Deriva da sotto-attuazione \\
+        \end{tabular}
+    \end{table}
+
+    \begin{itemize}
+        \item \textbf{Inner Loop (PID):} Tarato per evitare risonanze strutturali.
+        \item \textbf{Outer Loop (SMC):} Utilizzo della funzione $\tanh(s/\Phi)$ per eliminare il chattering e garantire robustezza.
+    \end{itemize}
+
+    \begin{block}{Osservazione}
+        L'assenza di accoppiamenti aerodinamici permette una risposta "deadbeat" (senza sovraelongazioni) nel controllo di posizione.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi nel Piano Complesso: Hovering}
+    \begin{columns}[c]
+        \begin{column}{0.6\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{../../img/controllo_verticale/rlocus_V.png}
+            \captionof{figure}{Mappa Poli-Zeri in hovering ($V_x \approx 0$).}
+        \end{column}
+
+        \begin{column}{0.4\textwidth}
+            \small
+            \textbf{Caratteristiche del regime:}
+            \begin{itemize}
+                \item \textbf{Modi Rapidi:} Poli dell'Inner Loop molto a sinistra ($\sigma < -60$), indicando una stabilizzazione d'assetto quasi istantanea.
+                \item \textbf{Modi Lenti:} Cluster di poli SMC con $\zeta \approx 1$, tipico di una risposta smorzata senza interazioni aerodinamiche.
+                \item \textbf{Integrazione:} Poli nell'origine associati agli stati integrativi dei PID per l'annullamento dell'errore a regime.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Assetto di Cruise e Separazione di Scala}
+    \small
+    A $V_x = 25$ m/s, dominano le forze aerodinamiche. Emergono modi a smorzamento ridotto ($\zeta \approx 0.24$).
+
+    \begin{columns}[T]
+        \begin{column}{0.6\textwidth}
+            \textbf{Trade-off dello smorzamento:}
+            \begin{itemize}
+                \item Un $k_{d,\theta}$ eccessivo innesca \textbf{cicli limite} e vibrazioni negli attuatori (fissati a 15 Hz).
+                \item Lo smorzamento $\zeta = 0.25$ è il limite fisico oltre il quale insorge instabilità numerica.
+            \end{itemize}
+            
+            \textbf{Separazione delle Scale Temporali:}
+            \begin{equation*}
+                \frac{\omega_{Inner}}{\omega_{Outer}} > 10
+            \end{equation*}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \centering
+            
+            \vspace{0.2cm}
+            \footnotesize
+            \textbf{Inner Loop:} 60--95 rad/s\\
+            \textbf{Outer Loop:} 0.1--3 rad/s
+        \end{column}
+    \end{columns}
+
+    \begin{block}{Compensazione del Phugoid}
+        Il modo lento di scambio energia (quota-velocità) è smorzato sinteticamente tramite un elevato guadagno $K_{d,z} = 10$ sulla velocità verticale.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi nel Piano Complesso: Cruise}
+    \begin{columns}[c]
+        \begin{column}{0.6\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{../../img/controllo_orizzontale/rlocus_H.png}
+            \captionof{figure}{Mappa Poli-Zeri in crociera ($V_x = 25$ m/s).}
+        \end{column}
+
+        \begin{column}{0.4\textwidth}
+            \small
+            \textbf{Effetti Aerodinamici:}
+            \begin{itemize}
+                \item \textbf{Migrazione dei Poli:} I modi traslazionali aumentano la frequenza naturale $\omega_n$ per l'incremento del dynamic pressure ($q$).
+                \item \textbf{Modo Phugoid:} Stabilizzato artificialmente dal loop di velocità ($K_{d,z}$), forzando i poli verso la regione di maggiore smorzamento.
+                \item \textbf{Accoppiamento L-D:} Presenza di poli a basso smorzamento ($\zeta \approx 0.24$) dovuti alla sotto-attuazione in virata coordinata.
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ============================================================

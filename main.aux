@@ -48,8 +48,10 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3.1}Sistemi di Riferimento}{12}{section.3.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}\protected@file@percent }
 \newlabel{fig:sist_rif}{{3.1}{12}{Sistemi di riferimento}{figure.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}Trasformazione dei Vettori (Matrice di Rotazione)}{12}{subsection.3.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}Trasformazione dei Ratei (Matrice Cinematica)}{13}{subsection.3.1.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.2}Equazioni della Dinamica}{14}{section.3.2}\protected@file@percent }
-\newlabel{eq:newton_euler}{{3.4}{14}{Equazioni della Dinamica}{equation.3.4}{}}
+\newlabel{eq:newton_euler}{{3.5}{14}{Equazioni della Dinamica}{equation.3.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3.3}Analisi delle Forze}{15}{section.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Configurazione Geometrica e Thrust}{15}{subsection.3.3.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{15}{figure.3.2}\protected@file@percent }
@@ -121,46 +123,48 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.3.1}Controllo Longitudinale: Quota e Velocità}{42}{subsection.7.3.1}\protected@file@percent }
 \newlabel{eq:fz_req}{{7.3}{42}{Controllo Longitudinale: Quota e Velocità}{equation.7.3}{}}
 \newlabel{eq:fx}{{7.5}{42}{Controllo Longitudinale: Quota e Velocità}{equation.7.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.2}Controllo Laterale: Yaw Steering}{42}{subsection.7.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.4}Inner Loop: Controllo d'Assetto}{44}{section.7.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.1}Algoritmo di Controllo PID}{44}{subsection.7.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.2}Fisica degli Attuatori: Thrust Vectoring}{44}{subsection.7.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.3}Validità dell'Approssimazione Lineare}{45}{subsection.7.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.5}Motor Mixing Algorithm}{46}{section.7.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{46}{subsubsection*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{46}{subsubsection*.4}\protected@file@percent }
-\newlabel{eq:decoupling}{{7.13}{46}{2. Trasformazione di Coordinate (Disaccoppiamento)}{equation.7.13}{}}
-\@writefile{toc}{\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{46}{subsubsection*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.1}Matrice di Mixing}{47}{subsection.7.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.6}Scenari di Validazione}{48}{section.7.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {8}Dimostrazione SMC}{49}{chapter.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.4}Bank-to-Turn (BTT)}{43}{section.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.1}Principi Fisici e Modello Matematico}{43}{subsection.7.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.2}Implementazione del Controllo Laterale (Outer Loop)}{43}{subsection.7.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.3}Coordinazione dell'Imbardata (Inner Loop)}{44}{subsection.7.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.4}Compensazione della Portanza in Virata}{44}{subsection.7.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.5}Inner Loop: Controllo d'Assetto}{45}{section.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.1}Algoritmo di Controllo PID}{45}{subsection.7.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.2}Fisica degli Attuatori: Thrust Vectoring}{45}{subsection.7.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.3}Validità dell'Approssimazione Lineare}{46}{subsection.7.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.6}Motor Mixing Algorithm}{47}{section.7.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{47}{subsubsection*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{47}{subsubsection*.4}\protected@file@percent }
+\newlabel{eq:decoupling}{{7.12}{47}{2. Trasformazione di Coordinate (Disaccoppiamento)}{equation.7.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{47}{subsubsection*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6.1}Matrice di Mixing}{48}{subsection.7.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.7}Scenari di Validazione}{49}{section.7.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {8}Dimostrazione SMC}{50}{chapter.8}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{ch:dimostrazione}{{8}{49}{Dimostrazione SMC}{chapter.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8.1}Modellazione della Dinamica}{49}{section.8.1}\protected@file@percent }
-\newlabel{eq:dynamics_z_final}{{8.1}{49}{Modellazione della Dinamica}{equation.8.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8.2}Definizione della \textit  {sliding surface}}{49}{section.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.3}Sintesi della Legge di Controllo}{50}{section.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.4}Analisi di Stabilità e Tempo di Raggiungimento}{50}{section.8.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.5}Regolarizzazione e Mitigazione del Chattering}{51}{section.8.5}\protected@file@percent }
-\citation{simulazioneVTOL3.m}
-\@writefile{toc}{\contentsline {chapter}{\numberline {9}Analisi di Stabilità}{52}{chapter.9}\protected@file@percent }
+\newlabel{ch:dimostrazione}{{8}{50}{Dimostrazione SMC}{chapter.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8.1}Modellazione della Dinamica}{50}{section.8.1}\protected@file@percent }
+\newlabel{eq:dynamics_z_final}{{8.1}{50}{Modellazione della Dinamica}{equation.8.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8.2}Definizione della \textit  {sliding surface}}{50}{section.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.3}Sintesi della Legge di Controllo}{51}{section.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.4}Analisi di Stabilità e Tempo di Raggiungimento}{51}{section.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.5}Regolarizzazione e Mitigazione del Chattering}{52}{section.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {9}Analisi di Stabilità}{53}{chapter.9}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{ch:stabilita}{{9}{52}{Analisi di Stabilità}{chapter.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9.1}Introduzione all'Analisi Lineare}{52}{section.9.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{52}{section.9.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9.3}Analisi dell'Assetto di Hovering}{53}{section.9.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3.1}Sintesi del Controllore}{53}{subsection.9.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3.2}Interpretazione dei Risultati e Modi Dominanti}{53}{subsection.9.3.2}\protected@file@percent }
-\citation{simulazioneVTOL3.m}
-\@writefile{toc}{\contentsline {section}{\numberline {9.4}Analisi dell'Assetto di Crociera (Cruise)}{54}{section.9.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.1}Sintesi del Controllore}{54}{subsection.9.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.2}Discussione critica dei modi al limite}{54}{subsection.9.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{54}{subsection.9.4.3}\protected@file@percent }
+\newlabel{ch:stabilita}{{9}{53}{Analisi di Stabilità}{chapter.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.1}Introduzione all'Analisi Lineare}{53}{section.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{53}{section.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.3}Analisi dell'Assetto di Hovering}{54}{section.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3.1}Sintesi del Controllore}{54}{subsection.9.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3.2}Interpretazione dei Risultati e Modi Dominanti}{54}{subsection.9.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.4}Analisi dell'Assetto di Crociera (Cruise)}{55}{section.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.1}Sintesi del Controllore}{55}{subsection.9.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.2}Discussione critica dei modi al limite}{55}{subsection.9.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{55}{subsection.9.4.3}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{bibliografia}
-\@writefile{toc}{\contentsline {section}{\numberline {9.5}Separazione delle Scale Temporali}{55}{section.9.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.5}Separazione delle Scale Temporali}{56}{section.9.5}\protected@file@percent }
 \bibcite{chen2017}{1}
 \bibcite{cheng2022}{2}
 \bibcite{mian2008}{3}
@@ -168,4 +172,4 @@
 \bibcite{riboldi2023}{5}
 \bibcite{yu2022}{6}
 \bibcite{zhang2014}{7}
-\gdef \@abspage@last{61}
+\gdef \@abspage@last{62}

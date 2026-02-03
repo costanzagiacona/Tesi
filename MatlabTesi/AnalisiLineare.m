@@ -41,7 +41,7 @@ end
 
 % Impostazioni per Crociera
 target_cruise = [25, 0, -10]; % Vx=25, Theta=0 (target), Z=-10
-test_id_cruise = 13;          % Controllo orizzontale (usiamo il case 12 che è l'ultimo tuning)
+test_id_cruise = 2;          % Controllo orizzontale (usiamo il case 12 che è l'ultimo tuning)
 
 % Condizioni iniziali "lanciate" per favorire la convergenza
 x0_cruise = zeros(30,1);

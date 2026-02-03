@@ -16,6 +16,8 @@
 \contentsline {section}{\numberline {2.8}Controllo tramite Spinta Differenziale}{11}{section.2.8}%
 \contentsline {chapter}{\numberline {3}Modello Matematico}{12}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Sistemi di Riferimento}{12}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Trasformazione dei Vettori (Matrice di Rotazione)}{12}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Trasformazione dei Ratei (Matrice Cinematica)}{13}{subsection.3.1.2}%
 \contentsline {section}{\numberline {3.2}Equazioni della Dinamica}{14}{section.3.2}%
 \contentsline {section}{\numberline {3.3}Analisi delle Forze}{15}{section.3.3}%
 \contentsline {subsection}{\numberline {3.3.1}Configurazione Geometrica e Thrust}{15}{subsection.3.3.1}%
@@ -55,31 +57,35 @@
 \contentsline {section}{\numberline {7.2}Architettura di Controllo}{40}{section.7.2}%
 \contentsline {section}{\numberline {7.3}Outer Loop: Guida e Navigazione}{42}{section.7.3}%
 \contentsline {subsection}{\numberline {7.3.1}Controllo Longitudinale: Quota e Velocità}{42}{subsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.3.2}Controllo Laterale: Yaw Steering}{42}{subsection.7.3.2}%
-\contentsline {section}{\numberline {7.4}Inner Loop: Controllo d'Assetto}{44}{section.7.4}%
-\contentsline {subsection}{\numberline {7.4.1}Algoritmo di Controllo PID}{44}{subsection.7.4.1}%
-\contentsline {subsection}{\numberline {7.4.2}Fisica degli Attuatori: Thrust Vectoring}{44}{subsection.7.4.2}%
-\contentsline {subsection}{\numberline {7.4.3}Validità dell'Approssimazione Lineare}{45}{subsection.7.4.3}%
-\contentsline {section}{\numberline {7.5}Motor Mixing Algorithm}{46}{section.7.5}%
-\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{46}{subsubsection*.3}%
-\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{46}{subsubsection*.4}%
-\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{46}{subsubsection*.5}%
-\contentsline {subsection}{\numberline {7.5.1}Matrice di Mixing}{47}{subsection.7.5.1}%
-\contentsline {section}{\numberline {7.6}Scenari di Validazione}{48}{section.7.6}%
-\contentsline {chapter}{\numberline {8}Dimostrazione SMC}{49}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Modellazione della Dinamica}{49}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Definizione della \textit {sliding surface}}{49}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Sintesi della Legge di Controllo}{50}{section.8.3}%
-\contentsline {section}{\numberline {8.4}Analisi di Stabilità e Tempo di Raggiungimento}{50}{section.8.4}%
-\contentsline {section}{\numberline {8.5}Regolarizzazione e Mitigazione del Chattering}{51}{section.8.5}%
-\contentsline {chapter}{\numberline {9}Analisi di Stabilità}{52}{chapter.9}%
-\contentsline {section}{\numberline {9.1}Introduzione all'Analisi Lineare}{52}{section.9.1}%
-\contentsline {section}{\numberline {9.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{52}{section.9.2}%
-\contentsline {section}{\numberline {9.3}Analisi dell'Assetto di Hovering}{53}{section.9.3}%
-\contentsline {subsection}{\numberline {9.3.1}Sintesi del Controllore}{53}{subsection.9.3.1}%
-\contentsline {subsection}{\numberline {9.3.2}Interpretazione dei Risultati e Modi Dominanti}{53}{subsection.9.3.2}%
-\contentsline {section}{\numberline {9.4}Analisi dell'Assetto di Crociera (Cruise)}{54}{section.9.4}%
-\contentsline {subsection}{\numberline {9.4.1}Sintesi del Controllore}{54}{subsection.9.4.1}%
-\contentsline {subsection}{\numberline {9.4.2}Discussione critica dei modi al limite}{54}{subsection.9.4.2}%
-\contentsline {subsection}{\numberline {9.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{54}{subsection.9.4.3}%
-\contentsline {section}{\numberline {9.5}Separazione delle Scale Temporali}{55}{section.9.5}%
+\contentsline {section}{\numberline {7.4}Bank-to-Turn (BTT)}{43}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Principi Fisici e Modello Matematico}{43}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Implementazione del Controllo Laterale (Outer Loop)}{43}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}Coordinazione dell'Imbardata (Inner Loop)}{44}{subsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.4.4}Compensazione della Portanza in Virata}{44}{subsection.7.4.4}%
+\contentsline {section}{\numberline {7.5}Inner Loop: Controllo d'Assetto}{45}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}Algoritmo di Controllo PID}{45}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}Fisica degli Attuatori: Thrust Vectoring}{45}{subsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.5.3}Validità dell'Approssimazione Lineare}{46}{subsection.7.5.3}%
+\contentsline {section}{\numberline {7.6}Motor Mixing Algorithm}{47}{section.7.6}%
+\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{47}{subsubsection*.3}%
+\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{47}{subsubsection*.4}%
+\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{47}{subsubsection*.5}%
+\contentsline {subsection}{\numberline {7.6.1}Matrice di Mixing}{48}{subsection.7.6.1}%
+\contentsline {section}{\numberline {7.7}Scenari di Validazione}{49}{section.7.7}%
+\contentsline {chapter}{\numberline {8}Dimostrazione SMC}{50}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Modellazione della Dinamica}{50}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Definizione della \textit {sliding surface}}{50}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Sintesi della Legge di Controllo}{51}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Analisi di Stabilità e Tempo di Raggiungimento}{51}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Regolarizzazione e Mitigazione del Chattering}{52}{section.8.5}%
+\contentsline {chapter}{\numberline {9}Analisi di Stabilità}{53}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Introduzione all'Analisi Lineare}{53}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{53}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Analisi dell'Assetto di Hovering}{54}{section.9.3}%
+\contentsline {subsection}{\numberline {9.3.1}Sintesi del Controllore}{54}{subsection.9.3.1}%
+\contentsline {subsection}{\numberline {9.3.2}Interpretazione dei Risultati e Modi Dominanti}{54}{subsection.9.3.2}%
+\contentsline {section}{\numberline {9.4}Analisi dell'Assetto di Crociera (Cruise)}{55}{section.9.4}%
+\contentsline {subsection}{\numberline {9.4.1}Sintesi del Controllore}{55}{subsection.9.4.1}%
+\contentsline {subsection}{\numberline {9.4.2}Discussione critica dei modi al limite}{55}{subsection.9.4.2}%
+\contentsline {subsection}{\numberline {9.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{55}{subsection.9.4.3}%
+\contentsline {section}{\numberline {9.5}Separazione delle Scale Temporali}{56}{section.9.5}%

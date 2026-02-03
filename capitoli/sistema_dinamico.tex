@@ -1,8 +1,6 @@
 \section{Sistema Dinamico}
-
 Una volta definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentano l'evoluzione temporale dello stato.
-
-Le equazioni di stato sono formulate come:
+\\Le equazioni di stato sono formulate come:
 \begin{equation}
     \dot{x}(t) = f(x(t), u(t), t)
 \end{equation}
@@ -11,9 +9,7 @@ dove $x(t)$ è il vettore di stato, $u(t)$ è il vettore degli ingressi di contr
 
 
 \subsection{Variabili di Stato}
-
 Il vettore di stato $x \in \mathbb{R}^{26}$ è definito come segue:
-
 \begin{equation}
     x = \begin{bmatrix} x_1 & x_2 & \dots & x_{26} \end{bmatrix}^T
 \end{equation}
@@ -57,7 +53,6 @@ Il vettore di stato $x \in \mathbb{R}^{26}$ è definito come segue:
 \clearpage
 
 \subsection{Ingressi di Controllo}
-
 Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 
 \begin{table}[H]
@@ -87,7 +82,6 @@ Le derivate delle posizioni nel sistema inerziale sono legate alle velocità esp
 \begin{equation}
     \begin{bmatrix} \dot{x}_{1} \\ \dot{x}_{2} \\ \dot{x}_{3} \end{bmatrix} = R_{b\rightarrow g} \begin{bmatrix} x_{4} \\ x_{5} \\ x_{6} \end{bmatrix}
 \end{equation}
-
 La matrice di rotazione (utilizzando la sequenza standard Yaw-Pitch-Roll) è espressa come:
 \begin{equation}
     R_{b\rightarrow g} = \begin{bmatrix}
@@ -104,7 +98,6 @@ Dalle leggi di Newton, le accelerazioni lineari nel body frame sono date da:
 \begin{equation}
     \begin{bmatrix} \dot{x}_{4} \\ \dot{x}_{5} \\ \dot{x}_{6} \end{bmatrix} = \frac{1}{m} \left( F_{TOT} - \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix} \times m \begin{bmatrix} x_{4} \\ x_{5} \\ x_{6} \end{bmatrix} \right)
 \end{equation}
-
 Dove la forza totale $F_{TOT}$ è la somma delle componenti di spinta ($F_{TH}$), gravità ($F_{GRAV}$) e aerodinamica ($F_{AERO}$):
 
 \begin{align}
@@ -149,7 +142,6 @@ Le accelerazioni angolari nel body frame derivano dall'equazione di Eulero per i
     \begin{bmatrix} \dot{x}_{10} \\ \dot{x}_{11} \\ \dot{x}_{12} \end{bmatrix} = 
     I_B^{-1} \left( M_{TOT} - \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix} \times (I_B \begin{bmatrix} x_{10} \\ x_{11} \\ x_{12} \end{bmatrix}) \right)
 \end{equation}
-
 Il momento totale $M_{TOT}$ include i contributi di spinta, effetti giroscopici e momenti aerodinamici/di attrito. La struttura generale derivata dal testo è:
 
 \begin{equation}
@@ -158,7 +150,6 @@ Il momento totale $M_{TOT}$ include i contributi di spinta, effetti giroscopici 
 \clearpage
 
 \subsection{Dinamica degli Attuatori (Tilting e Rotori)}
-
 La dinamica dei servomotori per il tilting dei rotori è modellata come sistemi del secondo ordine:
 
 \begin{align}
@@ -171,7 +162,6 @@ La dinamica dei servomotori per il tilting dei rotori è modellata come sistemi 
     \dot{x}_{19} &= x_{20} \\
     \dot{x}_{20} &= -2\zeta_4 \omega_{n,4} x_{20} + \omega_{n,4}^2 (u_7 - x_{19})
 \end{align}
-
 Analogamente, la dinamica dei motori (rotori) è modellata come:
 
 \begin{align}

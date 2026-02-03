@@ -164,9 +164,11 @@ parametri.rho = rho;
 parametri.s = s;
 
 
+
 parametri.C_d = C_d;
 parametri.C_y = C_y;
 parametri.C_l = C_l;
+
 
 
 parametri.b = b;
