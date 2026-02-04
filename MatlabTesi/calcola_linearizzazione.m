@@ -48,8 +48,27 @@ function [A, autovalori] = calcola_linearizzazione(x_eq, params, test_id, target
         A(:, i) = (dx_plus - dx_minus) / (2 * delta);
     end
     
-    % Calcolo autovalori
-    autovalori = eig(A);
+    % ... calcolo autovalori ...
+
+    % Soglie
+    autovalori = eig(A)
+    soglia_zero = 1e-5; % Sotto questa soglia consideriamo l'autovalore "praticamente 0"
+    soglia_instabilita = 1e-7; % Sopra questa soglia positiva, è sicuramente instabile
+    
+    reale_eig = real(autovalori);
+    
+    % 1. Verifica instabilità vera
+    instabili = reale_eig > soglia_instabilita;
+    num_instabili = sum(instabili);
+    
+    % 2. Verifica autovalori nulli (modi rigidi o integratori puri)
+    marginali = abs(reale_eig) <= soglia_zero;
+    num_marginali = sum(marginali);
+    
+    % 3. Verifica stabili asintotici
+    stabili = reale_eig < -soglia_instabilita;
+    num_stabili = sum(stabili);
+
     
     % Plot rapido degli autovalori nel piano complesso
     figure;
@@ -61,7 +80,7 @@ function [A, autovalori] = calcola_linearizzazione(x_eq, params, test_id, target
     
     % Controllo stabilità
     if all(real(autovalori) < 1e-6)
-        fprintf('RISULTATO: Il sistema linearizzato è STABILE (o marginalmente stabile).\n');
+        fprintf('RISULTATO: Il sistema linearizzato è STABILE (o stabile semplicemente).\n');
     else
         fprintf('RISULTATO: Il sistema linearizzato è INSTABILE.\n');
         num_inst = sum(real(autovalori) > 1e-6);

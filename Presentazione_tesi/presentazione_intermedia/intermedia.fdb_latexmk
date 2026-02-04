@@ -1,11 +1,10 @@
 # Fdb version 4
-["pdflatex"] 1770115777.6871 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770115786.02102 0
+["pdflatex"] 1770131821.94367 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770131827.79138 0
   "../../img/VTOL.png" 1769677789 950489 e265faf55272d7e8a865b86254410141 ""
   "../../img/controllo_orizzontale/rlocus_H.png" 1770115757 21971 48f9c36bd068db20d84c9d56016834f5 ""
   "../../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
   "../../img/controllo_verticale/pos_vel.png" 1769964645 77524 8e369bdb4fb04096036a76a39b907ec2 ""
   "../../img/controllo_verticale/rlocus_V.png" 1770115757 21758 0a1871f2a2e47e60b990e2545cbbbeae ""
-  "../../img/controllo_verticale/schema_controllo_V.png" 1769762867 189096 4a251428d7ebd686aa6bcd8cd484e0b5 ""
   "../../img/controllo_verticale/thrust.png" 1769964794 64933 67d6c80f3ebfb6799e7a3a4a840ccf60 ""
   "../../img/controllo_verticale/tilt.png" 1769964931 71763 df180d8fdca6021065180446338e139a ""
   "../../img/dragonfly.png" 1769677600 133343 ebc5ce23384ded5fbdd5509df34bf809 ""
@@ -303,12 +302,12 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/translator/translator.sty" 1622471510 8765 56d370785f0143111ff9898b5adfe08e ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770115757 65961 ebdbc9821e6c9d28e8543d8ef0b96b09 ""
-  "intermedia.aux" 1770115785 11372 6dab8e943c9c4e0ad354113a814b55a5 "pdflatex"
-  "intermedia.nav" 1770115785 7247 f96285fc70f758d2a7fefa8d9e0633f3 "pdflatex"
-  "intermedia.out" 1770115785 1073 fec63842c21b37cb080d2d7751a49fbc "pdflatex"
-  "intermedia.tex" 1770115757 65961 ebdbc9821e6c9d28e8543d8ef0b96b09 ""
-  "intermedia.toc" 1770115785 465 5800bc8702c0efa0ad1457b545762e2d "pdflatex"
+  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770131821 69876 1e55a119c44ba38e0c1216cd03a0d8cb ""
+  "intermedia.aux" 1770131827 11114 51b7925364dac70023e3e254a41bba66 "pdflatex"
+  "intermedia.nav" 1770131827 7061 60220c95735a5397202a3b9095c080dd "pdflatex"
+  "intermedia.out" 1770131827 1073 fec63842c21b37cb080d2d7751a49fbc "pdflatex"
+  "intermedia.tex" 1770131821 69876 1e55a119c44ba38e0c1216cd03a0d8cb ""
+  "intermedia.toc" 1770131827 465 bd8069cd5caf437d4e9aa15b0103d048 "pdflatex"
   (generated)
   "intermedia.aux"
   "intermedia.log"

@@ -92,6 +92,19 @@ J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,
 F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
 F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 
+
+% Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
+% alpha = atan2(x(6),x(4)); % angle of attack   
+% %beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
+% beta = 0;
+% 
+% Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
+% F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+% if alpha >= pi/2-0.001
+%     %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
+%     F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
+% end
+% F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 %% eq. forze BODY FRAME
 
 % GRAVITA'
@@ -220,19 +233,19 @@ else
 end
 
 % --- Anti-windup simulazione ---
-if simbolico == 0
-    % Velocità X
-    if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
-    
-    % Pitch
-    if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
-    
-    % Quota Z
-    if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
-    
-    % Integrale y 
-    if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
-end
+% if simbolico == 0
+%     % Velocità X
+%     if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
+% 
+%     % Pitch
+%     if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
+% 
+%     % Quota Z
+%     if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
+% 
+%     % Integrale y 
+%     if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
+% end
 
 %=====================================================================
 

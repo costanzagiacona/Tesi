@@ -11,14 +11,14 @@ paramFlag = 0; % se 1 print del valore dei parametri
 test_id = 0;    % flag per cambiare controllo
 disturbo = 0;
 
-tspan = [0 100];              % intervallo di simulazione
+tspan = [0 200];              % intervallo di simulazione
 
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
 fase = 3;       
 
-test_casi = 4;  % flag per cambiare le condizioni di simulazione
+test_casi = 3;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero
@@ -438,7 +438,7 @@ if flagPlot == 1
     h4 = plot(time, p, 'r', time, q, 'b', time, r, 'g');
     set(h4, 'LineWidth', 2)
     legend('p','q','r', 'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    ylim([-1 1]);grid on
+    % ylim([-1 1]);grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
     set(gca, 'FontSize', 14)

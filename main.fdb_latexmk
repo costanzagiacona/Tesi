@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1770050804.4515 "main.aux" "main.bbl" "main" 1770051522.45729 0
+["bibtex main"] 1770117835.90876 "main.aux" "main.bbl" "main" 1770117866.49441 0
   "./bibliografia.bib" 1768731482 2410 5180033513ffec778060e31485f88cb7 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1770051521 18103 f4226890ec24ca1c02034a4397de5248 "pdflatex"
+  "main.aux" 1770117865 18103 f4226890ec24ca1c02034a4397de5248 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1770051518.15462 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1770051522.45805 0
+["pdflatex"] 1770117862.32587 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1770117866.49516 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1769963964 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -249,15 +249,15 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/tools/tabularx.sty" 1761901070 7243 a2c17f18e2c9b702b84fad03d5f9c78b ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1770043921 4136 acdb179b8f68d15b0191f47ac5784c62 ""
-  "capitoli/analisi_stabilita.tex" 1770044293 7906 6eb2e28cf9fa98da58babba218ae847d ""
-  "capitoli/controllo_orizzontale.tex" 1770051517 22619 83ea86e44c56e911f5c472c236011902 ""
-  "capitoli/controllo_verticale.tex" 1769965057 25119 ea36000f5956b8314ea582575e349628 ""
+  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1770115757 4136 acdb179b8f68d15b0191f47ac5784c62 ""
+  "capitoli/analisi_stabilita.tex" 1770115757 7908 6b8881241c9542547023666baf914804 ""
+  "capitoli/controllo_orizzontale.tex" 1770115757 22619 83ea86e44c56e911f5c472c236011902 ""
+  "capitoli/controllo_verticale.tex" 1770117861 25119 2a47df366be8b79a2ae570d16511ee08 ""
   "capitoli/dimostrazione_SMC.tex" 1769962916 5342 2dca3d1ff7623ddce0b853ea5ade3f8f ""
-  "capitoli/introduzione.tex" 1770044516 2592 9850a659015e0f4596cf5aa1577ed306 ""
-  "capitoli/modello_completo.tex" 1770050912 11491 6b848cfbb4560c90341f4dab8e47662d ""
+  "capitoli/introduzione.tex" 1770115757 2592 9850a659015e0f4596cf5aa1577ed306 ""
+  "capitoli/modello_completo.tex" 1770115757 11491 6b848cfbb4560c90341f4dab8e47662d ""
   "capitoli/panoramica_controllo.tex" 1769962997 2836 06883c6e9ee4807b9362ca585c963152 ""
-  "capitoli/sistema_dinamico.tex" 1770044621 8794 13c99a7eedf0b7342b80a8ae2537dce6 ""
+  "capitoli/sistema_dinamico.tex" 1770115757 8794 13c99a7eedf0b7342b80a8ae2537dce6 ""
   "capitoli/stato_arte.tex" 1769934129 15138 4f251c9e49c441a5aeb6a929173cb165 ""
   "img/../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
   "img/../img/controllo_verticale/pos_vel.png" 1769964645 77524 8e369bdb4fb04096036a76a39b907ec2 ""
@@ -269,12 +269,12 @@
   "img/rotore_3.png" 1768810366 59375 d7469c5e94361e78b37009b63c35f0e7 ""
   "img/rotori_1_2.png" 1769342024 58613 5d6d1272abb6f91bd8f59c66588c1a71 ""
   "img/sist_rif.png" 1769934129 359174 77faf94a79a1c7a6cf15f0e07f33c52c ""
-  "main.aux" 1770051521 18103 f4226890ec24ca1c02034a4397de5248 "pdflatex"
-  "main.bbl" 1770050804 1705 fd29171eb3cd5cffeaaa97879eebe741 "bibtex main"
-  "main.lof" 1770051521 1733 832de782d57b71817c6bb5dbe80f2354 "pdflatex"
-  "main.out" 1770051521 19707 a3449025759082e8bfaeb3a26a2e5b5d "pdflatex"
-  "main.tex" 1770043921 4136 acdb179b8f68d15b0191f47ac5784c62 ""
-  "main.toc" 1770051521 8717 47731c00773404477c740bc78ba48854 "pdflatex"
+  "main.aux" 1770117865 18103 f4226890ec24ca1c02034a4397de5248 "pdflatex"
+  "main.bbl" 1770117836 1705 fd29171eb3cd5cffeaaa97879eebe741 "bibtex main"
+  "main.lof" 1770117865 1733 832de782d57b71817c6bb5dbe80f2354 "pdflatex"
+  "main.out" 1770117865 19707 a3449025759082e8bfaeb3a26a2e5b5d "pdflatex"
+  "main.tex" 1770115757 4136 acdb179b8f68d15b0191f47ac5784c62 ""
+  "main.toc" 1770117865 8717 47731c00773404477c740bc78ba48854 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"
