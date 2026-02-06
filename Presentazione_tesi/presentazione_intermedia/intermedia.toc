@@ -3,7 +3,8 @@
 \beamer@sectionintoc {1}{Introduzione}{3}{0}{1}
 \beamer@sectionintoc {2}{Descrizione VTOL}{5}{0}{2}
 \beamer@sectionintoc {3}{Modello Matematico}{8}{0}{3}
-\beamer@sectionintoc {4}{Architettura di Controllo Verticale}{22}{0}{4}
-\beamer@sectionintoc {5}{Simulazioni controllo verticale}{36}{0}{5}
-\beamer@sectionintoc {6}{Controllo Volo Orizzontale}{42}{0}{6}
-\beamer@sectionintoc {7}{Conclusioni}{60}{0}{7}
+\beamer@sectionintoc {4}{Sistema Dinamico}{22}{0}{4}
+\beamer@sectionintoc {5}{Architettura di Controllo Verticale}{31}{0}{5}
+\beamer@sectionintoc {6}{Simulazioni controllo verticale}{45}{0}{6}
+\beamer@sectionintoc {7}{Controllo Volo Orizzontale}{58}{0}{7}
+\beamer@sectionintoc {8}{Conclusioni}{76}{0}{8}

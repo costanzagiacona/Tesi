@@ -150,7 +150,22 @@ F_aeroBody = Drag_body(params.C_d_x, params.C_d_y, params.C_d_z, params.rho, ...
                        params.s_body_x, params.s_body_y, params.s_body_z, ...
                        u_b, v_b, w_b);
 
+% fprintf('alpha %2f, beta %2f\n', alpha, beta);
 
+%% wind frame e forze aerodinamiche
+% 
+% Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
+% alpha = atan2(x(6),x(4)) % angle of attack   
+% %beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
+% beta = 0;
+% 
+% Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
+% F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+% if alpha >= pi/2-0.001
+%     F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
+%     % F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
+% end
+% F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 
 %% eq. forze BODY FRAME
 
@@ -259,7 +274,7 @@ if test_id == 1
     x29_dot = 0;
     x30_dot = 0;
 
-elseif test_id == 2
+elseif test_id == 2 || test_id == 3
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     

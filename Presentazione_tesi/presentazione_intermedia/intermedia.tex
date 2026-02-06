@@ -16,6 +16,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{bm}
+\usepackage{siunitx}
+\usepackage{colortbl}
 % --- PACCHETTI PER GRAFICA E SCHEMI (TIKZ) ---
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, fit, calc, positioning, backgrounds}
@@ -514,6 +516,166 @@
     \begin{block}{Osservazioni}
         La pinna non genera momento di beccheggio ($M_{pinna,y} = 0$) e i segni negativi indicano che il momento si oppone al moto rotatorio, garantendo stabilità direzionale.
     \end{block}
+\end{frame}
+
+
+% ==========================================================
+% SISTEMA DINAMICO
+% ==========================================================
+\section{Sistema Dinamico}
+
+\begin{frame}
+    \vfill
+    \centering
+    {\Huge \textbf{Sistema Dinamico}}
+    \vfill
+\end{frame}
+
+% Slide 1: Definizione del Problema
+\begin{frame}{Definizione del Sistema Dinamico}
+    Il modello matematico del tricottero è tradotto in un sistema di equazioni differenziali ordinarie (ODE) che descrivono l'evoluzione temporale dello stato.
+    
+    \vspace{1em}
+    
+    Le equazioni di stato sono formulate come:
+    \begin{equation}
+        \dot{x}(t) = f(x(t), u(t), t)
+    \end{equation}
+    
+    \begin{itemize}
+        \item $x(t) \in \mathbb{R}^{26}$: Vettore di stato.
+        \item $u(t) \in \mathbb{R}^{7}$: Vettore degli ingressi di controllo.
+        \item $f(\cdot)$: Dinamica non lineare (Newton-Eulero + Dinamica Attuatori).
+    \end{itemize}
+\end{frame}
+
+% Slide 2: Variabili di Stato (Rigido)
+\begin{frame}{Variabili di Stato: Corpo Rigido ($x_1 - x_{12}$)}
+    Il vettore di stato è suddiviso funzionalmente. La parte relativa al corpo rigido comprende:
+    
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Posizione e Velocità Lineare}
+            \begin{itemize}
+                \item $x_{1,2,3} = [p_x, p_y, p_z]^T$: Posizione (Frame Inerziale).
+                \item $x_{4,5,6} = [v_{bx}, v_{by}, v_{bz}]^T$: Velocità (Body Frame).
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \textbf{Assetto e Velocità Angolari}
+            \begin{itemize}
+                \item $x_{7,8,9} = [\phi, \theta, \psi]^T$: Angoli di Eulero (RPY).
+                \item $x_{10,11,12} = [p, q, r]^T$: Velocità angolari (Body Frame).
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 3: Variabili di Stato (Attuatori)
+\begin{frame}{Variabili di Stato: Dinamica Attuatori ($x_{13} - x_{26}$)}
+    A differenza dei modelli semplificati, includiamo la dinamica dei servomotori e dei rotori.
+    
+    \vspace{0.5em}
+    \footnotesize
+    \begin{table}
+        \centering
+        \begin{tabular}{ll}
+            \toprule
+            \textbf{Stato} & \textbf{Descrizione} \\
+            \midrule
+            $x_{13}, x_{15}, x_{17}, x_{19}$ & Angoli di tilt attuali ($\theta_{rot}$) \\
+            $x_{14}, x_{16}, x_{18}, x_{20}$ & Velocità di tilt ($\dot{\theta}_{rot}$) \\
+            \midrule
+            $x_{21}, x_{23}, x_{25}$ & Velocità angolari rotori ($\omega_{rot}$) \\
+            $x_{22}, x_{24}, x_{26}$ & Accelerazioni angolari rotori ($\dot{\omega}_{rot}$) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \normalsize
+    \textit{Nota: Ogni attuatore è modellato come un sistema del secondo ordine.}
+\end{frame}
+
+% Slide 4: Ingressi di Controllo
+\begin{frame}{Ingressi di Controllo ($u \in \mathbb{R}^7$)}
+    Il sistema è sotto-attuato o sovra-attuato a seconda della configurazione di volo, controllato da 7 ingressi:
+    
+    \begin{equation*}
+        u = \begin{bmatrix} u_1 & \dots & u_7 \end{bmatrix}^T
+    \end{equation*}
+    
+    \begin{itemize}
+        \item \textbf{Propulsione ($u_1, u_2, u_3$):} Velocità angolari desiderate per i 3 rotori.
+        \item \textbf{Vettorizzazione ($u_4, u_5, u_6$):} Angoli di tilt desiderati intorno a $Y_B$.
+        \item \textbf{Yaw Control ($u_7$):} Angolo di tilt del rotore di coda intorno a $Z_B$.
+    \end{itemize}
+\end{frame}
+
+% Slide 5: Cinematica
+\begin{frame}{Cinematica: Lineare e Rotazionale}
+    \textbf{Velocità Lineari (Inerziali vs Body):}
+    \begin{equation}
+        \dot{p}_{inertial} = R_{b\rightarrow g}(\phi, \theta, \psi) \cdot v_{body}
+    \end{equation}
+    
+    \textbf{Velocità Angolari (Eulero vs Body Rates):}
+    La relazione è definita dalla matrice cinematica $T(\phi, \theta)$:
+    \begin{equation}
+        \begin{bmatrix} \dot{\phi} \\ \dot{\theta} \\ \dot{\psi} \end{bmatrix} = 
+        \begin{bmatrix}
+        1 & s_\phi t_\theta & c_\phi t_\theta \\
+        0 & c_\phi & -s_\phi \\
+        0 & \frac{s_\phi}{c_\theta} & \frac{c_\phi}{c_\theta}
+        \end{bmatrix}
+        \begin{bmatrix} p \\ q \\ r \end{bmatrix}
+    \end{equation}
+    \footnotesize{\textit{Singolarità per $\theta = \pm 90^\circ$ (Gimbal Lock).}}
+\end{frame}
+
+% Slide 6: Dinamica Traslazionale
+\begin{frame}{Dinamica Traslazionale (Newton)}
+    L'accelerazione lineare nel body frame deriva dal bilancio delle forze:
+    \begin{equation}
+        \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{w} \end{bmatrix} = \frac{1}{m} F_{TOT} - (\omega_{body} \times v_{body})
+    \end{equation}
+    
+    Dove $F_{TOT}$ somma tre contributi principali:
+    \begin{equation*}
+        F_{TOT} = F_{Thrust}(x, u) + F_{Gravity}(\phi, \theta) + F_{Aero}(v_{body})
+    \end{equation*}
+    
+    \vspace{0.5em}
+    \textbf{Nota critica:} La forza di spinta $F_{Thrust}$ dipende non linearmente dagli angoli di tilt attuali ($x_{13}, \dots$) e non istantaneamente dagli ingressi $u$.
+\end{frame}
+
+% Slide 7: Dinamica Rotazionale
+\begin{frame}{Dinamica Rotazionale (Eulero)}
+    L'evoluzione delle velocità angolari dipende dal momento d'inerzia $I_B$:
+    
+    \begin{equation}
+        \dot{\omega}_{body} = I_B^{-1} \left( M_{TOT} - \omega_{body} \times (I_B \omega_{body}) \right)
+    \end{equation}
+    
+    Composizione dei Momenti:
+    \begin{itemize}
+        \item $M_{thrust}$: Momenti generati dalla spinta vettorizzata.
+        \item $M_{gyro}$: Effetti giroscopici dei rotori (significativi ad alti RPM).
+        \item $M_{drag}$: Resistenza aerodinamica rotazionale.
+    \end{itemize}
+\end{frame}
+
+% Slide 8: Modello Attuatori
+\begin{frame}{Dinamica degli Attuatori}
+    Per aumentare la fedeltà del modello, i motori e i servi sono sistemi del \textbf{secondo ordine}. Esempio per il tilt ($\theta_i$):
+    
+    \begin{align}
+        \dot{x}_{2i-1} &= x_{2i} \quad \text{(Velocità)} \\
+        \dot{x}_{2i} &= \underbrace{-2\zeta \omega_n x_{2i}}_{\text{Smorzamento}} + \underbrace{\omega_n^2 (u_{cmd} - x_{2i-1})}_{\text{Rigidezza/Errore}}
+    \end{align}
+    
+    \begin{alertblock}{Implicazione di Controllo}
+        Questo introduce un ritardo di fase tra il comando $u$ e la forza generata, che il controllore di assetto deve gestire per evitare oscillazioni.
+    \end{alertblock}
 \end{frame}
 
 % ============================================================
@@ -1060,6 +1222,139 @@ Tali quantità sono calcolate come uscite di tre PID.
     \end{itemize}    
 \end{frame}
 
+% ===========================================================
+% MONTECARLO HOVERING
+% ===========================================================
+\begin{frame}
+    \vfill
+    \centering
+    {\Huge \textbf{Analisi di Monte Carlo per il volo verticale}}
+    \vfill
+\end{frame}
+
+% --- Slide 2: Setup Sperimentale ---
+\begin{frame}{Setup Monte Carlo: Recovery Test 3D}
+    Test di recupero da condizioni iniziali degradate ($N=100$ run).
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Target:} Punto fisso $[0, 0, -10]$ \si{\meter}.
+        \item \textbf{Perturbazioni (Uniformi):}
+        \begin{itemize}
+            \item \textbf{Posizione Planare (X, Y):} $\pm \SI{5}{\meter}$.
+            \item \textbf{Quota (Z):} $[-15, -5]$ \si{\meter}.
+            \item \textbf{Assetto:} $\phi, \theta \in [-20^\circ, +20^\circ]$ (Stress test).
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.2cm}
+    \textit{Obiettivo: Validare la capacità di "Homing" isotropico.}
+\end{frame}
+
+% --- Slide 3: Robustezza Totale ---
+\begin{frame}{Statistiche di Convergenza}
+    \begin{center}
+        \begin{beamerboxesrounded}[upper=block title, lower=block body, shadow=true]{Risultato Globale}
+            \centering
+            \huge \textbf{Success Rate: 100\%}
+        \end{beamerboxesrounded}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Sicurezza:} Nessun crash registrato su 100 tentativi estremi.
+        \item \textbf{Stabilità:} Il sistema recupera l'assetto anche partendo da $20^\circ$ di inclinazione.
+    \end{itemize}
+\end{frame}
+
+% --- Slide 4: Precisione Planare (X vs Y) ---
+\begin{frame}{Analisi Differenziale Assi Planari (X, Y)}
+    Emergono comportamenti dinamici diversi tra il canale Longitudinale (X) e Laterale (Y).
+    
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lcccc}
+            \toprule
+            \textbf{Canale} & \textbf{RMSE Mediana} & \textbf{RMSE Medio} & \textbf{Max Error} & \textbf{Comportamento} \\
+            \midrule
+            \textbf{Laterale (Y)} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \textcolor{blue}{Consistente} \\
+            \textbf{Longit. (X)} & \cellcolor{green!20}$\mathbf{< \SI{10}{\micro\meter}}$ & \cellcolor{red!10}\SI{5.48}{\meter} & \SI{135}{\meter} & \textcolor{red}{Bimodale} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \begin{alertblock}{Diagnosi del "Professore"}
+        \begin{itemize}
+            \item \textbf{Caso Tipico (75\% dei casi):} Il controllo su X è \textbf{chirurgico} (errori in $\mu m$), superiore alla Y.
+            \item \textbf{Outliers (25\% dei casi):} In condizioni specifiche (es. pitch iniziale opposto al target), il drone satura e "slitta" (drift) accumulando errore metrico.
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+% --- Slide 5: Precisione Verticale (Z) ---
+\begin{frame}{Performance Canale Verticale (Z)}
+    Il mantenimento della quota è robusto e disaccoppiato dalle problematiche planari.
+    
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item \textbf{RMSE Medio:} \SI{7.7}{\ milli\meter}
+                \item \textbf{RMSE Mediana:} $< \SI{1}{\micro\meter}$
+                \item \textbf{Max Error:} \SI{17}{\centi\meter}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Valutazione}
+                Eccellente. Anche nei casi di "drift" planare su X, la quota viene mantenuta perfettamente. Questo conferma la bontà del disaccoppiamento nel design del controllore.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- Slide 6: Analisi Ratei (La Causa del Drift) ---
+\begin{frame}{Analisi Sforzo Attuatori (Inner Loop)}
+    Perché la X ha degli outliers? Guardiamo i ratei richiesti.
+    
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Asse} & \textbf{Attività Media (RMSE)} & \textbf{Picco Max} & \textbf{Stress} \\
+            \midrule
+            Roll ($p$) & $\approx 0$ & $3 \times 10^{-4}$ & Nullo \\
+            Yaw ($r$) & $\approx 0$ & $2 \times 10^{-4}$ & Nullo \\
+            \rowcolor{yellow!20}\textbf{Pitch ($q$)} & \textbf{\SI{0.025}{rad/s}} & \textbf{\SI{0.55}{rad/s}} & \textbf{Alto} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \textbf{Conclusione Tecnica:}
+    Il canale di Pitch lavora sotto stress elevato (picchi di \SI{31}{\degree\per\second}).
+    Gli errori su X nascono quando la richiesta di coppia di pitch eccede la banda passante o l'autorità istantanea dei rotori, causando un ritardo nella frenata.
+\end{frame}
+
+% --- Slide 7: Sintesi Finale ---
+\begin{frame}{Sintesi Validazione Hovering}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \textbf{Stato Sistema:}
+            \begin{itemize}
+                \item[\checkmark] \textbf{Safety:} 100\% Convergenza (Nessun crash).
+                \item[\checkmark] \textbf{Precisione Nominale:} Eccellente su tutti gli assi ($< 3$cm).
+                \item[\textbf{!}] \textbf{Limiti:} Tendenza al drift su X (Pitch) in manovre di recupero estreme.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{block}{Roadmap}
+                Il controllore è \textbf{pronto per il volo} in condizioni nominali.
+                Si consiglia un tuning più aggressivo del guadagno derivativo (D) sul Pitch per limitare i drift negli outliers.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % ============================================================
 % CONTROLLO ORIZZONTALE
 % ============================================================
@@ -1221,53 +1516,53 @@ Tali quantità sono calcolate come uscite di tre PID.
     compensi quasi completamente la gravità; il controllore agisce in caso di variazioni sulla velocità o di disturbi. 
 \end{frame}
 
-% ============================================================
-% BANK-TO-TURN (BTT) - FISICA E CINEMATICA
-% ============================================================
-\begin{frame}{Strategia di Virata: Bank-to-Turn (BTT)}
-    \small
-    Il BTT è la strategia primaria in crociera: sfrutta l'inclinazione della portanza ($L$) per generare forza centripeta, ovviando alla bassa autorità di imbardata del tricottero.
-    \vspace{0.5cm}\\
-        \textbf{Principi Fisici:}
-        In virata coordinata, la componente orizzontale di $L$ sostiene l'accelerazione radiale:
-        \begin{equation}
-            L \sin(\phi) = m V_{tas} \dot{\psi}
-        \end{equation}
+% % ============================================================
+% % BANK-TO-TURN (BTT) - FISICA E CINEMATICA
+% % ============================================================
+% \begin{frame}{Strategia di Virata: Bank-to-Turn (BTT)}
+%     \small
+%     Il BTT è la strategia primaria in crociera: sfrutta l'inclinazione della portanza ($L$) per generare forza centripeta, ovviando alla bassa autorità di imbardata del tricottero.
+%     \vspace{0.5cm}\\
+%         \textbf{Principi Fisici:}
+%         In virata coordinata, la componente orizzontale di $L$ sostiene l'accelerazione radiale:
+%         \begin{equation}
+%             L \sin(\phi) = m V_{tas} \dot{\psi}
+%         \end{equation}
         
-        Dall'equilibrio verticale ($L \cos\phi = mg$), si ricava l'angolo di rollio necessario:
-        \begin{equation}
-            \phi_{des} = \arctan \left( \frac{V_{tas} \dot{\psi}}{g} \right)
-        \end{equation}
+%         Dall'equilibrio verticale ($L \cos\phi = mg$), si ricava l'angolo di rollio necessario:
+%         \begin{equation}
+%             \phi_{des} = \arctan \left( \frac{V_{tas} \dot{\psi}}{g} \right)
+%         \end{equation}
 
-        \textbf{Fattore di Carico ($n$):}
-        Per mantenere la quota, la spinta deve compensare l'aumento del peso apparente:
-        \begin{equation}
-            n = \frac{1}{\cos\phi} \implies F_{z,req} \propto \frac{mg}{\cos\phi}
-        \end{equation}
+%         \textbf{Fattore di Carico ($n$):}
+%         Per mantenere la quota, la spinta deve compensare l'aumento del peso apparente:
+%         \begin{equation}
+%             n = \frac{1}{\cos\phi} \implies F_{z,req} \propto \frac{mg}{\cos\phi}
+%         \end{equation}
 
-\end{frame}
+% \end{frame}
 
-% ============================================================
-% BTT - ARCHITETTURA DI CONTROLLO
-% ============================================================
-\begin{frame}{Controllo Laterale e Coordinazione}
-    \small
-    L'obiettivo è minimizzare lo scivolamento laterale ($\beta \approx 0$) durante il cambio di rotta.
+% % ============================================================
+% % BTT - ARCHITETTURA DI CONTROLLO
+% % ============================================================
+% \begin{frame}{Controllo Laterale e Coordinazione}
+%     \small
+%     L'obiettivo è minimizzare lo scivolamento laterale ($\beta \approx 0$) durante il cambio di rotta.
 
-    \begin{block}{Outer Loop: Controllo di Traiettoria}
-        L'errore $e_y$ genera il comando di rollio $\phi_{cmd}$:
-        \begin{equation}
-            \phi_{cmd} = \text{PID}(e_y) \quad \text{con } |\phi| < 30^\circ
-        \end{equation}
-    \end{block}
+%     \begin{block}{Outer Loop: Controllo di Traiettoria}
+%         L'errore $e_y$ genera il comando di rollio $\phi_{cmd}$:
+%         \begin{equation}
+%             \phi_{cmd} = \text{PID}(e_y) \quad \text{con } |\phi| < 30^\circ
+%         \end{equation}
+%     \end{block}
 
-    \begin{block}{Inner Loop: Coordinazione dell'Imbardata}
-        Per evitare lo "skidding", il rateo di imbardata desiderato $r_{req}$ è vincolato cinematicamente all'assetto:
-        \begin{equation}
-            r_{req} = \frac{g}{V_{tas}} \sin(\phi) \cos(\theta)
-        \end{equation}
-    \end{block}
-\end{frame}
+%     \begin{block}{Inner Loop: Coordinazione dell'Imbardata}
+%         Per evitare lo "skidding", il rateo di imbardata desiderato $r_{req}$ è vincolato cinematicamente all'assetto:
+%         \begin{equation}
+%             r_{req} = \frac{g}{V_{tas}} \sin(\phi) \cos(\theta)
+%         \end{equation}
+%     \end{block}
+% \end{frame}
 
 \begin{frame}{Outer Loop: Controllo di Velocità}
     L'obiettivo è raggiungere la velocità di crociera $v_{x,des} = 25 m/s$.\\
@@ -1422,128 +1717,127 @@ Tali quantità sono calcolate come uscite di tre PID.
     \end{table}
 \end{frame}
 
-
 % ===========================================================
-% ANALISI DI STABILITA
+% MONTECARLO
 % ===========================================================
-\begin{frame}{Analisi di Stabilità Lineare}
-    \small
-    L'obiettivo è dimostrare la \textbf{stabilità asintotica locale} nei punti di equilibrio critici (Hover e Cruise).
-    
-    \begin{block}{Metodologia: Linearizzazione di Lyapunov}
-        Il sistema non lineare $\mathbf{\dot{x}} = \mathbf{f}(\mathbf{x, u})$ viene approssimato nell'intorno di $(\mathbf{x}_e, \mathbf{u}_e)$:
-        \begin{equation*}
-            \mathbf{A} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \in \mathbb{R}^{26 \times 26}
-        \end{equation*}
-    \end{block}
-
-    \begin{itemize}
-        \item \textbf{Criterio di Stabilità:} Tutti gli autovalori $\lambda_i = \sigma_i \pm j\omega_i$ devono avere $\text{Re}(\lambda_i) < 0$.
-        \item \textbf{Smorzamento ($\zeta$):} Definisce la capacità di dissipare perturbazioni:
-        \begin{equation*}
-            \zeta = \frac{-\sigma}{\sqrt{\sigma^2 + \omega^2}}
-        \end{equation*}
-    \end{itemize}
-    
+% --- Slide 1: Titolo ---
+\begin{frame}
+    \vfill
     \centering
-    
+    {\Huge \textbf{Analisi Monte Carlo per il volo orizzontale}}
+    \vfill
 \end{frame}
 
-\begin{frame}{Analisi dei Modi: Assetto di Hovering}
-    \small
-    In hovering ($V_x \approx 0$), il sostentamento è puramente vettoriale. L'analisi degli autovalori conferma la stabilità locale:
+%% --- Slide 2: Obiettivo e Setup ---
+\begin{frame}{Setup Sperimentale: Case 3 "noWF"}
+    Analisi delle prestazioni in Crociera ($N=100$ run) con configurazione aggiornata.
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Obiettivo:} Verificare se la robustezza è mantenuta rimuvendo il filtro/peso (noWF).
+        \item \textbf{Target:} $V_x = \SI{25}{m/s}$, $Z = \SI{-10}{m}$.
+        \item \textbf{Risultato Atteso:} Mantenimento della stabilità e tracciamento dei riferimenti.
+    \end{itemize}
+\end{frame}
 
-    \begin{table}[]
-        \footnotesize
+% --- Slide 3: Robustezza (Il Grande Successo) ---
+\begin{frame}{Statistiche di Convergenza}
+    Rispetto ai test precedenti, la stabilità del sistema è assoluta.
+    
+    \vspace{0.5cm}
+    \begin{center}
+        \begin{beamerboxesrounded}[upper=block title, lower=block body, shadow=true]{Risultato Globale}
+            \centering
+            \huge \textbf{Success Rate: 100\%}
+        \end{beamerboxesrounded}
+    \end{center}
+    \vspace{0.5cm}
+    
+    \begin{itemize}
+        \item \textbf{Sicurezza:} 100 su 100 simulazioni completate senza crash.
+        \item \textbf{Significato:} Il sistema è estremamente robusto alle condizioni iniziali perturbate. Non soffre più di divergenze numeriche o stalli catastrofici.
+    \end{itemize}
+\end{frame}
+
+% --- Slide 4: Canale Velocità (Il Problema) ---
+\begin{frame}{Analisi Velocità Longitudinale ($V_x$)}
+    Si rileva un'anomalia critica nel tracciamento della velocità target (\SI{25}{m/s}).
+    
+    \vspace{0.2cm}
+    \begin{table}
         \centering
-        \begin{tabular}{l|c|c|l}
-            \textbf{Modo} & \textbf{Freq. [rad/s]} & \textbf{Smorzamento ($\zeta$)} & \textbf{Descrizione} \\ \hline
-            Alta Freq. & 85.49 & 0.815 & Dinamica attuatori e Inner Loop \\
-            Traiettoria & 2.32 -- 3.01 & $> 0.8$ & Risposta SMC (posizionamento) \\
-            Traslazione & 0.44 & 0.578 & Deriva da sotto-attuazione \\
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Metrica} & \textbf{Valore} & \textbf{Dev. Std.} & \textbf{Diagnosi} \\
+            \midrule
+            RMSE Medio & \SI{10.35}{m/s} & \SI{0.002}{m/s} & \textcolor{red}{\textbf{Bias Sistematico}} \\
+            RMSE Mediana & \SI{10.35}{m/s} & - & Errore Costante \\
+            \bottomrule
         \end{tabular}
     \end{table}
+    
+    \begin{alertblock}{Diagnosi del "Professore"}
+        L'errore non è stocastico (la deviazione standard è nulla). Il drone si "inchioda" stabilmente a una velocità errata ($\approx \SI{14.65}{m/s}$ oppure $\approx \SI{35.35}{m/s}$).
+        \textbf{Causa probabile:} Errore di Trim del Pitch. Il controllore non comanda un angolo di picchiata sufficiente per raggiungere i 25 m/s, oppure satura un integratore.
+    \end{alertblock}
+\end{frame}
 
+% --- Slide 5: Canale Verticale (Z) ---
+\begin{frame}{Analisi Quota ($Z$)}
+    Nonostante l'errore di velocità, il controllo di quota è eccellente.
+    
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item \textbf{RMSE Medio:} \SI{0.44}{\ milli\meter}
+                \item \textbf{RMSE Mediana:} \SI{0.18}{\ milli\meter}
+                \item \textbf{Max Error:} \SI{9}{\ milli\meter}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Valutazione}
+                \textcolor{green!60!black}{\textbf{Perfetto.}}
+                Il disaccoppiamento funziona: l'incapacità di raggiungere la velocità target non compromette la tenuta della quota. Il drone vola "lento ma preciso in Z".
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- Slide 6: Canale Laterale (Y) ---
+\begin{frame}{Analisi Laterale ($Y$)}
+    Conferma del comportamento in anello aperto (Open Loop).
+    
+    \vspace{0.3cm}
     \begin{itemize}
-        \item \textbf{Inner Loop (PID):} Tarato per evitare risonanze strutturali.
-        \item \textbf{Outer Loop (SMC):} Utilizzo della funzione $\tanh(s/\Phi)$ per eliminare il chattering e garantire robustezza.
+        \item \textbf{RMSE Medio:} \SI{97.6}{\meter}
+        \item \textbf{Picco Max:} \SI{341}{\meter}
+        \item \textbf{Ratei $p, r$:} Praticamente nulli ($\approx 10^{-17}$ rad/s).
     \end{itemize}
+    
+    \vspace{0.5cm}
+    \textit{Il drone mantiene un assetto perfettamente livellato (ratei nulli) ma deriva lateralmente a causa dell'assenza di una legge di guida di posizione Y.}
+\end{frame}
 
-    \begin{block}{Osservazione}
-        L'assenza di accoppiamenti aerodinamici permette una risposta "deadbeat" (senza sovraelongazioni) nel controllo di posizione.
+% --- Slide 7: Sintesi Finale ---
+\begin{frame}{Conclusioni Case 3 "noWF"}
+    \centering
+    \begin{tabular}{l c l}
+        \toprule
+        \textbf{Aspetto} & \textbf{Stato} & \textbf{Note} \\
+        \midrule
+        \textbf{Robustezza} & \cellcolor{green!20}\textbf{OTTIMA} & 100\% Successo. Sistema affidabile. \\
+        \textbf{Quota ($Z$)} & \cellcolor{green!20}\textbf{ECCELLENTE} & Errore sub-millimetrico. \\
+        \textbf{Velocità ($V_x$)} & \cellcolor{red!20}\textbf{CRITICA} & \textbf{Bias di 10 m/s.} Tuning necessario. \\
+        \textbf{Laterale ($Y$)} & \cellcolor{yellow!20}\textbf{OPEN LOOP} & Deriva attesa (Navigazione mancante). \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{0.5cm}
+    \begin{block}{Azione Correttiva Richiesta}
+        Il problema prioritario non è più la stabilità, ma la prestazione su $V_x$. 
+        È necessario verificare il \textbf{Feedforward del Pitch} o il guadagno integrale sul canale velocità per eliminare l'errore a regime.
     \end{block}
-\end{frame}
-
-\begin{frame}{Analisi nel Piano Complesso: Hovering}
-    \begin{columns}[c]
-        \begin{column}{0.6\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{../../img/controllo_verticale/rlocus_V.png}
-            \captionof{figure}{Mappa Poli-Zeri in hovering ($V_x \approx 0$).}
-        \end{column}
-
-        \begin{column}{0.4\textwidth}
-            \small
-            \textbf{Caratteristiche del regime:}
-            \begin{itemize}
-                \item \textbf{Modi Rapidi:} Poli dell'Inner Loop molto a sinistra ($\sigma < -60$), indicando una stabilizzazione d'assetto quasi istantanea.
-                \item \textbf{Modi Lenti:} Cluster di poli SMC con $\zeta \approx 1$, tipico di una risposta smorzata senza interazioni aerodinamiche.
-                \item \textbf{Integrazione:} Poli nell'origine associati agli stati integrativi dei PID per l'annullamento dell'errore a regime.
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}{Assetto di Cruise e Separazione di Scala}
-    \small
-    A $V_x = 25$ m/s, dominano le forze aerodinamiche. Emergono modi a smorzamento ridotto ($\zeta \approx 0.24$).
-
-    \begin{columns}[T]
-        \begin{column}{0.6\textwidth}
-            \textbf{Trade-off dello smorzamento:}
-            \begin{itemize}
-                \item Un $k_{d,\theta}$ eccessivo innesca \textbf{cicli limite} e vibrazioni negli attuatori (fissati a 15 Hz).
-                \item Lo smorzamento $\zeta = 0.25$ è il limite fisico oltre il quale insorge instabilità numerica.
-            \end{itemize}
-            
-            \textbf{Separazione delle Scale Temporali:}
-            \begin{equation*}
-                \frac{\omega_{Inner}}{\omega_{Outer}} > 10
-            \end{equation*}
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \centering
-            
-            \vspace{0.2cm}
-            \footnotesize
-            \textbf{Inner Loop:} 60--95 rad/s\\
-            \textbf{Outer Loop:} 0.1--3 rad/s
-        \end{column}
-    \end{columns}
-
-    \begin{block}{Compensazione del Phugoid}
-        Il modo lento di scambio energia (quota-velocità) è smorzato sinteticamente tramite un elevato guadagno $K_{d,z} = 10$ sulla velocità verticale.
-    \end{block}
-\end{frame}
-
-\begin{frame}{Analisi nel Piano Complesso: Cruise}
-    \begin{columns}[c]
-        \begin{column}{0.6\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{../../img/controllo_orizzontale/rlocus_H.png}
-            \captionof{figure}{Mappa Poli-Zeri in crociera ($V_x = 25$ m/s).}
-        \end{column}
-
-        \begin{column}{0.4\textwidth}
-            \small
-            \textbf{Effetti Aerodinamici:}
-            \begin{itemize}
-                \item \textbf{Migrazione dei Poli:} I modi traslazionali aumentano la frequenza naturale $\omega_n$ per l'incremento del dynamic pressure ($q$).
-                \item \textbf{Modo Phugoid:} Stabilizzato artificialmente dal loop di velocità ($K_{d,z}$), forzando i poli verso la regione di maggiore smorzamento.
-                \item \textbf{Accoppiamento L-D:} Presenza di poli a basso smorzamento ($\zeta \approx 0.24$) dovuti alla sotto-attuazione in virata coordinata.
-            \end{itemize}
-        \end{column}
-    \end{columns}
 \end{frame}
 
 % ============================================================
