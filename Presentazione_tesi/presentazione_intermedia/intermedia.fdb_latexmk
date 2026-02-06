@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1770131821.94367 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770131827.79138 0
+["pdflatex"] 1770199425.69204 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770199442.79361 0
   "../../img/VTOL.png" 1769677789 950489 e265faf55272d7e8a865b86254410141 ""
   "../../img/controllo_orizzontale/rlocus_H.png" 1770115757 21971 48f9c36bd068db20d84c9d56016834f5 ""
   "../../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
@@ -302,12 +302,12 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/translator/translator.sty" 1622471510 8765 56d370785f0143111ff9898b5adfe08e ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770131821 69876 1e55a119c44ba38e0c1216cd03a0d8cb ""
-  "intermedia.aux" 1770131827 11114 51b7925364dac70023e3e254a41bba66 "pdflatex"
-  "intermedia.nav" 1770131827 7061 60220c95735a5397202a3b9095c080dd "pdflatex"
-  "intermedia.out" 1770131827 1073 fec63842c21b37cb080d2d7751a49fbc "pdflatex"
-  "intermedia.tex" 1770131821 69876 1e55a119c44ba38e0c1216cd03a0d8cb ""
-  "intermedia.toc" 1770131827 465 bd8069cd5caf437d4e9aa15b0103d048 "pdflatex"
+  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770199419 70183 7b1be3afbf4fd1187f55ce1b2f8919a8 ""
+  "intermedia.aux" 1770199441 11114 51b7925364dac70023e3e254a41bba66 "pdflatex"
+  "intermedia.nav" 1770199441 7061 60220c95735a5397202a3b9095c080dd "pdflatex"
+  "intermedia.out" 1770199441 1073 fec63842c21b37cb080d2d7751a49fbc "pdflatex"
+  "intermedia.tex" 1770199419 70183 7b1be3afbf4fd1187f55ce1b2f8919a8 ""
+  "intermedia.toc" 1770199441 465 bd8069cd5caf437d4e9aa15b0103d048 "pdflatex"
   (generated)
   "intermedia.aux"
   "intermedia.log"

@@ -4,7 +4,7 @@ clear variables; close all; clc;
 % Carica parametri (assicurati che mainTest2 o un file di config li carichi)
 run('mainTest2.m'); % Eseguiamo il main per caricare la struct 'parametri'
 close all; % Chiudiamo i plot del main
-
+%%
 % Impostazioni per Hovering
 target_hover = [0, 0, -10]; % Vx=0, Theta=0, Z=-10
 test_id_hover = 1;          % Controllo verticale

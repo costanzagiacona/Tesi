@@ -492,28 +492,29 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Stabilità Direzionale: Momento della Pinna}
-    La superficie verticale di coda è modellata per garantire la \textit{Weathercock stability}:
-    
+\begin{frame}{Momento della Pinna in Coda}
+    Il momento generato dalla pinna di coda $\bm{M}_{pinna}$ agisce come contributo stabilizzante e smorzante, dipendente dalle velocità angolari e dalla velocità longitudinale:
+
     \begin{equation}
-        \bm{M}_{\text{fin}} = 
+        \bm{M}_{pinna} = 
+        \begin{bmatrix} M_{pinna,x} \\ M_{pinna,y} \\ M_{pinna,z} \end{bmatrix} =
         \begin{bmatrix} 
-        -p K_{d,roll} - \beta K_{s,roll} \\ 
+        -p \, \alpha_{0x} - \alpha_{1x} \, v_y^2 \\ 
         0 \\ 
-        -r K_{d,yaw} - \beta K_{s,yaw} 
+        -r \, (\alpha_{0z} + \alpha_{1z} \, v_y^2) 
         \end{bmatrix}
     \end{equation}
 
     \begin{itemize}
-        \item \textbf{Stabilità Statica ($K_s$):} Coppia raddrizzante proporzionale allo scivolamento laterale $\beta$.
-        \item \textbf{Smorzamento ($K_d$):} Opposizione alle velocità angolari $p$ e $r$.
+        \item $p, r$: Velocità angolari rispettivamente di rollio ($X_B$) e imbardata ($Z_B$).
+        \item $v_y$: Velocità longitudinale lungo l'asse $Y_B$.
+        \item $\alpha_{0x}, \alpha_{1x}, \alpha_{0z}, \alpha_{1z}$: Coefficienti aerodinamici specifici della pinna.
     \end{itemize}
-    \vspace{0.2cm}
-    \centering
-    \footnotesize
-    \textit{Fondamentale per la dinamica Bank-to-Turn in fase di crociera.}
-\end{frame}
 
+    \begin{block}{Osservazioni}
+        La pinna non genera momento di beccheggio ($M_{pinna,y} = 0$) e i segni negativi indicano che il momento si oppone al moto rotatorio, garantendo stabilità direzionale.
+    \end{block}
+\end{frame}
 
 % ============================================================
 % 3. ARCHITETTURA DI CONTROLLO
@@ -1373,10 +1374,10 @@ Tali quantità sono calcolate come uscite di tre PID.
     L'imbardata ($Yaw$) è controllata tramite la differenza di spinta tra i due rotori:
     \begin{equation}
         \begin{cases}
-            T_{Right} = \frac{T_{tot}}{2} - u_{\psi} \\
-            T_{Left}  = \frac{T_{tot}}{2} + u_{\psi}
+            T_{1} = \frac{T_{tot}}{2} - u_{\psi} \\
+            T_{2}  = \frac{T_{tot}}{2} + u_{\psi}
         \end{cases}
-        \implies \omega_{i} = \sqrt{\frac{T_{i}}{K_T}}
+        \implies \omega_{i} = \sqrt{\frac{T_{i}}{K}}
     \end{equation}
 
     \vspace{0.2cm}
@@ -1384,8 +1385,8 @@ Tali quantità sono calcolate come uscite di tre PID.
     Il rollio ($Roll$) è controllato differenzialmente, mentre il beccheggio ($Pitch$) si somma collettivamente all'angolo base:
     \begin{equation}
         \begin{cases}
-            \delta_{Right} = \alpha_{base} + u_{\theta} - u_{\phi} \\
-            \delta_{Left}  = \alpha_{base} + u_{\theta} + u_{\phi}
+            \delta_{1} = \alpha_{base} + u_{\theta} - u_{\phi} \\
+            \delta_{2}  = \alpha_{base} + u_{\theta} + u_{\phi}
         \end{cases}
     \end{equation}
     
@@ -1432,7 +1433,7 @@ Tali quantità sono calcolate come uscite di tre PID.
     \begin{block}{Metodologia: Linearizzazione di Lyapunov}
         Il sistema non lineare $\mathbf{\dot{x}} = \mathbf{f}(\mathbf{x, u})$ viene approssimato nell'intorno di $(\mathbf{x}_e, \mathbf{u}_e)$:
         \begin{equation*}
-            \mathbf{A} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \in \mathbb{R}^{30 \times 30}
+            \mathbf{A} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \in \mathbb{R}^{26 \times 26}
         \end{equation*}
     \end{block}
 

@@ -11,14 +11,14 @@ paramFlag = 0; % se 1 print del valore dei parametri
 test_id = 0;    % flag per cambiare controllo
 disturbo = 0;
 
-tspan = [0 200];              % intervallo di simulazione
+tspan = [0 100];              % intervallo di simulazione
 
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
 fase = 3;       
 
-test_casi = 3;  % flag per cambiare le condizioni di simulazione
+test_casi = 1;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero
@@ -114,10 +114,12 @@ I_rotor_tail = I_rotor;
 
 
 C_d = ((m-1)*g)/(rho*s*(v_air)^2); %1.28;  %coeff. di resistenza (drag) aerodinamica lungo asse X
+% C_d = 0.5;
 C_y = 0; % trascurabile
 % scelto in modo tale che se v_x = 90 km/h (25 m/s) la portanza contrasti
 % la gravità
 C_l = (m*g)/(rho*s*(v_air)^2); %0.854; %coeff. di portanza (lift) aerodinamica 
+
 
 %parametri distanza (m) tra centro di massa e forze aerodinamiche (per il calcolo del momento delle forze aerodinamiche)
 
@@ -298,7 +300,7 @@ elseif fase == 3
             x0(4) = 25;
             x4eq = x0(4);
             x0(7) = deg2rad(5);
-            x0(8) = deg2rad(-5);
+            x0(8) = deg2rad(10);
             x0(9) = deg2rad(5);
             F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
             F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
@@ -341,6 +343,9 @@ for k = 1:length(t)
     U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id, target);
 end
 
+
+% MonteCarloVTOL(parametri);
+
 %% GRAFICI
 xp = x(:,1);
 yp = x(:,2);
@@ -357,16 +362,16 @@ for i = 1:size(x,1)
     phi_i = x(i, 7); 
     theta_i = x(i, 8); 
     psi_i = x(i, 9);
-    
+
     % Calcola la matrice per questo istante
     R = matriceRotazione(phi_i, theta_i, psi_i);
-    
+
     % Velocità body all'istante i
     V_body_i = [x(i,4); x(i,5); x(i,6)];
-    
+
     % Trasformazione
     V_global_i = R * V_body_i;
-    
+
     % Salva la componente Z globale
     vz_global(i) = V_global_i(3);
 end
@@ -438,7 +443,8 @@ if flagPlot == 1
     h4 = plot(time, p, 'r', time, q, 'b', time, r, 'g');
     set(h4, 'LineWidth', 2)
     legend('p','q','r', 'FontSize', 14, 'Interpreter','tex', 'Location','best')
-    % ylim([-1 1]);grid on
+    % ylim([-1 1]);
+    grid on
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Vel. angolari [rad/s]', 'FontSize', 14)
     set(gca, 'FontSize', 14)
@@ -474,7 +480,8 @@ if flagPlot == 1
     subplot(3,1,3);
     h5=plot(time, yp, 'r', 'LineWidth', 2); hold on;
     h6=yline(0,'--k','LabelHorizontalAlignment','left','FontSize',12,'LineWidth', 2);
-    grid on; ylim([-10 10])
+    grid on; 
+    ylim([-10 10])
     xlabel('Time [s]', 'FontSize', 14)
     ylabel('Posizione y [m]', 'FontSize', 14)
     title('Posizione lungo y','FontSize',16)
@@ -549,7 +556,7 @@ if flagPlot == 1
     grid on
     ylabel('[grad]','FontSize',14)
     set(gca,'FontSize',14)
- 
+
 end
 
 

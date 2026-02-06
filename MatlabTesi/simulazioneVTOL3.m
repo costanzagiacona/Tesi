@@ -92,19 +92,66 @@ J = matriceJ(phi,theta,psi); % matrice di trasformazione  : OmegaVtol_body (p,q,
 F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
 F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
 
+%% CALCOLO AERODINAMICA (Wind Frame & Body Frame)
 
-% Va = sqrt((x(4)^2)+(x(5)^2)+(x(6)^2)); % airspeed 
-% alpha = atan2(x(6),x(4)); % angle of attack   
-% %beta = atan2(x(5),sqrt((x(4)^2)+(x(6)^2))); % sideslip angle
-% beta = 0;
-% 
-% Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
-% F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
-% if alpha >= pi/2-0.001
-%     %F_aeroWing = F_aero_wing(params.C_l,params.C_d,params.C_y, params.rho, params.s,Va,Rwb);
-%     F_aeroWing = F_aero_wing(0,params.C_d,0, params.rho, params.s,Va,Rwb);
-% end
-% F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
+% 1. Estrazione velocità nel Body Frame
+u_b = x(4); 
+v_b = x(5);
+w_b = x(6);
+
+% 2. Calcolo True Airspeed (Va)
+% La velocità totale rispetto all'aria
+Va = norm([u_b, v_b, w_b]); 
+
+% Evitiamo singolarità se siamo fermi
+if Va < 0.1
+    Va = 0.1;
+    alpha = 0;
+    beta = 0;
+else
+    % 3. Calcolo Angolo di Attacco (Alpha) e Deriva (Beta)
+    % Alpha: angolo nel piano x-z (positivo se il vento arriva da sotto/muso su)
+    alpha = atan2(w_b, u_b);
+    % Beta: angolo di scivolata laterale (trascuriamo per ora o teniamo a 0)
+    beta = asin(v_b / Va); 
+end
+
+% 4. Modello Lineare del Coefficiente di Portanza (C_L)
+% params.C_l è il valore a alpha=0 (calettamento).
+% 2*pi è la pendenza teorica per profili sottili (dCl/dAlpha).
+C_La_slope = 2*pi; 
+Cl_dynamic = params.C_l + C_La_slope * alpha;
+
+% 5. Simulazione dello Stallo (Semplificata)
+% Oltre i +/- 15 gradi, il profilo stalla e il Cl non cresce più (o cala)
+alpha_stall = deg2rad(15);
+if alpha > alpha_stall
+    Cl_dynamic = params.C_l + C_La_slope * alpha_stall; % Saturazione positiva
+elseif alpha < -alpha_stall
+    Cl_dynamic = params.C_l - C_La_slope * alpha_stall; % Saturazione negativa
+end
+
+% 6. Matrice di Rotazione Wind -> Body (Rwb)
+% Necessaria per proiettare Lift e Drag sugli assi del drone.
+% Rotazione attorno all'asse Y di -alpha.
+ca = cos(alpha);
+sa = sin(alpha);
+% Nota: Beta è assunto piccolo/nullo per questa matrice semplificata
+Rwb = [ ca,  0, -sa;
+        0,   1,   0;
+        sa,  0,  ca ];
+
+% 7. Calcolo Forza Aerodinamica sull'ALA (in assi Body)
+% Usiamo la funzione F_aero_wing definita sotto, ma con il NUOVO Cl_dynamic
+F_aeroWing = F_aero_wing(Cl_dynamic, params.C_d, 0, params.rho, params.s, Va, Rwb);
+
+% 8. Calcolo Drag della Fusoliera (Body Drag)
+F_aeroBody = Drag_body(params.C_d_x, params.C_d_y, params.C_d_z, params.rho, ...
+                       params.s_body_x, params.s_body_y, params.s_body_z, ...
+                       u_b, v_b, w_b);
+
+
+
 %% eq. forze BODY FRAME
 
 % GRAVITA'
