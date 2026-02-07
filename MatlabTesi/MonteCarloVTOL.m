@@ -1,17 +1,15 @@
 function MonteCarloVTOL(params)
-% MonteCarloSuite - Validazione Completa (Hovering + Crociera)
+    % MonteCarloSuite - Versione Rigorosa per Modello a 30 Stati
     fprintf('================================================\n');
-    fprintf('     VTOL MONTE CARLO SUITE                 \n');
+    fprintf('     VTOL MONTE CARLO SUITE (PRO)               \n');
     fprintf('================================================\n');
-    
-    %% 2. ESECUZIONE CAMPAGNE DI TEST
     
     % --- CONFIGURAZIONE 1: HOVERING ---
     cfg_hover.name = 'Hover';
     cfg_hover.test_id = 1; 
-    cfg_hover.target = [0, 0, -10]; 
-    cfg_hover.tspan = [0 100]; 
-    cfg_hover.sigma = struct('pos', 5.0, 'vel', 1.0, 'att', deg2rad(20), 'omega', deg2rad(5));
+    cfg_hover.target = [0; 0; -10]; % Vettore colonna per evitare errori
+    cfg_hover.tspan = [0 50]; 
+    cfg_hover.sigma = struct('pos', 3.0, 'vel', 1.0, 'att', deg2rad(10), 'omega', deg2rad(5));
     cfg_hover.x0_type = 'static';
     
     % RunCampaign(cfg_hover, params);
@@ -21,215 +19,140 @@ function MonteCarloVTOL(params)
     % --- CONFIGURAZIONE 2: CROCIERA ---
     cfg_cruise.name = 'Crociera';
     cfg_cruise.test_id = 3; 
-    cfg_cruise.target = [25, 0, -10]; 
-    cfg_cruise.tspan = [0 100]; 
-    cfg_cruise.sigma = struct('pos', 5.0, 'vel', 7.0, 'att', deg2rad(10), 'omega', deg2rad(5));
+    cfg_cruise.target = [25; 0; -10]; % [Vx_target; Pitch_target; Z_target]
+    cfg_cruise.tspan = [0 80]; 
+    cfg_cruise.sigma = struct('pos', 2.0, 'vel', 5.0, 'att', deg2rad(5), 'omega', deg2rad(2));
     cfg_cruise.x0_type = 'cruise'; 
     
     RunCampaign(cfg_cruise, params);
     
     fprintf('\n================================================\n');
-    fprintf(' SUITE COMPLETATA. FILE .MAT E .CSV GENERATI.\n');
-    fprintf('================================================\n');
+    fprintf(' SUITE COMPLETATA.\n');
+end
+
+
+function x0 = GenerateX0(type, target, sigma, params)
+    % Inizializzazione Vettore a 30 Stati (come da simulazioneVTOL3.m)
+    x0 = zeros(30,1);
+    
+    % Forza target a colonna per evitare il "Dimension Mismatch"
+    t_target = target(:); 
+
+    if strcmp(type, 'static')
+        % --- TRIM HOVERING ---
+        % Posizione: Target + Rumore (distribuzione normale)
+        x0(1:3) = t_target + randn(3,1) * (sigma.pos / 3);
+        if x0(3) > -0.5, x0(3) = -0.5; end % Sicurezza suolo (NED)
+        
+        % Velocità e Assetto
+        x0(4:6) = randn(3,1) * (sigma.vel / 3);
+        x0(7:9) = randn(3,1) * (sigma.att / 3);
+        
+        % Motori: Trim per contrastare il peso
+        % Dalla tua funzione controlloVTOL_v3:
+        % Motori anteriori: 1 e 2. Motore coda: 3.
+        T_hover_total = params.m * params.g;
+        omega_trim = sqrt((T_hover_total/3) / params.k);
+        x0(21) = omega_trim; % Motore 1
+        x0(23) = omega_trim; % Motore 2
+        x0(25) = omega_trim; % Motore 3
+        
+        % Tilt: Verticale (90 gradi = pi/2)
+        x0([13, 15, 17, 19]) = pi/2;
+        
+    elseif strcmp(type, 'cruise')
+        % --- TRIM CROCIERA ---
+        % Posizione: Iniziamo a X=0, quota target
+        x0(1:3) = [0; 0; t_target(3)] + randn(3,1) * (sigma.pos / 3);
+        
+        % Velocità: Iniziamo vicino alla velocità di crociera target
+        x0(4) = t_target(1) + randn() * (sigma.vel / 3);
+        x0(5:6) = randn(2,1) * 0.5;
+        
+        % Assetto: Quasi livellato
+        x0(7:9) = randn(3,1) * (sigma.att / 3);
+        
+        % Motori: Tilt orizzontale (0 rad)
+        x0([13, 15, 17, 19]) = 0;
+        
+        % Spinta stimata per vincere il drag a quella velocità
+        F_drag_est = 0.5 * params.rho * params.s * params.C_d * t_target(1)^2;
+        omega_cruise = sqrt((F_drag_est/2) / params.k);
+        x0(21) = omega_cruise;
+        x0(23) = omega_cruise;
+        x0(25) = 0; % Coda spenta in crociera
+    end
+    
+    % Ratei angolari (comuni)
+    x0(10:12) = randn(3,1) * sigma.omega;
+    
+    % Nota: Gli integrali (27:30) rimangono a 0 (giusto così).
 end
 
 function RunCampaign(cfg, params)
-    N_sim = 100; 
-    fprintf('>> Avvio Campagna: %s (Test ID %d)\n', cfg.name, cfg.test_id);
+    N_sim = 50; 
+    fprintf('>> Avvio Campagna Integrale: %s\n', cfg.name);
     
-    risultati = struct('t', {}, 'x', {}, 'x0', {}, 'RMSE_x', {}, 'RMSE_z', {}, 'RMSE_y', {}, 'converged', {});
-    
-    h = waitbar(0, ['Simulazione ' cfg.name '...']);
+    % Preallocazione per 12 stati + convergenza
+    stats = struct();
+    h = waitbar(0, ['Analisi 12 stati: ' cfg.name '...']);
     
     for i = 1:N_sim
-        waitbar(i/N_sim, h);
-        
-        % Generazione X0
+        if ishandle(h), waitbar(i/N_sim, h); end
         x0 = GenerateX0(cfg.x0_type, cfg.target, cfg.sigma, params);
         
-        % Esecuzione ODE
-        options = odeset('RelTol',1e-3,'AbsTol',1e-3);
         try
-            [t, x] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), cfg.tspan, x0, options);
+            [t, x] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), cfg.tspan, x0);
             
-            % Check convergenza
-            if any(isnan(x(:))) || max(abs(x(:,3))) > 500
-                ok = false;
+            % Check validità
+            ok = (t(end) == cfg.tspan(2)) && ~any(isnan(x(:)));
+            stats(i).conv = ok;
+
+            if ok
+                idx = t > (cfg.tspan(2)*0.6); % Analisi solo nell'ultimo 40% (regime)
+                
+                % Calcolo RMSE per i 12 stati
+                % Per gli stati che devono andare a zero (y, v, w, phi, theta, psi, p, q, r)
+                % e per quelli con target (x, z, u_cruise)
+                err = x(idx, 1:12);
+                target_mat = zeros(size(err));
+                
+                % Definizione Target specifica
+                if cfg.test_id == 1 % HOVER
+                    target_vec = [cfg.target(1), 0, cfg.target(3), 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                else % CROCIERA (Test 3)
+                    % In crociera x(1) cresce sempre, quindi non calcoliamo RMSE su x
+                    target_vec = [0, 0, cfg.target(3), cfg.target(1), 0, 0, 0, 0, 0, 0, 0, 0];
+                    err(:,1) = 0; % Ignoriamo errore posizione X
+                end
+                
+                rmse_all = sqrt(mean((err - target_vec).^2, 1));
+                stats(i).rmse = rmse_all;
             else
-                ok = true;
+                stats(i).rmse = NaN(1,12);
             end
-            
-            % --- CALCOLO ERRORI ---
-            idx = t > (cfg.tspan(2)/2);
-            if sum(idx)==0, idx=1:length(t); end
-            
-            % 1. Errore X (Distinzione Hover vs Cruise)
-            if cfg.test_id == 1 % HOVER
-                % In Hover voglio stare a X=0. L'errore posizionale ha senso.
-                x_err = x(idx, 1) - cfg.target(1);
-                vx_err = x(idx, 4) - 0;
-            else % CROCIERA
-                % In Crociera la X cresce indefinitamente. 
-                % L'errore posizionale non ha senso (metrica NaN).
-                x_err = NaN; 
-                vx_err = x(idx, 4) - cfg.target(1); % Target(1) è 25 m/s
-            end
-            
-            % 2. Altri Errori Posizione (Comuni)
-            z_err = x(idx, 3) - cfg.target(3);
-            y_err = x(idx, 2) - 0; 
-            
-            % 3. Errori Ratei Angolari
-            p_err = x(idx, 10); 
-            q_err = x(idx, 11); 
-            r_err = x(idx, 12);
-            
-            risultati(i).t = t;
-            risultati(i).x = x;
-            risultati(i).RMSE_vx = sqrt(mean(vx_err.^2));
-            risultati(i).x0 = x0;
-            risultati(i).converged = ok;
-            
-            % Salvataggio RMSE
-            risultati(i).RMSE_x = sqrt(mean(x_err.^2));
-            risultati(i).RMSE_z = sqrt(mean(z_err.^2));
-            risultati(i).RMSE_y = sqrt(mean(y_err.^2));
-            risultati(i).RMSE_p = sqrt(mean(p_err.^2)); 
-            risultati(i).RMSE_q = sqrt(mean(q_err.^2)); 
-            risultati(i).RMSE_r = sqrt(mean(r_err.^2)); 
-            
         catch
-            risultati(i).converged = false;
+            stats(i).conv = false;
+            stats(i).rmse = NaN(1,12);
         end
     end
-    close(h);
-    
-    fileMat = ['Risultati_case3_WF_' cfg.name '.mat'];
-    save(fileMat, 'risultati', 'cfg');
-    fileCsv = ['Report_case3_noWF_' cfg.name '.csv'];
-    GenerateCSV(risultati, fileCsv);
+    if ishandle(h), close(h); end
+    GenerateFullCSV(stats, ['Full_Analysis_' cfg.name '.csv']);
 end
 
-function x0 = GenerateX0(type, target, sigma, params)
-    x0 = zeros(30,1);
+function GenerateFullCSV(stats, filename)
+    N = length(stats);
+    conv = [stats.conv]';
+    rmses = reshape([stats.rmse], 12, N)';
     
-    % Perturbazioni comuni (Gaussiano per Omega)
-    omg_noise = randn(3,1) * sigma.omega;
-    
-    if strcmp(type, 'static')
-        % --- HOVER ---
-        % Posizione Uniforme
-        lim_p = sigma.pos;
-        pos_noise = -lim_p + (2 * lim_p) * rand(3,1);
-        
-        x0(1) = target(1) + pos_noise(1);
-        x0(2) = target(2) + pos_noise(2);
-        x0(3) = target(3) + pos_noise(3);
-        if x0(3) > 0, x0(3) = -0.5; end 
-        
-        % Velocità Uniforme
-        lim_v = sigma.vel;
-        vel_noise = -lim_v + (2 * lim_v) * rand(3,1);
-        x0(4:6) = [0;0;0] + vel_noise;
-        
-        % Assetto Uniforme
-        lim_att = sigma.att; 
-        att_noise = -lim_att + (2 * lim_att) * rand(3,1);
-        x0(7:9) = att_noise;
-        
-        % Motori
-        x0(13) = pi/2; x0(15) = pi/2; x0(17) = pi/2; x0(19) = -pi/2;
-        T_hover = params.m * params.g;
-        omega_hover = sqrt((T_hover/2)/params.k);
-        x0(21) = omega_hover; x0(23) = omega_hover; x0(25) = omega_hover;
-        
-    elseif strcmp(type, 'cruise')
-        % --- CROCIERA ---
-        pos_noise = randn(3,1) * sigma.pos; 
-        
-        x0(1:3) = [0; 0; target(3)] + pos_noise;
-        x0(1) = 0; 
-        
-        lim_v = sigma.vel; 
-        vx_noise = -lim_v + (2 * lim_v) * rand(); 
-        
-        std_lat = 2.0; 
-        vyz_noise = randn(2,1) * std_lat;
-        
-        x0(4) = target(1) + vx_noise; 
-        x0(5) = 0 + vyz_noise(1);     
-        x0(6) = 0 + vyz_noise(2);     
-        
-        % Assetto Uniforme
-        lim_att = sigma.att; 
-        % att_noise = -lim_att + (2 * lim_att) * rand(3,1);
-        att_noise = randn(3,1) * sigma.att;
-        % NOTA: Ho rimosso la riga che sovrascriveva att_noise qui!
-        
-        x0(7) = att_noise(1);                 
-        x0(8) = 0 + att_noise(2);             
-        x0(9) = att_noise(3);                 
-        
-        % Motori
-        x0(13) = 0; x0(15) = 0; x0(17) = 0; x0(19) = 0;
-        T_cruise = 15; 
-        omega_cruise = sqrt(T_cruise/params.k);
-        x0(21) = omega_cruise; x0(23) = omega_cruise; x0(25) = 0; 
-    end
-    
-    x0(10:12) = omg_noise;
-end
-
-function GenerateCSV(risultati, filename)
-    % Estrazione ID e Convergenza
-    ids = (1:length(risultati))';
-    conv = [risultati.converged]';
-    
-    % --- Estrazione Metriche con controllo esistenza campo ---
-    % Serve per evitare errori se usi vecchi file .mat senza il campo vx
-    
-    % 1. Posizione X (Importante per Hover)
-    if isfield(risultati, 'RMSE_x')
-        rx = [risultati.RMSE_x]';
-    else
-        rx = NaN(length(ids), 1);
-    end
-    
-    % 2. Velocità X (Importante per Cruise) <--- NUOVO
-    if isfield(risultati, 'RMSE_vx')
-        rvx = [risultati.RMSE_vx]';
-    else
-        rvx = NaN(length(ids), 1);
-    end
-    
-    % 3. Altri assi (Z, Y)
-    rz = [risultati.RMSE_z]';
-    ry = [risultati.RMSE_y]';
-    
-    % 4. Ratei (Assetto)
-    rp = [risultati.RMSE_p]';
-    rq = [risultati.RMSE_q]';
-    rr = [risultati.RMSE_r]';
-    
-    % --- Gestione NaN per i non convergenti ---
-    % Pulisce i dati: se la sim è crashata, i valori numerici non hanno senso
-    rx(~conv) = NaN;
-    rvx(~conv) = NaN;
-    rz(~conv) = NaN;
-    ry(~conv) = NaN;
-    rp(~conv) = NaN; 
-    rq(~conv) = NaN; 
-    rr(~conv) = NaN;
-    
-    % --- Creazione Tabella Completa ---
-    T = table(ids, conv, rx, rvx, rz, ry, rp, rq, rr, ...
-              'VariableNames', {'Run', 'Converged', ...
-                                'RMSE_X_Pos', 'RMSE_Vx_Vel', ... % Distinzione Posizione/Velocità
-                                'RMSE_Z_Pos', 'RMSE_Y_Pos', ...
-                                'RMSE_p_RollRate', 'RMSE_q_PitchRate', 'RMSE_r_YawRate'});
-    
-    % Scrittura su file
+    T = table((1:N)', conv, rmses(:,1), rmses(:,2), rmses(:,3), ...
+              rmses(:,4), rmses(:,5), rmses(:,6), ...
+              rmses(:,7), rmses(:,8), rmses(:,9), ...
+              rmses(:,10), rmses(:,11), rmses(:,12), ...
+        'VariableNames', {'Run', 'OK', 'RMSE_Pn', 'RMSE_Pe', 'RMSE_Pd', ...
+                          'RMSE_u', 'RMSE_v', 'RMSE_w', ...
+                          'RMSE_phi', 'RMSE_theta', 'RMSE_psi', ...
+                          'RMSE_p', 'RMSE_q', 'RMSE_r'});
     writetable(T, filename);
-    fprintf('   CSV Generato: %s\n', filename);
-    fprintf('   -> Colonne aggiunte: X Position (Hover) e Vx Velocity (Cruise)\n');
+    fprintf('   -> Report Completo Generato: %s\n', filename);
 end

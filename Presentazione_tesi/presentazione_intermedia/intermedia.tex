@@ -134,14 +134,20 @@
 \end{frame}
 
 \begin{frame}{Tricottero tilting-rotor}
-    Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici geometriche variabili.
-    Questa configurazione rappresenta una criticità in fase di crociera perché è necessario gestire sia assetto che posizione 
-    solo tramite la vettorizzazione della spinta.
-    \begin{figure}
-        \includegraphics[width=0.4\textwidth]{dragonfly.png}
-        \caption{Dragonfly.}
-    \end{figure}
+    \begin{columns}[c] % [c] centra verticalmente il contenuto delle colonne
+        \column{0.55\textwidth}
+        Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici geometriche variabili.
+        
+        \vspace{0.5cm} % Un po' di respiro tra i paragrafi
+        Questa configurazione rappresenta una criticità in fase di crociera perché è necessario gestire sia assetto che posizione solo tramite la vettorizzazione della spinta.
 
+        \column{0.45\textwidth}
+        \begin{figure}
+            \centering
+            \includegraphics[width=\columnwidth]{dragonfly.png} 
+            \caption{Dragonfly.}
+        \end{figure}
+    \end{columns}
 \end{frame}
 
 % ============================================================
@@ -339,7 +345,7 @@
             \end{equation}
             
             \vspace{0.2cm}
-            \textcolor{red}{\textbf{Nota di rigore:}} I coefficienti $C_L$ e $C_D$ sono funzioni non lineari dell'angolo d'attacco $\alpha = \arctan(v_z/v_x)$.
+            I coefficienti $C_L$ e $C_D$ sono funzioni non lineari dell'angolo d'attacco $\alpha = \arctan(v_z/v_x)$.
         \end{column}
 
         \begin{column}{0.4\textwidth}
@@ -403,30 +409,20 @@
 \end{frame}
 
 \begin{frame}{Momento Aerodinamico}
-    Il momento aerodinamico totale $\bm{M}_{\text{aero}}$ rispetto al baricentro è la somma dei momenti generati dalle ali e dalla resistenza del corpo:
+    Il momento aerodinamico totale $\bm{M}_{\text{aero}}$ rispetto al baricentro è il momento generati dalle ali:
     
     \begin{equation*}
-        \bm{M}_{\text{aero}} = \sum_{i \in \{dx, sx\}} (\mathbf{r}_{ala_i} \times \mathbf{F}_{aero, wing}) + (\mathbf{r}_{body} \times \mathbf{D}_{Body})
+        \bm{M}_{\text{aero}} = \sum_{i \in \{dx, sx\}} (\mathbf{r}_{ala_i} \times \mathbf{F}_{aero, wing})
     \end{equation*}
 
     \begin{equation}
         \bm{M}_{\text{aero}} = 
-        \underbrace{
         \sum_{i \in \{dx, sx\}} 
         \begin{bmatrix} 
         r_{i_y} F_{z} \\ 
         r_{i_z} F_{x} - r_{i_x} F_{z} \\ 
         -r_{i_y} F_{x} 
         \end{bmatrix}
-        }_{\text{Contributo Ali}}
-        + 
-        \underbrace{
-        \begin{bmatrix} 
-        r_{b_y} D_z - r_{b_z} D_y \\ 
-        r_{b_z} D_x - r_{b_x} D_z \\ 
-        r_{b_x} D_y - r_{b_y} D_x 
-        \end{bmatrix}
-        }_{\text{Contributo Corpo}}
     \end{equation}
 \end{frame}
 
@@ -490,7 +486,7 @@
     \end{equation}
 
     \begin{itemize}
-        \item Queste componenti rappresentano le coppie di accoppiamento giroscopico dovute alla distribuzione della massa del velivolo.
+        \item Queste componenti rappresentano le coppie giroscopiche dovute alla distribuzione della massa del velivolo.
     \end{itemize}
 \end{frame}
 
@@ -549,56 +545,51 @@
     \end{itemize}
 \end{frame}
 
-% Slide 2: Variabili di Stato (Rigido)
-\begin{frame}{Variabili di Stato: Corpo Rigido ($x_1 - x_{12}$)}
-    Il vettore di stato è suddiviso funzionalmente. La parte relativa al corpo rigido comprende:
-    
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \textbf{Posizione e Velocità Lineare}
-            \begin{itemize}
-                \item $x_{1,2,3} = [p_x, p_y, p_z]^T$: Posizione (Frame Inerziale).
-                \item $x_{4,5,6} = [v_{bx}, v_{by}, v_{bz}]^T$: Velocità (Body Frame).
-            \end{itemize}
-        \end{column}
-        
-        \begin{column}{0.48\textwidth}
-            \textbf{Assetto e Velocità Angolari}
-            \begin{itemize}
-                \item $x_{7,8,9} = [\phi, \theta, \psi]^T$: Angoli di Eulero (RPY).
-                \item $x_{10,11,12} = [p, q, r]^T$: Velocità angolari (Body Frame).
-            \end{itemize}
-        \end{column}
-    \end{columns}
+% Slide 2: Variabili di Stato
+\begin{frame}{Variabili di Stato}
+    La parte relativa al corpo rigido comprende:
+        \vspace{0.2cm}
+        \begin{columns}[T]
+            \begin{column}{0.48\textwidth}
+                \textbf{Posizione e Velocità Lineare}
+                \begin{itemize}
+                    \item $x_{1,2,3} = [p_x, p_y, p_z]^T$: Posizione (Frame Inerziale).
+                    \item $x_{4,5,6} = [v_{bx}, v_{by}, v_{bz}]^T$: Velocità (Body Frame).
+                \end{itemize}
+            \end{column}
+            
+            \begin{column}{0.48\textwidth}
+                \textbf{Assetto e Velocità Angolari}
+                \begin{itemize}
+                    \item $x_{7,8,9} = [\phi, \theta, \psi]^T$: Angoli di Eulero (RPY).
+                    \item $x_{10,11,12} = [p, q, r]^T$: Velocità angolari (Body Frame).
+                \end{itemize}
+            \end{column}
+        \end{columns}
+
+    \vspace{0.5em}
+    Dinamica dei servomotori e dei rotori.
+        \footnotesize
+        \begin{table}
+            
+            \begin{tabular}{ll}
+                \toprule
+                \textbf{Stato} & \textbf{Descrizione} \\
+                \midrule
+                $x_{13}, x_{15}, x_{17}, x_{19}$ & Angoli di tilt attuali ($\theta_{rot}$) \\
+                $x_{14}, x_{16}, x_{18}, x_{20}$ & Velocità di tilt ($\dot{\theta}_{rot}$) \\
+                \midrule
+                $x_{21}, x_{23}, x_{25}$ & Velocità angolari rotori ($\omega_{rot}$) \\
+                $x_{22}, x_{24}, x_{26}$ & Accelerazioni angolari rotori ($\dot{\omega}_{rot}$) \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
 \end{frame}
 
-% Slide 3: Variabili di Stato (Attuatori)
-\begin{frame}{Variabili di Stato: Dinamica Attuatori ($x_{13} - x_{26}$)}
-    A differenza dei modelli semplificati, includiamo la dinamica dei servomotori e dei rotori.
-    
-    \vspace{0.5em}
-    \footnotesize
-    \begin{table}
-        \centering
-        \begin{tabular}{ll}
-            \toprule
-            \textbf{Stato} & \textbf{Descrizione} \\
-            \midrule
-            $x_{13}, x_{15}, x_{17}, x_{19}$ & Angoli di tilt attuali ($\theta_{rot}$) \\
-            $x_{14}, x_{16}, x_{18}, x_{20}$ & Velocità di tilt ($\dot{\theta}_{rot}$) \\
-            \midrule
-            $x_{21}, x_{23}, x_{25}$ & Velocità angolari rotori ($\omega_{rot}$) \\
-            $x_{22}, x_{24}, x_{26}$ & Accelerazioni angolari rotori ($\dot{\omega}_{rot}$) \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-    \normalsize
-    \textit{Nota: Ogni attuatore è modellato come un sistema del secondo ordine.}
-\end{frame}
 
 % Slide 4: Ingressi di Controllo
 \begin{frame}{Ingressi di Controllo ($u \in \mathbb{R}^7$)}
-    Il sistema è sotto-attuato o sovra-attuato a seconda della configurazione di volo, controllato da 7 ingressi:
+    Il sistema è controllato da 7 ingressi:
     
     \begin{equation*}
         u = \begin{bmatrix} u_1 & \dots & u_7 \end{bmatrix}^T
@@ -632,50 +623,23 @@
     \footnotesize{\textit{Singolarità per $\theta = \pm 90^\circ$ (Gimbal Lock).}}
 \end{frame}
 
-% Slide 6: Dinamica Traslazionale
-\begin{frame}{Dinamica Traslazionale (Newton)}
+% Slide 6: Dinamica
+\begin{frame}{Dinamica: Traslazionale e Rotazionale}
     L'accelerazione lineare nel body frame deriva dal bilancio delle forze:
     \begin{equation}
         \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{w} \end{bmatrix} = \frac{1}{m} F_{TOT} - (\omega_{body} \times v_{body})
     \end{equation}
     
-    Dove $F_{TOT}$ somma tre contributi principali:
-    \begin{equation*}
-        F_{TOT} = F_{Thrust}(x, u) + F_{Gravity}(\phi, \theta) + F_{Aero}(v_{body})
-    \end{equation*}
-    
-    \vspace{0.5em}
-    \textbf{Nota critica:} La forza di spinta $F_{Thrust}$ dipende non linearmente dagli angoli di tilt attuali ($x_{13}, \dots$) e non istantaneamente dagli ingressi $u$.
-\end{frame}
-
-% Slide 7: Dinamica Rotazionale
-\begin{frame}{Dinamica Rotazionale (Eulero)}
-    L'evoluzione delle velocità angolari dipende dal momento d'inerzia $I_B$:
-    
+    L'evoluzione delle velocità angolari dipende dal momento d'inerzia $I_B$:  
     \begin{equation}
         \dot{\omega}_{body} = I_B^{-1} \left( M_{TOT} - \omega_{body} \times (I_B \omega_{body}) \right)
     \end{equation}
-    
-    Composizione dei Momenti:
-    \begin{itemize}
-        \item $M_{thrust}$: Momenti generati dalla spinta vettorizzata.
-        \item $M_{gyro}$: Effetti giroscopici dei rotori (significativi ad alti RPM).
-        \item $M_{drag}$: Resistenza aerodinamica rotazionale.
-    \end{itemize}
-\end{frame}
 
-% Slide 8: Modello Attuatori
-\begin{frame}{Dinamica degli Attuatori}
-    Per aumentare la fedeltà del modello, i motori e i servi sono sistemi del \textbf{secondo ordine}. Esempio per il tilt ($\theta_i$):
-    
+    I motori e i servi sono sistemi del \textbf{secondo ordine}. Esempio per il tilt ($\theta_i$):  
     \begin{align}
         \dot{x}_{2i-1} &= x_{2i} \quad \text{(Velocità)} \\
         \dot{x}_{2i} &= \underbrace{-2\zeta \omega_n x_{2i}}_{\text{Smorzamento}} + \underbrace{\omega_n^2 (u_{cmd} - x_{2i-1})}_{\text{Rigidezza/Errore}}
     \end{align}
-    
-    \begin{alertblock}{Implicazione di Controllo}
-        Questo introduce un ritardo di fase tra il comando $u$ e la forza generata, che il controllore di assetto deve gestire per evitare oscillazioni.
-    \end{alertblock}
 \end{frame}
 
 % ============================================================
@@ -724,7 +688,7 @@
     \begin{equation*}
         \omega_3^2 \left( d_{tx} k \cos\theta_3 \sin\theta_4 - b \sin\theta_3 \right) = 0
     \end{equation*}
-    Dividendo per $\cos\theta_3$ e riarrangiando, si ottiene l'angolo di equilibrio statico:  
+    Si ottiene l'angolo di equilibrio statico:  
     \begin{equation}
         \boxed{\theta_{3_{eq}} = \arctan\left( -\frac{k d_{tx}}{b}\right)}
     \end{equation}
@@ -872,7 +836,7 @@
 \end{frame}
 
 % --- SLIDE 3: Controllo Verticale (SMC) ---
-\begin{frame}{Controllo di Quota (Outer Loop)}
+\begin{frame}{Outer Loop: Controllo di Quota}
     
     \begin{columns}[T]
         % --- COLONNA SINISTRA: Matematica ---
@@ -1067,21 +1031,21 @@
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{Controllo di Assetto (Inner Loop)}
+\begin{frame}{Inner Loop: Controllo di Assetto}
 Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
 Tali quantità sono calcolate come uscite di tre PID.
 \begin{itemize}
     \item \textbf{Roll:} è stato applicato un controllo Proporzionale-Derivativo
     \begin{equation}
-        M_{x,req} = k_{p} (\phi_{des} - \phi) + k_{d} (\dot{\phi}_{des} - p)
+        M_{x,req} = K_P (\phi_{des} - \phi) + K_D (\dot{\phi}_{des} - p)
     \end{equation}
     \item \textbf{Pitch:} è stato applicato un controllo Proporzionale-Integrale-Derivativo. Il termine integrale reagisce alla condizione in cui il centro di pressione non coincida perfettamente con il centro di massa.
     \begin{equation}
-        M_{y,req} = k_{p} (\theta_{des} - \theta) + k_{i} \int (\theta_{des} - \theta) \,dt\ + k_{d} (\dot{\theta}_{des} - q)
+        M_{y,req} = K_P (\theta_{des} - \theta) + K_I \int (\theta_{des} - \theta) \,dt\ + K_D (\dot{\theta}_{des} - q)
     \end{equation}
     \item \textbf{Yaw:} è stato applicato un controllo Proporzionale-Derivativo
     \begin{equation}
-        M_{z,req} = k_{p} (\psi_{des} - \psi) + k_{d} (\dot{\psi}_{des} - r)
+        M_{z,req} = K_P (\psi_{des} - \psi) + K_D (\dot{\psi}_{des} - r)
     \end{equation}
 \end{itemize}
 \end{frame}
@@ -1155,6 +1119,13 @@ Tali quantità sono calcolate come uscite di tre PID.
     \begin{equation}
         \delta_{des} = \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right)
     \end{equation}
+    Gli angoli dei servomotori sono:
+    \begin{equation}
+        \begin{cases}
+            \theta_1 = \pi/2 - \delta_{des}\\
+            \theta_2 = \pi/2 + \delta_{des}
+        \end{cases}
+    \end{equation}
 \end{frame}
 
 % ===========================================================
@@ -1211,16 +1182,6 @@ Tali quantità sono calcolate come uscite di tre PID.
     \end{figure}
 \end{frame}
 
-\begin{frame}{Conclusioni}
-    \begin{itemize}
-        \item Nelle simulazioni, il drone parte da una condizione di equilibrio per raggiungere quota $z = -10$ metri. 
-        \item A circa 12 secondi si nota una lieve oscillazione degli angoli. Questo non è un errore di stabilità, 
-        ma un normale effetto fisico della frenata: quando i motori rallentano bruscamente, generano una forza inerziale 
-        che il Mixer non può prevedere, essendo basato su un modello statico. 
-        \item Il controllore, tuttavia, rileva subito questa variazione e la corregge efficacemente, riportando il 
-        drone stabile con errore nullo.
-    \end{itemize}    
-\end{frame}
 
 % ===========================================================
 % MONTECARLO HOVERING
@@ -1233,7 +1194,7 @@ Tali quantità sono calcolate come uscite di tre PID.
 \end{frame}
 
 % --- Slide 2: Setup Sperimentale ---
-\begin{frame}{Setup Monte Carlo: Recovery Test 3D}
+\begin{frame}{Setup Monte Carlo: Recovery Test}
     Test di recupero da condizioni iniziali degradate ($N=100$ run).
     \vspace{0.3cm}
     \begin{itemize}
@@ -1246,7 +1207,7 @@ Tali quantità sono calcolate come uscite di tre PID.
         \end{itemize}
     \end{itemize}
     \vspace{0.2cm}
-    \textit{Obiettivo: Validare la capacità di "Homing" isotropico.}
+    \textit{Obiettivo: Validare la capacità di raggiungimento del target da condizioni iniziali sfavorevoli.}
 \end{frame}
 
 % --- Slide 3: Robustezza Totale ---
@@ -1282,9 +1243,9 @@ Tali quantità sono calcolate come uscite di tre PID.
         \end{tabular}
     \end{table}
     
-    \begin{alertblock}{Diagnosi del "Professore"}
+    \begin{alertblock}{Risultati}
         \begin{itemize}
-            \item \textbf{Caso Tipico (75\% dei casi):} Il controllo su X è \textbf{chirurgico} (errori in $\mu m$), superiore alla Y.
+            \item \textbf{Caso Tipico (75\% dei casi):} Il controllo su X è \textbf{efficace} (errori in $\mu m$), superiore alla Y.
             \item \textbf{Outliers (25\% dei casi):} In condizioni specifiche (es. pitch iniziale opposto al target), il drone satura e "slitta" (drift) accumulando errore metrico.
         \end{itemize}
     \end{alertblock}
@@ -1305,7 +1266,7 @@ Tali quantità sono calcolate come uscite di tre PID.
         \end{column}
         \begin{column}{0.5\textwidth}
             \begin{block}{Valutazione}
-                Eccellente. Anche nei casi di "drift" planare su X, la quota viene mantenuta perfettamente. Questo conferma la bontà del disaccoppiamento nel design del controllore.
+                Eccellente. Anche nei casi di "drift" planare su X, la quota viene mantenuta perfettamente. Questo conferma un buon disaccoppiamento nel design del controllore.
             \end{block}
         \end{column}
     \end{columns}
@@ -1368,8 +1329,8 @@ Tali quantità sono calcolate come uscite di tre PID.
 \end{frame}
 
 \begin{frame}{Configurazione fase di crociera}
-    Durante la fase di crociera i roroti anteriori sono posizionati orizzontalmente per generare una spinta in avanti in grado di far avanzare il drone,
-    mentre il rotore posteriore è spento per evitare instabilità generate dal momento torcente.
+    Durante la fase di crociera i rotori anteriori sono posizionati orizzontalmente per generare una spinta in avanti in grado di far avanzare il drone,
+    mentre il rotore posteriore è spento per evitare instabilità generate dal momento torcente lungo l'asse $x$.
     
     \vspace{0.3cm}
     Si assume che in tale fase gli angoli di base dei rotori siano i seguenti:
@@ -1502,7 +1463,7 @@ Tali quantità sono calcolate come uscite di tre PID.
     \vspace{0.2cm}
     \textbf{Controllo di Quota ($z$)} \\
     Il primo obiettivo di controllo è il mantenimento della quota raggiunta in hovering.\\
-    Si definisce l'errore $e_z = z_{des} - z$ e si calcola l'accelerazione necessaria per contrastare la gravità attraversso un PID:
+    Si definisce l'errore $e_z = z_{des} - z$ e si calcola l'accelerazione necessaria per contrastare la gravità attraverso un PID:
     \begin{equation}
         a_{z,cmd} = K_P e_z + K_I \int e_z dt + K_D \dot{e}_z
     \end{equation} 
@@ -1512,8 +1473,6 @@ Tali quantità sono calcolate come uscite di tre PID.
         \label{eq:fz}
     \end{equation}
     dove $L_{wing} = \frac{1}{2}\rho S C_L v^2$ è il termine di feedforward della portanza.\\
-    Si assume che alla velocità di crociera ($v_x = 25 m/s$) la portanza 
-    compensi quasi completamente la gravità; il controllore agisce in caso di variazioni sulla velocità o di disturbi. 
 \end{frame}
 
 % % ============================================================
@@ -1643,7 +1602,7 @@ Tali quantità sono calcolate come uscite di tre PID.
 
 % --- SLIDE 2: Trasformazione di Coordinate ---
 \begin{frame}{MMA 2: Trasformazione Inerziale $\to$ Body}
-    I servomotori sono solidali alla fusoliera del drone. Pertanto, l'angolo comandato ai servi ($\alpha_{servo}$) deve compensare l'assetto istantaneo del velivolo (Pitch $\theta$).
+    I servomotori sono solidali alla fusoliera del drone. Pertanto, l'angolo comandato ai servi ($\theta_1, \theta_2$) deve compensare l'assetto del velivolo (Pitch $\theta$).
 
     \begin{block}{Disaccoppiamento Geometrico}
         Affinché il vettore spinta rimanga orientato correttamente nello spazio inerziale indipendentemente dall'oscillazione del drone, si applica la trasformazione:
@@ -1680,166 +1639,104 @@ Tali quantità sono calcolate come uscite di tre PID.
     Il rollio ($Roll$) è controllato differenzialmente, mentre il beccheggio ($Pitch$) si somma collettivamente all'angolo base:
     \begin{equation}
         \begin{cases}
-            \delta_{1} = \alpha_{base} + u_{\theta} - u_{\phi} \\
-            \delta_{2}  = \alpha_{base} + u_{\theta} + u_{\phi}
+            \theta_{1} = \alpha_{base} + u_{\theta} - u_{\phi} \\
+            \theta_{2} = \alpha_{base} + u_{\theta} + u_{\phi}
         \end{cases}
     \end{equation}
     
-    \footnotesize
-    \textit{Dove $u_\theta$ è l'azione del PID Pitch per le correzioni fini e $u_\phi$ è l'azione del PID Roll.}
 \end{frame}
 
-% ============================================================
-% SCENARI E VALIDAZIONE
-% ============================================================
-\begin{frame}{Validazione Sperimentale: Scenari di Test}
-    La robustezza dell'architettura di controllo è validata in tre condizioni operative critiche.
-
-    \begin{table}[]
-        \centering
-        \begin{tabular}{p{0.25\linewidth} p{0.65\linewidth}}
-            \toprule
-            \textbf{Scenario} & \textbf{Descrizione e Obiettivo} \\
-            \midrule
-            \textbf{Nominal Cruise} & 
-            \textit{Condizione:} $v_x = 25$ m/s, disturbi nulli. \newline
-            \textit{Verifica:} Capacità di mantenere $z_{des}$ e rotta con errore stazionario nullo. \\
-            \midrule
-            \textbf{Low Speed Recovery} & 
-            \textit{Condizione:} $v_x = 20$ m/s (Portanza insufficiente). \newline
-            \textit{Risposta:} Il controllore deve saturare il tilt in avanti per incrementare $v_x$ senza perdere quota ($F_{z,req} \uparrow$). \\
-            \midrule
-            \textbf{Attitude Recovery} & 
-            \textit{Condizione:} Iniezione disturbi su $\phi, \theta, \psi$. \newline
-            \textit{Verifica:} Reiezione dei disturbi tramite Inner Loop e disaccoppiamento efficace tra assetto e traiettoria. \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-\end{frame}
 
 % ===========================================================
-% MONTECARLO
+% MONTECARLO VOLO ORIZZONTALE
 % ===========================================================
-% --- Slide 1: Titolo ---
-\begin{frame}
-    \vfill
-    \centering
-    {\Huge \textbf{Analisi Monte Carlo per il volo orizzontale}}
-    \vfill
-\end{frame}
-
-%% --- Slide 2: Obiettivo e Setup ---
-\begin{frame}{Setup Sperimentale: Case 3 "noWF"}
-    Analisi delle prestazioni in Crociera ($N=100$ run) con configurazione aggiornata.
-    
-    \vspace{0.3cm}
+% Introduzione
+\begin{frame}{Obiettivi dell'Analisi}
     \begin{itemize}
-        \item \textbf{Obiettivo:} Verificare se la robustezza è mantenuta rimuvendo il filtro/peso (noWF).
-        \item \textbf{Target:} $V_x = \SI{25}{m/s}$, $Z = \SI{-10}{m}$.
-        \item \textbf{Risultato Atteso:} Mantenimento della stabilità e tracciamento dei riferimenti.
+        \item Valutazione della precisione del sistema di controllo/stima in due scenari operativi:
+        \begin{enumerate}
+            \item \textbf{Hovering}: Mantenimento della posizione stazionaria.
+            \item \textbf{Crociera}: Volo traslatorio a regime.
+        \end{enumerate}
+        \item Analisi statistica basata su 50 simulazioni (Run) per scenario.
+        \item Identificazione di eventuali bias o criticità nelle variabili di stato (Posizione, Velocità, Assetto).
     \end{itemize}
 \end{frame}
 
-% --- Slide 3: Robustezza (Il Grande Successo) ---
-\begin{frame}{Statistiche di Convergenza}
-    Rispetto ai test precedenti, la stabilità del sistema è assoluta.
-    
-    \vspace{0.5cm}
-    \begin{center}
-        \begin{beamerboxesrounded}[upper=block title, lower=block body, shadow=true]{Risultato Globale}
-            \centering
-            \huge \textbf{Success Rate: 100\%}
-        \end{beamerboxesrounded}
-    \end{center}
-    \vspace{0.5cm}
-    
-    \begin{itemize}
-        \item \textbf{Sicurezza:} 100 su 100 simulazioni completate senza crash.
-        \item \textbf{Significato:} Il sistema è estremamente robusto alle condizioni iniziali perturbate. Non soffre più di divergenze numeriche o stalli catastrofici.
-    \end{itemize}
-\end{frame}
-
-% --- Slide 4: Canale Velocità (Il Problema) ---
-\begin{frame}{Analisi Velocità Longitudinale ($V_x$)}
-    Si rileva un'anomalia critica nel tracciamento della velocità target (\SI{25}{m/s}).
-    
-    \vspace{0.2cm}
+% Risultati Hovering
+\begin{frame}{Risultati Fase di Hovering}
+    La fase di hovering mostra una precisione eccellente. Gli errori quadratici medi (RMSE) sono minimi in tutte le direzioni.
     \begin{table}
         \centering
-        \begin{tabular}{lccc}
+        \caption{Medie RMSE - Hovering (50 Run)}
+        \begin{tabular}{llS[table-format=1.2e-2]}
             \toprule
-            \textbf{Metrica} & \textbf{Valore} & \textbf{Dev. Std.} & \textbf{Diagnosi} \\
+            Categoria & Variabile & {Media RMSE} \\
             \midrule
-            RMSE Medio & \SI{10.35}{m/s} & \SI{0.002}{m/s} & \textcolor{red}{\textbf{Bias Sistematico}} \\
-            RMSE Mediana & \SI{10.35}{m/s} & - & Errore Costante \\
+            Posizione & $P_n$ (Nord) & 1.64e-4 \\
+                      & $P_e$ (Est)  & 2.28e-2 \\
+                      & $P_d$ (Down) & 2.23e-11 \\
+            \midrule
+            Velocità  & $u$ (Long.)  & 4.36e-5 \\
+                      & $v$ (Lat.)   & 4.47e-9 \\
+            \midrule
+            Assetto   & $\phi$ (Roll) & 1.39e-3 \\
+                      & $\theta$ (Pitch) & 2.98e-6 \\
             \bottomrule
         \end{tabular}
     \end{table}
-    
-    \begin{alertblock}{Diagnosi del "Professore"}
-        L'errore non è stocastico (la deviazione standard è nulla). Il drone si "inchioda" stabilmente a una velocità errata ($\approx \SI{14.65}{m/s}$ oppure $\approx \SI{35.35}{m/s}$).
-        \textbf{Causa probabile:} Errore di Trim del Pitch. Il controllore non comanda un angolo di picchiata sufficiente per raggiungere i 25 m/s, oppure satura un integratore.
-    \end{alertblock}
 \end{frame}
 
-% --- Slide 5: Canale Verticale (Z) ---
-\begin{frame}{Analisi Quota ($Z$)}
-    Nonostante l'errore di velocità, il controllo di quota è eccellente.
-    
-    \vspace{0.3cm}
-    \begin{columns}
-        \begin{column}{0.5\textwidth}
-            \begin{itemize}
-                \item \textbf{RMSE Medio:} \SI{0.44}{\ milli\meter}
-                \item \textbf{RMSE Mediana:} \SI{0.18}{\ milli\meter}
-                \item \textbf{Max Error:} \SI{9}{\ milli\meter}
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \begin{block}{Valutazione}
-                \textcolor{green!60!black}{\textbf{Perfetto.}}
-                Il disaccoppiamento funziona: l'incapacità di raggiungere la velocità target non compromette la tenuta della quota. Il drone vola "lento ma preciso in Z".
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% --- Slide 6: Canale Laterale (Y) ---
-\begin{frame}{Analisi Laterale ($Y$)}
-    Conferma del comportamento in anello aperto (Open Loop).
-    
-    \vspace{0.3cm}
-    \begin{itemize}
-        \item \textbf{RMSE Medio:} \SI{97.6}{\meter}
-        \item \textbf{Picco Max:} \SI{341}{\meter}
-        \item \textbf{Ratei $p, r$:} Praticamente nulli ($\approx 10^{-17}$ rad/s).
-    \end{itemize}
-    
-    \vspace{0.5cm}
-    \textit{Il drone mantiene un assetto perfettamente livellato (ratei nulli) ma deriva lateralmente a causa dell'assenza di una legge di guida di posizione Y.}
-\end{frame}
-
-% --- Slide 7: Sintesi Finale ---
-\begin{frame}{Conclusioni Case 3 "noWF"}
-    \centering
-    \begin{tabular}{l c l}
-        \toprule
-        \textbf{Aspetto} & \textbf{Stato} & \textbf{Note} \\
-        \midrule
-        \textbf{Robustezza} & \cellcolor{green!20}\textbf{OTTIMA} & 100\% Successo. Sistema affidabile. \\
-        \textbf{Quota ($Z$)} & \cellcolor{green!20}\textbf{ECCELLENTE} & Errore sub-millimetrico. \\
-        \textbf{Velocità ($V_x$)} & \cellcolor{red!20}\textbf{CRITICA} & \textbf{Bias di 10 m/s.} Tuning necessario. \\
-        \textbf{Laterale ($Y$)} & \cellcolor{yellow!20}\textbf{OPEN LOOP} & Deriva attesa (Navigazione mancante). \\
-        \bottomrule
-    \end{tabular}
-
-    \vspace{0.5cm}
-    \begin{block}{Azione Correttiva Richiesta}
-        Il problema prioritario non è più la stabilità, ma la prestazione su $V_x$. 
-        È necessario verificare il \textbf{Feedforward del Pitch} o il guadagno integrale sul canale velocità per eliminare l'errore a regime.
+% Risultati Crociera
+\begin{frame}{Risultati Fase di Crociera}
+    In crociera si osserva un degradamento delle prestazioni, specialmente nelle componenti traslatorie.
+    \begin{table}
+        \centering
+        \caption{Medie RMSE - Crociera (50 Run)}
+        \begin{tabular}{llS[table-format=2.2]}
+            \toprule
+            Categoria & Variabile & {Media RMSE} \\
+            \midrule
+            Posizione & $P_e$ (Est)  & 27.68 \\
+                      & $P_d$ (Down) & 0.0001 \\
+            \midrule
+            Velocità  & $u$ (Long.)  & 10.35 \\
+                      & $v$ (Lat.)   & 0.25 \\
+            \midrule
+            Assetto   & $\phi, \theta, \psi$ & {$< 10^{-12}$} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \begin{block}{Criticità}
+        L'errore su $u$ (\SI{10.35}{m/s}) e su $P_e$ (\SI{27.68}{m}) suggerisce un'incapacità del controller di annullare l'errore di inseguimento durante il moto o un'errata definizione del setpoint.
     \end{block}
 \end{frame}
 
+% Analisi Critica
+\begin{frame}{Analisi Comparativa e Critica}
+    \begin{itemize}
+        \item \textbf{Assetto}: In entrambe le fasi, l'errore sugli angoli di Eulero è trascurabile (ordine $10^{-3}$ o inferiore). Il sistema di stabilizzazione angolare è robusto.
+        \item \textbf{Discrepanza in Crociera}: 
+        \begin{itemize}
+            \item L'RMSE di $u \approx 10$ suggerisce che il drone non raggiunge la velocità di crociera desiderata (o rimane fermo mentre il setpoint avanza).
+            \item L'errore $P_e$ elevato indica una deriva laterale non compensata.
+        \end{itemize}
+        \item \textbf{Verticalità}: L'errore sulla quota ($P_d$) rimane eccellente in entrambi i casi, indicando un ottimo controllo dell'altitudine.
+    \end{itemize}
+\end{frame}
+
+% Conclusioni
+\begin{frame}{Conclusioni e Prospettive}
+    \begin{alertblock}{Sintesi}
+        Il sistema è estremamente preciso in hovering, ma fallisce nel mantenere le prestazioni durante la crociera.
+    \end{alertblock}
+    \textbf{Azioni Correttive Consigliate:}
+    \begin{enumerate}
+        \item Verificare i guadagni del controllore di velocità longitudinale ($u$).
+        \item Investigare la causa della deriva sulla coordinata Est ($P_e$) in fase di traslazione.
+        \item Implementare un'azione integrale più aggressiva per eliminare l'errore a regime in crociera.
+    \end{enumerate}
+\end{frame}
 % ============================================================
 % 5. CONCLUSIONI
 % ============================================================

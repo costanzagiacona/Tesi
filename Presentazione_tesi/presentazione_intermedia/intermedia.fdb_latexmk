@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1770396398.4212 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770396405.13246 0
+["pdflatex"] 1770487438.25772 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770487447.09194 0
   "../../img/VTOL.png" 1769677789 950489 e265faf55272d7e8a865b86254410141 ""
   "../../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
   "../../img/controllo_verticale/pos_vel.png" 1769964645 77524 8e369bdb4fb04096036a76a39b907ec2 ""
@@ -314,12 +314,12 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/translator/translator.sty" 1622471510 8765 56d370785f0143111ff9898b5adfe08e ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770396390 82308 c38461639bc7415535b653bdccad25ba ""
-  "intermedia.aux" 1770396404 13460 5a7b576127197718fa1e802a3219b2f5 "pdflatex"
-  "intermedia.nav" 1770396404 8706 b6498b6c7c93e1ad5d958fae51d46d19 "pdflatex"
-  "intermedia.out" 1770396404 1199 df1e4fc8155246d852e10148bd8f6550 "pdflatex"
-  "intermedia.tex" 1770396390 82308 c38461639bc7415535b653bdccad25ba ""
-  "intermedia.toc" 1770396404 518 44a31469e562175450c1e68d9e90e309 "pdflatex"
+  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770487427 77261 4b39691bb74cb7de1b2694a7c01ab821 ""
+  "intermedia.aux" 1770487446 12560 f6e683a7c8adecc927e11018fd22eee9 "pdflatex"
+  "intermedia.nav" 1770487446 8058 b8e3b84a4ab505d96d4c0b7a270f599d "pdflatex"
+  "intermedia.out" 1770487446 1199 df1e4fc8155246d852e10148bd8f6550 "pdflatex"
+  "intermedia.tex" 1770487427 77261 4b39691bb74cb7de1b2694a7c01ab821 ""
+  "intermedia.toc" 1770487446 518 c5bf7df83e10359caa54645d3907a865 "pdflatex"
   (generated)
   "intermedia.aux"
   "intermedia.log"
