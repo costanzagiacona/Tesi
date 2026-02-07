@@ -1186,135 +1186,135 @@ Tali quantità sono calcolate come uscite di tre PID.
 % ===========================================================
 % MONTECARLO HOVERING
 % ===========================================================
-\begin{frame}
-    \vfill
-    \centering
-    {\Huge \textbf{Analisi di Monte Carlo per il volo verticale}}
-    \vfill
-\end{frame}
+% \begin{frame}
+%     \vfill
+%     \centering
+%     {\Huge \textbf{Analisi di Monte Carlo per il volo verticale}}
+%     \vfill
+% \end{frame}
 
-% --- Slide 2: Setup Sperimentale ---
-\begin{frame}{Setup Monte Carlo: Recovery Test}
-    Test di recupero da condizioni iniziali degradate ($N=100$ run).
-    \vspace{0.3cm}
-    \begin{itemize}
-        \item \textbf{Target:} Punto fisso $[0, 0, -10]$ \si{\meter}.
-        \item \textbf{Perturbazioni (Uniformi):}
-        \begin{itemize}
-            \item \textbf{Posizione Planare (X, Y):} $\pm \SI{5}{\meter}$.
-            \item \textbf{Quota (Z):} $[-15, -5]$ \si{\meter}.
-            \item \textbf{Assetto:} $\phi, \theta \in [-20^\circ, +20^\circ]$ (Stress test).
-        \end{itemize}
-    \end{itemize}
-    \vspace{0.2cm}
-    \textit{Obiettivo: Validare la capacità di raggiungimento del target da condizioni iniziali sfavorevoli.}
-\end{frame}
+% % --- Slide 2: Setup Sperimentale ---
+% \begin{frame}{Setup Monte Carlo: Recovery Test}
+%     Test di recupero da condizioni iniziali degradate ($N=100$ run).
+%     \vspace{0.3cm}
+%     \begin{itemize}
+%         \item \textbf{Target:} Punto fisso $[0, 0, -10]$ \si{\meter}.
+%         \item \textbf{Perturbazioni (Uniformi):}
+%         \begin{itemize}
+%             \item \textbf{Posizione Planare (X, Y):} $\pm \SI{5}{\meter}$.
+%             \item \textbf{Quota (Z):} $[-15, -5]$ \si{\meter}.
+%             \item \textbf{Assetto:} $\phi, \theta \in [-20^\circ, +20^\circ]$ (Stress test).
+%         \end{itemize}
+%     \end{itemize}
+%     \vspace{0.2cm}
+%     \textit{Obiettivo: Validare la capacità di raggiungimento del target da condizioni iniziali sfavorevoli.}
+% \end{frame}
 
-% --- Slide 3: Robustezza Totale ---
-\begin{frame}{Statistiche di Convergenza}
-    \begin{center}
-        \begin{beamerboxesrounded}[upper=block title, lower=block body, shadow=true]{Risultato Globale}
-            \centering
-            \huge \textbf{Success Rate: 100\%}
-        \end{beamerboxesrounded}
-    \end{center}
-    \vspace{0.3cm}
-    \begin{itemize}
-        \item \textbf{Sicurezza:} Nessun crash registrato su 100 tentativi estremi.
-        \item \textbf{Stabilità:} Il sistema recupera l'assetto anche partendo da $20^\circ$ di inclinazione.
-    \end{itemize}
-\end{frame}
+% % --- Slide 3: Robustezza Totale ---
+% \begin{frame}{Statistiche di Convergenza}
+%     \begin{center}
+%         \begin{beamerboxesrounded}[upper=block title, lower=block body, shadow=true]{Risultato Globale}
+%             \centering
+%             \huge \textbf{Success Rate: 100\%}
+%         \end{beamerboxesrounded}
+%     \end{center}
+%     \vspace{0.3cm}
+%     \begin{itemize}
+%         \item \textbf{Sicurezza:} Nessun crash registrato su 100 tentativi estremi.
+%         \item \textbf{Stabilità:} Il sistema recupera l'assetto anche partendo da $20^\circ$ di inclinazione.
+%     \end{itemize}
+% \end{frame}
 
-% --- Slide 4: Precisione Planare (X vs Y) ---
-\begin{frame}{Analisi Differenziale Assi Planari (X, Y)}
-    Emergono comportamenti dinamici diversi tra il canale Longitudinale (X) e Laterale (Y).
+% % --- Slide 4: Precisione Planare (X vs Y) ---
+% \begin{frame}{Analisi Differenziale Assi Planari (X, Y)}
+%     Emergono comportamenti dinamici diversi tra il canale Longitudinale (X) e Laterale (Y).
     
-    \vspace{0.2cm}
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{lcccc}
-            \toprule
-            \textbf{Canale} & \textbf{RMSE Mediana} & \textbf{RMSE Medio} & \textbf{Max Error} & \textbf{Comportamento} \\
-            \midrule
-            \textbf{Laterale (Y)} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \textcolor{blue}{Consistente} \\
-            \textbf{Longit. (X)} & \cellcolor{green!20}$\mathbf{< \SI{10}{\micro\meter}}$ & \cellcolor{red!10}\SI{5.48}{\meter} & \SI{135}{\meter} & \textcolor{red}{Bimodale} \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
+%     \vspace{0.2cm}
+%     \begin{table}
+%         \centering
+%         \small
+%         \begin{tabular}{lcccc}
+%             \toprule
+%             \textbf{Canale} & \textbf{RMSE Mediana} & \textbf{RMSE Medio} & \textbf{Max Error} & \textbf{Comportamento} \\
+%             \midrule
+%             \textbf{Laterale (Y)} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \SI{2.2}{\centi\meter} & \textcolor{blue}{Consistente} \\
+%             \textbf{Longit. (X)} & \cellcolor{green!20}$\mathbf{< \SI{10}{\micro\meter}}$ & \cellcolor{red!10}\SI{5.48}{\meter} & \SI{135}{\meter} & \textcolor{red}{Bimodale} \\
+%             \bottomrule
+%         \end{tabular}
+%     \end{table}
     
-    \begin{alertblock}{Risultati}
-        \begin{itemize}
-            \item \textbf{Caso Tipico (75\% dei casi):} Il controllo su X è \textbf{efficace} (errori in $\mu m$), superiore alla Y.
-            \item \textbf{Outliers (25\% dei casi):} In condizioni specifiche (es. pitch iniziale opposto al target), il drone satura e "slitta" (drift) accumulando errore metrico.
-        \end{itemize}
-    \end{alertblock}
-\end{frame}
+%     \begin{alertblock}{Risultati}
+%         \begin{itemize}
+%             \item \textbf{Caso Tipico (75\% dei casi):} Il controllo su X è \textbf{efficace} (errori in $\mu m$), superiore alla Y.
+%             \item \textbf{Outliers (25\% dei casi):} In condizioni specifiche (es. pitch iniziale opposto al target), il drone satura e "slitta" (drift) accumulando errore metrico.
+%         \end{itemize}
+%     \end{alertblock}
+% \end{frame}
 
-% --- Slide 5: Precisione Verticale (Z) ---
-\begin{frame}{Performance Canale Verticale (Z)}
-    Il mantenimento della quota è robusto e disaccoppiato dalle problematiche planari.
+% % --- Slide 5: Precisione Verticale (Z) ---
+% \begin{frame}{Performance Canale Verticale (Z)}
+%     Il mantenimento della quota è robusto e disaccoppiato dalle problematiche planari.
     
-    \vspace{0.3cm}
-    \begin{columns}
-        \begin{column}{0.5\textwidth}
-            \begin{itemize}
-                \item \textbf{RMSE Medio:} \SI{7.7}{\ milli\meter}
-                \item \textbf{RMSE Mediana:} $< \SI{1}{\micro\meter}$
-                \item \textbf{Max Error:} \SI{17}{\centi\meter}
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \begin{block}{Valutazione}
-                Eccellente. Anche nei casi di "drift" planare su X, la quota viene mantenuta perfettamente. Questo conferma un buon disaccoppiamento nel design del controllore.
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
+%     \vspace{0.3cm}
+%     \begin{columns}
+%         \begin{column}{0.5\textwidth}
+%             \begin{itemize}
+%                 \item \textbf{RMSE Medio:} \SI{7.7}{\ milli\meter}
+%                 \item \textbf{RMSE Mediana:} $< \SI{1}{\micro\meter}$
+%                 \item \textbf{Max Error:} \SI{17}{\centi\meter}
+%             \end{itemize}
+%         \end{column}
+%         \begin{column}{0.5\textwidth}
+%             \begin{block}{Valutazione}
+%                 Eccellente. Anche nei casi di "drift" planare su X, la quota viene mantenuta perfettamente. Questo conferma un buon disaccoppiamento nel design del controllore.
+%             \end{block}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
-% --- Slide 6: Analisi Ratei (La Causa del Drift) ---
-\begin{frame}{Analisi Sforzo Attuatori (Inner Loop)}
-    Perché la X ha degli outliers? Guardiamo i ratei richiesti.
+% % --- Slide 6: Analisi Ratei (La Causa del Drift) ---
+% \begin{frame}{Analisi Sforzo Attuatori (Inner Loop)}
+%     Perché la X ha degli outliers? Guardiamo i ratei richiesti.
     
-    \vspace{0.2cm}
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{lccc}
-            \toprule
-            \textbf{Asse} & \textbf{Attività Media (RMSE)} & \textbf{Picco Max} & \textbf{Stress} \\
-            \midrule
-            Roll ($p$) & $\approx 0$ & $3 \times 10^{-4}$ & Nullo \\
-            Yaw ($r$) & $\approx 0$ & $2 \times 10^{-4}$ & Nullo \\
-            \rowcolor{yellow!20}\textbf{Pitch ($q$)} & \textbf{\SI{0.025}{rad/s}} & \textbf{\SI{0.55}{rad/s}} & \textbf{Alto} \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
+%     \vspace{0.2cm}
+%     \begin{table}
+%         \centering
+%         \small
+%         \begin{tabular}{lccc}
+%             \toprule
+%             \textbf{Asse} & \textbf{Attività Media (RMSE)} & \textbf{Picco Max} & \textbf{Stress} \\
+%             \midrule
+%             Roll ($p$) & $\approx 0$ & $3 \times 10^{-4}$ & Nullo \\
+%             Yaw ($r$) & $\approx 0$ & $2 \times 10^{-4}$ & Nullo \\
+%             \rowcolor{yellow!20}\textbf{Pitch ($q$)} & \textbf{\SI{0.025}{rad/s}} & \textbf{\SI{0.55}{rad/s}} & \textbf{Alto} \\
+%             \bottomrule
+%         \end{tabular}
+%     \end{table}
     
-    \textbf{Conclusione Tecnica:}
-    Il canale di Pitch lavora sotto stress elevato (picchi di \SI{31}{\degree\per\second}).
-    Gli errori su X nascono quando la richiesta di coppia di pitch eccede la banda passante o l'autorità istantanea dei rotori, causando un ritardo nella frenata.
-\end{frame}
+%     \textbf{Conclusione Tecnica:}
+%     Il canale di Pitch lavora sotto stress elevato (picchi di \SI{31}{\degree\per\second}).
+%     Gli errori su X nascono quando la richiesta di coppia di pitch eccede la banda passante o l'autorità istantanea dei rotori, causando un ritardo nella frenata.
+% \end{frame}
 
-% --- Slide 7: Sintesi Finale ---
-\begin{frame}{Sintesi Validazione Hovering}
-    \begin{columns}
-        \begin{column}{0.6\textwidth}
-            \textbf{Stato Sistema:}
-            \begin{itemize}
-                \item[\checkmark] \textbf{Safety:} 100\% Convergenza (Nessun crash).
-                \item[\checkmark] \textbf{Precisione Nominale:} Eccellente su tutti gli assi ($< 3$cm).
-                \item[\textbf{!}] \textbf{Limiti:} Tendenza al drift su X (Pitch) in manovre di recupero estreme.
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \begin{block}{Roadmap}
-                Il controllore è \textbf{pronto per il volo} in condizioni nominali.
-                Si consiglia un tuning più aggressivo del guadagno derivativo (D) sul Pitch per limitare i drift negli outliers.
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
+% % --- Slide 7: Sintesi Finale ---
+% \begin{frame}{Sintesi Validazione Hovering}
+%     \begin{columns}
+%         \begin{column}{0.6\textwidth}
+%             \textbf{Stato Sistema:}
+%             \begin{itemize}
+%                 \item[\checkmark] \textbf{Safety:} 100\% Convergenza (Nessun crash).
+%                 \item[\checkmark] \textbf{Precisione Nominale:} Eccellente su tutti gli assi ($< 3$cm).
+%                 \item[\textbf{!}] \textbf{Limiti:} Tendenza al drift su X (Pitch) in manovre di recupero estreme.
+%             \end{itemize}
+%         \end{column}
+%         \begin{column}{0.4\textwidth}
+%             \begin{block}{Roadmap}
+%                 Il controllore è \textbf{pronto per il volo} in condizioni nominali.
+%                 Si consiglia un tuning più aggressivo del guadagno derivativo (D) sul Pitch per limitare i drift negli outliers.
+%             \end{block}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 % ============================================================
 % CONTROLLO ORIZZONTALE

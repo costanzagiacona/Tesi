@@ -18,7 +18,7 @@ function MonteCarloVTOL(params)
     
     % --- CONFIGURAZIONE 2: CROCIERA ---
     cfg_cruise.name = 'Crociera';
-    cfg_cruise.test_id = 3; 
+    cfg_cruise.test_id = 2; 
     cfg_cruise.target = [25; 0; -10]; % [Vx_target; Pitch_target; Z_target]
     cfg_cruise.tspan = [0 80]; 
     cfg_cruise.sigma = struct('pos', 2.0, 'vel', 5.0, 'att', deg2rad(5), 'omega', deg2rad(2));
@@ -91,52 +91,66 @@ end
 
 function RunCampaign(cfg, params)
     N_sim = 50; 
-    fprintf('>> Avvio Campagna Integrale: %s\n', cfg.name);
+    fprintf('>> Avvio Campagna: %s (Test ID %d)\n', cfg.name, cfg.test_id);
     
-    % Preallocazione per 12 stati + convergenza
+    % Inizializziamo la struct risultati per il salvataggio .mat
+    % Deve contenere t, x e converged per essere letta dalla tua funzione di plot
+    risultati = struct('t', {}, 'x', {}, 'converged', {}, 'RMSE_u', {}, 'RMSE_Pe', {});
+    
+    % Inizializziamo la struct per il report statistico Full_Analysis
     stats = struct();
-    h = waitbar(0, ['Analisi 12 stati: ' cfg.name '...']);
+    
+    h = waitbar(0, ['Simulazione ' cfg.name '...']);
     
     for i = 1:N_sim
         if ishandle(h), waitbar(i/N_sim, h); end
+        
         x0 = GenerateX0(cfg.x0_type, cfg.target, cfg.sigma, params);
         
         try
             [t, x] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), cfg.tspan, x0);
             
-            % Check validità
+            % Check convergenza
             ok = (t(end) == cfg.tspan(2)) && ~any(isnan(x(:)));
+            
+            % --- DATI PER IL PLOTTING (.mat) ---
+            risultati(i).t = t;
+            risultati(i).x = x;
+            risultati(i).converged = ok;
+            
+            % --- DATI PER LE STATISTICHE (Full_Analysis) ---
             stats(i).conv = ok;
-
             if ok
-                idx = t > (cfg.tspan(2)*0.6); % Analisi solo nell'ultimo 40% (regime)
-                
-                % Calcolo RMSE per i 12 stati
-                % Per gli stati che devono andare a zero (y, v, w, phi, theta, psi, p, q, r)
-                % e per quelli con target (x, z, u_cruise)
+                idx = t > (cfg.tspan(2)*0.6);
                 err = x(idx, 1:12);
-                target_mat = zeros(size(err));
-                
-                % Definizione Target specifica
-                if cfg.test_id == 1 % HOVER
+                % Target vector per RMSE (Pn, Pe, Pd, u, v, w, phi, theta, psi, p, q, r)
+                if cfg.test_id == 1
                     target_vec = [cfg.target(1), 0, cfg.target(3), 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                else % CROCIERA (Test 3)
-                    % In crociera x(1) cresce sempre, quindi non calcoliamo RMSE su x
+                else
                     target_vec = [0, 0, cfg.target(3), cfg.target(1), 0, 0, 0, 0, 0, 0, 0, 0];
-                    err(:,1) = 0; % Ignoriamo errore posizione X
+                    err(:,1) = 0; % Ignora errore X in crociera
                 end
-                
-                rmse_all = sqrt(mean((err - target_vec).^2, 1));
-                stats(i).rmse = rmse_all;
+                stats(i).rmse = sqrt(mean((err - target_vec).^2, 1));
             else
                 stats(i).rmse = NaN(1,12);
             end
+            
         catch
+            risultati(i).converged = false;
             stats(i).conv = false;
             stats(i).rmse = NaN(1,12);
         end
     end
+    
     if ishandle(h), close(h); end
+    
+    % --- SALVATAGGIO FILE .MAT PER GRAFICI ---
+    % Nota: La tua funzione di plot cerca file come 'Results_Hover_Test.mat'
+    fileMat = ['Results_' cfg.name '_Test.mat'];
+    save(fileMat, 'risultati', 'cfg');
+    fprintf('   -> File .mat salvato: %s\n', fileMat);
+    
+    % --- SALVATAGGIO CSV ANALISI ---
     GenerateFullCSV(stats, ['Full_Analysis_' cfg.name '.csv']);
 end
 
