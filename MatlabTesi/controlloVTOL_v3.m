@@ -470,9 +470,20 @@ switch test_id
         % =================================================
         % --- Feedforward Aerodinamico (ALA) ---
         % =================================================
+
+                % --- Calcolo Airspeed e Alpha per il controllo ---
+        u_b = x(4); w_b = x(6);
+        Va = sqrt(u_b^2 + x(5)^2 + w_b^2); % Velocità d'aria totale
+        alpha_curr = atan2(w_b, u_b);      % Angolo di attacco corrente
+        
+        % Modello dinamico Cl (deve coincidere col simulatore)
+        Cl_dyn = params.C_l + 2*pi * alpha_curr; 
+        
+        % Feedforward Portanza corretta
+        F_lift_wing = -0.5 * params.rho * params.s * Cl_dyn * Va^2;
         % Calcolo portanza generata dall'ala (negativa in NED perché verso l'alto)
         % L = 0.5 * rho * S * Cl * V^2
-        F_lift_wing = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
+        % F_lift_wing = -0.5 * params.rho * params.s * params.C_l * vx_global^2;
         
         % Forza verticale richiesta ai motori (F = m*a - L_ala)
         % Se l'ala sostiene tutto il peso, Fz_req tende a 0.
@@ -498,9 +509,17 @@ switch test_id
         
         % Forza orizzontale richiesta (deve vincere Drag + Inerzia)
         Fx_req = F_drag + kp_v * e_v + ki_v * int_err_v;
+
+        F_drag_total = 0.5 * params.rho * (params.s * params.C_d + params.s_body_x * params.C_d_x) * vx_global^2;
+        Fx_req = F_drag_total + kp_v * e_v + ki_v * int_err_v;
+
+                % Feedforward Drag corretta (includendo la fusoliera)
+        F_drag_total = 0.5 * params.rho * (params.s * params.C_d + params.s_body_x * params.C_d_x) * Va^2;
+        
+        Fx_req = F_drag_total + kp_v * e_v + ki_v * int_err_v;
         
         % per evitare singolarità matematiche
-        if Fx_req < 0.1; Fx_req = 0.1; end
+        if Fx_req < -50; Fx_req = -50; end
        
         % =================================================
         % 5. STRATEGIA VETTORIALE (Thrust Vectoring)

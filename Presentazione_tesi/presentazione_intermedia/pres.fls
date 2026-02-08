@@ -637,6 +637,12 @@ INPUT ..\..\img\controllo_verticale\angoli.png
 INPUT ..\..\img\controllo_verticale\angoli.png
 INPUT ..\..\img\controllo_verticale\angoli.png
 INPUT ..\..\img\controllo_verticale\angoli.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
+INPUT ..\..\img\controllo_verticale\pos_vel.png
 INPUT ..\..\img\controllo_verticale\thrust.png
 INPUT ..\..\img\controllo_verticale\thrust.png
 INPUT ..\..\img\controllo_verticale\thrust.png
@@ -655,8 +661,6 @@ INPUT ..\..\img\config_orizzontale.png
 INPUT ..\..\img\config_orizzontale.png
 INPUT ..\..\img\config_orizzontale.png
 INPUT ..\..\img\config_orizzontale.png
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmss17.tfm
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmssbx10.tfm
 INPUT ..\..\img\montecarlo\takeoff.png
 INPUT ..\..\img\montecarlo\takeoff.png
 INPUT ..\..\img\montecarlo\takeoff.png
@@ -719,14 +723,10 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsso9.
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsso9.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy10.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy10.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy5.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy5.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy7.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy7.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy8.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy8.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy9.pfb
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmsy9.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msam10.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msam10.pfb
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msbm10.pfb

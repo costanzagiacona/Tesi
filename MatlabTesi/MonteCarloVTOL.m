@@ -20,7 +20,7 @@ function MonteCarloVTOL(params)
     cfg_rec.sigma = struct('pos', 2.0, 'vel', 1.5, 'att', deg2rad(15), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; % Parte già in quota
     
-    RunCampaign(cfg_rec, params);
+    % RunCampaign(cfg_rec, params);
     
     fprintf('\n------------------------------------------------\n');
     
@@ -33,14 +33,14 @@ function MonteCarloVTOL(params)
     cfg_take.sigma = struct('pos', 0.1, 'vel', 0.05, 'att', deg2rad(2), 'omega', deg2rad(1));
     cfg_take.x0_type = 'takeoff'; % Parte da terra
     
-    RunCampaign(cfg_take, params);
+    % RunCampaign(cfg_take, params);
 
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE (Volo avanzato) ---
     cfg_cru.name = 'Cruise_{Flight}';
     cfg_cru.test_id = 2; 
-    cfg_cru.target = [35; 0; -10]; 
+    cfg_cru.target = [25; 0; -10]; 
     cfg_cru.tspan = [0 60]; 
     cfg_cru.sigma = struct('pos', 2.0, 'vel', 3.0, 'att', deg2rad(5), 'omega', deg2rad(2));
     cfg_cru.x0_type = 'cruise'; 

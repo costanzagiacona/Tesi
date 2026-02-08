@@ -295,19 +295,19 @@ else
 end
 
 % --- Anti-windup simulazione ---
-% if simbolico == 0
-%     % Velocità X
-%     if abs(x(27)) > 50.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
-% 
-%     % Pitch
-%     if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
-% 
-%     % Quota Z
-%     if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
-% 
-%     % Integrale y 
-%     if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
-% end
+if simbolico == 0
+    % Velocità X
+    if abs(x(27)) > 20.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
+
+    % Pitch
+    if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
+
+    % Quota Z
+    if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
+
+    % Integrale y 
+    if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
+end
 
 %=====================================================================
 

@@ -718,7 +718,7 @@
 \end{frame}
 
 % --- SLIDE SIMULAZIONI 1: Assetto ---
-\begin{frame}{Analisi Prestazionale: Assetto e Posizione}
+\begin{frame}{Analisi Prestazionale: Assetto}
     \begin{columns}[c]
         \begin{column}{0.65\textwidth}
             \centering
@@ -735,13 +735,27 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}{Analisi Prestazionale: Posizione}
+    \begin{columns}[c]
+        \begin{column}{0.65\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{pos_vel.png}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \textbf{Posizione inerziale:}
+            \begin{itemize}
+                \item \textcolor{blue!80!black}{\textbf{X e Y:}} Il drone rimane fermo lungo gli assi $x$ e $y$.
+                \item \textcolor{blue!80!black}{\textbf{Z:}} Viene raggiunta con successo la quota.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % --- SLIDE SIMULAZIONI 2: Attuatori ---
 \begin{frame}{Analisi degli Attuatori: Sforzo di Controllo}
     \begin{columns}[c]
         \begin{column}{0.65\textwidth}
             \includegraphics[width=\linewidth]{thrust.png}
-            \vspace{0.1cm}
-            \includegraphics[width=\linewidth]{tilt.png}
         \end{column}
         \begin{column}{0.35\textwidth}
             \textbf{Thrust:}
@@ -749,7 +763,17 @@
                 \item Nessuna saturazione dei motori (Max 100N).
                 \item \textit{Ripple} limitato all'ingresso dei disturbi.
             \end{itemize}
-            \vspace{0.5cm}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE SIMULAZIONI 2: Attuatori ---
+\begin{frame}{Analisi degli Attuatori: Sforzo di Controllo}
+    \begin{columns}[c]
+        \begin{column}{0.65\textwidth}
+            \includegraphics[width=\linewidth]{tilt.png}
+        \end{column}
+        \begin{column}{0.35\textwidth}
             \textbf{Tilt:}
             \begin{itemize}
                 \item Escursione contenuta ($\pm 5^\circ$) in hovering.
@@ -1167,157 +1191,146 @@
 % ===========================================================
 \section{Validazione e Analisi Statistica}
 
+% --- SLIDE INTRODUTTIVA ---
 \begin{frame}
     \vfill
     \centering
-    {\Huge \textbf{Validazione Statistica (Monte Carlo)}}
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \rule{\linewidth}{0.5mm} \\[0.4cm]
+        {\Huge \textbf{Validazione Statistica}} \\
+        \large Campagna di Stress-Test Monte Carlo ($N=300$) \\
+        \rule{\linewidth}{0.5mm}
+    \end{minipage}
     \vfill
 \end{frame}
 
-\section{Validazione e Analisi Statistica}
-
-% --- SLIDE 1: METODOLOGIA (N=300) ---
+% --- SLIDE 1: METODOLOGIA ---
 \begin{frame}{Metodologia di Validazione Estesa}
-    \begin{alertblock}{Stress-Test Monte Carlo ($N=300$)}
-        La campagna di validazione è stata estesa per garantire significatività statistica e verificare la stabilità asintotica su orizzonti temporali lunghi.
+    \begin{alertblock}{Stress-Test Monte Carlo}
+        Il sistema è stato testato su 300 scenari indipendenti per verificare la robustezza del controllo rispetto a incertezze iniziali e mismatch tra modello fisico e modello di controllo interno.
     \end{alertblock}
 
-    \vspace{0.5cm}
+    \vspace{0.4cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \textbf{\large Il Campione}
+            \textbf{\large Il Campione ($N=300$)}
             \begin{itemize}
-                \item \textbf{100 Run} - Decollo (Takeoff)
-                \item \textbf{100 Run} - Recupero (Recovery)
-                \item \textbf{100 Run} - Crociera (Cruise)
+                \item \textbf{100 Run:} Decollo (Takeoff)
+                \item \textbf{100 Run:} Recupero (Recovery)
+                \item \textbf{100 Run:} Crociera (Cruise)
             \end{itemize}
         \end{column}
         
         \begin{column}{0.48\textwidth}
-            \textbf{\large Le Incertezze ($\sigma$)}
+            \textbf{\large Incertezze Iniziali ($\sigma$)}
             \begin{itemize}
-                \item Posizione iniziale: $\pm 2.0$ m
-                \item Velocità iniziale: $\pm 3.0$ m/s
-                \item Assetto iniziale: $\pm 15^\circ$
+                \item \textbf{Posizione:} $\pm 2.0$ m
+                \item \textbf{Velocità:} $\pm 3.0$ m/s
+                \item \textbf{Assetto:} $\pm 15^\circ$
             \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
 
 % --- SLIDE 2: DECOLLO ---
-\begin{frame}{Scenario 1: Decollo da Terra (Takeoff)}
-    \textbf{Obiettivo:} Analisi del transitorio motori (Idle $\to$ Hover) e tracking di quota.
+\begin{frame}{Scenario 1: Decollo e Controllo Verticale}
+    \textbf{Analisi:} Transizione Idle $\to$ Hover in configurazione tricottero puro.
     
     \vspace{0.2cm}
     \begin{columns}[c]
-        \begin{column}{0.35\textwidth}
-            \begin{block}{Statistiche ($N=100$)}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Risultati (Successo 100\%)}
                 \centering
-                \LARGE \textcolor{green!60!black}{\textbf{100\%}}\\
-                \normalsize Success Rate
-                
-                \vspace{0.3cm}
-                RMSE Quota ($Z$):\\
-                \textbf{$< 10^{-5}$ m}
+                RMSE Quota $\approx 2.8 \times 10^{-6}$ m
             \end{block}
-            \footnotesize
-            \textit{Il sistema non presenta overshoot né incertezze durante il distacco dal suolo.}
+            \textbf{Punti di Forza:}
+            \begin{itemize}
+                \item \textbf{Disaccoppiamento:} In assenza di vento relativo, il mixing dei motori non subisce disturbi aerodinamici.
+                \item \textbf{Lift-off:} La spinta supera il peso ($mg \approx 65.6$N) con un transitorio smorzato.
+            \end{itemize}
         \end{column}
         
-        \begin{column}{0.65\textwidth}
+        \begin{column}{0.5\textwidth}
             \centering
-            % IMMAGINE: Inserisci qui 'Figure 12.1' (Quota Z vs Tempo)
-            \includegraphics[width=\linewidth, height=5.5cm, keepaspectratio]{montecarlo/takeoff.png}
-            \captionof{figure}{\footnotesize \textbf{Tracking Quota ($Z$):} Sovrapposizione di 100 simulazioni. Si nota la perfetta coincidenza delle traiettorie e la salita monotona da $0$ a $-10$m senza oscillazioni.}
+            % Inserire qui il grafico a due piani (Quota + Spinta)
+            \includegraphics[width=\linewidth, height=5cm, keepaspectratio]{montecarlo/takeoff.png}
+            \captionof{figure}{\footnotesize \textbf{Tracking Quota e Spinta:} Sovrapposizione di 100 simulazioni. Si nota il picco di spinta al lift-off e la successiva stabilizzazione al peso nominale.}
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3: RECUPERO ---
+% --- SLIDE 3: RECOVERY ---
 \begin{frame}{Scenario 2: Recupero in Hovering (Recovery)}
-    \textbf{Obiettivo:} Reiezione di disturbi severi su posizione e assetto.
+    \textbf{Obiettivo:} Annullamento della velocità orizzontale residua per il rientro in hovering stazionario.
     
-    \vspace{0.1cm}
-    % IMMAGINE: Inserisci qui 'Figure 1.1' (Posizione 3D o XYZ) oppure 'Figure 1.2' (Velocità)
-    \centering
-    \includegraphics[width=0.9\linewidth, height=4.2cm, keepaspectratio]{montecarlo/recovery_V.png}
-    \captionof{figure}{\footnotesize \textbf{Convergenza Posizione:} "Spaghetti plot" di 100 run. L'elevata dispersione iniziale (caos a $t=0$) viene completamente assorbita dal controllore, portando tutte le traiettorie a convergere nell'origine (Target).}
-    
-    \vspace{0.2cm}
     \begin{columns}[T]
-        \begin{column}{0.33\textwidth}
-            \centering
-            \textbf{Success Rate}\\
-            \textcolor{orange}{\Large 96\%}\\
-            \tiny (4 outlier su 100)
+        \begin{column}{0.45\textwidth}
+            \textbf{Analisi del Comportamento:}
+            \begin{itemize}
+                \item \textbf{Frenata Aerodinamica:} Il sistema usa il beccheggio ($\theta$) per generare resistenza e annullare $V_x$.
+                \item \textbf{Accoppiamento:} Si osservano oscillazioni dovute allo scambio di energia tra assetto e spinta dei rotori.
+            \end{itemize}
         \end{column}
-        \begin{column}{0.33\textwidth}
-            \centering
-            \textbf{RMSE Velocità}\\
-            \Large 0.76 m/s\\
-            \tiny Smorzamento efficace
-        \end{column}
-        \begin{column}{0.33\textwidth}
-            \centering
-            \textbf{Analisi Failure}\\
-            \tiny I 4 casi falliti derivano da assetti iniziali estremi ($>60^\circ$) a bassa quota, fisicamente irrecuperabili.
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \includegraphics[width=\linewidth, height=5cm, keepaspectratio]{montecarlo/recovery_V.png}
+            \end{center}
         \end{column}
     \end{columns}
 \end{frame}
 
 % --- SLIDE 4: CROCIERA ---
-\begin{frame}{Scenario 3: Volo di Crociera (Cruise)}
-    \textbf{Obiettivo:} Verifica stabilità longitudinale a lungo termine ($t_{span}$ esteso).
+\begin{frame}{Scenario 3: Crociera e Tracking di Velocità}
+    \textbf{Analisi:} Verifica del bilanciamento aerodinamico e stabilità asintotica.
     
     \vspace{0.3cm}
     \begin{columns}[c]
         \begin{column}{0.5\textwidth}
-            \textbf{Performance Longitudinale:}
+            \textbf{Performance (99\% Successo):}
             \begin{itemize}
-                \item \textbf{RMSE $V_x$:} \textcolor{green!60!black}{\textbf{3 mm/s}} (Drift nullo)
-                \item \textbf{RMSE Quota:} \textcolor{green!60!black}{\textbf{2.9 cm}}
+                \item \textbf{RMSE $V_x$:} \textcolor{green!60!black}{\textbf{$7.5 \times 10^{-6}$ m/s}}
+                \item \textbf{RMSE Quota:} \textcolor{green!60!black}{\textbf{$1.1 \times 10^{-4}$ m}}
             \end{itemize}
             \vspace{0.2cm}
             \small
-            \textit{L'assenza di deriva su $V_x$ conferma che la stima del drag e il feedforward sono corretti.}
+            \textit{Il debug del feedforward (fattore 2 nel $C_L$) ha eliminato il drift di velocità, stabilizzando il drone a 25 m/s.}
         \end{column}
         
         \begin{column}{0.5\textwidth}
-            \begin{alertblock}{Nota Dinamica Laterale}
-                La posizione laterale ($Y$) è in \textbf{Open Loop}.
-                Il drift osservato è fisiologico e non influenza la sicurezza del volo.
+            \begin{alertblock}{Analisi Outlier (Run 87)}
+                Unico crash ($1\%$) dovuto a stallo di gravità.
+                L'assetto è mantenuto, ma la portanza è insufficiente a sostenere il peso ($RMSE_Z = 183$m).
             \end{alertblock}
         \end{column}
     \end{columns}
-
     \vspace{0.2cm}
+    
     \centering
-    % IMMAGINE: Inserisci qui 'Figure 21.2' (Velocità Vx vs Tempo)
-    \includegraphics[width=0.85\linewidth, height=3.5cm, keepaspectratio]{montecarlo/cruise.png}
-    \captionof{figure}{\footnotesize \textbf{Inseguimento $V_x$:} Le 100 linee si sovrappongono perfettamente sul target di $25$ m/s. Il "tubo" di errore è impercettibile, indicando altissima robustezza alle incertezze parametriche.}
+    \includegraphics[width=0.8\linewidth]{montecarlo/cruise.png}
 \end{frame}
 
 % --- SLIDE 5: SINTESI ---
-\begin{frame}{Sintesi della Validazione ($N=300$)}
+\begin{frame}{Sintesi della Validazione}
     \centering
-    \Large
-    Il sistema di controllo dimostra elevata affidabilità sull'intero inviluppo.
+    \Large Affidabilità confermata sull'intero inviluppo operativo.
     
     \vspace{0.5cm}
-    \normalsize
-    \renewcommand{\arraystretch}{1.5}
     \begin{table}[]
         \centering
-        \begin{tabular}{l c l}
+        \begin{tabular}{l c l p{4cm}}
             \toprule
-            \textbf{Fase} & \textbf{Esito} & \textbf{Note} \\
+            \textbf{Fase} & \textbf{Esito} & \textbf{Stato} & \textbf{Conclusione Tecnica} \\
             \midrule
-            Decollo & \textcolor{green!60!black}{\textbf{OTTIMO}} & Transitorio nominale perfetto. \\
-            Hovering & \textcolor{blue}{\textbf{ROBUSTO}} & 96\% Successo. Failure confinate a condizioni "Crash inevitabile". \\
-            Crociera & \textcolor{green!60!black}{\textbf{OTTIMO}} & Stabilità asintotica confermata (No Drift). \\
+            Decollo & 100\% & \textcolor{green}{Ottimo} & PID verticale robusto. \\
+            Recupero & 96\% & \textcolor{orange}{Critico} & Accoppiamento non-lineare forte. \\
+            Crociera & 99\% & \textcolor{green}{Ottimo} & Feedforward validato. \\
             \bottomrule
         \end{tabular}
     \end{table}
+    \vspace{0.3cm}
+    \normalsize
+    \textit{I punti di forza risiedono nella precisione del volo livellato; la criticità risiede nella transizione dinamica per la perdita di portanza alare.}
 \end{frame}
 
 

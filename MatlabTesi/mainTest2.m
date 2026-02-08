@@ -41,7 +41,7 @@ target = [vx_des theta_des z_des];
 if fase == 1
     test_id = 1;
 elseif fase == 3
-    test_id = 2;
+    test_id = 3;
 end
 
 new_model = 1;
@@ -119,7 +119,9 @@ C_y = 0; % trascurabile
 % scelto in modo tale che se v_x = 90 km/h (25 m/s) la portanza contrasti
 % la gravità
 C_l = (m*g)/(rho*s*(v_air)^2); %0.854; %coeff. di portanza (lift) aerodinamica 
-
+% In mainTest2.m
+C_l = (2 * m * g) / (rho * s * v_air^2);
+C_d = (2 * (m-1) * g) / (rho * s * v_air^2); % Se vuoi mantenere la logica m-1
 
 %parametri distanza (m) tra centro di massa e forze aerodinamiche (per il calcolo del momento delle forze aerodinamiche)
 
