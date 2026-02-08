@@ -166,30 +166,34 @@
 % --- SLIDE 1: SISTEMI DI RIFERIMENTO ---
 % Mantenuta simile, pulita la formattazione
 \begin{frame}{Sistemi di Riferimento}
-    \small 
+    \small
     Per descrivere la dinamica 6-DOF si adottano due sistemi destrorsi:
-    
-    \begin{columns}[c]
+    \vspace{-0.5cm}
+    \begin{columns}[t]
         \begin{column}{0.5\textwidth}
             \begin{itemize}
                 \item \textbf{Inerziale ($\mathcal{F}_g$):} \\
                 Posizione $\bm{P}_g$, Assetto $\bm{\Theta}_g$ (Eulero).
-                \vspace{0.5cm}
-                \item \textbf{Solidale ($\mathcal{F}_b$):} \\
-                Origine nel \textbf{CoM}. \\
-                Velocità $\bm{V}_b = [u, v, w]^T$, $\bm{\Omega}_b = [p, q, r]^T$.
+                \begin{center}
+                    \includegraphics[height=3cm]{sist_rif_global.png}
+                    \captionof{figure}{Sistema inerziale.}
+                \end{center}
             \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
-            \centering
-            % Placeholder per le immagini originali
-            \includegraphics[height=2.2cm]{sist_rif_global.png} \\
-            \vspace{0.2cm}
-            \includegraphics[height=2.2cm]{sist_rif_body.jpg}
+            \begin{itemize}
+                \item \textbf{Solidale ($\mathcal{F}_b$):} 
+                    Origine nel \textbf{CoM}. \\
+                    Velocità $\bm{V}_b = [u, v, w]^T$, $\bm{\Omega}_b = [p, q, r]^T$.
+                    \begin{center}
+                        \includegraphics[height=3cm]{sist_rif_body.jpg}
+                        \captionof{figure}{Sistema solidale al corpo.}
+                    \end{center}
+            \end{itemize}
         \end{column}
     \end{columns}
     
-    \vspace{0.5cm}
+    \vspace{0.1cm}
     \textbf{Cinematica (Relazione tra i sistemi):}
     \begin{equation}
         \begin{bmatrix} \bm{\dot{P}}_g \\ \bm{\dot{\Theta}}_g \end{bmatrix} = 
@@ -209,7 +213,7 @@
         \end{column}
         
         \begin{column}{0.5\textwidth}
-            \textbf{Configurazione Asimmetrica:}
+            \textbf{Configurazione:}
             \begin{itemize}
                 \item Rotori Anteriori: $\bm{r}_{1,2} = [d_{mx}, \pm d_{my}, 0]^T$
                 \item Rotore di Coda: $\bm{r}_3 = [-d_{tx}, 0, 0]^T$
@@ -218,7 +222,7 @@
             \vspace{0.5cm}
             \begin{alertblock}{Criticità Dinamica}
                 La spinta totale non è applicata nel CoM. 
-                \textbf{Implicazione:} Il bilanciamento del \textit{Pitch} richiede una ripartizione di potenza asimmetrica tra fronte e retro.
+                \textbf{Implicazione:} Il bilanciamento del \textit{Pitch} richiede una ripartizione di potenza asimmetrica tra rotori anteriori e posteriori.
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -242,8 +246,8 @@
     \vspace{0.5cm}
     \textbf{Scomposizione delle Forze e Momenti:}
     \begin{itemize}
-        \item $\bm{F}_{\text{tot}} = \bm{F}_{\text{th}} \text{ (Propulsione)} + \bm{F}_g \text{ (Gravità)} + \bm{F}_{\text{aero}} \text{ (Aerodinamica)}$
-        \item $\bm{M}_{\text{tot}}$ include contributi attivi (motori) e passivi (aerodinamica, giroscopici).
+        \item $\bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}$
+        \item $\bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{pinna}}$
     \end{itemize}
 \end{frame}
 
@@ -347,18 +351,21 @@
 % --- SLIDE 1: FORMULAZIONE DELLO STATO ---
 % Unisce definizione e variabili in una sola visione d'insieme potente
 \begin{frame}{Formulazione nello Spazio di Stato}
-    Il modello ad alta fedeltà è tradotto in un sistema di ODE del tipo $\dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u}, t)$.
+    Il modello è tradotto in un sistema di ODE del tipo $\dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u}, t)$.
     
     \vspace{0.5cm}
     \textbf{Vettore di Stato ($\mathbf{x} \in \mathbb{R}^{26}$):}
     \begin{equation}
         \mathbf{x} = 
+        {
+            \renewcommand{\arraystretch}{1.2}
         \begin{bmatrix}
             \bm{P}_g \\ \bm{V}_b \\ \hline
             \bm{\Theta}_g \\ \bm{\Omega}_b \\ \hline
             \bm{\theta}_{rot} \\ \bm{\dot{\theta}}_{rot} \\ \hline
             \bm{\omega}_{rot} \\ \bm{\dot{\omega}}_{rot}
         \end{bmatrix}
+        }
         \begin{array}{l}
             \left. \begin{matrix} \text{Posizione Inerziale } [x,y,z] \\ \text{Velocità Body } [u,v,w] \end{matrix} \right\} \text{\textbf{Traslazione}} \\[1em]
             \left. \begin{matrix} \text{Assetto Eulero } [\phi,\theta,\psi] \\ \text{Velocità Angolari } [p,q,r] \end{matrix} \right\} \text{\textbf{Rotazione}} \\[1em]
@@ -410,7 +417,7 @@
 % --- SLIDE 3: DINAMICA ATTUATORI ---
 % Questa è la slide critica. Sostituisce la cinematica standard con la dinamica realistica
 \begin{frame}{Dinamica degli Attuatori}
-    A differenza dei modelli semplificati, il simulatore include la dinamica del \textbf{secondo ordine} per motori e servomeccanismi.
+    È inclusa la dinamica del \textbf{secondo ordine} per motori e servomotori.
     
     \vspace{0.5cm}
     \begin{block}{Modello Dinamico (Esempio per il Tilt $\theta_i$)}
@@ -502,95 +509,7 @@
     \begin{figure}
         \centering
         \resizebox{0.75\textwidth}{!}{
-            \begin{tikzpicture}[auto, node distance=1.3cm, >=Stealth, thick]
-            % --- STILI ---
-            \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3.5em, align=center, fill=white]
-            \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, node distance=1.5cm]
-            \tikzstyle{input} = [coordinate]
-            \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, black!60]
-        
-            % --- 1. RIGA: QUOTA (Z) ---
-            \node [input] (ref_z) {};
-            \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
-            \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
-            \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
-        
-            % --- 2. RIGA: POSIZIONE Y -> ROLL (PHI) ---
-            \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
-            \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
-            \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
-            \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
-            \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {PID\\ROLL};
-            \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
-        
-            % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
-            \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
-            \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
-            \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
-            \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
-            \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {PID\\PITCH};
-            \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
-        
-            % --- 4. RIGA: YAW (PSI) ---
-            \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
-            \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
-            \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {PID\\YAW}; 
-            \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
-        
-            % --- MIXER E DRONE ---
-            \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MMA};
-            \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
-        
-            % --- COLLEGAMENTI ---
-            % Z Loop
-            \draw [->] (ref_z) -- (sum_z);
-            \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
-            
-            % Thrust Bus
-            \coordinate (bus_x) at ($(sum_y.east)!0.5!(smc_phi.west)$);
-            \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
-            \node[above, font=\footnotesize] at ($(smc_z.south) + (-1, -0.8)$) {$F_{req,z}$};
-            \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
-            \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
-
-            % Y Loop
-            \draw [->] (ref_y) -- (sum_y);
-            \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
-            \draw [->] (smc_phi) -- node[above, font=\footnotesize] {$\phi_{des}$} (sum_roll);
-            \draw [->] (sum_roll) -- node[above, font=\footnotesize] {$e_\phi$} (pid_roll);
-            \draw [->] (pid_roll) -- node[above, near end, font=\footnotesize] {$M_x$} (mixer.west |- pid_roll);
-        
-            % X Loop
-            \draw [->] (ref_x) -- (sum_x);
-            \draw [->] (sum_x) -- node[above, font=\footnotesize] {$e_x$} (smc_theta);
-            \draw [->] (smc_theta) -- node[above, font=\footnotesize] {$\theta_{des}$} (sum_pitch);
-            \draw [->] (sum_pitch) -- node[above, font=\footnotesize] {$e_\theta$} (pid_pitch);
-            \draw [->] (pid_pitch) -- node[above, near end, font=\footnotesize] {$M_y$} (mixer.west |- pid_pitch);
-        
-            % Yaw Loop
-            \draw [->] (ref_psi) -- (sum_yaw);
-            \draw [->] (sum_yaw) -- node[above, font=\footnotesize] {$e_\psi$} (pid_yaw);
-            \draw [->] (pid_yaw) -- node[above, near end, font=\footnotesize] {$M_z$} (mixer.west |- pid_yaw);
-        
-            % Mixer -> Drone
-            \draw [->] (mixer) -- (drone);
-        
-            % Feedback
-            \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start) -- ++(0,-5) coordinate (fb_corner) -- (fb_corner -| sum_z) coordinate (fb_end) -- ++(-1,0); 
-            \draw [->] (fb_end -| sum_z) -- (sum_z.south);
-            \draw [->] (fb_end -| sum_y) -- (sum_y.south);
-            \draw [->] (fb_end -| sum_x) -- (sum_x.south);
-            \draw [->] (fb_end -| sum_yaw) -- (sum_yaw.south);
-            \draw [->] (fb_end -| sum_roll) -- (sum_roll.south);
-            \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
-                
-            \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
-        
-            % Riquadri
-            \node [container, fit=(smc_z) (smc_phi) (smc_theta), label=above:\textbf{Outer Loop: Posizione}] {};
-            \node [container, fit=(pid_roll) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop: Assetto}] {};
-        
-            \end{tikzpicture}
+            \includegraphics{controllo_verticale/schema_blocchi_V.png}
         }
         \caption{Schema a blocchi del controllo verticale.}
     \end{figure}
@@ -600,12 +519,12 @@
 \begin{frame}{Outer Loop: Controllo di Quota}
     \begin{columns}[T]
         \begin{column}{0.6\textwidth}
-            \textbf{Obiettivo:} Robustezza ai disturbi.
+            \textbf{Obiettivo:} Robustezza ai disturbi.\\
             \vspace{0.2cm}
             \textbf{1. Definizioni:}
             \begin{itemize}
                 \item Errore: $e_z = z_{des} - z$
-                \item Superficie: $\sigma_z = \dot{e}_z + \lambda_z e_z$
+                \item Sliding surface: $\sigma_z = \dot{e}_z + \lambda_z e_z$
             \end{itemize}
             \vspace{0.3cm}
             \textbf{2. Legge di Controllo ($F_{z,req}$):}
@@ -634,7 +553,7 @@
 \end{frame}
 
 % --- SLIDE 5: STABILITÀ (INVARIATA) ---
-\begin{frame}{Analisi di Stabilità (Metodo di Lyapunov)}
+\begin{frame}{Analisi di Stabilità}
     Per garantire la stabilità asintotica globale della \textit{sliding surface} ($\sigma \to 0$), si utilizza il criterio di Lyapunov.
     \vspace{0.3cm}
     \begin{columns}[T]
@@ -707,8 +626,9 @@
     Le forze virtuali calcolate dagli SMC ($F_{x,req}, F_{y,req}$) sono convertite in angoli di assetto desiderati.
     
     \vspace{0.5cm}
-    \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
+    \begin{columns}[c] % [c] allinea verticalmente al centro. Usa [T] solo se necessario.
+    % Prima colonna: ridotta al 48% per lasciare spazio al centro
+        \begin{column}{0.48\textwidth}
             \begin{block}{Generazione Rollio ($\phi_{des}$)}
                 \begin{equation*}
                     \phi_{des} = \arcsin\left( \frac{F_{y,req}}{T} \right)
@@ -716,7 +636,12 @@
                 Compensa l'errore laterale $e_y$.
             \end{block}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        
+        % Spazio elastico che spinge le colonne agli estremi
+        \hfill 
+        
+        % Seconda colonna: ridotta al 48%
+        \begin{column}{0.48\textwidth}
             \begin{block}{Generazione Beccheggio ($\theta_{des}$)}
                 \begin{equation*}
                     \theta_{des} = \arcsin\left( - \frac{F_{x,req}}{T} \right)
@@ -1002,7 +927,7 @@
         \begin{column}{0.4\textwidth}
             \centering
             % Placeholder per immagine drone in volo orizzontale
-            \includegraphics[width=0.9\linewidth]{tricopter_2D.png} 
+            \includegraphics[width=0.9\linewidth]{config_orizzontale.png} 
             \captionof{figure}{\footnotesize Configurazione Forward Flight}
         \end{column}
     \end{columns}
@@ -1129,9 +1054,6 @@
         \end{column}
     \end{columns}
     
-    \vspace{0.5cm}
-    \small \centering
-    \textit{Nota:} Il controllo laterale ($y$) genera un riferimento di rollio $\phi_{des}$ per virare (Bank-to-Turn).
 \end{frame}
 
 % --- SLIDE 4: INNER LOOP (ANALOGIE) ---
@@ -1204,8 +1126,12 @@
     Ai valori di base si sovrappongono i comandi di stabilizzazione ($u_\phi, u_\psi$) dell'Inner Loop.
 
     \vspace{0.5cm}
-    \begin{columns}[c]
-        \begin{column}{0.5\textwidth}
+    % L'opzione 'onlytextwidth' assicura che il calcolo delle larghezze sia pulito
+    \begin{columns}[c, onlytextwidth] 
+        \hfill % Margine sinistro (opzionale, per centrare il blocco totale)
+        
+        \begin{column}{0.44\textwidth}
+            \centering % Centra il contenuto dentro la colonna per staccarlo dai bordi
             \textbf{A. Comandi ai Motori} \\
             (Controllo Yaw e Spinta)
             \begin{equation}
@@ -1214,20 +1140,25 @@
                     T_{2}  = \frac{T_{tot}}{2} + u_{\psi}
                 \end{cases}
             \end{equation}
-            \small $\implies$ RPM Motori.
+            $\implies$ RPM Motori.
         \end{column}
         
-        \begin{column}{0.5\textwidth}
+        \hfill % Crea lo spazio centrale tra le due colonne
+        
+        \begin{column}{0.44\textwidth}
+            \centering
             \textbf{B. Comandi ai Servi} \\
             (Controllo Pitch e Roll)
             \begin{equation}
                 \begin{cases}
-                    \theta_{1} = \alpha_{base} \underbrace{- u_{\phi}}_{\text{Diff.}} \\
-                    \theta_{2} = \alpha_{base} \underbrace{+ u_{\phi}}_{\text{Diff.}}
+                    \theta_{1} = \alpha_{base} + u_{\theta} - u_{\phi} \\
+                    \theta_{2} = \alpha_{base} + u_{\theta} + u_{\phi}
                 \end{cases}
             \end{equation}
-            \small $\implies$ Angoli Servi.
+            $\implies$ Angoli Servi.
         \end{column}
+        
+        \hfill % Margine destro
     \end{columns}
 \end{frame}
 
@@ -1243,173 +1174,150 @@
     \vfill
 \end{frame}
 
-% --- SLIDE 1: OBIETTIVI ---
-\begin{frame}{Obiettivi dell'Analisi Monte Carlo}
-    Per validare la robustezza del controllore rispetto alle incertezze parametriche e ai disturbi, è stata condotta una campagna di simulazioni.
-    
-    \vspace{0.5cm}
-    \begin{block}{Setup Sperimentale}
-        \begin{itemize}
-            \item \textbf{Campione:} 50 Simulazioni (Run) per scenario.
-            \item \textbf{Incertezze:} Variazione del $\pm 10\%$ su massa e inerzia + Disturbi di vento.
-            \item \textbf{Metriche:} Root Mean Square Error (RMSE) su Posizione, Velocità e Assetto.
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.3cm}
-    \textbf{Scenari Operativi:}
-    \begin{enumerate}
-        \item \textbf{Hovering:} Mantenimento punto fisso (Test di stabilità statica).
-        \item \textbf{Crociera:} Inseguimento traiettoria a $V_{const}$ (Test di inseguimento dinamico).
-    \end{enumerate}
-\end{frame}
+\section{Validazione e Analisi Statistica}
 
-% --- SLIDE 2: RISULTATI HOVERING ---
-\begin{frame}{Risultati: Scenario Hovering}
-    \begin{columns}[c]
-        % Colonna Dati (Sinistra)
-        \begin{column}{0.45\textwidth}
-            \textbf{Performance:} Eccellente precisione di posizionamento e stabilità.
-            
-            \vspace{0.2cm}
-            \tiny % Tabella piccola per lasciare spazio
-            \centering
-            \begin{tabular}{llc}
-                \toprule
-                \textbf{Stato} & \textbf{Var} & \textbf{RMSE Medio} \\
-                \midrule
-                Posizione & $P_n$ & $1.64 \cdot 10^{-4}$ \\
-                          & $P_e$ & $2.28 \cdot 10^{-2}$ \\
-                          & $P_d$ & \textcolor{green!60!black}{$\mathbf{2.23 \cdot 10^{-11}}$} \\
-                \midrule
-                Velocità  & $u$   & $4.36 \cdot 10^{-5}$ \\
-                          & $v$   & $4.47 \cdot 10^{-9}$ \\
-                \midrule
-                Assetto   & $\phi$ & $1.39 \cdot 10^{-3}$ \\
-                          & $\theta$ & $2.98 \cdot 10^{-6}$ \\
-                \bottomrule
-            \end{tabular}
-            
-            \vspace{0.3cm}
-            \normalsize
+% --- SLIDE 1: METODOLOGIA (N=300) ---
+\begin{frame}{Metodologia di Validazione Estesa}
+    \begin{alertblock}{Stress-Test Monte Carlo ($N=300$)}
+        La campagna di validazione è stata estesa per garantire significatività statistica e verificare la stabilità asintotica su orizzonti temporali lunghi.
+    \end{alertblock}
+
+    \vspace{0.5cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\large Il Campione}
             \begin{itemize}
-                \item Controllo di quota ($P_d$) quasi perfetto.
-                \item Oscillazioni residue trascurabili.
+                \item \textbf{100 Run} - Decollo (Takeoff)
+                \item \textbf{100 Run} - Recupero (Recovery)
+                \item \textbf{100 Run} - Crociera (Cruise)
             \end{itemize}
         \end{column}
         
-        % Colonna Immagini (Destra)
-        \begin{column}{0.55\textwidth}
-            \centering
-            % Placeholder Immagine 1: Posizione/Assetto Hovering
-            \includegraphics[width=0.95\linewidth, height=3cm, keepaspectratio]{example-image-a.png} 
-            \vspace{0.1cm}
-            % Placeholder Immagine 2: Attuatori Hovering
-            \includegraphics[width=0.95\linewidth, height=3cm, keepaspectratio]{example-image-a.png}
-            \captionof{figure}{\footnotesize Run rappresentativa (Hovering)}
+        \begin{column}{0.48\textwidth}
+            \textbf{\large Le Incertezze ($\sigma$)}
+            \begin{itemize}
+                \item Posizione iniziale: $\pm 2.0$ m
+                \item Velocità iniziale: $\pm 3.0$ m/s
+                \item Assetto iniziale: $\pm 15^\circ$
+            \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3: RISULTATI CROCIERA ---
-\begin{frame}{Risultati: Scenario Crociera}
+% --- SLIDE 2: DECOLLO ---
+\begin{frame}{Scenario 1: Decollo da Terra (Takeoff)}
+    \textbf{Obiettivo:} Analisi del transitorio motori (Idle $\to$ Hover) e tracking di quota.
+    
+    \vspace{0.2cm}
     \begin{columns}[c]
-        % Colonna Dati (Sinistra)
-        \begin{column}{0.45\textwidth}
-            \textbf{Performance:} Degradamento significativo sulle variabili longitudinali.
-            
-            \vspace{0.2cm}
-            \tiny
+        \begin{column}{0.35\textwidth}
+            \begin{block}{Statistiche ($N=100$)}
+                \centering
+                \LARGE \textcolor{green!60!black}{\textbf{100\%}}\\
+                \normalsize Success Rate
+                
+                \vspace{0.3cm}
+                RMSE Quota ($Z$):\\
+                \textbf{$< 10^{-5}$ m}
+            \end{block}
+            \footnotesize
+            \textit{Il sistema non presenta overshoot né incertezze durante il distacco dal suolo.}
+        \end{column}
+        
+        \begin{column}{0.65\textwidth}
             \centering
-            \begin{tabular}{llc}
-                \toprule
-                \textbf{Stato} & \textbf{Var} & \textbf{RMSE Medio} \\
-                \midrule
-                Posizione & $P_e$ & \textcolor{red}{$\mathbf{27.68}$ m} \\
-                          & $P_d$ & $0.0001$ \\
-                \midrule
-                Velocità  & $u$   & \textcolor{red}{$\mathbf{10.35}$ m/s} \\
-                          & $v$   & $0.25$ \\
-                \midrule
-                Assetto   & All   & $< 10^{-12}$ \\
-                \bottomrule
-            \end{tabular}
-            
-            \vspace{0.3cm}
-            \normalsize
-            \begin{alertblock}{Criticità}
-                L'errore su $u$ indica che il drone non raggiunge il target di velocità o avanza più lentamente del setpoint.
+            % IMMAGINE: Inserisci qui 'Figure 12.1' (Quota Z vs Tempo)
+            \includegraphics[width=\linewidth, height=5.5cm, keepaspectratio]{montecarlo/takeoff.png}
+            \captionof{figure}{\footnotesize \textbf{Tracking Quota ($Z$):} Sovrapposizione di 100 simulazioni. Si nota la perfetta coincidenza delle traiettorie e la salita monotona da $0$ a $-10$m senza oscillazioni.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE 3: RECUPERO ---
+\begin{frame}{Scenario 2: Recupero in Hovering (Recovery)}
+    \textbf{Obiettivo:} Reiezione di disturbi severi su posizione e assetto.
+    
+    \vspace{0.1cm}
+    % IMMAGINE: Inserisci qui 'Figure 1.1' (Posizione 3D o XYZ) oppure 'Figure 1.2' (Velocità)
+    \centering
+    \includegraphics[width=0.9\linewidth, height=4.2cm, keepaspectratio]{montecarlo/recovery_V.png}
+    \captionof{figure}{\footnotesize \textbf{Convergenza Posizione:} "Spaghetti plot" di 100 run. L'elevata dispersione iniziale (caos a $t=0$) viene completamente assorbita dal controllore, portando tutte le traiettorie a convergere nell'origine (Target).}
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \centering
+            \textbf{Success Rate}\\
+            \textcolor{orange}{\Large 96\%}\\
+            \tiny (4 outlier su 100)
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \centering
+            \textbf{RMSE Velocità}\\
+            \Large 0.76 m/s\\
+            \tiny Smorzamento efficace
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \centering
+            \textbf{Analisi Failure}\\
+            \tiny I 4 casi falliti derivano da assetti iniziali estremi ($>60^\circ$) a bassa quota, fisicamente irrecuperabili.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE 4: CROCIERA ---
+\begin{frame}{Scenario 3: Volo di Crociera (Cruise)}
+    \textbf{Obiettivo:} Verifica stabilità longitudinale a lungo termine ($t_{span}$ esteso).
+    
+    \vspace{0.3cm}
+    \begin{columns}[c]
+        \begin{column}{0.5\textwidth}
+            \textbf{Performance Longitudinale:}
+            \begin{itemize}
+                \item \textbf{RMSE $V_x$:} \textcolor{green!60!black}{\textbf{3 mm/s}} (Drift nullo)
+                \item \textbf{RMSE Quota:} \textcolor{green!60!black}{\textbf{2.9 cm}}
+            \end{itemize}
+            \vspace{0.2cm}
+            \small
+            \textit{L'assenza di deriva su $V_x$ conferma che la stima del drag e il feedforward sono corretti.}
+        \end{column}
+        
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{Nota Dinamica Laterale}
+                La posizione laterale ($Y$) è in \textbf{Open Loop}.
+                Il drift osservato è fisiologico e non influenza la sicurezza del volo.
             \end{alertblock}
         \end{column}
-        
-        % Colonna Immagini (Destra)
-        \begin{column}{0.55\textwidth}
-            \centering
-            % Placeholder Immagine 1: Posizione/Velocità Crociera (Evidenzia l'errore)
-            \includegraphics[width=0.95\linewidth, height=3cm, keepaspectratio]{example-image-a.png} 
-            \vspace{0.1cm}
-            % Placeholder Immagine 2: Attuatori Crociera
-            \includegraphics[width=0.95\linewidth, height=3cm, keepaspectratio]{example-image-a.png}
-            \captionof{figure}{\footnotesize Errore di inseguimento (Crociera)}
-        \end{column}
     \end{columns}
-\end{frame}
 
-% --- SLIDE 4: ANALISI CRITICA ---
-\begin{frame}{Analisi Comparativa: Successi e Limiti}
-    Dal confronto dei due scenari emergono chiaramente i punti di forza e le limitazioni dell'architettura attuale.
-
-    \vspace{0.3cm}
-    \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
-            \textcolor{green!60!black}{\textbf{\LARGE \checkmark} \textbf{Punti di Forza}}
-            \begin{itemize}
-                \item \textbf{Controllo di Assetto:} Robustissimo in ogni fase (RMSE $< 10^{-3}$). L'Inner Loop funziona perfettamente.
-                \item \textbf{Mantenimento Quota:} Eccellente anche in volo avanzato, indicando che il feedforward di Lift ($L_{wing}$) è ben modellato.
-            \end{itemize}
-        \end{column}
-        
-        \begin{column}{0.5\textwidth}
-            \textcolor{red}{\textbf{\LARGE \ding{55}} \textbf{Criticità}}
-            \begin{itemize}
-                \item \textbf{Inseguimento Velocità ($u$):} L'errore a regime suggerisce un'azione integrale insufficiente sul PID di velocità o una stima di Drag errata.
-                \item \textbf{Deriva Laterale ($P_e$):} Accumulo di errore non compensato durante il moto rettilineo.
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% --- SLIDE 5: CONCLUSIONI ---
-\begin{frame}{Conclusioni e Sviluppi Futuri}
-    Il lavoro di tesi ha portato alla modellazione completa e alla sintesi del controllo per un VTOL innovativo.
-    
-    \vspace{0.3cm}
-    \begin{block}{Sintesi dei Risultati}
-        \begin{itemize}
-            \item Modello dinamico 6-DOF ad alta fedeltà con dinamica attuatori.
-            \item Controllo Verticale (Hovering) validato e pronto per test sperimentali.
-            \item Controllo Orizzontale (Crociera) stabile in assetto ma richiede tuning per le prestazioni.
-        \end{itemize}
-    \end{block}
-
-    \vspace{0.3cm}
-    \textbf{Prossimi Passi (Next Steps):}
-    \begin{enumerate}
-        \item \textbf{Tuning Crociera:} Aumentare guadagno integrale ($K_I$) su $v_x$ per annullare l'errore a regime.
-        \item \textbf{Transizione:} Sviluppare la logica di passaggio tra Hover e Cruise.
-        \item \textbf{Implementazione:} Porting del codice su hardware (Pixhawk/PX4).
-    \end{enumerate}
-\end{frame}
-
-% --- SLIDE FINE ---
-\begin{frame}
+    \vspace{0.2cm}
     \centering
-    \vfill
-    {\Huge \textbf{Grazie per l'attenzione}}
-    \vspace{1cm}
+    % IMMAGINE: Inserisci qui 'Figure 21.2' (Velocità Vx vs Tempo)
+    \includegraphics[width=0.85\linewidth, height=3.5cm, keepaspectratio]{montecarlo/cruise.png}
+    \captionof{figure}{\footnotesize \textbf{Inseguimento $V_x$:} Le 100 linee si sovrappongono perfettamente sul target di $25$ m/s. Il "tubo" di errore è impercettibile, indicando altissima robustezza alle incertezze parametriche.}
+\end{frame}
+
+% --- SLIDE 5: SINTESI ---
+\begin{frame}{Sintesi della Validazione ($N=300$)}
+    \centering
+    \Large
+    Il sistema di controllo dimostra elevata affidabilità sull'intero inviluppo.
     
-    \textit{Domande?}
-    \vfill
+    \vspace{0.5cm}
+    \normalsize
+    \renewcommand{\arraystretch}{1.5}
+    \begin{table}[]
+        \centering
+        \begin{tabular}{l c l}
+            \toprule
+            \textbf{Fase} & \textbf{Esito} & \textbf{Note} \\
+            \midrule
+            Decollo & \textcolor{green!60!black}{\textbf{OTTIMO}} & Transitorio nominale perfetto. \\
+            Hovering & \textcolor{blue}{\textbf{ROBUSTO}} & 96\% Successo. Failure confinate a condizioni "Crash inevitabile". \\
+            Crociera & \textcolor{green!60!black}{\textbf{OTTIMO}} & Stabilità asintotica confermata (No Drift). \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
 

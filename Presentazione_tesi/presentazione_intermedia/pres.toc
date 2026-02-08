@@ -8,4 +8,5 @@
 \beamer@sectionintoc {6}{Simulazioni controllo verticale}{29}{0}{6}
 \beamer@sectionintoc {7}{Controllo Volo Orizzontale}{32}{0}{7}
 \beamer@sectionintoc {8}{Validazione e Analisi Statistica}{39}{0}{8}
-\beamer@sectionintoc {9}{Conclusioni}{46}{0}{9}
+\beamer@sectionintoc {9}{Validazione e Analisi Statistica}{40}{0}{9}
+\beamer@sectionintoc {10}{Conclusioni}{45}{0}{10}
