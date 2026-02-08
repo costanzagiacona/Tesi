@@ -1,9 +1,9 @@
 %% PLOT PRESENTATION SUITE - Con Legende Professionali
-clc; close all;
+close all;
 
-files = {'Results_Recovery_{Hover}.mat', ...
-         'Results_Takeoff_{Ground}.mat', ...
-         'Results_Cruise_{Flight}.mat'};
+files = {'Results_SMCRecovery_{Hover}.mat', ...
+         'Results_SMCTakeoff_{Ground}.mat', ...
+         'Results_SMCCruise_{Flight}.mat'};
 
 set(0, 'DefaultAxesFontSize', 14);       
 set(0, 'DefaultLineLineWidth', 1.0);     

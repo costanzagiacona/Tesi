@@ -673,12 +673,6 @@ INPUT ..\..\img\montecarlo\recovery_V.png
 INPUT ..\..\img\montecarlo\recovery_V.png
 INPUT ..\..\img\montecarlo\recovery_V.png
 INPUT ..\..\img\montecarlo\recovery_V.png
-INPUT ..\..\img\montecarlo\cruise.png
-INPUT ..\..\img\montecarlo\cruise.png
-INPUT ..\..\img\montecarlo\cruise.png
-INPUT ..\..\img\montecarlo\cruise.png
-INPUT ..\..\img\montecarlo\cruise.png
-INPUT ..\..\img\montecarlo\cruise.png
 OUTPUT pres.nav
 OUTPUT pres.toc
 OUTPUT pres.snm

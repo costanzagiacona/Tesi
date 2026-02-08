@@ -39,7 +39,7 @@ function MonteCarloVTOL(params)
     
     % --- SCENARIO 3: CRUISE (Volo avanzato) ---
     cfg_cru.name = 'Cruise_{Flight}';
-    cfg_cru.test_id = 2; 
+    cfg_cru.test_id = 3; 
     cfg_cru.target = [25; 0; -10]; 
     cfg_cru.tspan = [0 60]; 
     cfg_cru.sigma = struct('pos', 2.0, 'vel', 3.0, 'att', deg2rad(5), 'omega', deg2rad(2));
@@ -56,93 +56,57 @@ function RunCampaign(cfg, params)
     N_sim = 100; 
     fprintf('>> Scenario: %s (Test ID %d) | %d Simulazioni\n', cfg.name, cfg.test_id, N_sim);
     
-    % Preallocazione strutture dati
     risultati = struct('t', {}, 'x', {}, 'converged', {}, 'crashed', {}, 'crash_reason', {});
-    stats = struct(); % Per CSV
-    
-    % Setup Event Detector per interrompere i crash
+    stats = struct(); 
     opts = odeset('Events', @CrashDetector, 'RelTol', 1e-3, 'AbsTol', 1e-6);
     
     h = waitbar(0, ['Simulazione ' cfg.name '...']);
     
     for i = 1:N_sim
         if ishandle(h), waitbar(i/N_sim, h); end
-        
-        % Generazione Condizione Iniziale
         x0 = GenerateX0(cfg.x0_type, cfg.target, cfg.sigma, params);
         
         try
-            % Integrazione ODE con Event Detection
             [t, x, te, xe, ie] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), cfg.tspan, x0, opts);
             
-            % Analisi Esito
-            has_crashed = ~isempty(te); % Se te non è vuoto, ode45 è stato interrotto
-            crash_reason = 'None';
-            
-            if has_crashed
-                % Decodifica motivo del crash
-                reasons = {'Impatto Suolo', 'Divergenza Quota', 'Ribaltamento Assetto'};
-                if ie(end) <= length(reasons)
-                    crash_reason = reasons{ie(end)};
-                else
-                    crash_reason = 'Unknown';
-                end
-            end
-            
-            % Convergenza: Tempo finito raggiunto E nessun crash E niente NaN
+            has_crashed = ~isempty(te);
             ok = (t(end) >= cfg.tspan(2)) && ~has_crashed && ~any(isnan(x(:)));
             
-            % --- SALVATAGGIO DATI ---
-            risultati(i).t = t;
-            risultati(i).x = x;
-            risultati(i).converged = ok;
-            risultati(i).crashed = has_crashed;
-            risultati(i).crash_reason = crash_reason;
-            
-            % --- CALCOLO STATISTICHE (Solo se non crashato subito) ---
             stats(i).conv = ok;
             stats(i).crashed = has_crashed;
             
-            % Calcoliamo RMSE solo se abbiamo volato almeno il 60% del tempo
+            % --- ANALISI COMPLETA DEI 12 STATI ---
             if t(end) > (cfg.tspan(2) * 0.6)
                 idx_settle = t > (cfg.tspan(2) * 0.6);
                 
-                % Definisci vettore target esteso (12 stati)
-                if cfg.test_id == 1
-                    % Hovering: Tutto a 0 tranne Z
-                    target_vec = [cfg.target(1), 0, cfg.target(3), 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                else
-                    % Cruise: Vx target, Z target, il resto 0
-                    target_vec = [0, 0, cfg.target(3), cfg.target(1), 0, 0, 0, 0, 0, 0, 0, 0];
+                % Costruzione Target Vector Rigoroso (12 stati)
+                % Ordine: [x, y, z, vx, vy, vz, phi, theta, psi, p, q, r]
+                if cfg.test_id == 1 || cfg.test_id == 2 % Hover/Takeoff
+                    target_vec = [cfg.target(1), cfg.target(2), cfg.target(3), 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                else % Cruise
+                    % In crociera, X non è un setpoint di posizione ma una coordinata crescente
+                    target_vec = [0, 0, cfg.target(3), cfg.target(1), 0, 0, 0, cfg.target(2), 0, 0, 0, 0];
                 end
                 
-                err = x(idx_settle, 1:12);
-                % Rimuovi offset X per cruise (non ci interessa la posizione assoluta X)
-                if cfg.test_id == 2, err(:,1) = 0; end 
+                err_data = x(idx_settle, 1:12);
                 
-                stats(i).rmse = sqrt(mean((err - target_vec).^2, 1));
+                % Neutralizziamo l'errore sulla coordinata X se siamo in Cruise (non è un errore di tracking)
+                if cfg.test_id == 3, err_data(:,1) = 0; end 
+                
+                % Calcolo RMSE vettoriale (1x12)
+                stats(i).rmse = sqrt(mean((err_data - target_vec).^2, 1));
             else
                 stats(i).rmse = NaN(1,12);
             end
             
         catch ME
-            fprintf('   [!] Errore numerico Run %d: %s\n', i, ME.message);
-            risultati(i).converged = false;
             stats(i).conv = false;
             stats(i).rmse = NaN(1,12);
         end
     end
     
     if ishandle(h), close(h); end
-    
-    % Report sommario in console
-    n_crash = sum([risultati.crashed]);
-    fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
-    
-    % Salvataggio
-    fileMat = ['Results_' cfg.name '.mat'];
-    save(fileMat, 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_' cfg.name '.csv']);
+    GenerateFullCSV(stats, ['Analysis_SMC' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
@@ -230,11 +194,25 @@ function GenerateFullCSV(stats, filename)
     N = length(stats);
     conv = [stats.conv]';
     crashed = [stats.crashed]';
+    
+    % Estraiamo la matrice RMSE (N_sim x 12)
     rmses = reshape([stats.rmse], 12, N)';
     
-    T = table((1:N)', conv, crashed, rmses(:,3), rmses(:,4), rmses(:,7), rmses(:,8), ...
-        'VariableNames', {'Run', 'Success', 'Crashed', 'RMSE_Alt', 'RMSE_Vx', 'RMSE_Phi', 'RMSE_Theta'});
+    % Creazione Tabella con tutti i 12 stati
+    % 1-3: Posizioni | 4-6: Velocità | 7-9: Angoli | 10-12: Ratei
+    T = table((1:N)', conv, crashed, ...
+        rmses(:,1), rmses(:,2), rmses(:,3), ... % RMSE_X, Y, Z
+        rmses(:,4), rmses(:,5), rmses(:,6), ... % RMSE_VX, VY, VZ
+        rmses(:,7), rmses(:,8), rmses(:,9), ... % RMSE_Phi, Theta, Psi
+        rmses(:,10), rmses(:,11), rmses(:,12), ... % RMSE_p, q, r
+        'VariableNames', {
+            'Run', 'Success', 'Crashed', ...
+            'RMSE_X', 'RMSE_Y', 'RMSE_Z', ...
+            'RMSE_Vx', 'RMSE_Vy', 'RMSE_Vz', ...
+            'RMSE_Phi', 'RMSE_Theta', 'RMSE_Psi', ...
+            'RMSE_p', 'RMSE_q', 'RMSE_r'
+        });
     
     writetable(T, filename);
-    fprintf('   -> CSV Analisi generato: %s\n', filename);
+    fprintf('   -> Analisi Completa (12 stati) generata: %s\n', filename);
 end

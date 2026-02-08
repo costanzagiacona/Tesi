@@ -5,7 +5,7 @@
 \beamer@sectionintoc {3}{Modello Matematico}{8}{0}{3}
 \beamer@sectionintoc {4}{Sistema Dinamico}{15}{0}{4}
 \beamer@sectionintoc {5}{Architettura di Controllo Verticale}{19}{0}{5}
-\beamer@sectionintoc {6}{Simulazioni controllo verticale}{29}{0}{6}
-\beamer@sectionintoc {7}{Controllo Volo Orizzontale}{34}{0}{7}
-\beamer@sectionintoc {8}{Validazione e Analisi Statistica}{41}{0}{8}
-\beamer@sectionintoc {9}{Conclusioni}{47}{0}{9}
+\beamer@sectionintoc {6}{Simulazioni controllo verticale}{30}{0}{6}
+\beamer@sectionintoc {7}{Controllo Volo Orizzontale}{35}{0}{7}
+\beamer@sectionintoc {8}{Validazione e Analisi Statistica}{43}{0}{8}
+\beamer@sectionintoc {9}{Conclusioni}{48}{0}{9}
