@@ -42,7 +42,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
         \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
         \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
         \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
-        \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {PID\\ROLL};
+        \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {SMC\\$\phi$};
         \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
     
         % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
@@ -50,13 +50,13 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
         \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
         \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
         \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
-        \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {PID\\PITCH};
+        \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {SMC\\$\theta$};
         \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
     
         % --- 4. RIGA: YAW (PSI) ---
         \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
         \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
-        \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {PID\\YAW}; 
+        \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {SMC\\$\psi$}; 
         \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
     
         % --- MIXER E DRONE ---
@@ -76,17 +76,18 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
         
         % 2. Disegniamo la linea principale che scende
         % Parte da SMC_Z, va giù un po', gira a sinistra fino al bus_x, poi scende fino all'ultimo blocco
-        \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
-        
+        % \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
+        \draw [->] (smc_z.east) -- node[above, font=\footnotesize] {$F_{z,req}$} (mixer.west |- smc_z.east);
+
         % Etichetta F_req,z posizionata meglio (sopra il primo tratto orizzontale)
-        \node[above, font=\footnotesize] at ($(smc_z.south) + (-1, -0.8)$) {$F_{req,z}$};
+        % \node[above, font=\footnotesize] at ($(smc_z.east) + (-1, -0.8)$) {$F_{req,z}$};
 
         % 3. Collegamento a SMC Phi (Ingresso dall'alto pulito)
         % Partiamo dal bus all'altezza del blocco -> SALIAMO -> ENTRIAMO da sopra
-        \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
+        % \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
 
         % 4. Collegamento a SMC Theta (Ingresso dall'alto pulito)
-        \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
+        % \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
         % Y -> Phi Loop
         \draw [->] (ref_y) -- (sum_y);
         \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);

@@ -1,0 +1,84 @@
+\documentclass[12pt,a4paper]{article}
+
+% --- PACCHETTI STANDARD ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+
+% --- TITOLO ---
+\title{\textbf{Relazione Tecnica: Modellazione e Strategie di Controllo per UAV VTOL}}
+\author{Analisi delle Scelte Progettuali}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduzione: Il Problema e la Soluzione Ibrida}
+Il progetto nasce dalla necessità di superare il gap tecnologico tra le configurazioni classiche degli UAV:
+\begin{itemize}
+    \item \textbf{Multirotori:} Eccellenti nell'hovering ma inefficienti nel lungo raggio.
+    \item \textbf{Ali Fisse:} Alta efficienza e raggio d'azione, ma dipendenti da piste di decollo.
+\end{itemize}
+
+La soluzione proposta è un \textbf{tricottero tilting-rotor}. Un sistema ibrido che promette il meglio dei due mondi, introducendo tuttavia una dinamica fortemente accoppiata e non lineare. La sfida principale consiste nel gestire l'assetto senza superfici aerodinamiche mobili (niente alettoni o flap), affidando l'intera manovrabilità alla \textbf{vettorizzazione della spinta}.
+
+\section{Il Modello Matematico (Rigore Newton-Euler)}
+Il sistema è modellato utilizzando il formalismo di Newton-Euler. La cinematica lega il sistema Inerziale ($\mathcal{F}_g$) e il sistema Solidale ($\mathcal{F}_b$) attraverso matrici di rotazione e trasformazione:
+\begin{equation}
+\begin{bmatrix} \dot{P}_g \\ \dot{\Theta}_g \end{bmatrix} = \begin{bmatrix} R_{b \to g} & 0 \\ 0 & J_{b \to g} \end{bmatrix} \begin{bmatrix} V_b \\ \Omega_b \end{bmatrix}
+\end{equation}
+
+La dinamica nel \textit{Body Frame} include termini critici per un tilting-rotor, quali l'\textbf{effetto giroscopico} dei rotori in fase di rotazione e il momento della pinna di coda per lo smorzamento dello Yaw.
+
+\section{Volo Verticale (Case 1): Robustezza dello Sliding Mode}
+In fase di hovering, il sistema è intrinsecamente instabile. È stato scelto lo \textbf{Sliding Mode Control (SMC)} per la sua invarianza deterministica rispetto alle incertezze del modello.
+
+L'architettura è a cascata:
+\begin{itemize}
+    \item \textbf{Outer Loop:} Gestisce la posizione e genera l'assetto desiderato ($\phi_{des}, \theta_{des}$).
+    \item \textbf{Inner Loop:} Insegue i riferimenti angolari con estrema rapidità.
+\end{itemize}
+
+Secondo il criterio di Lyapunov, la superficie di scorrimento $\sigma$ è stabile se il guadagno di switching $k$ compensa il disturbo massimo atteso $\delta_{max}$:
+\begin{equation}
+k > \delta_{max}
+\end{equation}
+Per eliminare il \textit{chattering} e preservare gli attuatori, viene utilizzata la funzione $\tanh$ al posto della funzione segno, creando un \textit{boundary layer}.
+
+\section{Volo di Crociera (Case 3): Efficienza e Vettorizzazione}
+In crociera, il rotore di coda viene spento e la propulsione è affidata ai due rotori anteriori ($\theta \approx 0^\circ$). Data la sotto-attuazione (assenza di alettoni), il \textbf{mixer} emula i comandi classici:
+\begin{itemize}
+    \item \textbf{Pitch:} Tilt collettivo dei motori.
+    \item \textbf{Roll:} Tilt differenziale (coppia sull'asse X).
+    \item \textbf{Yaw:} Spinta differenziale ($T_1 \neq T_2$).
+\end{itemize}
+La compensazione geometrica richiede che il mixer sottragga il pitch del corpo dall'angolo dei servi: $\alpha_{base} = \alpha_{inertial} - \theta_{body}$.
+
+\section{Confronto: SMC vs PID}
+\begin{itemize}
+    \item \textbf{Perché SMC in Hovering (Case 1):} Il sistema è fortemente non lineare. Lo SMC gestisce efficacemente le raffiche di vento, l'effetto suolo e i forti termini giroscopici del tilting senza necessità di linearizzazione.
+    \item \textbf{Perché PID in Crociera (Case 3):} A velocità elevate ($25 \text{ m/s}$), le forze aerodinamiche stabilizzano naturalmente il velivolo. Il PID, con termini di \textbf{Feedforward}, garantisce efficienza energetica, fluidità e minor stress meccanico rispetto allo SMC.
+\end{itemize}
+
+\section{Anatomia del PID}
+\begin{itemize}
+    \item \textbf{Proporzionale (P):} Sempre presente; agisce come una molla sull'errore attuale.
+    \item \textbf{Integrale (I):} Fondamentale per Quota (Z) e Velocità (Vx) per annullare l'errore a regime. Non è usato nei loop veloci per evitare l'\textit{Integral Windup}.
+    \item \textbf{Derivativo (D):} Vitale negli \textit{Inner Loop} di assetto come smorzatore fisico. Viene evitato nei loop di posizione per non amplificare il rumore dei sensori.
+\end{itemize}
+
+\section{SMC in Crociera: Robustezza alle Raffiche}
+Sebbene il PID sia standard, lo SMC (Case 4) offre vantaggi in presenza di forti disturbi. Mentre il PID è reattivo, lo SMC forza il sistema sulla superficie $\sigma$, gestendo meglio rapidi cambiamenti dell'angolo d'attacco o della velocità relativa causati dal vento.
+
+\section{Validazione e Conclusioni}
+La robustezza è stata verificata tramite 300 simulazioni \textbf{Monte Carlo}, variando parametri aerodinamici e condizioni iniziali ($\pm 15^\circ$ sull'assetto). I risultati mostrano un tasso di successo del 100\% con errori medi nell'ordine dei $10^{-3}$ radianti.
+
+\end{document}

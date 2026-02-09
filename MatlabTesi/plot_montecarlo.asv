@@ -1,182 +1,124 @@
-%% PLOT PRESENTATION SUITE - Solo Grafici Chiave
-clc; close all;
+%% PLOT PRESENTATION SUITE - Kinematic, Dynamic & Actuator Analysis
+close all; clc;
+files = {'Results_SMCRecovery_Hover.mat', ...
+         'Results_SMCTakeoff_Ground.mat', ...
+         'Results_PIDCruise_Flight.mat'};
 
-% Lista File (Assicurati che i nomi coincidano con quelli nella cartella)
-files = {'Results_Recovery_{Hover}.mat', ...
-         'Results_Takeoff_{Ground}.mat', ...
-         'Results_Cruise_{Flight}.mat'};
-
-% files = {'Results_Cruise_{Flight}.mat'};
-
-% Impostazioni Grafiche "Publication Quality"
-set(0, 'DefaultAxesFontSize', 14);       % Font assi leggibile
-set(0, 'DefaultLineLineWidth', 1.0);     % Linee marcate
-set(0, 'DefaultAxesLineWidth', 1.2);     % Bordi assi marcati
+% Impostazioni grafiche per la leggibilità accademica
+set(0, 'DefaultAxesFontSize', 15);       
+set(0, 'DefaultLineLineWidth', 1.0);     
+set(0, 'DefaultAxesLineWidth', 1.4);     
 set(0, 'DefaultLegendFontSize', 12);
 
-%% CICLO DI GENERAZIONE
 for k = 1:length(files)
     filename = files{k};
-    
-    if ~isfile(filename)
-        fprintf('[SKIP] File %s non trovato.\n', filename);
-        continue;
-    end
-    
-    fprintf('>> Elaborazione %s ...\n', filename);
+    if ~isfile(filename); continue; end
     data = load(filename);
     
     if isfield(data, 'risultati') && isfield(data, 'cfg')
-        % SELETTORE SCENARIO INTELLIGENTE
-        % Sceglie quale grafico fare in base al nome dello scenario
-        if contains(data.cfg.name, 'Takeoff', 'IgnoreCase', true)
-            Plot_Takeoff_Focus(data.risultati, data.cfg);
-            
-        elseif contains(data.cfg.name, 'Recovery', 'IgnoreCase', true)
-            Plot_Recovery_Focus(data.risultati, data.cfg);
-            
-        elseif contains(data.cfg.name, 'Cruise', 'IgnoreCase', true)
-            Plot_Cruise_Focus(data.risultati, data.cfg);
-        end
+        scenarioName = extractBetween(data.cfg.name, '_', '_');
+        if isempty(scenarioName), scenarioName = {data.cfg.name}; end
+        
+        fprintf('Analisi in corso: %s...\n', char(scenarioName));
+        Plot_State_Overview(data.risultati, char(scenarioName));
     end
 end
-fprintf('>> Grafici pronti.\n');
 
 %% ---------------------------------------------------------
-%  FUNZIONE 1: DECOLLO (Solo Quota Z)
+%  FUNZIONE UNICA: VISUALIZZAZIONE COMPLETA (STATI + ATTUATORI)
 %  ---------------------------------------------------------
-function Plot_Takeoff_Focus(risultati, cfg)
-    figure(1); clf;
-    set(gcf, 'Name', 'Decollo: Quota e Spinta', 'Position', [100 100 800 600]);
-    
-    N = length(risultati);
-    target_z = -cfg.target(3);
-    col_z = [0 0.6 0.3 0.15];  % Verde Smeraldo
-    col_t = [0 0.4 0.8 0.15];  % Blu Cobalto
-    
-    k_val = 7*(10^-5);
-    m_val = 6.7;
-    g_val = 9.8;
-    
-    % Subplot 1: Quota
-    subplot(2,1,1); hold on; grid on; grid minor;
-    title('Scenario Decollo: Dinamica di involo', 'FontSize', 16);
-    ylabel('Quota [m]', 'FontWeight', 'bold');
-    
-    % Subplot 2: Spinta Totale (Thrust)
-    subplot(2,1,2); hold on; grid on; grid minor;
-    ylabel('Spinta Totale [N]', 'FontWeight', 'bold');
-    xlabel('Tempo [s]');
-
-    for i = 1:N
-        if risultati(i).converged
-            t = risultati(i).t;
-            z = -risultati(i).x(:,3);
-            
-            % Calcolo spinta usando il valore k_val estratto
-            thrust_tot = k_val * (risultati(i).x(:,21).^2 + ...
-                                  risultati(i).x(:,23).^2 + ...
-                                  risultati(i).x(:,25).^2);
-            
-            subplot(2,1,1); plot(t, z, 'Color', col_z, 'LineWidth', 1.2);
-            subplot(2,1,2); plot(t, thrust_tot, 'Color', col_t, 'LineWidth', 1.2);
-        end
-    end
-    
-    subplot(2,1,1); yline(target_z, '--k', 'Target', 'LineWidth', 2);
-    subplot(2,1,1); ylim([0 target_z + 5]);
-
-    % Linea del peso (mg) per riferimento
+function Plot_State_Overview(risultati, label)
+    % --- CONFIGURAZIONE INDICI E COSTANTI (DA VERIFICARE) ---
+    idx_tilt = 13;          % Indice stato Tilt nel vettore x
+    idx_rotors = [21, 23, 25]; % Indici velocità rotori (Omega). Aggiungi altri se necessario
+    k_thrust = 7e-5;        % Coefficiente di spinta (N/(rad/s)^2)
+    m_val = 6.7; g_val = 9.81; % Per riferimento peso
     weight = m_val * g_val;
-    subplot(2,1,2); h_w = yline(weight, '--r', 'Peso (mg)', 'LineWidth', 2);
-    subplot(2,1,2); ylim([0 weight + 40]); % Margine per vedere lo spunto iniziale
-end
+    % --------------------------------------------------------
 
-%% ---------------------------------------------------------
-%  FUNZIONE 2: RECOVERY (Spaghetti Plot Posizione)
-%  ---------------------------------------------------------
-function Plot_Recovery_Focus(risultati, cfg)
-    figure(2); clf;
-    set(gcf, 'Name', 'Recovery: Assetto e Attuatori', 'Position', [100 100 1000 700]);
+    % Colori semi-trasparenti per Monte Carlo
+    c_pos = [0 0.4470 0.7410 0.2]; 
+    c_vel = [0.8500 0.3250 0.0980 0.2]; 
+    c_att = [0.4660 0.6740 0.1880 0.2]; 
+    c_rat = [0.4940 0.1840 0.5560 0.2]; 
+    c_act = [0.6350 0.0780 0.1840 0.2]; % Rosso scuro per attuatori
 
-    k_val = 7*(10^-5);
-    m_val = 6.7;
-    
     N = length(risultati);
-    % Palette: Blu (Velocità), Rosso (Pitch), Arancio (Tilt Rotori)
-    col_v = [0 0.45 0.74 0.1];
-    col_th = [0.85 0.33 0.1 0.1];
-    col_tilt = [0.93 0.69 0.13 0.1];
-
-    % Subplot 1: Velocità Vx (Le sinusoidi)
-    subplot(3,1,1); hold on; grid on;
-    ylabel('V_x [m/s]', 'FontWeight', 'bold');
-    title('Recovery: Accoppiamento Velocità-Assetto-Rotori', 'FontSize', 16);
     
-    % Subplot 2: Assetto Pitch (Theta)
-    subplot(3,1,2); hold on; grid on;
-    ylabel('Pitch \theta [deg]', 'FontWeight', 'bold');
-    
-    % Subplot 3: Tilt Rotori Anteriori (Apertura Servi)
-    subplot(3,1,3); hold on; grid on;
-    ylabel('Tilt Servi [deg]', 'FontWeight', 'bold');
-    xlabel('Tempo [s]');
-
-    for i = 1:N
-        if risultati(i).converged && ~risultati(i).crashed
-            t = risultati(i).t;
-            % Estrazione dati
-            vx = risultati(i).x(:,4);
-            theta = rad2deg(risultati(i).x(:,8));
-            tilt_1 = rad2deg(risultati(i).x(:,13)); % Angolo reale servocomando 1
-
-            subplot(3,1,1); plot(t, vx, 'Color', col_v);
-            subplot(3,1,2); plot(t, theta, 'Color', col_th);
-            subplot(3,1,3); plot(t, tilt_1, 'Color', col_tilt);
-        end
-    end
-    
-    % Aggiunta target e limiti
-    subplot(3,1,1); yline(0, '--k', 'Hover', 'LineWidth', 2);
-    subplot(3,1,2); yline(0, '--k', 'LineWidth', 1.5);
-    subplot(3,1,3); yline(90, '--r', 'Verticale', 'LineWidth', 1.5);
-end
-
-%% ---------------------------------------------------------
-%  FUNZIONE 3: CROCIERA (Vx "Tubo" + Quota)
-%  ---------------------------------------------------------
-function Plot_Cruise_Focus(risultati, cfg)
-    figure(3); clf;
-    set(gcf, 'Name', 'Cruise: Precisione e Assetto', 'Position', [200 200 900 600]);
-
-    k_val = 7*(10^-5);
-    m_val = 6.7;
-    
-    N = length(risultati);
-    col_vx = [0.6350 0.0780 0.1840 0.15]; % Rosso
-    col_th = [0 0.4470 0.7410 0.15];      % Blu
-    
-    subplot(2,1,1); hold on; grid on;
-    ylabel('V_x [m/s]', 'FontWeight', 'bold');
-    title('Cruise: Stabilità Longitudinale Asintotica', 'FontSize', 16);
-    
-    subplot(2,1,2); hold on; grid on;
-    ylabel('Pitch \theta [deg]', 'FontWeight', 'bold');
-    xlabel('Tempo [s]');
+    % Creazione Figure (Posizionate per non sovrapporsi completamente)
+    figs(1) = figure('Name', [label, ': Posizione'], 'Position', [10 50 500 700]);
+    figs(2) = figure('Name', [label, ': Velocità'], 'Position', [520 50 500 700]);
+    figs(3) = figure('Name', [label, ': Assetto'], 'Position', [1030 50 500 700]);
+    figs(4) = figure('Name', [label, ': Ratei'], 'Position', [10 50 500 700]); % Sovrapposta a 1
+    figs(5) = figure('Name', [label, ': Attuatori (Tilt & Thrust)'], 'Position', [520 50 500 700]); % Sovrapposta a 2
 
     for i = 1:N
         if risultati(i).converged
             t = risultati(i).t;
-            vx = risultati(i).x(:,4);
-            theta = rad2deg(risultati(i).x(:,8));
+            X = risultati(i).x; 
             
-            subplot(2,1,1); plot(t, vx, 'Color', col_vx);
-            subplot(2,1,2); plot(t, theta, 'Color', col_th);
+            % --- FIG 1: POSIZIONE ---
+            set(0, 'CurrentFigure', figs(1));
+            subplot(3,1,1); hold on; grid on; plot(t, X(:,1), 'Color', c_pos); ylabel('X [m]'); title([label, ' - Cinematica']);
+            subplot(3,1,2); hold on; grid on; plot(t, X(:,2), 'Color', c_pos); ylabel('Y [m]');
+            subplot(3,1,3); hold on; grid on; plot(t, X(:,3), 'Color', c_pos); ylabel('Z [m]'); xlabel('Tempo [s]');
+
+            % --- FIG 2: VELOCITÀ ---
+            set(0, 'CurrentFigure', figs(2));
+            subplot(3,1,1); hold on; grid on; plot(t, X(:,4), 'Color', c_vel); ylabel('V_x [m/s]'); title([label, ' - Velocità']);
+            subplot(3,1,2); hold on; grid on; plot(t, X(:,5), 'Color', c_vel); ylabel('V_y [m/s]');
+            subplot(3,1,3); hold on; grid on; plot(t, X(:,6), 'Color', c_vel); ylabel('V_z [m/s]'); xlabel('Tempo [s]');
+
+            % --- FIG 3: ASSETTO (Gradi) ---
+            set(0, 'CurrentFigure', figs(3));
+            subplot(3,1,1); hold on; grid on; plot(t, rad2deg(X(:,7)), 'Color', c_att); ylabel('\phi (Roll) [deg]'); title([label, ' - Assetto']);
+            subplot(3,1,2); hold on; grid on; plot(t, rad2deg(X(:,8)), 'Color', c_att); ylabel('\theta (Pitch) [deg]');
+            subplot(3,1,3); hold on; grid on; plot(t, rad2deg(X(:,9)), 'Color', c_att); ylabel('\psi (Yaw) [deg]'); xlabel('Tempo [s]');
+
+            % --- FIG 4: RATEI (Gradi/s) ---
+            set(0, 'CurrentFigure', figs(4));
+            subplot(3,1,1); hold on; grid on; plot(t, rad2deg(X(:,10)), 'Color', c_rat); ylabel('p [deg/s]'); title([label, ' - Ratei']);
+            subplot(3,1,2); hold on; grid on; plot(t, rad2deg(X(:,11)), 'Color', c_rat); ylabel('q [deg/s]');
+            subplot(3,1,3); hold on; grid on; plot(t, rad2deg(X(:,12)), 'Color', c_rat); ylabel('r [deg/s]'); xlabel('Tempo [s]');
+
+            % --- FIG 5: ATTUATORI (TILT & THRUST) ---
+            set(0, 'CurrentFigure', figs(5));
+            
+            % 1. Tilt Rotori
+            subplot(3,1,1); hold on; grid on; 
+            plot(t, rad2deg(X(:,idx_tilt)), 'Color', c_act); 
+            ylabel('Tilt [deg]'); title([label, ' - Attuatori']);
+            
+            % 2. Spinta Singoli Rotori
+            % Calcolo spinta per ogni motore specificato in idx_rotors
+            subplot(3,1,2); hold on; grid on;
+            thrusts = zeros(length(t), length(idx_rotors));
+            for r = 1:length(idx_rotors)
+                thrusts(:,r) = k_thrust * (X(:, idx_rotors(r)).^2);
+                % Plot leggermente diverso per ogni rotore o unico colore? 
+                % Uso unico colore per pulizia, o linestyles diversi se necessario
+                plot(t, thrusts(:,r), 'Color', c_act); 
+            end
+            ylabel('Spinta Singola [N]');
+            
+            % 3. Spinta Totale vs Peso
+            subplot(3,1,3); hold on; grid on;
+            total_thrust = sum(thrusts, 2);
+            plot(t, total_thrust, 'Color', c_act); 
+            ylabel('Spinta Totale [N]'); xlabel('Tempo [s]');
         end
     end
     
-    subplot(2,1,1); yline(25, '--k', 'Target', 'LineWidth', 2);
-    % Zoom sulla precisione millimetrica che abbiamo trovato nel CSV
-    subplot(2,1,1); ylim([20 30]); 
-    subplot(2,1,2); ylim([-10 10]); 
+    % Aggiunta riferimenti (Weight) alla Figura 5 solo alla fine del loop
+    if isvalid(figs(5))
+        set(0, 'CurrentFigure', figs(5));
+        subplot(3,1,3); 
+        yline(weight, '--k', 'Peso (mg)', 'LineWidth', 1.5, 'LabelHorizontalAlignment', 'left');
+    end
+
+    % Pulizia Titoli Figure
+    for f = 1:length(figs)
+        figure(figs(f));
+        sgtitle([label, ' Analysis Unit'], 'FontWeight', 'bold', 'FontSize', 14);
+    end
 end

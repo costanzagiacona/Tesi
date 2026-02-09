@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  8 FEB 2026 18:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  9 FEB 2026 17:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/pres.tex
-(c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/pres.tex
+**c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex
+(c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
 (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamer.cls
@@ -797,8 +797,8 @@ File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count395
-) (pres.aux)
-\openout1 = `pres.aux'.
+) (presentazione_Giacona.aux)
+\openout1 = `presentazione_Giacona.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
 LaTeX Font Info:    ... okay on input line 36.
@@ -873,9 +873,9 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package hyperref Info: Link coloring OFF on input line 36.
- (pres.out) (pres.out)
+ (presentazione_Giacona.out) (presentazione_Giacona.out)
 \@outlinefile=\write5
-\openout5 = `pres.out'.
+\openout5 = `presentazione_Giacona.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 36.
@@ -954,13 +954,13 @@ LaTeX Info: Redefining \it@ccap on input line 36.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 Package translations Info: no dictionary file `translations-basic-dictionary-italian.trsl' found. on input line 36.
- (pres.nav)
+ (presentazione_Giacona.nav)
 Overfull \hbox (35.1286pt too wide) in paragraph at lines 36--36
  [][][][]  
  []
 
 
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 46--46
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 49--49
  [][][][]  
  []
 
@@ -972,11 +972,11 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [1
 
 {C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 51--51
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 54--54
  [][][][]  
  []
 
-(pres.toc)
+(presentazione_Giacona.toc)
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
  []
@@ -984,7 +984,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [2
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 63--63
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 66--66
  [][][][]  
  []
 
@@ -996,65 +996,65 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [3
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 100--100
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 103--103
  [][][][]  
  []
 
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 100.
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 103.
 (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmss.fd
 File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 100.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 100.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 100.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 100.
+(Font)              <10.95> on input line 103.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 100.
+(Font)              <8> on input line 103.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 100.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 100.
+(Font)              <6> on input line 103.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 100.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 100.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 103.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 100.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 103.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 100.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 100.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 103.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 103.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 100.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 103.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 100.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 103.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 100.
-<../../img/multicopter.png, id=108, 1498.59875pt x 839.135pt>
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 103.
+<../../img/multicopter.png, id=102, 1498.59875pt x 839.135pt>
 File: ../../img/multicopter.png Graphic file (type png)
 <use ../../img/multicopter.png>
-Package pdftex.def Info: ../../img/multicopter.png  used on input line 100.
+Package pdftex.def Info: ../../img/multicopter.png  used on input line 103.
 (pdftex.def)             Requested size: 124.80322pt x 69.87225pt.
-<../../img/fixed_wing.png, id=109, 1606.0pt x 903.375pt>
+<../../img/fixed_wing.png, id=103, 1606.0pt x 903.375pt>
 File: ../../img/fixed_wing.png Graphic file (type png)
 <use ../../img/fixed_wing.png>
-Package pdftex.def Info: ../../img/fixed_wing.png  used on input line 100.
+Package pdftex.def Info: ../../img/fixed_wing.png  used on input line 103.
 (pdftex.def)             Requested size: 124.80322pt x 70.19003pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
@@ -1064,7 +1064,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [4
 
 {C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc} <../../img/multicopter.png (PNG copy)> <../../img/fixed_wing.png (PNG copy)>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 109--109
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 112--112
  [][][][]  
  []
 
@@ -1076,14 +1076,14 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [5
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 135--135
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 138--138
  [][][][]  
  []
 
-<../../img/VTOL.png, id=141, 1027.84pt x 749.80125pt>
+<../../img/VTOL.png, id=135, 1027.84pt x 749.80125pt>
 File: ../../img/VTOL.png Graphic file (type png)
 <use ../../img/VTOL.png>
-Package pdftex.def Info: ../../img/VTOL.png  used on input line 135.
+Package pdftex.def Info: ../../img/VTOL.png  used on input line 138.
 (pdftex.def)             Requested size: 138.66849pt x 101.15015pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
@@ -1093,14 +1093,14 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [6
 
  <../../img/VTOL.png (PNG copy)>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 152--152
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 155--155
  [][][][]  
  []
 
-<../../img/dragonfly.png, id=151, 490.08093pt x 366.61969pt>
+<../../img/dragonfly.png, id=145, 490.08093pt x 366.61969pt>
 File: ../../img/dragonfly.png Graphic file (type png)
 <use ../../img/dragonfly.png>
-Package pdftex.def Info: ../../img/dragonfly.png  used on input line 152.
+Package pdftex.def Info: ../../img/dragonfly.png  used on input line 155.
 (pdftex.def)             Requested size: 195.00348pt x 145.87328pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
@@ -1110,7 +1110,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [7
 
  <../../img/dragonfly.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 164--164
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 167--167
  [][][][]  
  []
 
@@ -1122,46 +1122,46 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [8
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 203--203
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 206--206
  [][][][]  
  []
 
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 203.
+(Font)              <10> on input line 206.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 203.
+(Font)              <7> on input line 206.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 203.
+(Font)              <5> on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <7> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <5> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 203.
-<../../img/sist_rif_global.png, id=168, 187.45032pt x 298.86656pt>
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 206.
+<../../img/sist_rif_global.png, id=162, 187.45032pt x 298.86656pt>
 File: ../../img/sist_rif_global.png Graphic file (type png)
 <use ../../img/sist_rif_global.png>
-Package pdftex.def Info: ../../img/sist_rif_global.png  used on input line 203.
+Package pdftex.def Info: ../../img/sist_rif_global.png  used on input line 206.
 (pdftex.def)             Requested size: 53.53543pt x 85.35826pt.
-<../../img/sist_rif_body.jpg, id=169, 1438.37375pt x 1063.975pt>
+<../../img/sist_rif_body.jpg, id=163, 1438.37375pt x 1063.975pt>
 File: ../../img/sist_rif_body.jpg Graphic file (type jpg)
 <use ../../img/sist_rif_body.jpg>
-Package pdftex.def Info: ../../img/sist_rif_body.jpg  used on input line 203.
+Package pdftex.def Info: ../../img/sist_rif_body.jpg  used on input line 206.
 (pdftex.def)             Requested size: 115.37952pt x 85.35826pt.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <7> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 206.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <5> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 203.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 206.
 
-Overfull \vbox (1.53175pt too high) detected at line 203
+Overfull \vbox (1.53175pt too high) detected at line 206
  []
 
 
@@ -1172,21 +1172,21 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [9
 
 {C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc} <../../img/sist_rif_global.png> <../../img/sist_rif_body.jpg>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 229--229
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 232--232
  [][][][]  
  []
 
-<../../img/tricopter_2D.png, id=185, 420.82219pt x 207.02344pt>
+<../../img/tricopter_2D.png, id=179, 420.82219pt x 207.02344pt>
 File: ../../img/tricopter_2D.png Graphic file (type png)
 <use ../../img/tricopter_2D.png>
-Package pdftex.def Info: ../../img/tricopter_2D.png  used on input line 229.
+Package pdftex.def Info: ../../img/tricopter_2D.png  used on input line 232.
 (pdftex.def)             Requested size: 195.00348pt x 95.93321pt.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 229.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 232.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 229.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 232.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 229.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 232.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1195,7 +1195,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [10
 
  <../../img/tricopter_2D.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 252--252
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 255--255
  [][][][]  
  []
 
@@ -1207,15 +1207,19 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [11
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 284--284
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 288--288
  [][][][]  
  []
 
-<../../img/forze_x.jpg, id=228, 1525.7pt x 973.6375pt>
+<../../img/forze_x.jpg, id=222, 1525.7pt x 973.6375pt>
 File: ../../img/forze_x.jpg Graphic file (type jpg)
 <use ../../img/forze_x.jpg>
-Package pdftex.def Info: ../../img/forze_x.jpg  used on input line 284.
-(pdftex.def)             Requested size: 173.33826pt x 110.60658pt.
+Package pdftex.def Info: ../../img/forze_x.jpg  used on input line 288.
+(pdftex.def)             Requested size: 147.33537pt x 94.01189pt.
+
+Overfull \vbox (8.38586pt too high) detected at line 288
+ []
+
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1224,7 +1228,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [12
 
  <../../img/forze_x.jpg>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 304--304
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 306--306
  [][][][]  
  []
 
@@ -1236,7 +1240,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [13
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 337--337
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 338--338
  [][][][]  
  []
 
@@ -1248,7 +1252,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [14
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 349--349
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 350--350
  [][][][]  
  []
 
@@ -1260,7 +1264,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [15
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 376--376
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 377--377
  [][][][]  
  []
 
@@ -1272,18 +1276,18 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [16
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 415--415
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 416--416
  [][][][]  
  []
 
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 415.
+(Font)              <14.4> on input line 416.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <14.4> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 415.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 416.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <14.4> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 415.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 416.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <14.4> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 415.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 416.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1292,18 +1296,10 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [17
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 437--437
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 447--447
  [][][][]  
  []
 
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 437.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 437.
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 437.
-LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 437.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1312,7 +1308,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [18
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 450--450
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 460--460
  [][][][]  
  []
 
@@ -1324,14 +1320,14 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [19
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 482--482
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 492--492
  [][][][]  
  []
 
-<../../img/rotore_3.png, id=327, 461.47406pt x 356.0803pt>
+<../../img/rotore_3.png, id=332, 461.47406pt x 356.0803pt>
 File: ../../img/rotore_3.png Graphic file (type png)
 <use ../../img/rotore_3.png>
-Package pdftex.def Info: ../../img/rotore_3.png  used on input line 482.
+Package pdftex.def Info: ../../img/rotore_3.png  used on input line 492.
 (pdftex.def)             Requested size: 138.66849pt x 106.99878pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
@@ -1341,7 +1337,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [20
 
  <../../img/rotore_3.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 508--508
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 518--518
  [][][][]  
  []
 
@@ -1353,17 +1349,17 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [21
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 519--519
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 529--529
  [][][][]  
  []
 
-<../../img/controllo_verticale/schema_blocchi_V.png, id=357, 1612.0225pt x 942.52126pt>
+<../../img/controllo_verticale/schema_blocchi_V.png, id=362, 1027.84pt x 676.5275pt>
 File: ../../img/controllo_verticale/schema_blocchi_V.png Graphic file (type png)
 <use ../../img/controllo_verticale/schema_blocchi_V.png>
-Package pdftex.def Info: ../../img/controllo_verticale/schema_blocchi_V.png  used on input line 519.
-(pdftex.def)             Requested size: 1612.01859pt x 942.51897pt.
+Package pdftex.def Info: ../../img/controllo_verticale/schema_blocchi_V.png  used on input line 529.
+(pdftex.def)             Requested size: 1027.8375pt x 676.52583pt.
 
-Overfull \vbox (11.16353pt too high) detected at line 519
+Overfull \vbox (14.58629pt too high) detected at line 529
  []
 
 
@@ -1374,7 +1370,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [22
 
  <../../img/controllo_verticale/schema_blocchi_V.png (PNG copy)>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 556--556
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 566--566
  [][][][]  
  []
 
@@ -1386,28 +1382,34 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [23
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 592--592
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 602--602
  [][][][]  
  []
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <12> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 592.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 602.
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <8> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 592.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 602.
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <6> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 592.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 602.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/b/it' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/b/it' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/b/it' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/it' tried instead on input line 602.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 592.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 602.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 602.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 602.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1416,18 +1418,18 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [24
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 625--625
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 635--635
  [][][][]  
  []
 
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 625.
+(Font)              <9> on input line 635.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 625.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 635.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <9> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 625.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 635.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <9> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 625.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 635.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1436,10 +1438,12 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [25
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 660--660
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 667--667
  [][][][]  
  []
 
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 667.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1448,7 +1452,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [26
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 683--683
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 686--686
  [][][][]  
  []
 
@@ -1460,7 +1464,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [27
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 702--702
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 705--705
  [][][][]  
  []
 
@@ -1472,7 +1476,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [28
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 729--729
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 741--741
  [][][][]  
  []
 
@@ -1484,7 +1488,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [29
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 741--741
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 831--831
  [][][][]  
  []
 
@@ -1496,15 +1500,15 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [30
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 759--759
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 860--860
  [][][][]  
  []
 
-<../../img/controllo_verticale/angoli.png, id=460, 1236.87094pt x 680.5425pt>
-File: ../../img/controllo_verticale/angoli.png Graphic file (type png)
-<use ../../img/controllo_verticale/angoli.png>
-Package pdftex.def Info: ../../img/controllo_verticale/angoli.png  used on input line 759.
-(pdftex.def)             Requested size: 281.67096pt x 154.97423pt.
+<../../img/config_orizzontale.png, id=475, 1341.01pt x 775.89874pt>
+File: ../../img/config_orizzontale.png Graphic file (type png)
+<use ../../img/config_orizzontale.png>
+Package pdftex.def Info: ../../img/config_orizzontale.png  used on input line 860.
+(pdftex.def)             Requested size: 156.0004pt x 90.25056pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1512,16 +1516,11 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [31
 
- <../../img/controllo_verticale/angoli.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 775--775
+ <../../img/config_orizzontale.png (PNG copy)>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 882--882
  [][][][]  
  []
 
-<../../img/controllo_verticale/pos_vel.png, id=470, 1245.9047pt x 683.55376pt>
-File: ../../img/controllo_verticale/pos_vel.png Graphic file (type png)
-<use ../../img/controllo_verticale/pos_vel.png>
-Package pdftex.def Info: ../../img/controllo_verticale/pos_vel.png  used on input line 775.
-(pdftex.def)             Requested size: 281.67096pt x 154.5335pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1529,16 +1528,16 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [32
 
- <../../img/controllo_verticale/pos_vel.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 790--790
+]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 892--892
  [][][][]  
  []
 
-<../../img/controllo_verticale/thrust.png, id=479, 1228.59pt x 668.4975pt>
-File: ../../img/controllo_verticale/thrust.png Graphic file (type png)
-<use ../../img/controllo_verticale/thrust.png>
-Package pdftex.def Info: ../../img/controllo_verticale/thrust.png  used on input line 790.
-(pdftex.def)             Requested size: 281.67096pt x 153.26157pt.
+<../../img/controllo_orizzontale/schema_blocchi_H.png, id=503, 1027.84pt x 567.11874pt>
+File: ../../img/controllo_orizzontale/schema_blocchi_H.png Graphic file (type png)
+<use ../../img/controllo_orizzontale/schema_blocchi_H.png>
+Package pdftex.def Info: ../../img/controllo_orizzontale/schema_blocchi_H.png  used on input line 892.
+(pdftex.def)             Requested size: 1027.8375pt x 567.11736pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1546,16 +1545,11 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [33
 
- <../../img/controllo_verticale/thrust.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 806--806
+ <../../img/controllo_orizzontale/schema_blocchi_H.png (PNG copy)>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1018--1018
  [][][][]  
  []
 
-<../../img/controllo_verticale/tilt.png, id=488, 1280.53406pt x 680.5425pt>
-File: ../../img/controllo_verticale/tilt.png Graphic file (type png)
-<use ../../img/controllo_verticale/tilt.png>
-Package pdftex.def Info: ../../img/controllo_verticale/tilt.png  used on input line 806.
-(pdftex.def)             Requested size: 281.67096pt x 149.68866pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1563,8 +1557,8 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [34
 
- <../../img/controllo_verticale/tilt.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 819--819
+]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1099--1099
  [][][][]  
  []
 
@@ -1576,15 +1570,10 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [35
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 848--848
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1150--1150
  [][][][]  
  []
 
-<../../img/config_orizzontale.png, id=515, 1341.01pt x 775.89874pt>
-File: ../../img/config_orizzontale.png Graphic file (type png)
-<use ../../img/config_orizzontale.png>
-Package pdftex.def Info: ../../img/config_orizzontale.png  used on input line 848.
-(pdftex.def)             Requested size: 156.0004pt x 90.25056pt.
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1592,13 +1581,9 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [36
 
- <../../img/config_orizzontale.png (PNG copy)>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 942--942
+]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1191--1191
  [][][][]  
- []
-
-
-Overfull \vbox (32.95122pt too high) detected at line 942
  []
 
 
@@ -1609,7 +1594,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [37
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 970--970
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1203--1203
  [][][][]  
  []
 
@@ -1621,7 +1606,7 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [38
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1015--1015
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1218--1218
  [][][][]  
  []
 
@@ -1633,8 +1618,17 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [39
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1040--1040
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1228--1228
  [][][][]  
+ []
+
+<../../img/montecarlo/takeoff_p_v.png, id=632, 1387.43344pt x 665.48625pt>
+File: ../../img/montecarlo/takeoff_p_v.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff_p_v.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff_p_v.png  used on input line 1228.
+(pdftex.def)             Requested size: 346.67653pt x 166.27975pt.
+
+Overfull \vbox (9.70042pt too high) detected at line 1228
  []
 
 
@@ -1644,9 +1638,18 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [40
 
-]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1061--1061
+ <../../img/montecarlo/takeoff_p_v.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1237--1237
  [][][][]  
+ []
+
+<../../img/montecarlo/takeoff_eulero.png, id=641, 1373.13pt x 665.48625pt>
+File: ../../img/montecarlo/takeoff_eulero.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff_eulero.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff_eulero.png  used on input line 1237.
+(pdftex.def)             Requested size: 346.67653pt x 168.01617pt.
+
+Overfull \vbox (9.30771pt too high) detected at line 1237
  []
 
 
@@ -1656,9 +1659,18 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [41
 
-]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1102--1102
+ <../../img/montecarlo/takeoff_eulero.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1247--1247
  [][][][]  
+ []
+
+<../../img/montecarlo/recovery_p_v.png, id=650, 1367.1075pt x 673.76718pt>
+File: ../../img/montecarlo/recovery_p_v.png Graphic file (type png)
+<use ../../img/montecarlo/recovery_p_v.png>
+Package pdftex.def Info: ../../img/montecarlo/recovery_p_v.png  used on input line 1247.
+(pdftex.def)             Requested size: 346.67653pt x 170.85738pt.
+
+Overfull \vbox (14.27805pt too high) detected at line 1247
  []
 
 
@@ -1668,9 +1680,18 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [42
 
-]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1135--1135
+ <../../img/montecarlo/recovery_p_v.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1256--1256
  [][][][]  
+ []
+
+<../../img/montecarlo/recovery_eulero.png, id=659, 1370.87157pt x 668.4975pt>
+File: ../../img/montecarlo/recovery_eulero.png Graphic file (type png)
+<use ../../img/montecarlo/recovery_eulero.png>
+Package pdftex.def Info: ../../img/montecarlo/recovery_eulero.png  used on input line 1256.
+(pdftex.def)             Requested size: 346.67653pt x 169.05183pt.
+
+Overfull \vbox (13.08086pt too high) detected at line 1256
  []
 
 
@@ -1680,16 +1701,20 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [43
 
-]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1161--1161
+ <../../img/montecarlo/recovery_eulero.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1266--1266
  [][][][]  
  []
 
-<../../img/montecarlo/takeoff.png, id=664, 1230.84843pt x 675.27281pt>
-File: ../../img/montecarlo/takeoff.png Graphic file (type png)
-<use ../../img/montecarlo/takeoff.png>
-Package pdftex.def Info: ../../img/montecarlo/takeoff.png  used on input line 1161.
-(pdftex.def)             Requested size: 216.66005pt x 118.86487pt.
+<../../img/montecarlo/cruise_p_v.png, id=669, 1400.98407pt x 674.52pt>
+File: ../../img/montecarlo/cruise_p_v.png Graphic file (type png)
+<use ../../img/montecarlo/cruise_p_v.png>
+Package pdftex.def Info: ../../img/montecarlo/cruise_p_v.png  used on input line 1266.
+(pdftex.def)             Requested size: 346.67653pt x 166.91077pt.
+
+Overfull \vbox (10.33144pt too high) detected at line 1266
+ []
+
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1697,16 +1722,20 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [44
 
- <../../img/montecarlo/takeoff.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1181--1181
+ <../../img/montecarlo/cruise_p_v.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1275--1275
  [][][][]  
  []
 
-<../../img/montecarlo/recovery_V.png, id=673, 1234.6125pt x 671.50874pt>
-File: ../../img/montecarlo/recovery_V.png Graphic file (type png)
-<use ../../img/montecarlo/recovery_V.png>
-Package pdftex.def Info: ../../img/montecarlo/recovery_V.png  used on input line 1181.
-(pdftex.def)             Requested size: 216.66325pt x 117.84367pt.
+<../../img/montecarlo/cruise_eulero.png, id=678, 1382.16376pt x 677.53125pt>
+File: ../../img/montecarlo/cruise_eulero.png Graphic file (type png)
+<use ../../img/montecarlo/cruise_eulero.png>
+Package pdftex.def Info: ../../img/montecarlo/cruise_eulero.png  used on input line 1275.
+(pdftex.def)             Requested size: 346.67653pt x 169.93031pt.
+
+Overfull \vbox (13.35098pt too high) detected at line 1275
+ []
+
 
 Overfull \hbox (35.1286pt too wide) has occurred while \output is active
  [][][][]  
@@ -1714,8 +1743,8 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 
 [45
 
- <../../img/montecarlo/recovery_V.png>]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1207--1207
+ <../../img/montecarlo/cruise_eulero.png>]
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1287--1287
  [][][][]  
  []
 
@@ -1727,22 +1756,8 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [46
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1230--1230
+Overfull \hbox (35.1286pt too wide) in paragraph at lines 1303--1303
  [][][][]  
- []
-
-
-Underfull \hbox (badness 8132) in paragraph at lines 1230--1230
-[]|\T1/lmss/m/n/14.4 Zero di-ver-gen-ze di
- []
-
-
-Underfull \hbox (badness 3954) in paragraph at lines 1230--1230
-[]|\T1/lmss/m/n/14.4 Chattering eli-mi-na-to
- []
-
-
-Overfull \vbox (2.86186pt too high) detected at line 1230
  []
 
 
@@ -1753,59 +1768,35 @@ Overfull \hbox (35.1286pt too wide) has occurred while \output is active
 [47
 
 ]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1243--1243
- [][][][]  
- []
-
-
-Overfull \hbox (35.1286pt too wide) has occurred while \output is active
- [][][][]  
- []
-
-[48
-
-]
-Overfull \hbox (35.1286pt too wide) in paragraph at lines 1258--1258
- [][][][]  
- []
-
-
-Overfull \hbox (35.1286pt too wide) has occurred while \output is active
- [][][][]  
- []
-
-[49
-
-]
 \tf@nav=\write6
-\openout6 = `pres.nav'.
+\openout6 = `presentazione_Giacona.nav'.
 
 \tf@toc=\write7
-\openout7 = `pres.toc'.
+\openout7 = `presentazione_Giacona.toc'.
 
 \tf@snm=\write8
-\openout8 = `pres.snm'.
+\openout8 = `presentazione_Giacona.snm'.
 
- (pres.aux)
+ (presentazione_Giacona.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
-Package rerunfilecheck Info: File `pres.out' has not changed.
-(rerunfilecheck)             Checksum: 6DC5A48A20951C8FB35BC03D46B1291B;1411.
+Package rerunfilecheck Info: File `presentazione_Giacona.out' has not changed.
+(rerunfilecheck)             Checksum: A38872E9110EB5BF4FF7EA37BE04E8FF;1101.
  ) 
 Here is how much of TeX's memory you used:
- 34105 strings out of 467871
- 726421 string characters out of 5418375
- 1085937 words of memory out of 5000000
- 62232 multiletter control sequences out of 15000+600000
+ 33869 strings out of 467871
+ 722615 string characters out of 5418375
+ 1063791 words of memory out of 5000000
+ 62001 multiletter control sequences out of 15000+600000
  813404 words of font info for 160 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,19n,123p,460b,1069s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 128i,19n,123p,477b,1049s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbo10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on pres.pdf (49 pages, 6530571 bytes).
+Output written on presentazione_Giacona.pdf (47 pages, 7132405 bytes).
 PDF statistics:
- 865 PDF objects out of 1000 (max. 8388607)
- 108 named destinations out of 1000 (max. 500000)
- 1004 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 831 PDF objects out of 1000 (max. 8388607)
+ 103 named destinations out of 1000 (max. 500000)
+ 959 words of extra memory for PDF output out of 10000 (max. 10000000)
 

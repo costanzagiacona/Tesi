@@ -13,7 +13,7 @@ function MonteCarloVTOL(params)
     fprintf('================================================\n');
     
     % --- SCENARIO 1: RECOVERY (Stabilizzazione da perturbazione in aria) ---
-    cfg_rec.name = 'Recovery Hover';
+    cfg_rec.name = 'Recovery_{Hover}';
     cfg_rec.test_id = 1; 
     cfg_rec.target = [0; 0; -10]; 
     cfg_rec.tspan = [0 100]; 
@@ -25,7 +25,7 @@ function MonteCarloVTOL(params)
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 2: TAKEOFF (Decollo da terra con motori al minimo) ---
-    cfg_take.name = 'Takeoff Ground';
+    cfg_take.name = 'Takeoff_{Ground}';
     cfg_take.test_id = 1; 
     cfg_take.target = [0; 0; -10]; 
     cfg_take.tspan = [0 50]; 
@@ -38,7 +38,7 @@ function MonteCarloVTOL(params)
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE (Volo avanzato) ---
-    cfg_cru.name = 'Cruise Flight';
+    cfg_cru.name = 'Cruise_{Flight}';
     cfg_cru.test_id = 3; 
     cfg_cru.target = [25; 0; -10]; 
     cfg_cru.tspan = [0 60]; 
@@ -56,91 +56,57 @@ function RunCampaign(cfg, params)
     N_sim = 100; 
     fprintf('>> Scenario: %s (Test ID %d) | %d Simulazioni\n', cfg.name, cfg.test_id, N_sim);
     
-    % Inizializzazione strutture
-    risultati(N_sim) = struct('t', [], 'x', [], 'converged', [], 'crashed', [], 'crash_reason', '');
-    stats(N_sim) = struct('conv', [], 'crashed', [], 'rmse', []);
-    
-    % Setup Event Detector
+    risultati = struct('t', {}, 'x', {}, 'converged', {}, 'crashed', {}, 'crash_reason', {});
+    stats = struct(); 
     opts = odeset('Events', @CrashDetector, 'RelTol', 1e-3, 'AbsTol', 1e-6);
     
     h = waitbar(0, ['Simulazione ' cfg.name '...']);
     
     for i = 1:N_sim
         if ishandle(h), waitbar(i/N_sim, h); end
-        
-        % 1. Generazione Condizione Iniziale
         x0 = GenerateX0(cfg.x0_type, cfg.target, cfg.sigma, params);
         
         try
-            % 2. Integrazione ODE
-            [t, x, te, xe, ie] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), ...
-                                       cfg.tspan, x0, opts);
+            [t, x, te, xe, ie] = ode45(@(t,x) simulazioneVTOL3(t, x, params, cfg.test_id, 0, cfg.target, 0), cfg.tspan, x0, opts);
             
-            % 3. Analisi Esito e Gestione Crash (FIX BUG)
             has_crashed = ~isempty(te);
-            if has_crashed
-                reasons = {'Impatto Suolo', 'Divergenza Quota', 'Ribaltamento Assetto'};
-                if ie(end) <= length(reasons)
-                    current_reason = reasons{ie(end)};
-                else
-                    current_reason = 'Sconosciuto';
-                end
-            else
-                current_reason = 'Nessuno';
-            end
-            
-            % Verifica convergenza
             ok = (t(end) >= cfg.tspan(2)) && ~has_crashed && ~any(isnan(x(:)));
             
-            % 4. Calcolo Statistiche sui 12 Stati
-            % Formula RMSE: $$RMSE = \sqrt{\frac{1}{N} \sum (x - x_{des})^2}$$
-            if t(end) > (cfg.tspan(2) * 0.5)
-                idx_settle = t > (t(end) * 0.6); % Analisi sull'ultimo 40% del tempo
+            stats(i).conv = ok;
+            stats(i).crashed = has_crashed;
+            
+            % --- ANALISI COMPLETA DEI 12 STATI ---
+            if t(end) > (cfg.tspan(2) * 0.6)
+                idx_settle = t > (cfg.tspan(2) * 0.6);
                 
-                % Target Vector [x, y, z, vx, vy, vz, phi, theta, psi, p, q, r]
-                if cfg.test_id ~= 3 % Hover / Takeoff
+                % Costruzione Target Vector Rigoroso (12 stati)
+                % Ordine: [x, y, z, vx, vy, vz, phi, theta, psi, p, q, r]
+                if cfg.test_id == 1 || cfg.test_id == 2 % Hover/Takeoff
                     target_vec = [cfg.target(1), cfg.target(2), cfg.target(3), 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 else % Cruise
-                    % X libera, Vx target, Z target, Theta target
+                    % In crociera, X non è un setpoint di posizione ma una coordinata crescente
                     target_vec = [0, 0, cfg.target(3), cfg.target(1), 0, 0, 0, cfg.target(2), 0, 0, 0, 0];
                 end
                 
                 err_data = x(idx_settle, 1:12);
-                if cfg.test_id == 3, err_data(:,1) = 0; end % Ignora posizione X in crociera
                 
-                rmse_vettore = sqrt(mean((err_data - target_vec).^2, 1));
+                % Neutralizziamo l'errore sulla coordinata X se siamo in Cruise (non è un errore di tracking)
+                if cfg.test_id == 3, err_data(:,1) = 0; end 
+                
+                % Calcolo RMSE vettoriale (1x12)
+                stats(i).rmse = sqrt(mean((err_data - target_vec).^2, 1));
             else
-                rmse_vettore = NaN(1,12);
+                stats(i).rmse = NaN(1,12);
             end
             
-            % 5. Archiviazione Dati
-            risultati(i).t = t;
-            risultati(i).x = x;
-            risultati(i).converged = ok;
-            risultati(i).crashed = has_crashed;
-            risultati(i).crash_reason = current_reason;
-            
-            stats(i).conv = ok;
-            stats(i).crashed = has_crashed;
-            stats(i).rmse = rmse_vettore;
-            
         catch ME
-            fprintf('   [!] Errore numerico Run %d: %s\n', i, ME.message);
             stats(i).conv = false;
-            stats(i).crashed = true;
             stats(i).rmse = NaN(1,12);
-            risultati(i).crash_reason = 'Errore Software';
         end
     end
     
     if ishandle(h), close(h); end
-    
-    % Report e Salvataggio
-    n_crash = sum([stats.crashed]);
-    fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
-    
-    save(['Results_PID_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_PID_' cfg.name '.csv']);
+    GenerateFullCSV(stats, ['Analysis_PID' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
