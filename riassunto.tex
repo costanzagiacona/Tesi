@@ -41,6 +41,51 @@ La dinamica nel \textit{Body Frame} include termini critici per un tilting-rotor
 \section{Volo Verticale (Case 1): Robustezza dello Sliding Mode}
 In fase di hovering, il sistema è intrinsecamente instabile. È stato scelto lo \textbf{Sliding Mode Control (SMC)} per la sua invarianza deterministica rispetto alle incertezze del modello.
 
+\section*{Architettura della Legge di Controllo Sliding Mode}
+
+La legge di controllo $u(t)$ è composta fondamentalmente da due termini additivi:
+\begin{equation}
+    u(t) = u_{eq}(t) + u_{n}(t)
+\end{equation}
+
+\subsection*{1. Il Termine Equivalente ($u_{eq}$)}
+Rappresenta la componente continua del controllo. Il suo scopo è mantenere lo stato del sistema sulla superficie di scorrimento $\sigma(x) = 0$ una volta che questa è stata raggiunta, assumendo che il modello del sistema sia nominalmente esatto.
+
+\begin{itemize}
+    \item \textbf{Derivazione:} Si ottiene imponendo la condizione di invarianza $\dot{\sigma}(x) = 0$. Risolvendo rispetto all'ingresso, si ricava il valore di $u$ necessario a mantenere la derivata della superficie nulla.
+    \item \textbf{Funzione:} Definisce la dinamica del sistema nel cosiddetto \textit{sliding regime}. È la componente che garantisce l'inseguimento della traiettoria desiderata in condizioni ideali.
+\end{itemize}
+
+\subsection*{2. Il Termine Discontinuo o Correttivo ($u_{n}$)}
+Rappresenta l'elemento di robustezza del controllo Sliding Mode (SMC). Il suo compito è compensare le incertezze di modellazione e i disturbi esterni, forzando lo stato verso la superficie di scorrimento.
+
+\begin{itemize}
+    \item \textbf{Formulazione:} Tipicamente espresso tramite la funzione segno:
+    \begin{equation}
+        u_{n} = -K \cdot \text{sgn}(\sigma(x))
+    \end{equation}
+    \item \textbf{Parametro $K$:} Deve essere scelto per soddisfare la condizione di raggiungibilità. Utilizzando la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$, si deve garantire che:
+    \begin{equation}
+        \dot{V} = \sigma \cdot \dot{\sigma} < 0
+    \end{equation}
+    \item \textbf{Funzione:} Corregge istantaneamente ogni deviazione dalla superficie, "respingendo" lo stato verso $\sigma = 0$.
+\end{itemize}
+
+\subsection*{Analisi Critica: Il Fenomeno del Chattering}
+Sebbene la teoria preveda una commutazione istantanea a frequenza infinita, i limiti fisici degli attuatori (banda passante finita e ritardi) introducono il \textbf{chattering}: oscillazioni ad alta frequenza attorno alla superficie di sliding.
+
+Per mitigare questo effetto, il termine $\text{sgn}(\sigma)$ viene spesso sostituito da approssimazioni \textit{smooth}:
+\begin{enumerate}
+    \item \textbf{Funzione Saturazione:} $\text{sat}\left(\frac{\sigma}{\epsilon}\right)$
+    \item \textbf{Tangente Iperbolica:} $\tanh\left(\frac{\sigma}{\epsilon}\right)$
+\end{enumerate}
+
+\begin{quote}
+    \textit{Nota metodologica:} È bene non confondere la robustezza del termine discontinuo con l'accuratezza del termine equivalente. Un errore nel calcolo di $u_{eq}$ può essere assorbito da $u_{n}$ se il guadagno $K$ è sufficientemente elevato, tuttavia ciò comporta un inutile incremento del chattering, con conseguente stress meccanico e degrado delle prestazioni energetiche.
+\end{quote}
+
+1. Stabilità della superficie ($\sigma = 0$)L'obiettivo primario dell'SMC è rendere la superficie di scorrimento $\sigma(x) = 0$ un attrattore globale asintoticamente stabile (o, più correttamente, stabile in tempo finito).Attraverso la condizione di Lyapunov $V = \frac{1}{2}\sigma^2$, imponiamo che la "distanza" dalla superficie diminuisca sempre fino a annullarsi.Una volta che $\sigma(x) = 0$, abbiamo garantito che il sistema si trovi nel cosiddetto sliding mode.2. Stabilità della dinamica ridottaMa attenzione: stabilizzare $\sigma$ non significa automaticamente che l'intero sistema sia stabile.La superficie $\sigma(x)$ viene progettata affinché, quando il sistema è vincolato su di essa, la sua dinamica risultante (chiamata dinamica ridotta o sliding dynamics) sia asintoticamente stabile.Se hai progettato una superficie lineare del tipo $\sigma = \dot{e} + \lambda e$ (dove $e$ è l'errore), quando il controllo garantisce $\sigma = 0$, ti ritrovi con l'equazione differenziale $\dot{e} = -\lambda e$.Questa equazione è asintoticamente stabile per definizione (se $\lambda > 0$).3. Cosa stiamo garantendo "Globalmente"?Quando parliamo di Stabilità Asintotica Globale (GAS) nell'SMC, intendiamo che:Da qualunque condizione iniziale parta il sistema (globalità), esso raggiungerà la superficie $\sigma=0$.Una volta sulla superficie, l'errore (o lo stato) convergerà a zero.L'osservazione critica del "Professore"Qui però c'è una trappola concettuale in cui cadono molti studenti. Devi distinguere tra:Raggiungibilità (Reachability): Garantita in tempo finito. A differenza del controllo lineare classico (dove l'errore tende a zero per $t \to \infty$), lo Sliding Mode "puro" tocca lo zero in un tempo ben preciso $t_r$.Convergenza allo stato desiderato: Una volta sulla superficie, se la dinamica ridotta è lineare (come $\dot{e} = -\lambda e$), la convergenza dell'errore a zero è asintotica ($t \to \infty$).Quindi, per rispondere alla tua domanda:Stai garantendo la stabilità asintotica globale dell'errore di inseguimento (o dello stato di equilibrio), passando attraverso la stabilità (in tempo finito) della superficie di sliding.Nota bene: Se il sistema presenta i cosiddetti zeri instabili (dinamica a zero instabile), potresti stabilizzare perfettamente la superficie $\sigma=0$ ma vedere il resto del sistema esplodere. Il rigore matematico impone quindi di verificare che il sistema sia a fase minima rispetto alla variabile di output che definisce la superficie.
+
 L'architettura è a cascata:
 \begin{itemize}
     \item \textbf{Outer Loop:} Gestisce la posizione e genera l'assetto desiderato ($\phi_{des}, \theta_{des}$).

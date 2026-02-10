@@ -1,5 +1,13 @@
 function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo, target, simbolico)
 
+% --- MODIFICA IN simulazioneVTOL3.m ---
+global U_FORCE_TRIM
+if ~isempty(U_FORCE_TRIM)
+    u = U_FORCE_TRIM; % Usa l'input del solver di trim
+else
+    u = controlloVTOL_v3(t, params, x, test_id, target); % Usa il controllore normale
+end
+% --------------------------------------
 % check parametri
 
 paramFlag = 0;
