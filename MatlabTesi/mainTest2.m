@@ -16,9 +16,9 @@ tspan = [0 100];              % intervallo di simulazione
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
-fase = 3;       
+fase = 1;       
 
-test_casi = 3;  % flag per cambiare le condizioni di simulazione
+test_casi = 1;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero
@@ -345,6 +345,58 @@ for k = 1:length(t)
     U_values(k,:) = controlloVTOL_v3(t(k), parametri,x(k,:), test_id, target);
 end
 
+% % Estrazione stati della dinamica a zero (Roll e Pitch)
+% roll_deg = rad2deg(x(:,7));
+% pitch_deg = rad2deg(x(:,8));
+% 
+% figure('Name', 'Validazione Dinamica a Zero - Case 1 (Hovering)');
+% 
+% subplot(2,1,1);
+% plot(t, roll_deg, 'LineWidth', 2); hold on;
+% plot(t, pitch_deg, 'LineWidth', 2);
+% grid on;
+% title('Dinamica a Zero: Evoluzione Assetto in Hovering');
+% ylabel('Angoli [gradi]');
+% legend('\phi (Roll)', '\theta (Pitch)');
+% 
+% subplot(2,1,2);
+% % Vediamo se la superficie di sliding sigma è davvero a zero
+% % Nota: calcola sigma_z come definito nel tuo controlloVTOL_v3
+% e_z = x(:,3) - z_des;
+% de_z = x(:,6); % approssimazione della derivata dell'errore
+% lambda_z = 0.5; % come nel tuo codice
+% sigma_z = de_z + lambda_z * e_z;
+% 
+% plot(t, sigma_z, 'r', 'LineWidth', 2);
+% grid on;
+% title('Verifica del Vincolo: Superficie di Sliding \sigma_z');
+% ylabel('\sigma_z');
+% xlabel('Tempo [s]');
+
+% % Estrazione Angolo di Attacco (Alpha) e Segnali di Controllo
+% alpha_deg = zeros(length(t), 1);
+% for i = 1:length(t)
+%     u_b = x(i,4); 
+%     w_b = x(i,6);
+%     alpha_deg(i) = rad2deg(atan2(w_b, u_b));
+% end
+% 
+% figure('Name', 'Analisi Dinamica a Zero e Autorità di Controllo');
+% subplot(2,1,1);
+% plot(t, alpha_deg, 'LineWidth', 2, 'Color', [0.85, 0.33, 0.1]);
+% grid on;
+% title('Evoluzione della Dinamica a Zero: Angolo di Attacco (\alpha)');
+% ylabel('\alpha [gradi]');
+% xlabel('Tempo [s]');
+% 
+% subplot(2,1,2);
+% plot(t, rad2deg(U_values(:,4)), 'b', 'LineWidth', 1.5); hold on;
+% plot(t, rad2deg(U_values(:,5)), 'r--', 'LineWidth', 1.5);
+% grid on;
+% title('Sforzo degli Attuatori (Tilt Servi)');
+% legend('Tilt DX', 'Tilt SX');
+% ylabel('Angolo Tilt [gradi]');
+% xlabel('Tempo [s]');
 
 % MonteCarloVTOL(parametri);
 

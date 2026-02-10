@@ -124,7 +124,7 @@
         \vspace{0.5cm}
         \begin{block}{La Sfida Ingegneristica}
             Questa versatilità introduce una \textbf{dinamica complessa} e fortemente accoppiata, 
-            richiedendo strategie di controllo e allocazione avanzate.
+            richiedendo strategie di controllo avanzate.
         \end{block}
 
         \column{0.4\textwidth}
@@ -398,7 +398,7 @@
             \begin{itemize}
                 \item[] \textbf{Propulsione}
                 \begin{itemize}
-                    \item[$u_{1-3}$:] Velocità angolari target ($\omega_{ref}$) per i tre motori.
+                    \item[$u_{1-3}$:] Velocità angolari per i tre motori.
                 \end{itemize}
                 \vspace{0.3cm}
                 \item[] \textbf{Tilt Anteriore}
@@ -542,7 +542,7 @@
             \vspace{0.3cm}
             \textbf{2. Legge di Controllo ($F_{z,req}$):}
             \begin{equation*}
-                 \underbrace{mg + F_{aero,z} - m \lambda_z \dot{e}_z}_{\text{Linearizzazione}} - \underbrace{m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)}_{\text{Termine Robusto}}
+                 \underbrace{mg + F_{aero,z} - m \lambda_z \dot{e}_z}_{\text{Termine Equivalente}} - \underbrace{m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)}_{\text{Termine Robusto}}
             \end{equation*}
             \small
             L'uso di $\tanh(\cdot)$ al posto di $\text{sgn}(\cdot)$ definisce un \textit{boundary layer} $\Phi$ per eliminare il \textit{chattering}.
@@ -840,7 +840,7 @@
             \textbf{Configurazione:}
             \begin{itemize}
                 \item Rotori Anteriori: $\theta \approx 0^\circ$ (Orizzontali).
-                \item Rotore di Coda: \textbf{Spento} (per evitare instabilità su Roll).
+                \item Rotore di Coda: \textbf{Spento} (per evitare instabilità intorno all'asse X).
             \end{itemize}
             
             \vspace{0.3cm}
@@ -1059,7 +1059,7 @@
     \begin{columns}[T]
         \begin{column}{0.32\textwidth}
             \begin{alertblock}{Pitch ($\theta$)}
-                \centering \textbf{"Elevator"}
+                \centering \textbf{"Elevatori"}
                 \vspace{0.2cm}
                 \begin{itemize}
                     \item \textbf{Azione:} Tilt Collettivo.
@@ -1072,7 +1072,7 @@
 
         \begin{column}{0.32\textwidth}
             \begin{block}{Roll ($\phi$)}
-                \centering \textbf{"Ailerons"}
+                \centering \textbf{"Alettoni"}
                 \vspace{0.2cm}
                 \begin{itemize}
                     \item \textbf{Azione:} Tilt Differenziale.
@@ -1085,7 +1085,7 @@
 
         \begin{column}{0.32\textwidth}
             \begin{exampleblock}{Yaw ($\psi$)}
-                \centering \textbf{"Rudder"}
+                \centering \textbf{"Timone"}
                 \vspace{0.2cm}
                 \begin{itemize}
                     \item \textbf{Azione:} Spinta Differenziale.

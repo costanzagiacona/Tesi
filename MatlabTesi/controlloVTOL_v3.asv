@@ -229,7 +229,7 @@ switch test_id
         % Lambda basso (risposta dolce), Phi alto (comando pulito per il loop interno)
         
         % --- QUOTA (Z) ---
-        lambda_z = 1.5; K_z = 3; Phi_z = 1.5;
+        lambda_z = 1.5; K_z = 40; Phi_z = 1.5;
         e_z = z_des - x(3);
         de_z = vz_des - vz_g;
         s_z = de_z + lambda_z * e_z;
