@@ -5,6 +5,7 @@ files = {'Results_SMC_Recovery Hover.mat', ...
          'Results_PID_Cruise Flight.mat'};
 
 files = {'Results_PID_Cruise Flight.mat'};
+files = {'Results_SMC_Takeoff Ground.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica
 set(0, 'DefaultAxesFontSize', 15);       
@@ -79,9 +80,9 @@ function Plot_State_Overview(risultati, label)
 
             % --- FIG 4: RATEI (Gradi/s) ---
             set(0, 'CurrentFigure', figs(4));
-            subplot(3,1,1); hold on; grid on; plot(t, rad2deg(X(:,10)), 'Color', c_rat); ylabel('p [deg/s]'); title([label, ' - Ratei']);
-            subplot(3,1,2); hold on; grid on; plot(t, rad2deg(X(:,11)), 'Color', c_rat); ylabel('q [deg/s]');
-            subplot(3,1,3); hold on; grid on; plot(t, rad2deg(X(:,12)), 'Color', c_rat); ylabel('r [deg/s]'); xlabel('Tempo [s]');
+            subplot(3,1,1); hold on; grid on; plot(t, rad2deg(X(:,10)), 'Color', c_rat); ylabel('p [deg/s]'); ylim([-100, 100]); title([label, ' - Ratei']);
+            subplot(3,1,2); hold on; grid on; plot(t, rad2deg(X(:,11)), 'Color', c_rat); ylabel('q [deg/s]'); ylim([-100, 100]); 
+            subplot(3,1,3); hold on; grid on; plot(t, rad2deg(X(:,10)), 'Color', c_rat); ylabel('r [deg/s]'); ylim([-100, 100]);  xlabel('Tempo [s]');
 
             % --- FIG 5: ATTUATORI (TILT & THRUST) ---
             set(0, 'CurrentFigure', figs(5));

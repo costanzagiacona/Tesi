@@ -522,22 +522,20 @@
     \begin{itemize}
         \item \textbf{Outer Loop (Posizione):} \textcolor{blue}{\textbf{Sliding Mode Control (SMC)}}.
         \begin{itemize}
-            \item Tracking di traiettoria e reiezione disturbi atmosferici.
+            \item Raggiungimento della quota.
             \item Genera l'assetto desiderato ($\phi_{des}, \theta_{des}$).
         \end{itemize}
         
         \vspace{0.3cm}
         \item \textbf{Inner Loop (Assetto):} \textcolor{red}{\textbf{Sliding Mode Control (SMC)}}.
         \begin{itemize}
-            \item \textbf{Robustezza:} Invarianza rispetto alle incertezze della matrice d'inerzia $J$.
-            \item \textbf{Velocità:} Tracking istantaneo dei riferimenti angolari esterni.
-            \item \textbf{Disaccoppiamento:} Gestione intrinseca dei termini giroscopici non lineari.
+            \item Stabilizzazione dell'assetto.
         \end{itemize}
     \end{itemize}
     
     \vspace{0.5cm}
     \begin{block}{Vantaggio dell'Architettura Full SMC}
-        L'intera catena di controllo condivide la stessa filosofia di stabilità (Lyapunov), garantendo prestazioni superiori rispetto al PID classico in presenza di forti non-linearità.
+        Garantisce prestazioni superiori rispetto al PID classico in presenza di forti non-linearità.
     \end{block}
 \end{frame}
 
@@ -564,12 +562,7 @@
                 \item Sliding surface: $\sigma_z = \dot{e}_z + \lambda_z e_z$
             \end{itemize}
             \vspace{0.3cm}
-            \textbf{2. Legge di Controllo ($F_{z,req}$):}
-            \begin{equation*}
-                 \underbrace{mg + F_{aero,z} - m \lambda_z \dot{e}_z}_{\text{Termine Equivalente}} - \underbrace{m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)}_{\text{Termine Robusto}}
-            \end{equation*}
-            \small
-            L'uso di $\tanh(\cdot)$ al posto di $\text{sgn}(\cdot)$ definisce un \textit{boundary layer} $\Phi$ per eliminare il \textit{chattering}.
+            Genera la richiesta di Thrust ($F_{z,req}$) per portare il drone in quota e mantenerlo in hovering.
         \end{column}
         \begin{column}{0.4\textwidth}
             \centering
@@ -660,7 +653,7 @@
 
 % --- SLIDE 7: INVERSIONE CINEMATICA (IL PONTE) ---
 \begin{frame}{Inversione Cinematica: Dal Loop Esterno all'Interno}
-    Le forze virtuali generate dagli SMC di posizione ($F_{x,req}, F_{y,req}$) devono essere tradotte in angoli di assetto, sfruttando la natura sottoattuata del drone.
+    Le forze virtuali generate dagli SMC di posizione ($F_{x,req}, F_{y,req}$) devono essere tradotte in angoli di assetto.
     
     \vspace{0.4cm}
     \begin{columns}[c]
@@ -685,7 +678,7 @@
     
     \vspace{0.4cm}
     \begin{itemize}
-        \item \textbf{Input:} Forze $F_{req}$ robuste (SMC esterno).
+        \item \textbf{Input:} Forze $F_{req}$ (SMC esterno).
         \item \textbf{Output:} Riferimenti angolari $\mathbf{A}_{des}$ per l'SMC interno.
     \end{itemize}
 \end{frame}
@@ -700,18 +693,16 @@
         \sigma = \dot{e} + \lambda e \quad \longrightarrow \quad \text{se } \sigma=0, \text{ l'errore decade esponenzialmente.}
     \end{equation*}
 
-    \item Il momento richiesto ai motori si compone di due termini:
-    \begin{equation*}
-        M_{req} = \underbrace{J \lambda \dot{e}}_{\text{Inseguimento Nominale}} + \underbrace{K \tanh(s / \Phi)}_{\text{Reiezione Disturbi}}
-    \end{equation*}
+    \item Attraverso lo SMC vengono generati dei momenti torcenti lungo gli assi $x, y, z$ 
+    con i quali si raggiungono gli angoli desiderati.
+
     \end{itemize}
 
-    Vengono generati dei momenti torcenti lungo gli assi $x, y, z$ attraverso i quali si raggiungono gli angoli desiderati.
 \end{frame}
 
 % --- SLIDE 8: MMA Longitudinale (Condensata) ---
 \begin{frame}{Motor Mixing Algorithm: Longitudinale}
-    La dinamica longitudinale richiede la risoluzione di un sistema accoppiato: Spinta ($T$) e Beccheggio ($M_y$).
+    La dinamica longitudinale richiede la risoluzione di un sistema con Spinta ($F_{z,req}$) e Beccheggio ($M_y$).
     
     \vspace{0.3cm}
     \textbf{1. Calcolo Rotore di Coda ($\omega_3$):}
@@ -738,12 +729,12 @@
             \textbf{ROLL (Spinta Differenziale)} \\
             Si ripartisce la spinta anteriore tra destra ($T_1$) e sinistra ($T_2$):
             \begin{equation}
-                \Delta\omega_{des} = \frac{M_{x,req}}{2 d_{my}}
+                \Delta T_{des} = \frac{M_{x,req}}{2 d_{my}}
             \end{equation}
             \begin{equation}
                 \begin{cases}
-                    \omega_{1} = \frac{T_{front}}{2k} - \Delta\omega_{des}\\
-                    \omega_{2} = \frac{T_{front}}{2k} + \Delta\omega_{des}
+                    T_{1} = \frac{T_{front}}{2} - \Delta T_{des}\\
+                    T_{2} = \frac{T_{front}}{2} + \Delta T_{des}
                 \end{cases}
             \end{equation}
         \end{column}
@@ -909,7 +900,7 @@
     \begin{figure}
         \centering
         \resizebox{0.75\textwidth}{!}{
-            \includegraphics{controllo_orizzontale/schema_blocchi_H.png}
+            \includegraphics{controllo_orizzontale/schema_blocchi_H_t.png}
         }
         \caption{Schema a blocchi del controllo orizzontale.}
     \end{figure}
@@ -1014,26 +1005,33 @@
 
 % --- SLIDE 3: OUTER LOOP (UNIFICATA) ---
 \begin{frame}{Outer Loop: Quota e Velocità}
-    L'Outer Loop genera le forze richieste ($F_{req}$) per inseguire i riferimenti. Entrambi i canali utilizzano un Feedforward Aerodinamico.
+    L'Outer Loop genera i riferimenti per l'Inner Loop. La strategia di controllo è di tipo Fixed-Wing: la quota è controllata dall'assetto longitudinale (Pitch), mentre la velocità è controllata dalla spinta.
 
     \vspace{0.3cm}
     \begin{columns}[T]
         % Colonna Quota
         \begin{column}{0.48\textwidth}
-            \begin{block}{Controllo Quota ($z$)}
-                Mantenimento altitudine tramite modulazione forza verticale:
+            \begin{block}{Controllo Quota ($z$) $\rightarrow$ Pitch ($\theta_{ref}$)}
+                Il mantenimento dell'altitudine avviene modulando l'angolo di beccheggio.
+                
+                \vspace{0.2cm}
+                \textbf{Generazione Riferimento:}
                 \begin{equation}
-                    F_{z,req} = \underbrace{m (g - a_{z,PID})}_{\text{Inerziale}} - \underbrace{L_{wing}(v)}_{\text{Lift Feedforward}}
+                    \theta_{des} = \text{PID}_z (e_z, \dot{e}_z)
                 \end{equation}
+                
             \end{block}
         \end{column}
 
         % Colonna Velocità
         \begin{column}{0.48\textwidth}
-            \begin{block}{Controllo Velocità ($v_x$)}
-                Inseguimento del setpoint ($25 m/s$) tramite forza propulsiva:
+            \begin{block}{Controllo Velocità ($v_x$) $\rightarrow$ Spinta ($F_{x}$)}
+                Inseguimento del riferimento di velocità con compensazione aerodinamica.
+                
+                \vspace{0.2cm}
+                \textbf{Forza Richiesta:}
                 \begin{equation}
-                    F_{x,req} = \underbrace{F_{x,PID}}_{\text{Correttivo}} + \underbrace{D_{x}(v)}_{\text{Drag Feedforward}}
+                    F_{x,req} = \text{PI}_{v_x}(e_{v_x}) + \underbrace{D_{tot}(v)}_{\text{Drag Feedforward}}
                 \end{equation}
             \end{block}
         \end{column}
@@ -1077,7 +1075,7 @@
 
 % --- SLIDE 4: INNER LOOP (ANALOGIE) ---
 \begin{frame}{Inner Loop: Thrust Vectoring come Superfici Virtuali}
-    In assenza di alettoni e timoni, il mixer emula le superfici di controllo classiche usando i motori.
+    In assenza di superfici aerodinamiche mobili, il mixer emula le superfici di controllo classiche usando i motori.
 
     \vspace{0.3cm}
     \begin{columns}[T]
@@ -1113,7 +1111,7 @@
                 \vspace{0.2cm}
                 \begin{itemize}
                     \item \textbf{Azione:} Spinta Differenziale.
-                    \item $\omega_1 \neq \omega_2$.
+                    \item $T_1 \neq T_2$.
                     \item Crea coppia torcente sull'asse $Z$.
                     \item PD
                 \end{itemize}
@@ -1153,23 +1151,18 @@
 % \end{frame}
 
 % --- SLIDE 5: MMA CONCETTO (SINTESI VETTORIALE) ---
-\begin{frame}{Motor Mixing Algorithm: Sintesi e Compensazione Geometrica}
-    Il Mixer traduce le forze cartesiane ($F_x, F_z$) in un vettore spinta.\\
+\begin{frame}{Motor Mixing Algorithm: Thrust}
+    Il Mixer mappa i comandi di assetto sui motori (funzione di \textit{Thrust Vectoring}).
+
     \vspace{0.3cm}
-    \textbf{1. Sintesi del Vettore Spinta (Frame Inerziale)}
+    \textbf{Assegnazione Spinta (Propulsione)}
+    La spinta totale è determinata dalla richiesta del loop di velocità longitudinale.
     \begin{equation}
-        T_{tot} = \sqrt{F_{x}^2 + F_{z}^2} \quad ; \quad \alpha_{inertial} = \arctan2(F_z, F_x)
+         T_{tot} = F_{x,req} 
     \end{equation}
 
     \vspace{0.3cm}
-    \textbf{2. Trasformazione al Body Frame (Compensazione)}
-    I servi sono solidali alla fusoliera. Se il drone cabra ($\theta > 0$), i motori devono ruotare in basso per mantenere la spinta orizzontale.
-    
-    \begin{equation}
-        \boxed{\alpha_{base} = \alpha_{inertial} - \theta_{body}}
-    \end{equation}
-    
-    \small \textit{Questo disaccoppia la dinamica di traslazione dalle oscillazioni di beccheggio.}
+    Il controllo di quota è garantito indirettamente: il servo picchia ($u_{pitch}$), il drone alza il naso ($\theta$), l'ala genera più portanza.
 \end{frame}
 
 % --- SLIDE 6: MMA ATTUAZIONE (EQUAZIONI FINALI) ---
@@ -1181,32 +1174,30 @@
     \begin{columns}[c, onlytextwidth] 
         \hfill % Margine sinistro (opzionale, per centrare il blocco totale)
         
-        \begin{column}{0.44\textwidth}
+        \begin{column}{0.48\textwidth}
             \centering % Centra il contenuto dentro la colonna per staccarlo dai bordi
             \textbf{A. Comandi ai Motori} \\
             (Controllo Yaw e Spinta)
             \begin{equation}
                 \begin{cases}
-                    \omega_{1} = \frac{T_{tot}}{2k} - u_{\psi} \\
-                    \omega_{2} = \frac{T_{tot}}{2k} + u_{\psi}
+                    T_{1} = \frac{T_{tot}}{2} - u_{\psi} \\
+                    T_{2} = \frac{T_{tot}}{2} + u_{\psi}
                 \end{cases}
             \end{equation}
-            $\implies$ RPM Motori.
         \end{column}
         
         \hfill % Crea lo spazio centrale tra le due colonne
         
-        \begin{column}{0.44\textwidth}
+        \begin{column}{0.48\textwidth}
             \centering
             \textbf{B. Comandi ai Servi} \\
             (Controllo Pitch e Roll)
             \begin{equation}
                 \begin{cases}
-                    \theta_{1} = \alpha_{base} + u_{\theta} - u_{\phi} \\
-                    \theta_{2} = \alpha_{base} + u_{\theta} + u_{\phi}
+                    \theta_{1} = u_{\theta} - u_{\phi} \\
+                    \theta_{2} = u_{\theta} + u_{\phi}
                 \end{cases}
             \end{equation}
-            $\implies$ Angoli Servi.
         \end{column}
         
         \hfill % Margine destro
@@ -1228,13 +1219,13 @@
 % --- SLIDE 1: METODOLOGIA ---
 \begin{frame}{Metodologia di Validazione}
     \begin{alertblock}{Stress-Test stocastico ($N=300$)}
-        Il sistema è stato sottoposto a 100 simulazioni per ogni scenario per quantificare la robustezza dei controllori scelti a fronte di incertezze iniziali ($\pm 15^\circ$ assetto, $\pm 2$m posizione) e mismatch dei parametri aerodinamici.
+        Il sistema è stato sottoposto a 100 simulazioni per ogni scenario per quantificare la robustezza dei controllori scelti a fronte di incertezze iniziali su assetto e posizione.
     \end{alertblock}
 
     \vspace{0.3cm}
             \textbf{Logica di Controllo adottata:}
             \begin{itemize}
-                \item \textbf{SMC (Takeoff/Recovery):} Scelto per la gestione delle forti non-linearità e la reiezione dei disturbi in hovering.
+                \item \textbf{SMC (Takeoff/Recovery):} Scelto per la gestione delle non-linearità e la reiezione dei disturbi in hovering.
                 \item \textbf{PID (Cruise):} Utilizzato come baseline per il volo rettilineo uniforme a $25$ m/s.
             \end{itemize}
 
@@ -1321,7 +1312,7 @@
     \textbf{Sviluppi Futuri:}
     \begin{itemize}
         \item Sviluppo del controllo laterale per la fase di crociera. 
-        \item Analisi di stabilità.
+        \item Analisi di stabilità tramite linearizzazione.
     \end{itemize}
 \end{frame}
 

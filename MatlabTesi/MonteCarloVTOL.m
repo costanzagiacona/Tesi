@@ -42,7 +42,7 @@ function MonteCarloVTOL(params)
     cfg_cru.test_id = 3; 
     cfg_cru.target = [25; 0; -10]; 
     cfg_cru.tspan = [0 60]; 
-    cfg_cru.sigma = struct('pos', 2.0, 'vel', 3.0, 'att', deg2rad(5), 'omega', deg2rad(2));
+    cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(10), 'omega', deg2rad(10));
     cfg_cru.x0_type = 'cruise'; 
     
     RunCampaign(cfg_cru, params);
@@ -139,8 +139,8 @@ function RunCampaign(cfg, params)
     n_crash = sum([stats.crashed]);
     fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
     
-    save(['Results_PID_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_PID_' cfg.name '.csv']);
+    save(['Results_PID2_' cfg.name '.mat'], 'risultati', 'cfg');
+    GenerateFullCSV(stats, ['Analysis_PID2_' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
