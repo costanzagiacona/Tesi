@@ -1,13 +1,5 @@
 function x_dot = simulazioneVTOL3(t, x, params, test_id, disturbo, target, simbolico)
 
-% --- MODIFICA IN simulazioneVTOL3.m ---
-global U_FORCE_TRIM
-if ~isempty(U_FORCE_TRIM)
-    u = U_FORCE_TRIM; % Usa l'input del solver di trim
-else
-    u = controlloVTOL_v3(t, params, x, test_id, target); % Usa il controllore normale
-end
-% --------------------------------------
 % check parametri
 
 paramFlag = 0;
@@ -290,7 +282,7 @@ elseif test_id == 2 || test_id == 3
     x28_dot = theta_target - theta;
     
     % Stato 29: Integrale errore Quota Z
-    x29_dot = z_target - x(3);
+    x29_dot = x(3) - z_target;
     
     % Stato 30: Integrale errore Vy (Sideslip) 
     x30_dot = 0 - x(2);

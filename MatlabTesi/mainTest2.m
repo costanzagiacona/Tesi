@@ -11,12 +11,12 @@ paramFlag = 0; % se 1 print del valore dei parametri
 test_id = 0;    % flag per cambiare controllo
 disturbo = 0;
 
-tspan = [0 10];              % intervallo di simulazione
+tspan = [0 30];              % intervallo di simulazione
 
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
-fase = 3;       
+fase = 1;       
 
 test_casi = 3;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
@@ -41,7 +41,7 @@ target = [vx_des theta_des z_des];
 if fase == 1
     test_id = 1;
 elseif fase == 3
-    test_id = 3;
+    test_id = 2;
 end
 
 new_model = 1;
@@ -305,7 +305,7 @@ elseif fase == 3
             x0(4) = 25;
             x4eq = x0(4);
             x0(7) = deg2rad(-10);
-            x0(8) = deg2rad(10);
+            x0(8) = deg2rad(-10);
             x0(9) = deg2rad(-10);
             F_drag = 0.5*parametri.rho*parametri.s_body_x*parametri.C_d_x*sign(x0(4))*x0(4)^2;
             F_drag_ali = parametri.rho*parametri.s*parametri.C_d*sign(x0(4))*x0(4)^2;
