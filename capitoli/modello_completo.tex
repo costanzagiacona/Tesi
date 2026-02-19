@@ -1,9 +1,10 @@
 % !TEX root = ../main.tex
+Lo studio si basa su modello del VTOL ottenuto attraverso la formulazione di Newton-Eulero a 6 DOF.
 
 \section{Sistemi di Riferimento}
 Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di riferimento principali, entrambi destrorsi:
 \begin{itemize}
-    \item \textbf{Sistema Inerziale (Earth Frame) $\mathcal{F}_g$}: Fisso rispetto al terreno, definito dalla terna $(O_g, X_g, Y_g, Z_g)$. La posizione del velivolo è indicata dal vettore $\bm{P}_g = [x_g, y_g, z_g]^T$ e l'orientamento dagli angoli di Eulero $\bm{\Theta}_g = [\phi, \theta, \psi]^T$ (Roll, Pitch, Yaw).
+    \item \textbf{Sistema Inerziale (Global Frame) $\mathcal{F}_g$}: Fisso rispetto al terreno, definito dalla terna $(O_g, X_g, Y_g, Z_g)$. La posizione del velivolo è indicata dal vettore $\bm{P}_g = [x_g, y_g, z_g]^T$ e l'orientamento dagli angoli di Eulero $\bm{\Theta}_g = [\phi, \theta, \psi]^T$ (Roll, Pitch, Yaw).
     \item \textbf{Sistema Solidale (Body Frame) $\mathcal{F}_b$}: Con origine nel centro di massa (CoM) del velivolo e assi $(X_b, Y_b, Z_b)$ solidali alla struttura. Le velocità lineari e angolari sono definite rispettivamente come $\bm{V}_b = [u, v, w]^T$ e $\bm{\Omega}_b = [p, q, r]^T$.
 \end{itemize}
 
@@ -14,14 +15,18 @@ Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di rifer
     \label{fig:sist_rif}
 \end{figure}
 
-È fondamentale distinguere tra la trasformazione dei vettori fisici e la relazione cinematica delle velocità angolari.
+Gli angoli di Eulero sono definiti come:
+\begin{itemize}
+    \item Roll $\phi$: angolo di rotazione intorno all'asse $X_g$
+    \item Pitch $\theta$: angolo di rotazione intorno all'asse $Y_g$
+    \item Yaw $\psi$: angolo di rotazione intorno all'asse $Z_g$
+\end{itemize}
 
-\subsection{Trasformazione dei Vettori (Matrice di Rotazione)}
-La trasformazione delle grandezze vettoriali (come velocità lineari e forze) dal sistema solidale al corpo a quello inerziale avviene tramite la matrice di rotazione ortogonale $\mathbf{R}_{b \to g}$ (secondo la convenzione standard Z-Y-X):
+\subsection{Trasformazione dei Vettori}
+La trasformazione delle grandezze vettoriali dal sistema solidale al corpo a quello inerziale avviene tramite la matrice di rotazione ortogonale $\mathbf{R}_{b \to g}$ (secondo la convenzione standard Z-Y-X):
 \begin{equation}
     \bm{\dot{P}}_g = \mathbf{R}_{b \to g}(\bm{\Theta}_g) \bm{V}_b
 \end{equation}
-
 In forma esplicita, utilizzando la notazione $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot}=\sin(\cdot)$:
 \begin{equation}
     \mathbf{R}_{b \to g} = 
@@ -31,16 +36,10 @@ In forma esplicita, utilizzando la notazione $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot
         -s_\theta       & c_\theta s_\phi                        & c_\theta c_\phi
     \end{bmatrix}
 \end{equation}
+Poiché ${R}_{b \to g}$ è una matrice ortogonale, è possibile passare dal sistema inerziale a quello solidale al corpo utilizzando la sua trasposta.
 
-\subsection{Trasformazione dei Ratei (Matrice Cinematica)}
-Le velocità angolari misurate dai giroscopi nel body frame ($\bm{\Omega}_b = [p,q,r]^T$) non sono direttamente le derivate temporali degli angoli di Eulero ($\bm{\dot{\Theta}}_g = [\dot{\phi}, \dot{\theta}, \dot{\psi}]^T$), poiché le rotazioni di Eulero avvengono su assi non ortogonali tra loro.
-La relazione corretta è data dalla matrice di trasformazione Jacobiana $\mathbf{J}_{b \to g}$:
-
-\begin{equation}
-    \bm{\dot{\Theta}}_g = \mathbf{J}_{b \to g}(\bm{\Theta}_g) \bm{\Omega}_b
-\end{equation}
-
-Tale matrice è definita come:
+\subsection{Trasformazione dei Ratei}
+Si definisce adesso  $\mathbf{J}_{b \to g}$, matrice di trasformazione delle velocità angolari dal body frame al global frame:
 \begin{equation}
     \mathbf{J}_{b \to g} = 
     \begin{bmatrix}
@@ -49,8 +48,7 @@ Tale matrice è definita come:
         0 & \frac{\sin\phi}{\cos\theta} & \frac{\cos\phi}{\cos\theta}
     \end{bmatrix}
 \end{equation}
-
-\textbf{Nota:} A differenza di $\mathbf{R}_{b \to g}$, la matrice $\mathbf{J}_{b \to g}$ presenta una singolarità matematica per $\theta = \pm 90^\circ$ (divisione per zero del $\cos\theta$), nota come \textit{Gimbal Lock}. Questa relazione è cruciale per calcolare correttamente il tasso di virata ($\dot{\psi}$) partendo dal rateo di imbardata ($r$) misurato dai sensori.
+A differenza di $\mathbf{R}_{b \to g}$, la matrice $\mathbf{J}_{b \to g}$ presenta una singolarità matematica per $\theta = \pm 90^\circ$ (divisione per zero del $\cos\theta$), nota come \textit{Gimbal Lock}. Questa relazione è cruciale per calcolare correttamente il tasso di virata ($\dot{\psi}$) partendo dal rateo di imbardata ($r$) misurato dai sensori.
 \clearpage
 
 \section{Equazioni della Dinamica}

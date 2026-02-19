@@ -1,17 +1,28 @@
-L'evoluzione tecnologica nel settore degli aeromobili a pilotaggio remoto (UAV) ha portato all'emergere di configurazioni ibride capaci di coniugare i vantaggi operativi dei multirotori con l'efficienza aerodinamica dei velivoli ad ala fissa. In questo scenario, i velivoli a decollo e atterraggio verticale (VTOL) rappresentano una frontiera critica dell'ingegneria aerospaziale e dell'automazione, offrendo la versatilità necessaria per operare in ambienti confinati senza rinunciare a lunghe autonomie di volo.
+Negli ultimi anni, è sorto un crescente interesse verso i veicoli aerei a guida autonoma (\textit{Unmanned Aerial Vehicles}, UAV) grazie all'ampio ventaglio di applicazioni sia in ambito civile che militare. 
+Trovano, infatti, applicazione, in operazioni di ricerca e soccorso, sorveglianza, ma anche in settori come l'agricoltura e il monitoraggio ambientale.\\
+Il principale vantaggio consiste nella loro capacità di muoversi in ambienti complessi e dinamici in maniera autonoma, arrivando in luoghi che per l'uomo potrebbero essere ostici o pericolosi.\\
+Gli UAV sono generalmente classificati in due categorie:
+\begin{itemize}
+    \item \textbf{Multirotori}: sono caratterizzati da alta stabilità in hovering e capacità di decollare e atterrare verticalmente, ma non sono in grado di percorrere lunghe distanze;
+    \item \textbf{Aeromobili ad ala fissa}: presentano alta efficienza aerodinamica e sono in grado di effettuare lunghe percorrenze, ma hanno necessità di infrastrutture dedicate per il decollo e l'atterraggio.
+\end{itemize}
+Le limitazioni di entrambe le configurazioni vengono superate dai VTOL (Vertical Take-Off and Landing), ovvero UAV a configurazione ibrida, i quali presentano superfici aerodinamiche e rotori inclinabili;
+in questo modo offrono la versatilità necessaria per operare in ambienti confinati senza rinunciare a lunghe autonomie di volo.
 
 \section{Il Problema Ingegneristico}
-La progettazione di sistemi di controllo per UAV VTOL ibridi presenta sfide non banali, derivanti principalmente dalla natura fortemente non lineare e tempo-variante della loro dinamica. Durante la transizione tra il volo verticale (hovering) e quello orizzontale (crociera), il velivolo attraversa regimi aerodinamici complessi in cui le forze di portanza, resistenza e i momenti giroscopici risultano strettamente accoppiati.
-
-In particolare, la configurazione oggetto di questo studio --- un tricottero asimmetrico con rotori anteriori inclinabili e rotore di coda a due gradi di libertà --- introduce ulteriori gradi di complessità rispetto ai modelli standard:
-\begin{itemize}
-    \item \textbf{Sotto-attuazione intrinseca:} La necessità di variare l'assetto del corpo per indurre traslazioni orizzontali in hovering.
-    \item \textbf{Asimmetria strutturale:} Il bilanciamento del momento di imbardata e beccheggio richiede una gestione raffinata del mixing dei motori.
-    \item \textbf{Vincoli fisici:} La banda passante degli attuatori limita l'autorità di controllo, imponendo trade-off critici tra smorzamento e stabilità numerica.
-\end{itemize}
+La progettazione di sistemi di controllo per UAV VTOL ibridi presenta sfide non banali, derivanti principalmente dalla natura fortemente non lineare e tempo-variante della loro dinamica.\\
+Durante la transizione tra il volo verticale (hovering) e quello orizzontale (crociera), il velivolo attraversa regimi aerodinamici complessi in cui le forze di portanza, resistenza e i momenti giroscopici risultano strettamente accoppiati.\\
+Il velivolo oggetto di questo studio è un VTOL innovativo, caratterizzato dalla presenza di ali e tre rotori inclinabili: due anteriori e uno posteriore.
+Ciò che rende particolarmente sfidante il controllo dell'inviluppo di volo di questo drone è l'instabilità intrinseca che deriva dall'ultilizzo di tre soli rotori e l'assenza di superfici aerodinamiche a geometria varibile, le quali sono generalmente usate 
+per il controllo di assetto in fase di crociera.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{dragonfly.png}
+    \caption{Dragonfly}
+\end{figure}  
 
 \section{Obiettivo della Tesi}
-Il presente lavoro si propone di derivare un modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'intero inviluppo di volo.
+Il presente lavoro si propone di modificare il modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'intero inviluppo di volo.
 \\La strategia proposta si articola su un sistema di controllo gerarchico a cascata:
 \begin{enumerate}
     \item Un \textit{Outer Loop} per la guida del drone, con scelte di controllori differenti tra la fase di hovering e quella di crociera.

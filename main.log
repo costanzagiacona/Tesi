@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  9 FEB 2026 15:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  19 FEB 2026 16:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -836,17 +836,23 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ]
 Capitolo 1.
 (capitoli/introduzione.tex
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
+<./img/dragonfly.png, id=496, 490.08093pt x 366.61969pt>
+File: ./img/dragonfly.png Graphic file (type png)
+<use ./img/dragonfly.png>
+Package pdftex.def Info: ./img/dragonfly.png  used on input line 20.
+(pdftex.def)             Requested size: 341.43437pt x 255.42369pt.
+
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.18     \item U
-                n \textit{Inner Loop} di assetto che utilizza regolatori PID... [1
+l.23 
+      [1
 
-{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]) [2]
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]) [2 <./img/dragonfly.png>]
 Capitolo 2.
 (capitoli/stato_arte.tex [3
 
@@ -857,7 +863,7 @@ Capitolo 2.
 ] [7
 
 {C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-<./img/coaxial.png, id=537, 376.40625pt x 226.59656pt>
+<./img/coaxial.png, id=542, 376.40625pt x 226.59656pt>
 File: ./img/coaxial.png Graphic file (type png)
 <use ./img/coaxial.png>
 Package pdftex.def Info: ./img/coaxial.png  used on input line 56.
@@ -865,7 +871,7 @@ Package pdftex.def Info: ./img/coaxial.png  used on input line 56.
  [8
 
  <./img/coaxial.png>]
-<./img/paper5.png, id=547, 586.44093pt x 447.17062pt>
+<./img/paper5.png, id=551, 586.44093pt x 447.17062pt>
 File: ./img/paper5.png Graphic file (type png)
 <use ./img/paper5.png>
 Package pdftex.def Info: ./img/paper5.png  used on input line 75.
@@ -879,25 +885,25 @@ Package pdftex.def Info: ./img/paper5.png  used on input line 75.
 ]
 Capitolo 3.
 (capitoli/modello_completo.tex
-<./img/sist_rif.png, id=568, 1983.41pt x 822.07124pt>
+<./img/sist_rif.png, id=572, 1983.41pt x 822.07124pt>
 File: ./img/sist_rif.png Graphic file (type png)
 <use ./img/sist_rif.png>
-Package pdftex.def Info: ./img/sist_rif.png  used on input line 12.
+Package pdftex.def Info: ./img/sist_rif.png  used on input line 13.
 (pdftex.def)             Requested size: 405.45047pt x 168.04903pt.
  [12
 
  <./img/sist_rif.png (PNG copy)>] [13{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}] [14
 
 ]
-<./img/rotori_1_2.png, id=592, 525.46312pt x 421.575pt>
+<./img/rotori_1_2.png, id=595, 525.46312pt x 421.575pt>
 File: ./img/rotori_1_2.png Graphic file (type png)
 <use ./img/rotori_1_2.png>
-Package pdftex.def Info: ./img/rotori_1_2.png  used on input line 96.
+Package pdftex.def Info: ./img/rotori_1_2.png  used on input line 94.
 (pdftex.def)             Requested size: 204.85802pt x 164.35568pt.
-<./img/rotore_3.png, id=593, 461.47406pt x 356.0803pt>
+<./img/rotore_3.png, id=596, 461.47406pt x 356.0803pt>
 File: ./img/rotore_3.png Graphic file (type png)
 <use ./img/rotore_3.png>
-Package pdftex.def Info: ./img/rotore_3.png  used on input line 104.
+Package pdftex.def Info: ./img/rotore_3.png  used on input line 102.
 (pdftex.def)             Requested size: 204.85802pt x 158.07219pt.
  [15
 
@@ -976,17 +982,17 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 ] [33] [34] [35] [36
 
 ]
-<./img/../img/controllo_verticale/pos_vel.png, id=755, 1245.9047pt x 683.55376pt>
+<./img/../img/controllo_verticale/pos_vel.png, id=758, 1245.9047pt x 683.55376pt>
 File: ./img/../img/controllo_verticale/pos_vel.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/pos_vel.png>
 Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 342.
 (pdftex.def)             Requested size: 426.79135pt x 234.15747pt.
-<./img/../img/controllo_verticale/angoli.png, id=756, 1236.87094pt x 680.5425pt>
+<./img/../img/controllo_verticale/angoli.png, id=759, 1236.87094pt x 680.5425pt>
 File: ./img/../img/controllo_verticale/angoli.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/angoli.png>
 Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 348.
 (pdftex.def)             Requested size: 426.79135pt x 234.82895pt.
-<./img/../img/controllo_verticale/thrust.png, id=757, 1228.59pt x 668.4975pt>
+<./img/../img/controllo_verticale/thrust.png, id=760, 1228.59pt x 668.4975pt>
 File: ./img/../img/controllo_verticale/thrust.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/thrust.png>
 Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 354.
@@ -994,12 +1000,12 @@ Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on in
  [37
 
  <./img/../img/controllo_verticale/pos_vel.png> <./img/../img/controllo_verticale/angoli.png>]
-<./img/../img/controllo_verticale/tilt_1_2.png, id=764, 1263.97218pt x 684.30656pt>
+<./img/../img/controllo_verticale/tilt_1_2.png, id=767, 1263.97218pt x 684.30656pt>
 File: ./img/../img/controllo_verticale/tilt_1_2.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/tilt_1_2.png>
 Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 360.
 (pdftex.def)             Requested size: 426.79135pt x 231.05313pt.
-<./img/../img/controllo_verticale/tilt_3.png, id=765, 1252.68pt x 682.80093pt>
+<./img/../img/controllo_verticale/tilt_3.png, id=768, 1252.68pt x 682.80093pt>
 File: ./img/../img/controllo_verticale/tilt_3.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/tilt_3.png>
 Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_3.png  used on input line 366.
@@ -1044,20 +1050,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: A3449025759082E8BFAEB3A26A2E5B5D;19707.
+(rerunfilecheck)             Checksum: DC74CA2A03C6D2ECFC8F69A9BF8CDF05;19460.
  ) 
 Here is how much of TeX's memory you used:
- 29562 strings out of 467871
- 548211 string characters out of 5418375
- 982416 words of memory out of 5000000
- 57162 multiletter control sequences out of 15000+600000
- 782711 words of font info for 363 fonts, out of 8000000 for 9000
+ 29565 strings out of 467871
+ 548359 string characters out of 5418375
+ 983473 words of memory out of 5000000
+ 57171 multiletter control sequences out of 15000+600000
+ 782472 words of font info for 360 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,24n,104p,1038b,1067s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (62 pages, 1795119 bytes).
+Output written on main.pdf (62 pages, 1932288 bytes).
 PDF statistics:
- 1072 PDF objects out of 1200 (max. 8388607)
+ 1075 PDF objects out of 1200 (max. 8388607)
  279 named destinations out of 1000 (max. 500000)
- 82671 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 82676 words of extra memory for PDF output out of 89155 (max. 10000000)
 
