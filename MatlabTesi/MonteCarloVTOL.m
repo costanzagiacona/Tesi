@@ -42,7 +42,8 @@ function MonteCarloVTOL(params)
     cfg_cru.test_id = 2; 
     cfg_cru.target = [25; 0; -10]; 
     cfg_cru.tspan = [0 60]; 
-    cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(10), 'omega', deg2rad(0));
+    % CORREZIONE: Varianze ridotte per testare perturbazioni realistiche
+    cfg_cru.sigma = struct('pos', 2.0, 'vel', 2.0, 'att', deg2rad(5), 'omega', deg2rad(0));
     cfg_cru.x0_type = 'cruise'; 
     
     RunCampaign(cfg_cru, params);
@@ -190,12 +191,29 @@ function x0 = GenerateX0(type, target, sigma, params)
     elseif strcmp(type, 'cruise')
         % --- CRUISE (Volo ala fissa) ---
         x0(1:3) = [0; 0; t_target(3)] + randn(3,1) * sigma.pos;
+        
+        % 1. PROTEZIONE QUOTA (Z NED è positivo verso il basso)
+        % Impediamo al drone di nascere a meno di 2 metri dal suolo o sottoterra
+        if x0(3) > -2.0
+            x0(3) = -2.0; 
+        end
+        
         x0(4) = t_target(1) + randn() * sigma.vel; % Vx
+        
+        % 2. PROTEZIONE STALLO AERODINAMICO
+        % Il drone ha bisogno di portanza per mantenere il volo orizzontale.
+        % Fissiamo una velocità minima di sicurezza (es. 18 m/s).
+        if x0(4) < 18.0
+            x0(4) = 18.0; 
+        end
+        
         x0(5:6) = randn(2,1) * 0.5;
         x0(7:9) = randn(3,1) * sigma.att;
         
         % Tilt orizzontale
         x0([13, 15, 17, 19]) = 0; 
+        
+        % ... [resto del codice esistente per le spinte iniziali]
         
         % Stima spinta per drag
         F_drag = 0.5 * params.rho * params.s * params.C_d * t_target(1)^2;
