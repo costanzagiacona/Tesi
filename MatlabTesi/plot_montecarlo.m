@@ -4,7 +4,7 @@ files = {'Results_SMC_Recovery Hover.mat', ...
          'Results_SMC_Takeoff Ground.mat', ...
          'Results_PID_Cruise Flight.mat'};
 
-files = {'Results_PID4_Cruise Flight.mat'};
+files = {'Results_PID_Cruise Flight.mat'};
 % files = {'Results_SMC_Takeoff Ground.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica
@@ -53,7 +53,8 @@ function Plot_State_Overview(risultati, label)
     figs(2) = figure('Name', [label, ': Velocità'], 'Position', [520 50 500 700]);
     figs(3) = figure('Name', [label, ': Assetto'], 'Position', [1030 50 500 700]);
     figs(4) = figure('Name', [label, ': Ratei'], 'Position', [10 50 500 700]); % Sovrapposta a 1
-    figs(5) = figure('Name', [label, ': Attuatori (Tilt & Thrust)'], 'Position', [520 50 500 700]); % Sovrapposta a 2
+    figs(5) = figure('Name', [label, ': Attuatori (Thrust)'], 'Position', [520 50 500 700]); % Sovrapposta a 2
+    figs(6) = figure('Name', [label, ': Attuatori (Tilt)'], 'Position', [520 50 500 700]); % Sovrapposta a 2
 
     for i = 1:N
         if risultati(i).converged
@@ -85,30 +86,70 @@ function Plot_State_Overview(risultati, label)
             subplot(3,1,3); hold on; grid on; plot(t, rad2deg(X(:,12)), 'Color', c_rat); ylabel('r [deg/s]'); ylim([-100, 100]);  xlabel('Tempo [s]');
 
             % --- FIG 5: ATTUATORI (TILT & THRUST) ---
+            % --- FIG 6: ANALISI ATTUATORI (TILT SINGOLI ROTORI) ---
             set(0, 'CurrentFigure', figs(5));
+            num_rotors = length(idx_rotors);
             
-            % 1. Tilt Rotori
-            subplot(2,1,1); hold on; grid on; 
-            plot(t, rad2deg(X(:,idx_tilt)), 'Color', c_act); 
-            ylabel('Tilt [deg]'); title([label, ' - Attuatori']);
+            % Mappatura indici Tilt (Assicurati che idx_tilt sia un vettore di 3 elementi, es: [13, 14, 15])
+            % Se hai un solo indice per tutti, usa: idx_tilt_vec = repmat(idx_tilt, 1, 3);
+            idx_tilt_vec = [13, 14, 15]; % Esempio: modifica in base al tuo vettore di stato
             
-            % 2. Spinta Singoli Rotori
-            % Calcolo spinta per ogni motore specificato in idx_rotors
-            subplot(2,1,2); hold on; grid on;
-            thrusts = zeros(length(t), length(idx_rotors));
-            for r = 1:length(idx_rotors)
-                thrusts(:,r) = k_thrust * (X(:, idx_rotors(r)).^2);
-                % Plot leggermente diverso per ogni rotore o unico colore? 
-                % Uso unico colore per pulizia, o linestyles diversi se necessario
-                plot(t, thrusts(:,r), 'Color', c_act); 
+            % Nomi e colori coerenti con la Fig. 5 per facilitare la cross-analisi
+            rotor_names = {'Tilt Front-Left', 'Tilt Front-Right', 'Tilt Rear'}; 
+            rotor_colors = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.4660 0.6740 0.1880];
+            
+            for r = 1:num_rotors
+                subplot(num_rotors, 1, r); hold on; grid on;
+                
+                % Estrazione e conversione in gradi
+                % X(:, idx_tilt_vec(r)) preleva lo stato specifico per il rotore r
+                tilt_deg = rad2deg(X(:, idx_tilt_vec(r)));
+                
+                % Plot con trasparenza per analisi Monte Carlo
+                plot(t, tilt_deg, 'Color', [rotor_colors(r,:), 0.25], 'LineWidth', 1.2);
+                
+                % Etichettatura tecnica
+                ylabel(['\delta_{', num2str(r), '} [deg]']);
+                title(rotor_names{r});
+                
+                % Riferimenti di assetto standard (Hover = 90°, Cruise = 0°)
+                yline(90, '--k', 'Alpha', 0.2);
+                yline(0, '--k', 'Alpha', 0.2);
+                
+                % Limiti asse Y per confronto immediato
+                ylim([-5, 95]); 
             end
-            ylabel('Spinta Singola [N]');
+            xlabel('Tempo [s]');
             
-            % 3. Spinta Totale vs Peso
-            subplot(2,1,2); hold on; grid on;
-            total_thrust = sum(thrusts, 2);
-            plot(t, total_thrust, 'Color', c_act); 
-            ylabel('Spinta Totale [N]'); xlabel('Tempo [s]');
+            % Sincronizzazione degli assi per evidenziare asincronie temporali
+            linkaxes(findobj(figs(5), 'Type', 'axes'), 'xy');
+
+            % --- FIG 6: ANALISI ATTUATORI (SINGOLI ROTORI) ---
+            set(0, 'CurrentFigure', figs(6));
+            num_rotors = length(idx_rotors);
+            
+            % Definiamo i nomi dei rotori per le etichette (Personalizzali se sai l'ordine)
+            rotor_names = {'Rotore Front-Left', 'Rotore Front-Right', 'Rotore Rear'}; 
+            % Palette colori accademica (Blue, Red, Green)
+            rotor_colors = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.4660 0.6740 0.1880];
+
+            for r = 1:num_rotors
+                subplot(num_rotors, 1, r); hold on; grid on;
+                
+                % Calcolo della spinta: T = k * omega^2
+                thrust_r = k_thrust * (X(:, idx_rotors(r)).^2);
+                
+                % Plot con trasparenza per visualizzare la dispersione Monte Carlo
+                plot(t, thrust_r, 'Color', [rotor_colors(r,:), 0.25], 'LineWidth', 1);
+                
+                % Etichettatura rigorosa
+                ylabel(['T_{', num2str(r), '} [N]']);
+                title(rotor_names{r});
+                
+                % Aggiunta del limite di saturazione se noto (Esempio: 25N)
+                % yline(25, '--r', 'Saturazione', 'Alpha', 0.5); 
+            end
+            xlabel('Tempo [s]');
         end
     end
     

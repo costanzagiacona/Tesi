@@ -298,7 +298,7 @@ switch test_id
         % Calcolo Spinta Totale (T_base)
         % Proiezione: T_base * cos(theta) = Fx_req
         % Protezione: cos(theta) non deve scendere troppo (anche se limitiamo theta a 20°)
-        T_base = Fx_req / max(cos(theta), 0.7); 
+        T_base = Fx_req;
         
         % 1. ALLOCAZIONE YAW (Differenziale di Spinta)
         % M_z = (T_right - T_left) * d_my => Delta_T = M_z / (2 * d_my)
@@ -306,6 +306,9 @@ switch test_id
         
         T_left  = (T_base / 2) + dT_yaw;
         T_right = (T_base / 2) - dT_yaw;
+
+        if T_left > 100; T_left = 100; end
+        if T_right > 100; T_right = 100; end 
         
         % Protezione saturazione motori (minimo 0)
         T_left  = max(0, T_left);
