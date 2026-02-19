@@ -248,6 +248,7 @@ alpha0z =1;
 alpha1z =1;
 
 M_stab_pinna = [-x(10)*(alpha0x+alpha1x*x(5)^2);0;-x(12)*(alpha0z+alpha1z*x(5)^2)];
+% M_stab_pinna = [0; 0; 0];
 M_tot = -M_gyro_body + M_th + M_aero +M_gyro_tilt+M_stab_pinna; 
 
 % if M_tot(3) ~= 0 || M_tot(2)~=0

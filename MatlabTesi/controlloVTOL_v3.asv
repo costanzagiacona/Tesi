@@ -502,8 +502,8 @@ switch test_id
         % =================================================
         % 2. DEFINIZIONE SETPOINT
         % =================================================
-        z_des     = target(3); % Quota target (-10 m)
-        vx_des    = target(1); % Velocità target (25 m/s)
+        z_des     = target(3); % Quota target (-10)
+        vx_des    = target(1); % Velocità target (25)
         phi_des   = 0;
         psi_des   = 0;
 

@@ -61,7 +61,7 @@ function RunCampaign(cfg, params)
     stats(N_sim) = struct('conv', [], 'crashed', [], 'rmse', [], 'x0', []); % <--- NUOVO CAMPO
     
     % Setup Event Detector
-    opts = odeset('Events', @CrashDetector, 'RelTol', 1e-6, 'AbsTol', 1e-6);
+    opts = odeset('Events', @CrashDetector, 'RelTol', 1e-3, 'AbsTol', 1e-6);
     
     h = waitbar(0, ['Simulazione ' cfg.name '...']);
     
