@@ -37,6 +37,12 @@ switch test_id
         phi = x(7); theta = x(8); psi = x(9);
         p = x(10); q = x(11); r = x(12);
 
+        J = matriceJ(phi,theta,psi);
+        Omega = J*[p;q;r];
+        p = Omega(1);
+        q = Omega(2);
+        r = Omega(3);
+
         R = matriceRotazione(phi, theta, psi);
         V_body = [x(4); x(5); x(6)];
         V_global = R * V_body;
@@ -86,7 +92,7 @@ switch test_id
         de_x = vx_des - vx_g;
         s_x = de_x + lambda_x * e_x;
 
-        F_x_req = params.m * (lambda_x * de_x) + K_x * tanh(s_x / Phi_x);
+        F_x_req = params.m * (lambda_x * de_x) + params.m * K_x * tanh(s_x / Phi_x) + params.g *sin(theta) + 1/params.m * (sign(x(4))*params.s*2*params.C_d);
         sin_theta_des = -F_x_req / Thrust_req;
         theta_des = asin(max(min(sin_theta_des, 0.5), -0.5));
 
@@ -97,7 +103,7 @@ switch test_id
 
         lambda_att = 12.0; % Più veloce del loop esterno
         K_att = 20.0;      % Ridotto per evitare eccitazione armonica
-        Phi_att = 1.8;     % Valore critico 
+        Phi_att = 3;     % Valore critico 
 
         % --- ROLL ---
         e_phi = phi_des - phi;

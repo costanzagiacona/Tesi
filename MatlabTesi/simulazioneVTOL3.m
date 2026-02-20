@@ -95,15 +95,16 @@ w_b = x(6);
 
 Va = norm([u_b, v_b, w_b]); 
 
-if Va < 0.1
-    Va = 0.1;
-    alpha = 0;
-    beta = 0;
-else
-
-    alpha = atan2(w_b, u_b);
-    beta = asin(v_b / Va); 
-end
+if simbolico == 0
+    if Va < 0.1
+        Va = 0.1;
+        alpha = 0;
+        beta = 0;
+    else
+    
+        alpha = atan2(w_b, u_b);
+        beta = asin(v_b / Va); 
+    end
 
 Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
 
@@ -117,6 +118,12 @@ F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params
 
 F_aeroWing = F_aero_wing(CL_eff,CD_eff,params.C_y, params.rho, params.s,Va,Rwb);
 
+else 
+    % wind frame e forze aerodinamiche
+
+    F_aeroWing = F_aerodyn_wing(params.C_l,params.C_d,0, params.rho ,x(4),x(6), params.s);
+    F_aeroBody = Drag_body(params.C_d_x,params.C_d_y,params.C_d_z, params.rho,params.s_body_x,params.s_body_y,params.s_body_z,x(4),x(5),x(6));
+end
 
 %% eq. forze BODY FRAME
 
@@ -219,14 +226,7 @@ theta_target = target(2);
 z_target = target(3);
 
 % 3. Calcolo delle derivate 
-if test_id == 1
-    % Stato 28: Integrale errore Pitch
-    x28_dot = theta_target - theta;
-    x27_dot = 0 - x(1);
-    x29_dot = 0;
-    x30_dot = 0;
-
-elseif test_id == 2 || test_id == 3
+if test_id == 2 || test_id == 3
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
     
@@ -239,15 +239,10 @@ elseif test_id == 2 || test_id == 3
     % Stato 30: Integrale errore Vy (Sideslip) 
     x30_dot = 0 - x(2);
     
-else
-    x27_dot = 0;
-    x28_dot = 0;
-    x29_dot = 0;
-    x30_dot = 0;
 end
 
 % --- Anti-windup simulazione ---
-if simbolico == 0
+if simbolico == 0 && test_id == 2
     % Velocità X
     if abs(x(27)) > 20.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
 
@@ -307,6 +302,10 @@ x26_dot = -2*zeta_rotor*omega_n_rotor*x(26) -(x(25)-u(3))*omega_n_rotor^2;
 if simbolico == 1
     x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
 else
-    x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
+    if test_id == 2
+        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
+    elseif test_id == 1
+        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
+    end
 end
 end
