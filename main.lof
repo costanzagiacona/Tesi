@@ -3,23 +3,23 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Dragonfly}}{2}{figure.1.1}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Coaxial tilt rotor UAV.}}{8}{figure.2.1}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{9}{figure.2.2}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Coaxial tilt rotor UAV.}}{9}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{10}{figure.2.2}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{15}{figure.3.2}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Tilt rotore coda ($X_b, Y_b, Z_b$)}}{15}{figure.3.3}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Configurazione di tilt dei propulsori e vettori spinta.}}{15}{figure.3.4}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{13}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Configurazione dei rotori.}}{16}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{17}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Tilt rotore coda ($X_b, Y_b, Z_b$)}}{17}{figure.3.4}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Schema a blocchi del controllo verticale.}}{28}{figure.6.1}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Andamento velocità.}}{37}{figure.6.2}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{37}{figure.6.3}%
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Thrust generato dai rotori.}}{38}{figure.6.4}%
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{38}{figure.6.5}%
-\contentsline {figure}{\numberline {6.6}{\ignorespaces Andamento degli angoli $\theta _3$ e $\theta _4$.}}{39}{figure.6.6}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Schema a blocchi del controllo verticale.}}{30}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Andamento velocità.}}{41}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{41}{figure.6.3}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Thrust generato dai rotori.}}{42}{figure.6.4}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{42}{figure.6.5}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Andamento degli angoli $\theta _3$ e $\theta _4$.}}{43}{figure.6.6}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {7.1}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{41}{figure.7.1}%
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{45}{figure.7.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

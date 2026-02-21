@@ -18,7 +18,7 @@ tspan = [0 100];              % intervallo di simulazione
 % fase = 3 orizzontale
 fase = 1;       
 
-test_casi = 3;  % flag per cambiare le condizioni di simulazione
+test_casi = 1;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero

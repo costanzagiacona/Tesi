@@ -40,7 +40,7 @@ function u = controlloVTOL_lineare(t, params, x, test_id, target)
     
     % ELIMINATA la saturazione numerica max(..., 0.1) sul coseno. In hovering è pari a 1.
     cos_factor = cos(theta) * cos(phi); 
-    Thrust_req = (params.m * params.g - u_smc_z + F_drag_z) / cos_factor ;
+    Thrust_req = (params.m * params.g - u_smc_z) / cos_factor + F_drag_z;
 
     % ELIMINATE rigorosamente le saturazioni (Thrust_req < 5 e > 100).
     % Stiamo supponendo di analizzare il sistema nell'intorno dell'equilibrio (65.7 N).
@@ -51,7 +51,8 @@ function u = controlloVTOL_lineare(t, params, x, test_id, target)
     de_y = vy_des - vy_g;
     s_y = de_y + lambda_y * e_y;
 
-    F_y_req = params.m * (lambda_y * de_y) + K_y * (s_y / Phi_y);
+    cos_factor_y = max(cos(psi) * cos(phi), 0.1);
+    F_y_req = (params.m * (lambda_y * de_y) + params.m * K_y * (s_y / Phi_y) ) / cos_factor_y;
     sin_phi_des = F_y_req / Thrust_req;
     
     % ELIMINATE le saturazioni su asin (max e min). 
@@ -64,8 +65,8 @@ function u = controlloVTOL_lineare(t, params, x, test_id, target)
     de_x = vx_des - vx_g;
     s_x = de_x + lambda_x * e_x;
 
-    % ELIMINATO il termine sign() aerodinamico e mantenuta solo l'azione di gravità
-    F_x_req = params.m * (lambda_x * de_x) + params.m * K_x * (s_x / Phi_x) + params.g * sin(theta);
+    cos_factor_x = max(cos(psi) * cos(theta), 0.1);
+    F_x_req = (params.m * (lambda_x * de_x) + params.m * K_x * (s_x / Phi_x)) /cos_factor_x ;
     sin_theta_des = -F_x_req / Thrust_req;
     theta_des = asin(sin_theta_des);
 

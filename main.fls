@@ -276,6 +276,8 @@ INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\listings\lstmisc.st
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\listings\listings.cfg
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\listings\listings.cfg
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\listings\listings.cfg
+INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\parskip\parskip.sty
+INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\parskip\parskip.sty
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\booktabs\booktabs.sty
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\booktabs\booktabs.sty
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\tex\latex\colortbl\colortbl.sty
@@ -423,6 +425,12 @@ INPUT .\img\sist_rif.png
 INPUT .\img\sist_rif.png
 INPUT .\img\sist_rif.png
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathex.enc
+INPUT .\img\tricopter_2D.png
+INPUT .\img\tricopter_2D.png
+INPUT .\img\tricopter_2D.png
+INPUT .\img\tricopter_2D.png
+INPUT .\img\tricopter_2D.png
+INPUT .\img\tricopter_2D.png
 INPUT .\img\rotori_1_2.png
 INPUT .\img\rotori_1_2.png
 INPUT .\img\rotori_1_2.png

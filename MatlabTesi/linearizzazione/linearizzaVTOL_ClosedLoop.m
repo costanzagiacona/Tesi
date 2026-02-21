@@ -14,7 +14,6 @@ function A_cl = linearizzaVTOL_ClosedLoop(x_eq, params, test_id, target)
     t = 0; 
     disturbo = 0;  % Nessun disturbo impulsivo durante la linearizzazione
     simbolico = 0; % Uso numerico
-    fase = 1;
     
     %% Calcolo della Matrice A_cl (Jacobiano rispetto allo stato)
     for j = 1:n_stati

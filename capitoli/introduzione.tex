@@ -1,6 +1,6 @@
 Negli ultimi anni, è sorto un crescente interesse verso i veicoli aerei a guida autonoma (\textit{Unmanned Aerial Vehicles}, UAV) grazie all'ampio ventaglio di applicazioni sia in ambito civile che militare. 
-Trovano, infatti, applicazione, in operazioni di ricerca e soccorso, sorveglianza, ma anche in settori come l'agricoltura e il monitoraggio ambientale.\\
-Il principale vantaggio consiste nella loro capacità di muoversi in ambienti complessi e dinamici in maniera autonoma, arrivando in luoghi che per l'uomo potrebbero essere ostici o pericolosi.\\
+Trovano infatti applicazione in operazioni di ricerca e soccorso, sorveglianza, ma anche in settori come l'agricoltura e il monitoraggio ambientale.\\
+Il principale vantaggio consiste nella loro capacità di muoversi in ambienti complessi e dinamici in maniera autonoma, anche in situazioni che per l'uomo potrebbero essere ostiche o pericolose.\\
 Gli UAV sono generalmente classificati in due categorie:
 \begin{itemize}
     \item \textbf{Multirotori}: sono caratterizzati da alta stabilità in hovering e capacità di decollare e atterrare verticalmente, ma non sono in grado di percorrere lunghe distanze;
@@ -26,6 +26,6 @@ Il presente lavoro si propone di modificare il modello matematico completo a sei
 \\La strategia proposta si articola su un sistema di controllo gerarchico a cascata:
 \begin{enumerate}
     \item Un \textit{Outer Loop} per la guida del drone, con scelte di controllori differenti tra la fase di hovering e quella di crociera.
-    \item Un \textit{Inner Loop} di assetto che utilizza regolatori PID per la stabilizzazione veloce dei momenti.
+    \item Un \textit{Inner Loop} di assetto per la stabilizzazione dei momenti.
     \item Un algoritmo di \textit{Motor Mixing} sequenziale che traduce i comandi virtuali in riferimenti fisici per i rotori e i servomotori, rispettando i vincoli di equilibrio meccanico del sistema.
 \end{enumerate}

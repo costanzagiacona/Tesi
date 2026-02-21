@@ -30,7 +30,7 @@ switch test_id
 
     case 1
         % =========================================================================
-        % CASE 1: RIGOROUS CASCADED SMC WITH MIXER PROTECTION & CHATTERING FILTER
+        % SLIDING MODE CONTROL PER CONTROLLO VERTICALE
         % =========================================================================
 
         % --- 1. Stato e Cinematica ---
@@ -55,9 +55,8 @@ switch test_id
         psi_des = 0;    r_des = 0;
 
         %% =========================================================================
-        %   OUTER LOOP: POSITION SMC (Parametri per stabilità globale)
+        %   OUTER LOOP: POSITION SMC 
         % =========================================================================
-        % Lambda basso (risposta dolce), Phi alto (comando pulito per il loop interno)
 
         % --- QUOTA (Z) ---
         lambda_z = 2; K_z = 10; Phi_z = 0.8;
@@ -65,12 +64,10 @@ switch test_id
         de_z = vz_des - vz_g;
         s_z = de_z + lambda_z * e_z;
 
-        % F_grav = params.m * params.g * cos(theta) * cos(phi);
         F_drag_z = -params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
-        % F_lift = -params.C_l*params.rho*params.s*x(4)^2;
-        u_smc_z = params.m * (lambda_z * de_z) + K_z * tanh(s_z / Phi_z);
+        u_smc_z = params.m * (lambda_z * de_z) + params.m * K_z * tanh(s_z / Phi_z);
         cos_factor = max(cos(theta) * cos(phi), 0.1); % Protezione divisione per zero
-        Thrust_req = (params.m * params.g - u_smc_z + F_drag_z) / cos_factor ;
+        Thrust_req = (params.m * params.g - u_smc_z ) / cos_factor + F_drag_z;
 
         % Protezione Saturazione
         if Thrust_req < 5; Thrust_req = 5; end
@@ -82,7 +79,8 @@ switch test_id
         de_y = vy_des - vy_g;
         s_y = de_y + lambda_y * e_y;
 
-        F_y_req = params.m * (lambda_y * de_y) + K_y * tanh(s_y / Phi_y);
+        cos_factor_y = max(cos(psi) * cos(phi), 0.1);
+        F_y_req = (params.m * (lambda_y * de_y) + params.m * K_y * tanh(s_y / Phi_y) ) / cos_factor_y;
         sin_phi_des = F_y_req / Thrust_req;
         phi_des = asin(max(min(sin_phi_des, 0.5), -0.5)); % Saturazione ~30°
 
@@ -92,7 +90,9 @@ switch test_id
         de_x = vx_des - vx_g;
         s_x = de_x + lambda_x * e_x;
 
-        F_x_req = params.m * (lambda_x * de_x) + params.m * K_x * tanh(s_x / Phi_x) + params.g *sin(theta) + 1/params.m * (sign(x(4))*params.s*2*params.C_d);
+        cos_factor_x = max(cos(psi) * cos(theta), 0.1);
+        F_x_req = (params.m * (lambda_x * de_x) + params.m * K_x * tanh(s_x / Phi_x)) /cos_factor_x ;
+        % F_x_req = params.m * (lambda_x * de_x) + K_x * tanh(s_x / Phi_x);
         sin_theta_des = -F_x_req / Thrust_req;
         theta_des = asin(max(min(sin_theta_des, 0.5), -0.5));
 
@@ -124,7 +124,7 @@ switch test_id
         Moment_yaw_req = (lambda_att * 0.7) * de_psi + (K_att * 0.8) * tanh(s_psi / Phi_att);
 
         %% =========================================================================
-        %   MIXING E ALLOCAZIONE CON PROTEZIONE ANTIDIVERGENZA
+        %   MIXER
         % =========================================================================
         theta3_ideal = atan2(((-params.d_tx * params.k) / params.b), 1);
         theta3_actual = x(17); 
@@ -294,19 +294,16 @@ switch test_id
         M_z_req = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
         
         % =================================================
-        % 6. MIXER & ALLOCAZIONE 
+        % 6. MIXER 
         % =================================================
         
         % Parametri geometrici
         d_my = params.d_my; % Braccio laterale
         d_mx = params.d_mx; % Braccio longitudinale
         
-        % Calcolo Spinta Totale (T_base)
-        % Proiezione: T_base * cos(theta) = Fx_req
-        % Protezione: cos(theta) non deve scendere troppo (anche se limitiamo theta a 20°)
         T_base = Fx_req;
         
-        % 1. ALLOCAZIONE YAW (Differenziale di Spinta)
+        % YAW (Differenziale di Spinta)
         % M_z = (T_right - T_left) * d_my => Delta_T = M_z / (2 * d_my)
         dT_yaw = M_z_req / (2 * d_my);
         
@@ -323,7 +320,7 @@ switch test_id
         % Ricalcoliamo T_base effettivo dopo le saturazioni per coerenza nel tilt
         T_base_eff = T_left + T_right;
         
-        % 2. ALLOCAZIONE TILT (Pitch & Roll)
+        % TILT (Pitch & Roll)
         % M_y = T_base_eff * sin(theta_tilt_common) * d_mx
         % M_x = T_base_eff * sin(theta_tilt_diff) * d_my
         
