@@ -31,17 +31,17 @@ C.~E.~D. Riboldi and A.~Rolando.
   2023.
 \newblock DOI: 10.13009/EUCASS2023-025.
 
+\bibitem{Wang2024}
+Xinhua Wang and Xuerui Mao.
+\newblock Non-overshooting sliding mode for uav control.
+\newblock {\em The Aeronautical Journal}, 2024.
+\newblock arXiv:2405.01087.
+
 \bibitem{yu2022}
 L.~Yu, G.~He, X.~Wang, and S.~Zhao.
 \newblock Robust fixed-time sliding mode attitude control of tilt trirotor uav
   in helicopter mode.
 \newblock {\em IEEE Transactions on Industrial Electronics},
   69(10):10322--10332, 2022.
-
-\bibitem{zhang2014}
-Y.~Zhang, F.~Gao, and T.~Y. Zeng.
-\newblock A sliding mode controller design for vertical take-off and landing
-  based on model decoupling.
-\newblock In {\em Proc. 33rd Chinese Control Conference}, pages 115--119, 2014.
 
 \end{thebibliography}

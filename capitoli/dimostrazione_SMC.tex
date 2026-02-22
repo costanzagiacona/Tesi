@@ -1,11 +1,14 @@
 % --- Sezione Controllo Verticale ---
-L'obiettivo di questa sezione è la sintesi di una legge di controllo robusta per la dinamica traslazionale lungo l'asse verticale $z$. Si adotta un sistema di riferimento \textbf{NED (North-East-Down)}, in cui l'asse $z$ è orientato verso il centro della Terra; pertanto, valori di $z$ positivi indicano una quota crescente verso il basso (discesa).
+\section{Analisi di Stabilità}
+L'obiettivo di questo capitolo è la sintesi di una legge di controllo robusta per la dinamica traslazionale lungo l'asse verticale $z$ e la dimostrazione della stabilità secondo Lyapunov della \textit{sliding surface} e della legge di controllo.\\
+Si adotta un sistema di riferimento \textbf{NED (North-East-Down)}, in cui l'asse $z$ è orientato verso il centro della Terra; pertanto, valori di $z$ positivi indicano una quota crescente verso il basso.
 
-\section{Modellazione della Dinamica}
+\subsection{Modellazione della Dinamica}
+La dinamica del sistema viene analizzata nel frame inerziale, poiché il loop di controllo esterno si basa sull'errore di posizione, che perde di significato nel body frame.\\
 Il secondo principio della dinamica, proiettato sull'asse $z$ del sistema inerziale, definisce l'evoluzione del velivolo come:
 
 \begin{equation}
-    m\ddot{z} = mg + F_{\mathrm{aero},z} - F_{\mathrm{thrust},z} + d(t)
+    m\ddot{z} = mg + \cos(\phi)\cos(\theta) F_{\mathrm{aero},z} - \cos(\phi)\cos(\theta) F_{\mathrm{thrust},z} + d(t)
     \label{eq:dynamics_z_final}
 \end{equation}
 dove:
@@ -18,52 +21,86 @@ dove:
 \end{itemize}
 Normalizzando rispetto alla massa, si ottiene la forma affine al controllo:
 \begin{equation}
-    \ddot{z} = g + \frac{F_{\mathrm{aero},z}}{m} - \frac{u}{m} + \Delta(t)
+    \ddot{z} = g + \cos(\phi)\cos(\theta) \left(\frac{F_{\mathrm{aero},z}}{m} - \frac{u}{m} \right) + \Delta(t)
 \end{equation}
 In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: $|\Delta(t)| \le \delta_{\max}, \forall t \ge 0$.
 
-\section{Definizione della \textit{sliding surface}}
-Sia $z_{\mathrm{des}}(t)$ la traiettoria di riferimento desiderata e $e(t) = z(t) - z_{\mathrm{des}}(t)$ l'errore di tracking. Per un sistema del secondo ordine, si definisce una \textit{sliding surface} $\sigma(t)$ lineare del primo ordine:
-
+\subsection{Definizione della \textit{sliding surface}}
+Sia $z_{\mathrm{des}}(t)$ la quota di riferimento desiderata e $e(t) = z_{\mathrm{des}}(t) - z(t)$ l'errore di tracking. Per un sistema del secondo ordine, si definisce una \textit{sliding surface} $\sigma(t)$ lineare del primo ordine:
 \begin{equation}
     \sigma(t) = \dot{e}(t) + \lambda e(t)
 \end{equation}
 con $\lambda > 0$ costante di progetto. La condizione di regime $\sigma = 0$ definisce una dinamica vincolata (sliding mode) in cui l'errore decade esponenzialmente a zero con una velocità determinata dalla costante di tempo $\tau = 1/\lambda$.
 
-\section{Sintesi della Legge di Controllo}
-La derivata temporale della \textit{sliding surface} è definita come $\dot{\sigma} = \ddot{z} - \ddot{z}_{\mathrm{des}} + \lambda \dot{e}$. Sostituendo la dinamica del sistema, si ricava:
+\subsection{Sintesi della Legge di Controllo}
+Per ricavare la legge di controllo, si deriva rispetto al tempo la \textit{sliding surface} $\sigma(t)$, ottenendo $\dot{\sigma} = \ddot{z}_{\mathrm{des}} - \ddot{z} + \lambda \dot{e}$. Sostituendo l'espressione della dinamica del sistema proiettata lungo $z$, si ricava la dinamica dell'errore sulla superficie:
 \begin{equation}
-    \dot{\sigma} = \left( g + \frac{F_{\mathrm{aero},z}}{m} - \frac{u}{m} - \ddot{z}_{\mathrm{des}} + \lambda \dot{e} \right) + \Delta(t)
-\end{equation}
-La legge di controllo Sliding Mode (SMC) è composta da un termine nominale e uno robusto: $u = u_{\mathrm{eq}} + u_{\mathrm{sw}}$.
-Il termine di \textbf{controllo equivalente} $u_{\mathrm{eq}}$ compensa la dinamica nota per mantenere lo stato sulla superficie in assenza di disturbi ($\dot{\sigma}=0$):
-\begin{equation}
-    u_{\mathrm{eq}} = m \left( g + \frac{F_{\mathrm{aero},z}}{m} - \ddot{z}_{\mathrm{des}} + \lambda \dot{e} \right)
-\end{equation}
-Il termine di \textbf{switching} $u_{\mathrm{sw}}$ è progettato per contrastare l'incertezza $\Delta(t)$ e forzare lo stato verso la superficie:
-\begin{equation}
-    u_{\mathrm{sw}} = m k \operatorname{sgn}(\sigma)
+    \dot{\sigma} = \ddot{z}_{\mathrm{des}} - g - \cos(\phi)\cos(\theta)\frac{F_{\mathrm{aero},z}}{m} + \cos(\phi)\cos(\theta)\frac{u}{m} - \Delta(t) + \lambda \dot{e}
 \end{equation}
 
-\section{Analisi di Stabilità e Tempo di Raggiungimento}
-Per dimostrare la stabilità e la convergenza in tempo finito, si consideri la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$. Affinché lo stato raggiunga la superficie $\sigma=0$ in un intervallo di tempo limitato, deve essere soddisfatta la \textit{condizione di raggiungibilità}:
+L'obiettivo del controllo Sliding Mode è garantire che le traiettorie del sistema raggiungano la superficie $\sigma = 0$ in tempo finito, forzando la condizione di scorrimento indipendentemente dalla presenza del disturbo $\Delta(t)$. A tal fine, si adotta l'approccio basato sulla \textbf{reaching law}. Si impone che la porzione nominale della dinamica di $\dot{\sigma}$ (ovvero in assenza di incertezze) segua una traiettoria del primo ordine discontinua:
+\begin{equation}
+    \dot{\sigma}_{\mathrm{nom}} = -k \operatorname{sgn}(\sigma)
+\end{equation}
+con $k > 0$ parametro di progetto. Uguagliando la dinamica nominale alla legge di raggiungimento desiderata, si ottiene l'equazione algebrica da cui estrarre analiticamente l'ingresso di controllo $u$:
+\begin{equation}
+    \ddot{z}_{\mathrm{des}} - g - \cos(\phi)\cos(\theta)\frac{F_{\mathrm{aero},z}}{m} + \lambda \dot{e} + \cos(\phi)\cos(\theta)\frac{u}{m} = -k \operatorname{sgn}(\sigma)
+\end{equation}
+
+Isolando il termine dipendente dall'azione di controllo, si ottiene:
+\begin{equation}
+    \cos(\phi)\cos(\theta)\frac{u}{m} = -\ddot{z}_{\mathrm{des}} + g + \cos(\phi)\cos(\theta)\frac{F_{\mathrm{aero},z}}{m} - \lambda \dot{e} - k \operatorname{sgn}(\sigma)
+\end{equation}
+
+Si ricava la legge di controllo completa:
+\begin{equation}
+    u = \frac{m}{\cos(\phi)\cos(\theta)} \left( g - \ddot{z}_{\mathrm{des}} - \lambda \dot{e} \right) + F_{\mathrm{aero},z} - \frac{m}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma)
+\end{equation}
+
+Affinché l'inversione della dinamica sia matematicamente ben posta, è strettamente necessario introdurre l'assunzione che gli angoli di assetto soddisfino $\phi, \theta \in (-\pi/2, \pi/2)$. Fisicamente, questa condizione evita la singolarità cinematica, garantendo che il velivolo non si trovi in orientamento perfettamente verticale o capovolto, configurazione in cui la spinta non avrebbe alcuna componente utile lungo l'asse $z$ inerziale.
+
+Questa formulazione evidenzia la scomposizione dell'ingresso di controllo in due termini $u = u_{\mathrm{eq}} + u_{\mathrm{sw}}$:
+\begin{itemize}
+    \item Il \textbf{controllo equivalente} $u_{\mathrm{eq}} = \frac{m}{\cos(\phi)\cos(\theta)} \left( g - \ddot{z}_{\mathrm{des}} - \lambda \dot{e} \right) + F_{\mathrm{aero},z}$ annulla esattamente la dinamica propria e nota del sistema.
+    \item Il termine di \textbf{switching} $u_{\mathrm{sw}} = - \frac{m}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma)$ è il contributo discontinuo che, pre-moltiplicato per compensare l'effetto dell'assetto, impone la legge di raggiungimento.
+\end{itemize}
+
+Infine, applicando la legge di controllo $u$ così sintetizzata al sistema perturbato originale, la dinamica a ciclo chiuso proiettata sulla superficie di scorrimento si riduce all'espressione:
+\begin{equation}
+    \dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)
+\end{equation}
+Questa forma strutturale chiusa è il punto di partenza per la dimostrazione formale della stabilità, in quanto il parametro $k$ dovrà essere dimensionato opportunamente per dominare il termine incerto $\Delta(t)$.
+
+\subsection{Analisi di Stabilità e Tempo di Raggiungimento}
+Per dimostrare la stabilità asintotica e la convergenza in tempo finito alla superficie, si introduce la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$. Il teorema di Lyapunov per la stabilità richiede che $\dot{V}$ sia definita negativa. Inoltre, per assicurare il raggiungimento in tempo finito, si impone la \textit{condizione di raggiungibilità} (o $\eta$-reachability condition):
 \begin{equation}
     \dot{V} \le -\eta |\sigma|, \quad \text{con } \eta > 0
 \end{equation}
-
-Sostituendo la dinamica a ciclo chiuso:
-\begin{align}
-    \dot{V} = \sigma \dot{\sigma} &= \sigma \left[ -k \operatorname{sgn}(\sigma) + \Delta(t) \right] \nonumber \\
-    &= -k|\sigma| + \sigma \Delta(t) \le -|\sigma|(k - \delta_{\max})
-\end{align}
-Scegliendo il guadagno di switching tale che $k \ge \delta_{\max} + \eta$, si garantisce il soddisfacimento della condizione di raggiungibilità. Il tempo di raggiungimento della superficie è limitato superiormente da $t_r \le |\sigma(0)|/\eta$.
-
-
-
-\section{Regolarizzazione e Mitigazione del Chattering}
-La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce una regolarizzazione tramite uno \textbf{strato limite} (boundary layer) di spessore $\Phi$, sostituendo la funzione segno con una funzione continua (tipicamente la tangente iperbolica):
-
+Calcoliamo la derivata temporale lungo le traiettorie del sistema a ciclo chiuso. Sostituendo $u_{\mathrm{sw}}$ nella dinamica di $\dot{\sigma}$:
 \begin{equation}
-    F_{\mathrm{req},z} = u_{\mathrm{eq}} + m k \tanh\left(\frac{\sigma}{\Phi}\right)
+    \dot{\sigma} = \cos(\phi)\cos(\theta)\left( - \frac{1}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma) \right) - \Delta(t) = -k \operatorname{sgn}(\sigma) - \Delta(t)
 \end{equation}
-L'introduzione dello strato limite trasforma la stabilità del sistema da asintotica a \textbf{Ultimately Uniformely Bounded (UUB)}. In questa configurazione, l'errore di tracking non converge più esattamente a zero, ma rimane confinato in un intorno dell'origine proporzionale alla scelta dei parametri $\Phi$ e $k$.
+Sostituendo ora $\dot{\sigma}$ in $\dot{V}$:
+\begin{align}
+    \dot{V} &= \sigma \dot{\sigma} = \sigma \left( -k \operatorname{sgn}(\sigma) - \Delta(t) \right) \nonumber \\
+            &= -k|\sigma| - \sigma \Delta(t)
+\end{align}
+Applicando la disuguaglianza triangolare e sapendo che il termine incerto è limitato superiormente, ovvero $-\sigma \Delta(t) \le |\sigma||\Delta(t)| \le |\sigma|\delta_{\max}$, si può maggiorare l'espressione:
+\begin{equation}
+    \dot{V} \le -k|\sigma| + \delta_{\max}|\sigma| = - (k - \delta_{\max}) |\sigma|
+\end{equation}
+Per soddisfare la condizione di raggiungibilità $\dot{V} \le -\eta |\sigma|$, è necessario e sufficiente imporre che:
+\begin{equation}
+    k - \delta_{\max} \ge \eta \implies k \ge \delta_{\max} + \eta
+\end{equation}
+Sotto questa condizione sul guadagno di discontinuità $k$, il sistema è forzato sulla superficie di scorrimento $\sigma = 0$ in un tempo finito $t_r$. Poiché $\dot{V} \le -\eta |\sigma| = -\eta \sqrt{2V}$, integrando tale disequazione differenziale si ricava infine che il tempo di raggiungimento è limitato superiormente da:
+\begin{equation}
+    t_r \le \frac{|\sigma(0)|}{\eta}
+\end{equation}
+
+\subsection{Regolarizzazione e Mitigazione del Chattering}
+La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce una regolarizzazione tramite uno \textbf{strato limite} (boundary layer) di spessore $\Phi$, sostituendo la funzione segno con una funzione continua (tipicamente la tangente iperbolica):
+\begin{equation}
+    F_{\mathrm{req},z} = u_{\mathrm{eq}} - \frac{m}{\cos(\phi)\cos(\theta)} k \tanh\left(\frac{\sigma}{\Phi}\right)
+\end{equation}
+L'introduzione dello strato limite trasforma la stabilità del sistema da asintotica a \textbf{Ultimately Uniformly Bounded (UUB)}. In questa configurazione, l'errore di tracking non converge più esattamente a zero, ma rimane confinato in un intorno dell'origine proporzionale alla scelta dei parametri $\Phi$ e $k$.

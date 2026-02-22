@@ -36,7 +36,7 @@ function u = controlloVTOL_lineare(t, params, x, test_id, target)
     F_drag_z = 0; 
     
     % SOSTITUITO tanh(s/Phi) con il suo sviluppo in serie di Taylor al primo ordine: (s/Phi)
-    u_smc_z = params.m * (lambda_z * de_z) + K_z * (s_z / Phi_z);
+    u_smc_z = params.m * (lambda_z * de_z + K_z * (s_z / Phi_z));
     
     % ELIMINATA la saturazione numerica max(..., 0.1) sul coseno. In hovering è pari a 1.
     cos_factor = cos(theta) * cos(phi); 
@@ -51,7 +51,7 @@ function u = controlloVTOL_lineare(t, params, x, test_id, target)
     de_y = vy_des - vy_g;
     s_y = de_y + lambda_y * e_y;
 
-    cos_factor_y = max(cos(psi) * cos(phi), 0.1);
+    cos_factor_y = max(sin(psi)*sin(theta)*sin(phi) +cos(psi) * cos(phi), 0.1);
     F_y_req = (params.m * (lambda_y * de_y) + params.m * K_y * (s_y / Phi_y) ) / cos_factor_y;
     sin_phi_des = F_y_req / Thrust_req;
     

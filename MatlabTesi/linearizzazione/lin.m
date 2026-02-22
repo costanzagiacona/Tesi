@@ -1,5 +1,6 @@
 %% ANALISI DI STABILITÀ LINEARE VTOL - REPORT FINALE
 clc; clear; close all;
+addpath 'C:\Users\costa\Documents\GitHub\Tesi\MatlabTesi'
 mainTest2; % Carica i parametri e la struct 'parametri'
 close all; % Chiude i grafici aperti da mainTest2
 

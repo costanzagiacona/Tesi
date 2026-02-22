@@ -1,14 +1,16 @@
 % !TEX root = ../main.tex
 \section{Configurazione di Hovering}
-In questa fase di volo, i rotori anteriori sono orientati verticalmente ($\theta_{1,2} \approx 90^\circ$). La criticità principale di questa fase per un tricottero è il bilanciamento del momento di imbardata. Poiché i rotori anteriori sono controrotanti, il momento torcente residuo è dominato dal rotore di coda.
+In questa fase di volo, i rotori anteriori sono orientati verticalmente ($\theta_{1,2} \approx 90^\circ$), mentre il rotore posteriore è posizionato in una configurazione di equilibrio. 
+La criticità principale di questa fase per un tricottero, infatti, è il bilanciamento del momento di imbardata. 
+Poiché i rotori anteriori sono controrotanti, il momento torcente residuo è dominato dal rotore di coda.
 \\Per garantire l'heading senza indurre rotazioni indesiderate, si sfrutta il grado di libertà $\theta_3$ del rotore posteriore. L'obiettivo è generare una componente laterale di spinta che crei un momento uguale e opposto alla coppia di reazione del motore stesso.
 
 \section{Architettura di Controllo}
 Si adotta un'architettura di controllo a cascata per disaccoppiare la dinamica traslazionale, lenta, da quella rotazionale, veloce:
 \begin{enumerate}
-    \item \textbf{Outer Loop (Posizione $x, y, z$):} Utilizza la tecnica \textbf{Siling Mode Control (SMC)} per calcolare le forze ($F_{x,req}, F_{y,req}, F_{z,req}$) per annullare l'errore di posizione lungo i tre assi.
-    \\Poiché il drone è un sistema sotto-attuato, non ha attuatori diretti per gli assi $x$ e $y$, ma per cambiare la posizione deve prima cambiare l'orientamento (\textit{roll e yaw}); dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico: traduce $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
-    \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Siling Mode Control (SMC)} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
+    \item \textbf{Outer Loop (Posizione $x, y, z$):} Utilizza la tecnica \textbf{Sliding Mode Control} per calcolare le forze ($F_{x,req}, F_{y,req}, F_{z,req}$) per annullare l'errore di posizione lungo i tre assi.
+    A causa della natura sotto-attuata del drone, per modificare la posizione nel piano $x,y$ è necessario cambiare l'orientamento di \textit{roll e yaw}; dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico, traducendo $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
+    \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Sliding Mode} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
 Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \mathbb{R}^{12} $:
 \[
@@ -135,10 +137,10 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 \clearpage
 
 \section{Fondamenti dello Sliding Mode Control}
-La scelta della tecnica \textbf{Sliding Mode Control (SMC)} è motivata dalla necessità di garantire robustezza a fronte di incertezze parametriche e disturbi esterni. La progettazione del controllore si articola in due fasi logiche:
+La scelta della tecnica \textbf{Sliding Mode Control (SMC)} è motivata dalla necessità di garantire robustezza a fronte di incertezze parametriche e disturbi esterni. La progettazione del controllore si articola in due fasi:
 
 \begin{enumerate}
-    \item \textbf{Reaching Phase:} In questa fase, lo stato del sistema viene forzato a convergere verso la \textit{sliding surface} $\sigma = 0$. Per garantire che tale superficie sia un attrattore globale, si utilizza il metodo diretto di Lyapunov. Definita una funzione candidata positiva definita $V(\sigma) = \frac{1}{2}\sigma^2$, si impone la condizione di stabilità:
+    \item \textbf{Reaching Phase:} In questa fase, lo stato del sistema viene forzato a convergere verso la \textit{sliding surface} $\sigma = 0$. Per garantire che tale superficie sia un attrattore globale, si utilizza il metodo di Lyapunov. Definita una funzione candidata positiva definita $V(\sigma) = \frac{1}{2}\sigma^2$, si impone la condizione di stabilità:
     \begin{equation}
         \dot{V}(\sigma) = \sigma \dot{\sigma} < 0
     \end{equation}
@@ -149,8 +151,6 @@ La scelta della tecnica \textbf{Sliding Mode Control (SMC)} è motivata dalla ne
         \dot{e} = -\lambda e \implies e(t) = e(0)e^{-\lambda t}
     \end{equation}
 \end{enumerate}
-
-
 
 \subsection{Problematica del Chattering e Regolarizzazione}
 L'implementazione pratica della funzione $\text{sgn}(\sigma)$ comporta commutazioni istantanee della spinta e dei momenti, che si traducono nel fenomeno del \textbf{chattering}. Queste oscillazioni ad alta frequenza sono indesiderate in quanto eccitano le dinamiche non modellate (elasticità dei bracci, vibrazioni dei motori) e causano un'usura precoce degli attuatori.
@@ -168,16 +168,20 @@ All'interno di questo strato, l'azione di controllo è approssimativamente linea
 \section{Controllo di Posizione $z$}
 Il controllo della quota $z$ è progettato secondo la tecnica \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi.
 
-Si definisce l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{sliding surface} come:
+Si definiscono l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{sliding surface} come:
 \begin{equation}
     \sigma_z = \dot{e}_z + \lambda_z e_z
 \end{equation}
 Si impone una dinamica di raggiungimento $\dot{\sigma}_z = -K_z \tanh \left(\sigma_z / \Phi \right)$, con l'uso di una funzione continua, in questo caso la funzione tangente iperbolica, 
 al posto della funzione segno per evitare il fenomeno del \textit{chattering}. Questo consente di rimanere entro uno \textit{boudary layer} $\Phi$ attorno alla \textit{sliding surface}, anziché imporre
 alla traiettoria di rimanere precisamente sulla superficie stessa.
-\\Risolvendo l'equazione dinamica lungo $z$ ($m\ddot{z} = mg - F_{thrust} + F_{aero}$), la legge di controllo risultante per la spinta richiesta è:
+\\Risolvendo l'equazione dinamica lungo $z$ 
 \begin{equation}
-    F_{z,req} = m g + F_{aero,z} - m \lambda_z \dot{e}_z - m K_z \tanh\left(\frac{\sigma_z}{\Phi}\right)
+    m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
+\end{equation}
+la legge di controllo risultante per la spinta richiesta è:
+\begin{equation}
+    F_{z,req} = F_{aero,z} + \frac{m}{\cos(\phi)cos(\theta)} \left(g  - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right)
 \end{equation}
 dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 
@@ -190,7 +194,7 @@ invertendo le componenti della forza aerodinamica:
     \item \textbf{Generazione del riferimento di Roll ($\phi_{des}$):} Per compensare l'errore sulla coordinata $y$, 
     il controllore SMC calcola una forza virtuale richiesta $F_{y,req}$. 
     Quando il drone è dritto ($\phi = 0$), i rotori generano una forza che si esprime solo lungo l'assse $z$, con forza laterale netta nulla.
-    Tuttavia, in caso di \textit{side-slip} o errore di posizione lungo l'asse $y$, è necessario imporre
+    Tuttavia, in caso di \textit{sideslip} o errore di posizione lungo l'asse $y$, è necessario imporre
     un angolo di rollio diverso da zero, che permetta al drone di modificare la propria posizione.
     \begin{equation}
         F_{z} = T cos(\phi)
@@ -198,7 +202,7 @@ invertendo le componenti della forza aerodinamica:
     \begin{equation}
         F_{y} = T sin(\phi)
     \end{equation}
-    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una \textit{sliding surface} $\sigma_{y} = \dot{e_{y}} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)$,
+    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una \textit{sliding surface} $\sigma_{y} = \dot{e}_{y} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)$,
     si ottiene:
     \begin{equation}\begin{split}
         \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)\\

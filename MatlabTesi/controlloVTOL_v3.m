@@ -55,73 +55,99 @@ switch test_id
         psi_des = 0;    r_des = 0;
 
         %% =========================================================================
-        %   OUTER LOOP: POSITION SMC 
+        %   OUTER LOOP: POSITION SMC (Rigorosamente Disaccoppiato)
         % =========================================================================
-
-        % --- QUOTA (Z) ---
+        
+        % --- 1. SINTESI FORZE VIRTUALI (Frame Inerziale) ---
+        
+        % Asse Z (Quota)
         lambda_z = 2; K_z = 10; Phi_z = 0.8;
         e_z = z_des - x(3);
         de_z = vz_des - vz_g;
         s_z = de_z + lambda_z * e_z;
-
-        F_drag_z = -params.rho*params.s_body_z*params.C_d_z*sign(x(6))*x(6)^2;
-        u_smc_z = params.m * (lambda_z * de_z) + params.m * K_z * tanh(s_z / Phi_z);
-        cos_factor = max(cos(theta) * cos(phi), 0.1); % Protezione divisione per zero
-        Thrust_req = (params.m * params.g - u_smc_z ) / cos_factor + F_drag_z;
-
-        % Protezione Saturazione
-        if Thrust_req < 5; Thrust_req = 5; end
-        if Thrust_req > 100; Thrust_req = 100; end
-
-        % --- TRASLAZIONE LATERALE (Y -> Roll Desiderato) ---
-        lambda_y = 0.8; K_y = 10; Phi_y = 2.5;
+        
+        % U_z: Forza verticale richiesta per contrastare g e inseguire la quota
+        U_z = params.m * (params.g - (lambda_z * de_z + K_z * tanh(s_z / Phi_z)));
+        
+        % Assi Y e X (Piano Orizzontale)
+        lambda_y = 0.8; K_y = 3; Phi_y = 2.5;
         e_y = y_des - x(2);
         de_y = vy_des - vy_g;
         s_y = de_y + lambda_y * e_y;
-
-        cos_factor_y = max(cos(psi) * cos(phi), 0.1);
-        F_y_req = (params.m * (lambda_y * de_y) + params.m * K_y * tanh(s_y / Phi_y) ) / cos_factor_y;
-        sin_phi_des = F_y_req / Thrust_req;
-        phi_des = asin(max(min(sin_phi_des, 0.5), -0.5)); % Saturazione ~30°
-
-        % --- TRASLAZIONE LONGITUDINALE (X -> Pitch Desiderato) ---
-        lambda_x = 0.8; K_x = 8; Phi_x = 2.5;
+        U_y = params.m * (lambda_y * de_y + K_y * tanh(s_y / Phi_y));
+        
+        lambda_x = 0.8; K_x = 3; Phi_x = 2.5;
         e_x = x_des - x(1);
         de_x = vx_des - vx_g;
         s_x = de_x + lambda_x * e_x;
+        U_x = params.m * (lambda_x * de_x + K_x * tanh(s_x / Phi_x));
 
-        cos_factor_x = max(cos(psi) * cos(theta), 0.1);
-        F_x_req = (params.m * (lambda_x * de_x) + params.m * K_x * tanh(s_x / Phi_x)) /cos_factor_x ;
-        % F_x_req = params.m * (lambda_x * de_x) + K_x * tanh(s_x / Phi_x);
-        sin_theta_des = -F_x_req / Thrust_req;
-        theta_des = asin(max(min(sin_theta_des, 0.5), -0.5));
+        % --- 2. CALCOLO SPINTA FISICA (Body Frame) ---
+        % Proiezione della forza U_z sull'asse verticale del drone
+        cos_factor_z = max(cos(theta) * cos(phi), 0.1); % Protezione divisione per zero
+        Thrust_req = U_z / cos_factor_z;
+        
+        % Compensazione del Drag (opzionale, dal modello originale)
+        F_drag_z = -params.rho * params.s_body_z * params.C_d_z * sign(x(6)) * x(6)^2;
+        Thrust_req = Thrust_req + F_drag_z;
+        
+        % Saturazione fisica della spinta (Sicurezza)
+        Thrust_req = max(min(Thrust_req, 100), 5);
 
+        % % --- 3. DISACCOPPIAMENTO IMBARDATA (Heading Alignment) ---
+        % % Rotazione delle forze dal Frame Inerziale al Frame locale del drone
+        % U_x_psi =  U_x * cos(psi) + U_y * sin(psi);
+        % U_y_psi = -U_x * sin(psi) + U_y * cos(psi);
+
+        % --- 4. MAPPING DI ASSETTO (Inversione Dinamica Esatta) ---
+        
+        % ROLLIO (Y -> Phi)
+        % Si calcola per primo poiché l'equazione è indipendente da theta
+        sin_phi_des = U_y / Thrust_req;
+        phi_des = asin(max(min(sin_phi_des, 0.5), -0.5)); % Saturazione a +/- 30°
+        
+        % BECCHEGGIO (X -> Theta)
+        % Si utilizza il phi_des appena calcolato per l'inversione esatta
+        cos_phi_des = max(cos(phi_des), 0.1); % Protezione da divisione per zero
+        
+        % Nota l'inserimento di cos_phi_des a denominatore!
+        sin_theta_des = -U_x / (Thrust_req * cos_phi_des); 
+        theta_des = asin(max(min(sin_theta_des, 0.5), -0.5)); % Saturazione a +/- 30°
+        
         %% =========================================================================
-        %   INNER LOOP: ATTITUDE SMC
+        %   INNER LOOP: ATTITUDE SMC (Feedback Linearization)
         % =========================================================================
-        % Lambda alto (inseguimento veloce), Phi aumentato per pulire p,q,r
-
-        lambda_att = 12.0; % Più veloce del loop esterno
-        K_att = 20.0;      % Ridotto per evitare eccitazione armonica
-        Phi_att = 3;     % Valore critico 
+        lambda_att = 12.0; 
+        K_att = 10.0;      
+        Phi_att = 3;     
+        
+        % accelerazioni angolari desiderate
+        ddphi_des = 0; ddtheta_des = 0; ddpsi_des = 0;
 
         % --- ROLL ---
         e_phi = phi_des - phi;
-        de_phi = 0 - p; 
+        de_phi = 0 - p; % Assumendo p_des = 0
         s_phi = de_phi + lambda_att * e_phi;
-        Moment_roll_req = lambda_att * de_phi + K_att * tanh(s_phi / Phi_att);
+        
+        acc_phi_virtual = ddphi_des + lambda_att * de_phi + K_att * tanh(s_phi / Phi_att);
+        Moment_roll_req = params.Ixx * acc_phi_virtual - (params.Iyy - params.Izz) * q * r;
 
         % --- PITCH ---
         e_theta = theta_des - theta;
         de_theta = 0 - q;
         s_theta = de_theta + lambda_att * e_theta;
-        Moment_pitch_req = lambda_att * de_theta + K_att * tanh(s_theta / Phi_att);
+        
+        acc_theta_virtual = ddtheta_des + lambda_att * de_theta + K_att * tanh(s_theta / Phi_att);
+        Moment_pitch_req = params.Iyy * acc_theta_virtual - (params.Izz - params.Iyy) * p * r;
 
         % --- YAW ---
+        lambda_att_yaw = 8.4;
         e_psi = atan2(sin(psi_des - psi), cos(psi_des - psi)); 
         de_psi = r_des - r;
-        s_psi = de_psi + (lambda_att * 0.7) * e_psi; 
-        Moment_yaw_req = (lambda_att * 0.7) * de_psi + (K_att * 0.8) * tanh(s_psi / Phi_att);
+        s_psi = de_psi + lambda_att_yaw * e_psi; 
+        
+        acc_psi_virtual = ddpsi_des + lambda_att_yaw * de_psi + (K_att * 0.8) * tanh(s_psi / Phi_att);
+        Moment_yaw_req = params.Izz * acc_psi_virtual - (params.Ixx - params.Ixx) * p * q;
 
         %% =========================================================================
         %   MIXER

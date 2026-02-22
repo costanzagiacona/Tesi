@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1771692833.26412 "main.aux" "main.bbl" "main" 1771692838.00718 0
-  "./bibliografia.bib" 1768731482 2410 5180033513ffec778060e31485f88cb7 ""
+["bibtex main"] 1771763382.55524 "main.aux" "main.bbl" "main" 1771771833.64668 0
+  "./bibliografia.bib" 1771750654 2410 5180033513ffec778060e31485f88cb7 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1771692837 18532 9db35d0b7a991d955a0c6ab3a0beac81 "pdflatex"
+  "main.aux" 1771771832 18587 3bddc88e7f7c0489492219996dac21d4 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771692833.61821 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1771692838.00796 0
+["pdflatex"] 1771771828.45544 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1771771833.64747 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1771685046 82686 2381c3433487640bf26aa76a10db7eb2 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -250,16 +250,15 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/tools/tabularx.sty" 1761901070 7243 a2c17f18e2c9b702b84fad03d5f9c78b ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1771685033 4167 d8097513898d23b22122a0da8a604851 ""
+  "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1771762125 4179 dcb7610ca4df530dda3fefffb507630d ""
   "capitoli/analisi_stabilita.tex" 1770115757 7908 6b8881241c9542547023666baf914804 ""
   "capitoli/controllo_orizzontale.tex" 1770115757 22619 83ea86e44c56e911f5c472c236011902 ""
-  "capitoli/controllo_verticale.tex" 1771692827 28703 38cd6400d6ff0e3f6cb8548cf3ed58b3 ""
-  "capitoli/dimostrazione_SMC.tex" 1769962916 5342 2dca3d1ff7623ddce0b853ea5ade3f8f ""
-  "capitoli/introduzione.tex" 1771684437 3295 776e952ad72b091f3b759b0114a65b54 ""
+  "capitoli/controllo_verticale.tex" 1771771827 28855 efe6d839ffdbf0a257b379947df80caf ""
+  "capitoli/dimostrazione_SMC.tex" 1771761754 9520 9e8160efdf20481c19d1a2361dc4ef62 ""
+  "capitoli/introduzione.tex" 1771762173 6225 35fab8c989366f1750e4a7bb9e52c7f2 ""
   "capitoli/modello_completo.tex" 1771687719 13978 313600abb6110cb71bae6e9beed0082d ""
-  "capitoli/panoramica_controllo.tex" 1771690373 2880 f46b3932d108ce66561205fc1e8a30e7 ""
   "capitoli/sistema_dinamico.tex" 1771689509 8794 13c99a7eedf0b7342b80a8ae2537dce6 ""
-  "capitoli/stato_arte.tex" 1769934129 15138 4f251c9e49c441a5aeb6a929173cb165 ""
+  "capitoli/stato_arte.tex" 1771751652 14402 c8015d7a336c63b8848b79bd339f82bb ""
   "img/../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
   "img/../img/controllo_verticale/pos_vel.png" 1769964645 77524 8e369bdb4fb04096036a76a39b907ec2 ""
   "img/../img/controllo_verticale/thrust.png" 1769964794 64933 67d6c80f3ebfb6799e7a3a4a840ccf60 ""
@@ -272,12 +271,12 @@
   "img/rotori_1_2.png" 1769342024 58613 5d6d1272abb6f91bd8f59c66588c1a71 ""
   "img/sist_rif.png" 1769934129 359174 77faf94a79a1c7a6cf15f0e07f33c52c ""
   "img/tricopter_2D.png" 1769597444 108737 d2b6b6a008aaa1821da6517e89ab949e ""
-  "main.aux" 1771692837 18532 9db35d0b7a991d955a0c6ab3a0beac81 "pdflatex"
-  "main.bbl" 1771692833 1705 fd29171eb3cd5cffeaaa97879eebe741 "bibtex main"
-  "main.lof" 1771692837 1788 d66764949994a7d38f806ee621c75bac "pdflatex"
-  "main.out" 1771692837 19507 1690676707198a68e89231c66e1d8bd9 "pdflatex"
-  "main.tex" 1771685033 4167 d8097513898d23b22122a0da8a604851 ""
-  "main.toc" 1771692837 8866 2584e042131b598f4b94c01ead0a44e9 "pdflatex"
+  "main.aux" 1771771832 18587 3bddc88e7f7c0489492219996dac21d4 "pdflatex"
+  "main.bbl" 1771763382 1645 4be47ca796c8e42fdba6bb7fc93e544e "bibtex main"
+  "main.lof" 1771771832 1772 f29a700050628030842bffd5926385da "pdflatex"
+  "main.out" 1771771832 19819 b497b62c5e4e2681f9461b0a16deb627 "pdflatex"
+  "main.tex" 1771762125 4179 dcb7610ca4df530dda3fefffb507630d ""
+  "main.toc" 1771771832 9044 26921a4ad1852787e3f3d732a2fa2fe7 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"

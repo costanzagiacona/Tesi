@@ -17,10 +17,10 @@ function MonteCarloVTOL(params)
     cfg_rec.test_id = 1; 
     cfg_rec.target = [0; 0; -10]; 
     cfg_rec.tspan = [0 100]; 
-    cfg_rec.sigma = struct('pos', 2.0, 'vel', 1.5, 'att', deg2rad(15), 'omega', deg2rad(5));
+    cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(15), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; % Parte già in quota
     
-    % RunCampaign(cfg_rec, params);
+    RunCampaign(cfg_rec, params);
     
     fprintf('\n------------------------------------------------\n');
     
@@ -30,10 +30,10 @@ function MonteCarloVTOL(params)
     cfg_take.target = [0; 0; -10]; 
     cfg_take.tspan = [0 50]; 
     % Incertezza pos bassa (sappiamo da dove partiamo), incertezza sensori alta
-    cfg_take.sigma = struct('pos', 0.1, 'vel', 0.05, 'att', deg2rad(2), 'omega', deg2rad(1));
+    cfg_take.sigma = struct('pos', 1, 'vel', 0.5, 'att', deg2rad(3), 'omega', deg2rad(1));
     cfg_take.x0_type = 'takeoff'; % Parte da terra
     
-    % RunCampaign(cfg_take, params);
+    RunCampaign(cfg_take, params);
 
     fprintf('\n------------------------------------------------\n');
     
@@ -46,7 +46,7 @@ function MonteCarloVTOL(params)
     cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(10), 'omega', deg2rad(0));
     cfg_cru.x0_type = 'cruise'; 
     
-    RunCampaign(cfg_cru, params);
+    % RunCampaign(cfg_cru, params);
     
     fprintf('\n================================================\n');
     fprintf(' SUITE COMPLETATA.\n');
@@ -142,13 +142,17 @@ function RunCampaign(cfg, params)
     n_crash = sum([stats.crashed]);
     fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
     
-    save(['Results_PID_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_PID_' cfg.name '.csv']);
+    save(['Results_' cfg.name '.mat'], 'risultati', 'cfg');
+    GenerateFullCSV(stats, ['Analysis_' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
 function x0 = GenerateX0(type, target, sigma, params)
-    x0 = zeros(30,1);
+    if target(1) == 25
+        x0 = zeros(30,1);
+    else
+        x0 = zeros(26,1);
+    end
     t_target = target(:); 
     
     % Calcolo regime di hovering teorico
