@@ -52,7 +52,7 @@ switch test_id
         z_des = -10;    vz_des = 0;
         y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
-        psi_des = 0;    r_des = 0;
+        psi_des = deg2rad(45);    r_des = 0;
 
         %% =========================================================================
         %   OUTER LOOP: POSITION SMC (Rigorosamente Disaccoppiato)
@@ -70,13 +70,13 @@ switch test_id
         U_z = params.m * (params.g - (lambda_z * de_z + K_z * tanh(s_z / Phi_z)));
         
         % Assi Y e X (Piano Orizzontale)
-        lambda_y = 0.8; K_y = 3; Phi_y = 2.5;
+        lambda_y = 0.8; K_y = 1.5; Phi_y = 4;
         e_y = y_des - x(2);
         de_y = vy_des - vy_g;
         s_y = de_y + lambda_y * e_y;
         U_y = params.m * (lambda_y * de_y + K_y * tanh(s_y / Phi_y));
         
-        lambda_x = 0.8; K_x = 3; Phi_x = 2.5;
+        lambda_x = 0.8; K_x = 1.5; Phi_x = 4;
         e_x = x_des - x(1);
         de_x = vx_des - vx_g;
         s_x = de_x + lambda_x * e_x;
@@ -146,55 +146,75 @@ switch test_id
         de_psi = r_des - r;
         s_psi = de_psi + lambda_att_yaw * e_psi; 
         
-        acc_psi_virtual = ddpsi_des + lambda_att_yaw * de_psi + (K_att * 0.8) * tanh(s_psi / Phi_att);
+        acc_psi_virtual = ddpsi_des + lambda_att_yaw * de_psi + (K_att*0.8) * tanh(s_psi / Phi_att);
         Moment_yaw_req = params.Izz * acc_psi_virtual - (params.Ixx - params.Ixx) * p * q;
 
         %% =========================================================================
-        %   MIXER
+        %   MOTOR MIXING ALGORITHM (MMA)
         % =========================================================================
+        
+        % --- 0. Parametri di Equilibrio e Stato Attuale ---
         theta3_ideal = atan2(((-params.d_tx * params.k) / params.b), 1);
-        theta3_actual = x(17); 
-        theta4 = -pi/2;
-
-        % 1. Mixing Longitudinale (Z + Pitch)
-        denom_mix = params.d_mx * params.k * sin(theta3_actual) ...
-                  - params.d_tx * params.k * sin(theta3_actual) ...
-                  + params.b * cos(theta3_actual) * sin(theta4);
-
+        theta3_actual = x(17); % Angolo di tilt reale del rotore di coda
+        theta4 = -pi/2;        % Configurazione laterale fissa del rotore di coda
+        
+        % --- 1. Calcolo Preventivo dello Yaw (Tilt dei Rotori Anteriori) ---
+        % Stimiamo la spinta anteriore necessaria per lo Yaw (usiamo Thrust_req come base)
+        F_front_est = max(Thrust_req * 0.65, 2.0); % Protezione: almeno 2N per garantire autorità di Yaw
+        delta_tilt_yaw = Moment_yaw_req / (F_front_est * params.d_my);
+        
+        % Saturazione di sicurezza per il tilt (circa 25-30 gradi)
+        max_tilt_rad = 0.52; 
+        delta_tilt_yaw = max(min(delta_tilt_yaw, max_tilt_rad), -max_tilt_rad);
+        
+        % FATTORE CRITICO: proiezione della spinta sul piano verticale
+        % Se delta = 0, cos_delta = 1 (nessuna perdita).
+        cos_delta = cos(delta_tilt_yaw);
+        
+        % --- 2. Mixing Longitudinale (Z + Pitch) con Proiezione ---
+        % Aggiorniamo il sistema 2x2 considerando che i motori anteriori sono inclinati
+        % La loro efficacia su Z e My è ridotta dal fattore cos_delta
+        denom_mix = (params.d_mx * params.k * sin(theta3_actual) * cos_delta) ...
+              - (params.d_tx * params.k * sin(theta3_actual) * cos_delta) ...
+              + (params.b * cos(theta3_actual) * sin(theta4));
+        
         % Protezione numerica denominatore
-        if abs(denom_mix) < 1e-4; denom_mix = 1e-4 * sign(denom_mix); end
-
-        numeratore_coda = (params.d_mx * Thrust_req) - Moment_pitch_req;
+        if abs(denom_mix) < 1e-5
+        denom_mix = 1e-5 * sign(denom_mix); 
+        end
+        
+        % Calcolo velocità angolare rotore di coda (omega3)
+        numeratore_coda = (params.d_mx * Thrust_req * cos_delta) - Moment_pitch_req;
         omega3_sq = max(0, numeratore_coda / denom_mix);
+        
+        % Spinta verticale effettiva del rotore di coda
         F_tail_z = omega3_sq * params.k * sin(theta3_actual);
-
-        % 2. Mixing Laterale (Roll)
+        
+        % --- 3. Mixing Laterale (Roll) e Distribuzione Frontale ---
+        % Calcoliamo la spinta totale che deve essere fornita dai due rotori anteriori
         F_front_tot_z = Thrust_req - F_tail_z;
-
-        % *** PROTEZIONE CRITICA ***
-        % Se la spinta anteriore è troppo bassa, il controllo di Yaw via tilt fallisce.
-        % Impediamo al denominatore di scendere sotto una soglia di sicurezza.
-        F_safe_for_yaw = max(F_front_tot_z, 2.0); 
-
-        omega_front_sq_base = max(0, F_front_tot_z / (2 * params.k));
-        delta_omega_sq = Moment_roll_req / (params.k * params.d_my * 2);
-
+        
+        % Calcolo della velocità di base (media) per i motori frontali
+        % Nota: dividiamo per cos_delta per compensare la perdita di spinta dovuta al tilt
+        omega_front_sq_base = max(0, F_front_tot_z / (2 * params.k * cos_delta));
+        
+        % Differenziale per il Roll (anche questo risente dell'inclinazione)
+        delta_omega_sq = Moment_roll_req / (params.k * params.d_my * 2 * cos_delta);
+        
+        % Velocità finali motori anteriori
         omega_dx_sq = max(0, omega_front_sq_base - delta_omega_sq);
         omega_sx_sq = max(0, omega_front_sq_base + delta_omega_sq);
+        
+        % --- 4. Assegnamento Output Finali (u) ---
+        u(1) = sqrt(omega_dx_sq);    % Motore Front Destro
+        u(2) = sqrt(omega_sx_sq);    % Motore Front Sinistro
+        u(3) = sqrt(omega3_sq);      % Motore Coda
+        u(4) = pi/2 + delta_tilt_yaw; % Tilt Motore 1 (Rad)
+        u(5) = pi/2 - delta_tilt_yaw; % Tilt Motore 2 (Rad)
+        u(6) = theta3_ideal;         % Tilt strutturale coda
+        u(7) = -pi/2;                % Offset fisso coda
 
-        % 3. Mixing Yaw (Tilt) con saturazione e protezione
-        delta_tilt_yaw = Moment_yaw_req / (F_safe_for_yaw * params.d_my);
-        max_tilt_rad = 0.45; % Circa 25 gradi
-        delta_tilt_yaw = max(min(delta_tilt_yaw, max_tilt_rad), -max_tilt_rad);
-
-        % --- Output Finali ---
-        u(1) = sqrt(omega_dx_sq);    
-        u(2) = sqrt(omega_sx_sq);    
-        u(3) = sqrt(omega3_sq);      
-        u(4) = pi/2 + delta_tilt_yaw; 
-        u(5) = pi/2 - delta_tilt_yaw; 
-        u(6) = theta3_ideal; 
-        u(7) = -pi/2;
+        
 
     
     case 2

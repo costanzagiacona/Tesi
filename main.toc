@@ -33,63 +33,67 @@
 \contentsline {subsection}{\numberline {4.1.1}Variabili di Stato}{23}{subsection.4.1.1}%
 \contentsline {subsection}{\numberline {4.1.2}Ingressi di Controllo}{24}{subsection.4.1.2}%
 \contentsline {section}{\numberline {4.2}Dinamica del Sistema}{25}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Equazioni relative alle velocità lineari (Cinematica)}{25}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Equazioni relative alle accelerazioni lineari (Dinamica Traslazionale)}{25}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Equazioni relative alle velocità angolari (Cinematica Rotazionale)}{26}{subsection.4.2.3}%
-\contentsline {subsection}{\numberline {4.2.4}Equazioni relative alle accelerazioni angolari (Dinamica Rotazionale)}{26}{subsection.4.2.4}%
-\contentsline {subsection}{\numberline {4.2.5}Dinamica degli Attuatori (Tilting e Rotori)}{27}{subsection.4.2.5}%
-\contentsline {chapter}{\numberline {5}Controllo Verticale}{28}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Configurazione di Hovering}{28}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Architettura di Controllo}{28}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Fondamenti dello Sliding Mode Control}{30}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Problematica del Chattering e Regolarizzazione}{30}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Controllo di Posizione $z$}{31}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Controllo Planare e Mapping di Assetto}{31}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Controllo di Assetto}{33}{section.5.6}%
-\contentsline {subsubsection}{Roll ($\phi $)}{33}{subsubsection*.3}%
-\contentsline {subsubsection}{Pitch ($\theta $)}{34}{subsubsection*.4}%
-\contentsline {subsubsection}{Yaw ($\psi $)}{34}{subsubsection*.5}%
-\contentsline {section}{\numberline {5.7}Motor Mixing Algorithm}{35}{section.5.7}%
-\contentsline {subsection}{\numberline {5.7.1}Angolo di Equilibrio $\theta _{3}$}{35}{subsection.5.7.1}%
-\contentsline {subsection}{\numberline {5.7.2}Quota e Beccheggio}{36}{subsection.5.7.2}%
-\contentsline {subsection}{\numberline {5.7.3}Rollio e Motori Anteriori}{37}{subsection.5.7.3}%
-\contentsline {subsection}{\numberline {5.7.4}Controllo di Imbardata}{37}{subsection.5.7.4}%
-\contentsline {section}{\numberline {5.8}Sotto-attuazione in Assetto di Hovering}{39}{section.5.8}%
-\contentsline {chapter}{\numberline {6}Controllo Orizzontale}{43}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Introduzione e Configurazione di Crociera}{43}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Architettura di Controllo}{43}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Outer Loop: Guida e Navigazione}{45}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Controllo Longitudinale: Quota e Velocità}{45}{subsection.6.3.1}%
-\contentsline {section}{\numberline {6.4}Bank-to-Turn (BTT)}{46}{section.6.4}%
-\contentsline {subsection}{\numberline {6.4.1}Principi Fisici e Modello Matematico}{46}{subsection.6.4.1}%
-\contentsline {subsection}{\numberline {6.4.2}Implementazione del Controllo Laterale (Outer Loop)}{46}{subsection.6.4.2}%
-\contentsline {subsection}{\numberline {6.4.3}Coordinazione dell'Imbardata (Inner Loop)}{47}{subsection.6.4.3}%
-\contentsline {subsection}{\numberline {6.4.4}Compensazione della Portanza in Virata}{47}{subsection.6.4.4}%
-\contentsline {section}{\numberline {6.5}Inner Loop: Controllo d'Assetto}{49}{section.6.5}%
-\contentsline {subsection}{\numberline {6.5.1}Algoritmo di Controllo PID}{49}{subsection.6.5.1}%
-\contentsline {subsection}{\numberline {6.5.2}Fisica degli Attuatori: Thrust Vectoring}{49}{subsection.6.5.2}%
-\contentsline {subsection}{\numberline {6.5.3}Validità dell'Approssimazione Lineare}{50}{subsection.6.5.3}%
-\contentsline {section}{\numberline {6.6}Motor Mixing Algorithm}{51}{section.6.6}%
-\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{51}{subsubsection*.6}%
-\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{51}{subsubsection*.7}%
-\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{51}{subsubsection*.8}%
-\contentsline {subsection}{\numberline {6.6.1}Matrice di Mixing}{52}{subsection.6.6.1}%
-\contentsline {section}{\numberline {6.7}Scenari di Validazione}{53}{section.6.7}%
-\contentsline {chapter}{\numberline {7}Analisi di Lyapunov}{54}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Analisi di Stabilità}{54}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}Modellazione della Dinamica}{54}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}Definizione della \textit {sliding surface}}{55}{subsection.7.1.2}%
-\contentsline {subsection}{\numberline {7.1.3}Sintesi della Legge di Controllo}{55}{subsection.7.1.3}%
-\contentsline {subsection}{\numberline {7.1.4}Analisi di Stabilità e Tempo di Raggiungimento}{56}{subsection.7.1.4}%
-\contentsline {subsection}{\numberline {7.1.5}Regolarizzazione e Mitigazione del Chattering}{57}{subsection.7.1.5}%
-\contentsline {chapter}{\numberline {8}Analisi di Stabilità}{58}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Introduzione all'Analisi Lineare}{58}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{58}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Analisi dell'Assetto di Hovering}{59}{section.8.3}%
-\contentsline {subsection}{\numberline {8.3.1}Sintesi del Controllore}{59}{subsection.8.3.1}%
-\contentsline {subsection}{\numberline {8.3.2}Interpretazione dei Risultati e Modi Dominanti}{59}{subsection.8.3.2}%
-\contentsline {section}{\numberline {8.4}Analisi dell'Assetto di Crociera (Cruise)}{60}{section.8.4}%
-\contentsline {subsection}{\numberline {8.4.1}Sintesi del Controllore}{60}{subsection.8.4.1}%
-\contentsline {subsection}{\numberline {8.4.2}Discussione critica dei modi al limite}{60}{subsection.8.4.2}%
-\contentsline {subsection}{\numberline {8.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{60}{subsection.8.4.3}%
-\contentsline {section}{\numberline {8.5}Separazione delle Scale Temporali}{61}{section.8.5}%
+\contentsline {subsubsection}{Equazioni relative alle accelerazioni lineari}{25}{subsubsection*.3}%
+\contentsline {subsubsection}{Equazioni relative alle velocità angolari}{26}{subsubsection*.6}%
+\contentsline {subsubsection}{Equazioni relative alle accelerazioni angolari}{27}{subsubsection*.9}%
+\contentsline {subsubsection}{Equazioni relative alla dinamica di tilting dei rotori}{28}{subsubsection*.12}%
+\contentsline {subsubsection}{Equazioni relative alla dinamica dei rotori}{29}{subsubsection*.13}%
+\contentsline {chapter}{\numberline {5}Controllo Verticale}{30}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Configurazione di Hovering}{30}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Architettura di Controllo}{30}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Fondamenti dello Sliding Mode Control}{32}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Problematica del Chattering e Regolarizzazione}{32}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Controllo di Posizione $z$}{33}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Controllo Planare e Mapping di Assetto}{33}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Controllo $y$}{34}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Controllo $x$}{35}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Controllo di Assetto}{36}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Modello Dinamico e Inversione}{36}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Sintesi del Controllore Sliding Mode}{36}{subsection.5.6.2}%
+\contentsline {subsubsection}{Rollio ($\phi $) e Beccheggio ($\theta $)}{37}{subsubsection*.14}%
+\contentsline {subsubsection}{Imbardata ($\psi $)}{37}{subsubsection*.15}%
+\contentsline {section}{\numberline {5.7}Motor Mixing Algorithm}{38}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Angolo di Equilibrio $\theta _{3}$}{38}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Thrust}{39}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Imbardata}{39}{subsection.5.7.3}%
+\contentsline {subsection}{\numberline {5.7.4}Quota e Beccheggio}{39}{subsection.5.7.4}%
+\contentsline {subsection}{\numberline {5.7.5}Rollio e Motori Anteriori}{41}{subsection.5.7.5}%
+\contentsline {section}{\numberline {5.8}Sotto-attuazione in Assetto di Hovering}{42}{section.5.8}%
+\contentsline {chapter}{\numberline {6}Controllo Orizzontale}{46}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduzione e Configurazione di Crociera}{46}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Architettura di Controllo}{46}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Outer Loop: Guida e Navigazione}{48}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Controllo Longitudinale: Quota e Velocità}{48}{subsection.6.3.1}%
+\contentsline {section}{\numberline {6.4}Bank-to-Turn (BTT)}{49}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Principi Fisici e Modello Matematico}{49}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Implementazione del Controllo Laterale (Outer Loop)}{49}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}Coordinazione dell'Imbardata (Inner Loop)}{50}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}Compensazione della Portanza in Virata}{50}{subsection.6.4.4}%
+\contentsline {section}{\numberline {6.5}Inner Loop: Controllo d'Assetto}{52}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Algoritmo di Controllo PID}{52}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Fisica degli Attuatori: Thrust Vectoring}{52}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Validità dell'Approssimazione Lineare}{53}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Motor Mixing Algorithm}{54}{section.6.6}%
+\contentsline {subsubsection}{1. Sintesi del Vettore Spinta Inerziale}{54}{subsubsection*.16}%
+\contentsline {subsubsection}{2. Trasformazione di Coordinate (Disaccoppiamento)}{54}{subsubsection*.17}%
+\contentsline {subsubsection}{3. Distribuzione agli Attuatori}{54}{subsubsection*.18}%
+\contentsline {subsection}{\numberline {6.6.1}Matrice di Mixing}{55}{subsection.6.6.1}%
+\contentsline {section}{\numberline {6.7}Scenari di Validazione}{56}{section.6.7}%
+\contentsline {chapter}{\numberline {7}Analisi di Lyapunov}{57}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Analisi di Stabilità}{57}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Modellazione della Dinamica}{57}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Definizione della \textit {sliding surface}}{58}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}Sintesi della Legge di Controllo}{58}{subsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.1.4}Analisi di Stabilità e Tempo di Raggiungimento}{59}{subsection.7.1.4}%
+\contentsline {subsection}{\numberline {7.1.5}Regolarizzazione e Mitigazione del Chattering}{60}{subsection.7.1.5}%
+\contentsline {chapter}{\numberline {8}Analisi di Stabilità}{61}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Introduzione all'Analisi Lineare}{61}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{61}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Analisi dell'Assetto di Hovering}{62}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}Sintesi del Controllore}{62}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}Interpretazione dei Risultati e Modi Dominanti}{62}{subsection.8.3.2}%
+\contentsline {section}{\numberline {8.4}Analisi dell'Assetto di Crociera (Cruise)}{63}{section.8.4}%
+\contentsline {subsection}{\numberline {8.4.1}Sintesi del Controllore}{63}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {8.4.2}Discussione critica dei modi al limite}{63}{subsection.8.4.2}%
+\contentsline {subsection}{\numberline {8.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{63}{subsection.8.4.3}%
+\contentsline {section}{\numberline {8.5}Separazione delle Scale Temporali}{64}{section.8.5}%

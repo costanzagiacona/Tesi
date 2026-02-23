@@ -10,7 +10,7 @@ Si adotta un'architettura di controllo a cascata per disaccoppiare la dinamica t
 \begin{enumerate}
     \item \textbf{Outer Loop (Posizione $x, y, z$):} Utilizza la tecnica \textbf{Sliding Mode Control} per calcolare le forze ($F_{x,req}, F_{y,req}, F_{z,req}$) per annullare l'errore di posizione lungo i tre assi.
     A causa della natura sotto-attuata del drone, per modificare la posizione nel piano $x,y$ è necessario cambiare l'orientamento di \textit{roll e yaw}; dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico, traducendo $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
-    \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Sliding Mode} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti torcenti necessari ($M_x, M_y, M_z$).
+    \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Sliding Mode} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
 Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \mathbb{R}^{12} $:
 \[
@@ -175,144 +175,217 @@ Si definiscono l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{
 Si impone una dinamica di raggiungimento $\dot{\sigma}_z = -K_z \tanh \left(\sigma_z / \Phi \right)$, con l'uso di una funzione continua, in questo caso la funzione tangente iperbolica, 
 al posto della funzione segno per evitare il fenomeno del \textit{chattering}. Questo consente di rimanere entro uno \textit{boudary layer} $\Phi$ attorno alla \textit{sliding surface}, anziché imporre
 alla traiettoria di rimanere precisamente sulla superficie stessa.
-\\Risolvendo l'equazione dinamica lungo $z$ 
+
+Si considera l'equazione della dinamica lungo l'asse $z$ inerziale:
 \begin{equation}
     m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
 \end{equation}
-la legge di controllo risultante per la spinta richiesta è:
+Si ricava un ingresso di controllo virtuale che corrisponde alla spinta necessaria lungo $z$:
 \begin{equation}
-    F_{z,req} = F_{aero,z} + \frac{m}{\cos(\phi)cos(\theta)} \left(g  - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right)
+    F_{z,req} = m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) + \cos(\phi)cos(\theta) F_{aero,z} \right)
+\end{equation}
+
+Passando al body frame, la legge di controllo risultante per la spinta richiesta è:
+\begin{equation}
+    F_{z,req} = F_{aero,z} + \frac{m}{\cos(\phi)cos(\theta)} \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right)
 \end{equation}
 dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 
-\section{Controllo Planare e Mapping di Assetto}Il sistema è \textbf{sottoattuato}: le accelerazioni sui gradi di libertà traslazionali orizzontali ($x, y$) 
-non sono generate da attuatori diretti, ma dipendono dall'orientamento del vettore spinta totale $T$ (Thrust) rispetto al frame inerziale.\\
-Assumendo che la dinamica dell'anello 
-interno sia sufficientemente veloce da poter considerare l'assetto istantaneo rispetto alla posizione (\textit{Time-scale separation}), è possibile calcolare gli angoli di riferimento 
-invertendo le componenti della forza aerodinamica:
-\begin{itemize}
-    \item \textbf{Generazione del riferimento di Roll ($\phi_{des}$):} Per compensare l'errore sulla coordinata $y$, 
-    il controllore SMC calcola una forza virtuale richiesta $F_{y,req}$. 
-    Quando il drone è dritto ($\phi = 0$), i rotori generano una forza che si esprime solo lungo l'assse $z$, con forza laterale netta nulla.
-    Tuttavia, in caso di \textit{sideslip} o errore di posizione lungo l'asse $y$, è necessario imporre
-    un angolo di rollio diverso da zero, che permetta al drone di modificare la propria posizione.
-    \begin{equation}
-        F_{z} = T cos(\phi)
-    \end{equation}
-    \begin{equation}
-        F_{y} = T sin(\phi)
-    \end{equation}
-    Si definisce l'errore di posizione come $e_{y}(t) = y_{des}(t) - y(t)$ e una \textit{sliding surface} $\sigma_{y} = \dot{e}_{y} + \lambda_{y} e_{y}$. Imponendo una legge di raggiungimento $\dot{\sigma_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)$,
-    si ottiene:
-    \begin{equation}\begin{split}
-        \-\frac{T sin(\phi)}{m} + \lambda_{y} \dot{e_{y}} = -K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right)\\
-        \to F_{y,req} = m \left(\lambda_{y} \dot{e_{y}} + K_{y} tanh \left(\frac{\sigma_{y}}{\Phi} \right) \right)
-    \end{split}\end{equation}
 
-    L'angolo di rollio necessario è ricavato tramite l'inversione della proiezione della spinta:
-    \begin{equation}
-        \phi_{des} = \arcsin\left( \frac{F_{y,req}}{T} \right)
-    \end{equation}
-    dove $T$ è la spinta totale richiesta per il mantenimento della quota (output del loop $z$). 
-    Per garantire la stabilità numerica dell'operazione, il termine $\frac{F_{y,req}}{T}$ viene saturato nell'intervallo $[-1, 1]$, 
-    in particolare è stato limitato a $\pm 0.5$ per motivi di sicurezza fisica, assicurando che l'angolo di rollio non sia superiore a $\pm30^\circ$.
-    
-    \item \textbf{Generazione del riferimento di Pitch ($\theta_{des}$):} In modo analogo, per l'asse $x$, l'inversione della dinamica 
-    (tenendo conto della convenzione dei segni dei frame Euleriani) fornisce:
+\section{Controllo Planare e Mapping di Assetto}
+
+Il controllo degli spostamenti del drone nel piano $x-y$ implica il controllo di assetto tramite rollio e imbardata, a causa dell'assenza di attuatori diretti lungo questi assi.
+Dunque, i controllori di posizione per $x$ e $y$ generano dei controlli virtuali che servono per calcolare gli angoli di assetto desiderati $\phi_{des}$ e $\theta_{des}$.
+
+Si assume che la dinamica dell'anello interno sia sufficientemente veloce da poter considerare l'assetto istantaneo rispetto alla posizione, secondo il principio di \textit{time-scale separation}, e si calcolano gli angoli di riferimento
+attraverso un'inversione della dinamica.
+
+Si considera il Thrust nel body frame $T_b = [0, 0, -T]^T$ e si effettua la trasformazione nel frame inerziale attraverso la matrice di rotazione $R_{b \to g}$, ottenendo:
 \begin{equation}
-    \theta_{des} = \arcsin\left( - \frac{F_{x,req}}{T} \right)
+    T_I =
+    \begin{bmatrix}
+        -T(\cos(\psi)\sin(\theta)\cos(\phi) + \sin(\psi)\sin(\phi))\\
+        -T(\sin(\psi)\sin(\theta)\cos(\phi) - \cos(\psi)\sin(\phi))\\
+        -T(\cos(\phi)\cos(\theta))
+    \end{bmatrix}
 \end{equation}
-\end{itemize}Questa procedura di \textbf{inversione dinamica} garantisce una precisione superiore rispetto 
-alla linearizzazione classica $\sin\theta \approx \theta$, specialmente durante manovre aggressive. 
-Tuttavia, essa introduce un \textbf{accoppiamento non lineare}: l'autorità di controllo sugli assi planari 
-è direttamente proporzionale alla spinta $T$ generata dal loop verticale. Se $T \to 0$ (ad esempio in caduta libera), 
-il sistema perde la capacità di comandare spostamenti orizzontali.
+
+\begin{equation}
+    \begin{cases}
+        m \ddot{x} = -T(\cos(\psi)\sin(\theta)\cos(\phi) + \sin(\psi)\sin(\phi))\\
+        m \ddot{y} = -T(\sin(\psi)\sin(\theta)\cos(\phi) - \cos(\psi)\sin(\phi))\\
+        m \ddot{z} = m g -T\cos(\phi)\cos(\theta) + F_{aero,z}\cos(\theta)\cos(\phi)
+    \end{cases}
+\end{equation}
+
+Assumendo di mantenere $\psi = 0$, è possibile scrivere le equazioni delle dinamica come segue:
+\begin{equation}
+    \begin{cases}
+        m \ddot{x} = -T\sin(\theta)\cos(\phi)\\
+        m \ddot{y} = T\sin(\phi)\\
+        m \ddot{z} = m g -T\cos(\phi)\cos(\theta) + F_{aero,z}\cos(\theta)\cos(\phi)
+    \end{cases}
+\end{equation}
+Dalle quali si ottengono i comandi virtuali per le forze $F_{x,req}, F_{y,req}, F_{z,req}$.
+
+\subsection{Controllo $y$}
+Per generare la forza virtuale $F_{y,req}$ si utilizza un controllore \textit{Sliding Mode}.
+Analogamente al controllo di quota, si definiscono l'errore di posizione $e_y(t) = y_{des}(t) - y(t)$ e la \textit{sliding surface} $\sigma_y = \dot{e}_y + \lambda_y e_y$.\\
+Si impone la legge di raggiungimento $\dot{\sigma}_y = - K_y \tanh\left(\frac{\sigma_y}{\Phi}\right)$ e, sostituendo la dinamica $y$ nella derivata della \textit{sliding surface}, si ottiene:
+\begin{equation}
+    F_{y,req} = m \left(\ddot{y}_{des} + K_y \tanh\left(\frac{\sigma_y}{\Phi}\right) + \lambda_y \dot{e}_y \right)
+\end{equation}
+
+Sapendo che $m \ddot{y} = T\sin(\phi) \implies F_{y,req} = T\sin(\phi_{des})$, è possibile ottenere l'espressione dell'angolo di rollio desiderato come:
+\begin{equation}
+    \phi_{des} = arcsin\left(\frac{F_{y,req}}{T} \right)
+\end{equation}
+dove $T$ è il modulo del Thrust calcolato attraverso il controllore di quota.
+
+Per garantire la stabilità numerica dell'operazione, il termine $\frac{F_{y,req}}{T}$ viene saturato nell'intervallo $[-1, 1]$, 
+in particolare è stato limitato a $\pm 0.5$ per motivi di sicurezza fisica, assicurando che l'angolo di rollio non sia superiore a $\pm30^\circ$.
+
+Il controllore appena descritto viene utilizzato sia per compensare errori di posizione laterale che fenomeni di 
+\textit{sideslip}, a causa dei quali il drone potrebbe subire effetti di deriva.
+
+\subsection{Controllo $x$}
+In modo analogo, per l'asse $x$, si progetta un controllore \textit{Sliding Mode} e si ottiene il controllo virtuale:
+\begin{equation}
+    F_{x,req} = -m \left(\ddot{x}_{des} + K_x \tanh\left(\frac{\sigma_x}{\Phi}\right) + \lambda_x \dot{e}_x \right)
+\end{equation}
+
+Partendo dall'equazione $m \ddot{x} = -T\sin(\theta)\cos(\phi) \implies F_{x,req} = -T\sin(\theta_{des})\cos(\phi_{des})$, si ricava l'angolo di beccheggio desiderato:
+\begin{equation}
+    \theta_{des} = arcsin\left(\frac{-F_{x,req}}{T\cos(\phi_{des})} \right)
+\end{equation}
+dove $T$ è il modulo del Thrust calcolato attraverso il controllore di quota. Sono valide anche qui le considerazioni in merito alla saturazione dell'angolo.
+
 \clearpage
 
 % =========================================================
 %   INNER LOOP
 % =========================================================
-\section{Controllo  di Assetto}
-Per inseguire gli angoli di riferimento ($\phi_{des}, \theta_{des}, \psi_{des}$) è necessario calcolare dei momenti torcenti rispettivamente lungo gli assi $x, y, z$.
+\section{Controllo di Assetto}
+Il loop interno è deputato alla stabilizzazione dell'assetto del velivolo e all'inseguimento dei riferimenti $(\phi_{des}, \theta_{des}, \psi_{des})$ generati dal loop esterno. A differenza della dinamica traslazionale, la dinamica rotazionale del tricottero è governata dalle equazioni di Newton-Eulero per un corpo rigido in rotazione, caratterizzata da forti accoppiamenti non lineari.
 
-Tali quantità sono state calcolate attraverso l'applicazione della tecnica \textit{Sliding Mode}.
+\subsection{Modello Dinamico e Inversione}
+Le equazioni che descrivono l'evoluzione delle velocità angolari nel sistema di riferimento solidale al corpo sono:
+\begin{align}
+    \dot{p} &= \frac{I_{yy} - I_{zz}}{I_{xx}} qr + \frac{M_x}{I_{xx}} \\
+    \dot{q} &= \frac{I_{zz} - I_{xx}}{I_{yy}} pr + \frac{M_y}{I_{yy}} \\
+    \dot{r} &= \frac{I_{xx} - I_{yy}}{I_{zz}} pq + \frac{M_z}{I_{zz}}
+\end{align}
+dove $I_{xx}, I_{yy}, I_{zz}$ sono i momenti d'inerzia principali e $M_x, M_y, M_z$ i momenti risultanti dall'azione dei motori. Ai fini del controllo, si assume l'ipotesi di manovre limitate tale per cui la derivata degli angoli di Eulero coincida con le velocità angolari nel \textit{Body Frame} ($\dot{\phi} \approx p, \dot{\theta} \approx q, \dot{\psi} \approx r$).
 
-Per ogni asse, definiamo una superficie di sliding $\sigma$ come combinazione lineare dell'errore di assetto e della sua derivata:
+\subsection{Sintesi del Controllore Sliding Mode}
+Per garantire robustezza rispetto alle incertezze parametriche (errori sui tensori d'inerzia) e ai disturbi aerodinamici esterni, è stata adottata una legge di controllo \textit{Sliding Mode} con tecnica di \textit{Feedback Linearization}.
+
+Per ogni asse, definiamo la superficie di sliding $\sigma$ come:
 \begin{equation}
-    \sigma = \dot{e} + \lambda e
+    \sigma = \dot{e} + \lambda_{att} e
 \end{equation}
-dove $e = \eta_{des} - \eta$ è l'errore angolare.\\
-La legge di controllo applicata segue la formulazione:
+dove l'errore è definito come $e = \eta_{des} - \eta$. Per garantire la convergenza alla superficie e annullare l'errore di tracking, si impone una dinamica della superficie del tipo $\dot{\sigma} = -K_{att} \tanh(\sigma/\Phi)$. 
+
+I parametri scelti garantiscono la separazione delle scale temporali rispetto all'Outer Loop, assicurando che la dinamica d'assetto sia di un ordine di grandezza più rapida di quella di posizione.
+
+\subsubsection{Rollio ($\phi$) e Beccheggio ($\theta$)}
+Invertendo la dinamica del corpo rigido e applicando la legge SMC, i momenti richiesti sono calcolati come:
+\begin{align}
+    M_{x,req} = I_{xx} \left[ \ddot{\phi}_{des} + \lambda_{att} \dot{e}_\phi + K_{att} \tanh\left( \frac{\sigma_\phi}{\Phi_{att}} \right) \right] - (I_{yy} - I_{zz})qr \\
+    M_{y,req} = I_{yy} \left[ \ddot{\theta}_{des} + \lambda_{att} \dot{e}_\theta + K_{att} \tanh\left( \frac{\sigma_\theta}{\Phi_{att}} \right) \right] - (I_{zz} - I_{xx})pr
+\end{align}
+dove il primo termine rappresenta la componente inerziale del controllo, mentre il secondo termine compensa attivamente gli effetti giroscopici parassiti.
+\\In entrambi i casi si richiede che le accelerazioni angolari di riferimento siano nulle.
+
+\subsubsection{Imbardata ($\psi$)}
+Per l'asse di imbardata, si utilizza una metrica di errore periodica per gestire la discontinuità $2\pi$:
 \begin{equation}
-    M = \lambda \dot{e} + K \tanh\left(\frac{s}{\Phi}\right)
+    e_\psi = \text{atan2}(\sin(\psi_{des} - \psi), \cos(\psi_{des} - \psi))
 \end{equation}
-I parametri di sintesi ($\lambda_{att} = 12, K_{att} = 20, \Phi_{att} = 3$) sono stati calibrati per impartire una dinamica spiccatamente aggressiva al loop interno. Tale scelta è dettata non solo dalla velocità intrinseca della dinamica d'assetto, ma anche dalla necessità di garantire una netta \textbf{separazione delle scale temporali} rispetto al loop esterno. 
-
-Imponendo $\lambda_{att} \gg \lambda_{pos}$ (dove $\lambda_{pos} \approx 0.8$), si assicura che il sistema d'assetto converga al riferimento desiderato con una rapidità di ordini di grandezza superiore rispetto alla dinamica di traslazione. Questo disaccoppiamento temporale è essenziale per l'integrità del controllo gerarchico, in quanto permette di assumere, dal punto di vista dell'Outer Loop, che i riferimenti d'assetto siano inseguiti istantaneamente, minimizzando le interferenze tra i due cicli di controllo.
-
-\subsubsection{Roll ($\phi$)}
-Il controllo di roll agisce sul momento $M_x$ per inseguire il riferimento $\phi_{des}$ calcolato dall'outer loop:
-\begin{align}
-    s_\phi &= (-p) + \lambda_{att}(\phi_{des} - \phi) \\
-    M_{x,req} &= \lambda_{att} (-p) + K_{att} \tanh\left( \frac{s_\phi}{\Phi_{att}} \right)
-\end{align}
-
-\subsubsection{Pitch ($\theta$)}
-Il controllo di pitch agisce sul momento $M_y$ per la gestione della dinamica longitudinale:
-\begin{align}
-    s_\theta &= (-q) + \lambda_{att}(\theta_{des} - \theta) \\
-    M_{y,req} &= \lambda_{att} (-q) + K_{att} \tanh\left( \frac{s_\theta}{\Phi_{att}} \right)
-\end{align}
-
-\subsubsection{Yaw ($\psi$)}
-Per l'imbardata, si utilizza una metrica di errore che gestisce la discontinuità $2\pi$ e guadagni riscalati per assecondare la dinamica dei servocomandi di \textit{tilt}:
-\begin{align}
-    e_\psi &= \text{atan2}(\sin(\psi_{des} - \psi), \cos(\psi_{des} - \psi)) \\
-    s_\psi &= (r_{des} - r) + (0.7 \lambda_{att}) e_\psi \\
-    M_{z,req} &= (0.7 \lambda_{att}) (r_{des} - r) + (0.8 K_{att}) \tanh\left( \frac{s_\psi}{\Phi_{att}} \right)
-\end{align}
-
+Il momento di imbardata risultante è:
+\begin{equation}
+    M_{z,req} = I_{zz} \left[ \ddot{\psi}_{des} + \lambda_\psi \dot{e}_\psi + K_\psi \tanh\left( \frac{\sigma_\psi}{\Phi_{att}} \right) \right] - (I_{xx} - I_{yy})pq
+\end{equation}
+I guadagni $\lambda_\psi$ e $K_\psi$ sono riscalati rispetto agli altri assi per assecondare la dinamica del servocomando di \textit{tilt} posteriore, tipicamente più lenta rispetto alla risposta in coppia dei motori.
 \clearpage
 
 % ==============================================================
 %   MIXER
 % ==============================================================
 \section{Motor Mixing Algorithm}
-Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_{req}, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servi.
+Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_z, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servmotori ($\theta_1, \theta_2, \theta_3, \theta_4$).
 \\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
 \\In condizioni di \textit{hovering}, assumiamo la seguente configurazione nominale:
 \begin{itemize}
-    \item I rotori anteriori sono fissi in posizione verticale ($\theta_{1} = \theta_{2} = \pi/2$) e, essendo controrotanti, compensano reciprocamente le coppie di reazione.
+    \item I rotori anteriori sono posti in posizione verticale ($\theta_{1} = \theta_{2} = \pi/2$) e, essendo controrotanti, compensano reciprocamente le coppie di reazione.
     \item Il rotore posteriore è orientato lateralmente ($\theta_{4} = -\pi/2$), ma il suo angolo di tilt $\theta_{3}$ possiede un valore di equilibrio non nullo ($\theta_{3,eq}$).
 \end{itemize}
 Tale inclinazione $\theta_{3,eq}$ è necessaria per generare una componente laterale di spinta capace di contrastare il momento torcente di reazione (yaw torque) del motore stesso, che altrimenti indurrebbe una rotazione indesiderata attorno all'asse $z$ (imbardata), non essendo presente un secondo rotore posteriore per il bilanciamento.
 
-\subsection{Angolo di Equilibrio $\theta_{3}$}
-L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorno all'asse $z$.
-\begin{gather*}
-    M_{th,z} = d_{my} k \omega_{2}^2 \cos(\theta_{2}) - d_{my} k \omega_{1}^2 \cos(\theta_{1}) \\ 
-    - d_{ty} k \omega_{3}^2 \cos(\theta_{3}) \cos(\theta_{4}) + d_{tx} k \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) \\[1ex]
-    M_{tor,z} = -(b \omega_{1}^2 + I_{rot_{12_{z}}} \dot{\omega}_{1}) \sin(\theta_{1}) + (b \omega_{2}^2 + I_{rot_{12_{z}}} \dot{\omega}_{2}) \sin(\theta_{2}) \\
-    - (b \omega_{3}^2 + I_{rot_{3_{z}}} \dot{\omega}_{3}) \sin(\theta_{3}) \\[1ex]
-    M_{th,z} + M_{tor,z} = 0 \\[1ex]
-    - d_{tx} k \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) - b \omega_{3}^2 \sin(\theta_{3}) = 0 \\[1ex]
-\end{gather*}
+\subsection{Angolo di Equilibrio \texorpdfstring{$\theta_{3}$}{theta 3}}
+L'angolo di equilibrio è calcolato a partire dalle equazioni dei momenti intorno all'asse $z$, dove $c_i = \cos(\theta_i)$ e $s_i = \sin(\theta_i)$.
+\begin{equation}
+    \begin{cases}
+        M_{TH,z} = d_{my} k \omega_{2}^2 c_2 - d_{my} k \omega_{1}^2 c_1 - d_{ty} k \omega_{3}^2 c_3 c_4 + d_{tx} k \omega_{3}^2 c_3 s_4 \\
+        M_{TOR,z} = -(b \omega_{1}^2 + I_{rot_{12_{z}}} \dot{\omega}_{1}) s_1 + (b \omega_{2}^2 + I_{rot_{12_{z}}} \dot{\omega}_{2}) s_2 - (b \omega_{3}^2 + I_{rot_{3_{z}}} \dot{\omega}_{3}) s_3
+    \end{cases}
+    \label{eq:equilibrio_momenti_theta_3}
+\end{equation}
+Imponendo la condizione di equilibrio:
+\begin{equation}
+    M_{TH,z} + M_{TOR,z} = 0
+\end{equation}
+E sostituendo le espressioni in \ref{eq:equilibrio_momenti_theta_3} si ottiene:
+\begin{equation}
+    - d_{tx} k \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) - b \omega_{3}^2 \sin(\theta_{3}) = 0
+\end{equation}
+Dalla quale si ricava l'espressione analitica dell'angolo $\theta_3$ che annulla il momento indesiderato di imbardata:
 \begin{equation}
     \theta_{3} = \arctan\left(-\frac{k d_{tx}}{b}\right)
 \end{equation}
 
+\subsection{Thrust}
+La spinta propulsiva necessaria per portare il drone in quota e mantenerlo in hovering è calcolata attraverso 
+il controllo $z$ dell'Outer Loop. Si ipotizza, inizialmente, di ripartire equamente tale spinta fra i tre rotori:
+\begin{equation}
+    \begin{matrix}
+        T = F_{z,req}\\
+        \implies 
+        \begin{cases}
+            T_{front} = \frac{2}{3}F_{z,req}\\
+            T_{tail} = \frac{F_{z,req}}{3}
+        \end{cases}        
+    \end{matrix}    
+\end{equation}
+Successivamente, si calcola la ripartizione di Thrust opportuna per raggiungere gli obiettivi desiderati. 
+
+\subsection{Imbardata}
+Il controllo dell'imbardata è gestito tramite il tilt differenziale dei rotori anteriori.\\ 
+La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
+\begin{equation}
+    M_z \approx T_{front} d_{my} \sin(\delta)
+\end{equation}
+Invertendo questa relazione, si calcola l'angolo di tilt necessario:
+\begin{equation}
+    \delta_{des} = \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right)
+\end{equation}
+È prevista una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale.
+
 \subsection{Quota e Beccheggio}
-Il controllo dell'equilibrio longitudinale richiede la risoluzione di un sistema accoppiato, poiché i rotori non sono posizionati sul baricentro del velivolo. Di conseguenza, ogni variazione di spinta per il controllo di quota ($F_{z,req}$) induce un momento di beccheggio, e viceversa.\\
-Il mixing deve quindi determinare la ripartizione ottima della spinta tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema lineare di due equazioni in due incognite:
+Il controllo dell'assetto longitudinale richiede la risoluzione di un sistema cinematicamente accoppiato. Poiché i centri di spinta dei rotori non coincidono con il baricentro del velivolo, ogni variazione della spinta totale per il controllo di quota ($F_{z,req}$) genera un momento di beccheggio, e viceversa.
+
+Il modulo di \textit{mixing} deve quindi determinare la ripartizione ottima delle forze tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema algebrico di due equazioni in due incognite derivato dalle condizioni di equilibrio del corpo rigido:
 \begin{enumerate}
-    \item \textbf{Equilibrio alla traslazione verticale:} La somma delle componenti verticali delle spinte deve eguagliare la richiesta del controllore di quota ($F_{z,req}$).
-    \item \textbf{Equilibrio alla rotazione (Beccheggio):} La somma dei momenti generati dalle spinte rispetto all'asse $y$ deve essere nulla (in hovering) o pari al momento di controllo richiesto.
+    \item \textbf{Equilibrio alla traslazione verticale:} La risultante delle proiezioni verticali delle spinte deve eguagliare la forza di sostentamento richiesta dal controllore di quota ($F_{z,req}$).
+    \item \textbf{Equilibrio alla rotazione (Beccheggio):} La somma dei momenti generati dalle spinte e dalle componenti dei momenti torcenti deve eguagliare il momento di controllo ($M_{y,req}$) calcolato dall'Inner Loop.
 \end{enumerate}
+In questa fase, si trascurano i contributi dei momenti torcenti dei rotori anteriori sull'asse $y$. Tale assunzione è giustificata dalla loro disposizione verticale ($\theta_{1,2} = 90^\circ$) e dalla loro natura controrotante, che annulla la proiezione del vettore coppia sull'asse del beccheggio anche in caso di inclinazione dovuta allo \textit{yaw}. 
+
 Considerando i bracci di leva rispetto al baricentro ($d_{mx}$ per i motori anteriori e $d_{tx}$ per il posteriore) e l'angolo di tilt del motore di coda ($\theta_3$), il sistema si formalizza come:
 \begin{equation}
     \begin{cases}
     T_{front} + k \omega_{3} \sin(\theta_{3}) = F_{z,req} \\
-    T_{front} d_{mx} + k \omega_{3} \sin(\theta_{3}) d_{tx} + M_{tor,3} = M_y
+    T_{front} d_{mx} + k \omega_{3} \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_y
     \end{cases}
 \end{equation}
 dove $\theta_3$ rappresenta l'angolo strutturale del braccio posteriore, $T_{front} = 2T{i}$ ($i = {1,2}$) è la componente di spinta media dei rotori anteriori ($T_1 \approx T_2$).
@@ -357,17 +430,6 @@ Definendo la spinta media anteriore come $T_i = T_{front} / 2$, le spinte dei si
 \end{equation}
 Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 
-\subsection{Controllo di Imbardata}
-Il controllo dell'imbardata è gestito tramite il tilt differenziale dei rotori anteriori.\\ 
-La relazione che lega il momento torcente $M_z$ all'angolo di inclinazione $\delta$ è approssimabile come:
-\begin{equation}
-    M_z \approx T_{front} d_{my} \sin(\delta)
-\end{equation}
-Invertendo questa relazione, si calcola l'angolo di tilt necessario:
-\begin{equation}
-    \delta_{des} = \arcsin\left( \frac{M_z}{2 T_i d_{my}} \right)
-\end{equation}
-È prevista una saturazione di sicurezza ($\delta_{max}$) per evitare configurazioni singolari o perdite eccessive di spinta verticale.
 \clearpage
 
 \section{Sotto-attuazione in Assetto di Hovering}
