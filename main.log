@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  23 FEB 2026 17:21
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  23 FEB 2026 19:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1018,36 +1018,34 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 ] [37] [38
 
-] [39] [40] [41] [42
-
-]
-<./img/../img/controllo_verticale/pos_vel.png, id=817, 1245.9047pt x 683.55376pt>
+] [39] [40] [41] [42]
+<./img/../img/controllo_verticale/pos_vel.png, id=826, 1245.9047pt x 683.55376pt>
 File: ./img/../img/controllo_verticale/pos_vel.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/pos_vel.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 453.
+Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 474.
 (pdftex.def)             Requested size: 426.79135pt x 234.15747pt.
-<./img/../img/controllo_verticale/angoli.png, id=818, 1236.87094pt x 680.5425pt>
+<./img/../img/controllo_verticale/angoli.png, id=827, 1236.87094pt x 680.5425pt>
 File: ./img/../img/controllo_verticale/angoli.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/angoli.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 459.
+Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 480.
 (pdftex.def)             Requested size: 426.79135pt x 234.82895pt.
-<./img/../img/controllo_verticale/thrust.png, id=819, 1228.59pt x 668.4975pt>
+<./img/../img/controllo_verticale/thrust.png, id=828, 1228.59pt x 668.4975pt>
 File: ./img/../img/controllo_verticale/thrust.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/thrust.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 465.
+Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 486.
 (pdftex.def)             Requested size: 426.79135pt x 232.22314pt.
  [43
 
  <./img/../img/controllo_verticale/pos_vel.png> <./img/../img/controllo_verticale/angoli.png>]
-<./img/../img/controllo_verticale/tilt_1_2.png, id=826, 1263.97218pt x 684.30656pt>
+<./img/../img/controllo_verticale/tilt_1_2.png, id=835, 1263.97218pt x 684.30656pt>
 File: ./img/../img/controllo_verticale/tilt_1_2.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/tilt_1_2.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 471.
+Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 492.
 (pdftex.def)             Requested size: 426.79135pt x 231.05313pt.
-<./img/../img/controllo_verticale/tilt_3.png, id=827, 1252.68pt x 682.80093pt>
+<./img/../img/controllo_verticale/tilt_3.png, id=836, 1252.68pt x 682.80093pt>
 File: ./img/../img/controllo_verticale/tilt_3.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/tilt_3.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_3.png  used on input line 477.
+Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_3.png  used on input line 498.
 (pdftex.def)             Requested size: 426.79135pt x 232.6285pt.
 ) [44 <./img/../img/controllo_verticale/thrust.png> <./img/../img/controllo_verticale/tilt_1_2.png>] [45 <./img/../img/controllo_verticale/tilt_3.png>]
 Capitolo 6.
@@ -1094,20 +1092,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 5701B7373FFE19A74207A4FE425BFBB2;18648.
+(rerunfilecheck)             Checksum: 6AA9FAF9ED967C44BD9FB9E5030A0F1E;18450.
  ) 
 Here is how much of TeX's memory you used:
- 29666 strings out of 467871
- 550001 string characters out of 5418375
+ 29681 strings out of 467871
+ 550226 string characters out of 5418375
  984661 words of memory out of 5000000
- 57208 multiletter control sequences out of 15000+600000
- 783417 words of font info for 370 fonts, out of 8000000 for 9000
+ 57210 multiletter control sequences out of 15000+600000
+ 783599 words of font info for 372 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,15n,104p,1230b,1065s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (70 pages, 2039646 bytes).
+Output written on main.pdf (70 pages, 2042511 bytes).
 PDF statistics:
- 1157 PDF objects out of 1200 (max. 8388607)
- 323 named destinations out of 1000 (max. 500000)
+ 1169 PDF objects out of 1200 (max. 8388607)
+ 332 named destinations out of 1000 (max. 500000)
  82689 words of extra memory for PDF output out of 89155 (max. 10000000)
 

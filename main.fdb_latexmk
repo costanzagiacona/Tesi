@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1771863698.30945 "main.aux" "main.bbl" "main" 1771863703.49392 0
+["bibtex main"] 1771872595.74194 "main.aux" "main.bbl" "main" 1771872600.88045 0
   "./bibliografia.bib" 1771750654 2410 5180033513ffec778060e31485f88cb7 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1771863702 19138 5361bf2dbaa46c4326ff8f9df7ca22df "pdflatex"
+  "main.aux" 1771872599 19110 b58654c3e2a612bc5f7b2e617b364ba2 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771863698.67568 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1771863703.49473 0
+["pdflatex"] 1771872596.07765 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1771872600.88122 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1771685046 82686 2381c3433487640bf26aa76a10db7eb2 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -253,7 +253,7 @@
   "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1771762125 4179 dcb7610ca4df530dda3fefffb507630d ""
   "capitoli/analisi_stabilita.tex" 1770115757 7908 6b8881241c9542547023666baf914804 ""
   "capitoli/controllo_orizzontale.tex" 1770115757 22619 83ea86e44c56e911f5c472c236011902 ""
-  "capitoli/controllo_verticale.tex" 1771863692 32318 2401d00a1cc47f01b2a9083180b9984d ""
+  "capitoli/controllo_verticale.tex" 1771872585 32804 a3650ba0e3e742d4d91370370ec72700 ""
   "capitoli/dimostrazione_SMC.tex" 1771761754 9520 9e8160efdf20481c19d1a2361dc4ef62 ""
   "capitoli/introduzione.tex" 1771762173 6225 35fab8c989366f1750e4a7bb9e52c7f2 ""
   "capitoli/modello_completo.tex" 1771687719 13978 313600abb6110cb71bae6e9beed0082d ""
@@ -271,12 +271,12 @@
   "img/rotori_1_2.png" 1769342024 58613 5d6d1272abb6f91bd8f59c66588c1a71 ""
   "img/sist_rif.png" 1769934129 359174 77faf94a79a1c7a6cf15f0e07f33c52c ""
   "img/tricopter_2D.png" 1769597444 108737 d2b6b6a008aaa1821da6517e89ab949e ""
-  "main.aux" 1771863702 19138 5361bf2dbaa46c4326ff8f9df7ca22df "pdflatex"
-  "main.bbl" 1771863698 1645 4be47ca796c8e42fdba6bb7fc93e544e "bibtex main"
-  "main.lof" 1771863702 1772 fe779f7b4d06dbc53aec612064c998ba "pdflatex"
-  "main.out" 1771863702 18648 5701b7373ffe19a74207a4fe425bfbb2 "pdflatex"
+  "main.aux" 1771872599 19110 b58654c3e2a612bc5f7b2e617b364ba2 "pdflatex"
+  "main.bbl" 1771872596 1645 4be47ca796c8e42fdba6bb7fc93e544e "bibtex main"
+  "main.lof" 1771872599 1772 fe779f7b4d06dbc53aec612064c998ba "pdflatex"
+  "main.out" 1771872599 18450 6aa9faf9ed967c44bd9fb9e5030a0f1e "pdflatex"
   "main.tex" 1771762125 4179 dcb7610ca4df530dda3fefffb507630d ""
-  "main.toc" 1771863702 9298 25b5878b21b3ac4efd84cc5d05cb5e5b "pdflatex"
+  "main.toc" 1771872599 9270 f830ced09aab4409299e562d4a359ca2 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"
