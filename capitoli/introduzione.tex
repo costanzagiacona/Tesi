@@ -1,25 +1,25 @@
-Negli ultimi anni, è sorto un crescente interesse verso i veicoli aerei a guida autonoma (\textit{Unmanned Aerial Vehicles}, UAV) grazie all'ampio ventaglio di applicazioni sia in ambito civile che militare. 
-Trovano infatti applicazione in operazioni di ricerca e soccorso, sorveglianza, ma anche in settori come l'agricoltura e il monitoraggio ambientale.\\
-Il principale vantaggio consiste nella loro capacità di muoversi in ambienti complessi e dinamici in maniera autonoma, anche in situazioni che per l'uomo potrebbero essere ostiche o pericolose.\\
-Gli UAV sono generalmente classificati in due categorie:
-\begin{itemize}
-    \item \textbf{Multirotori}: sono caratterizzati da alta stabilità in hovering e capacità di decollare e atterrare verticalmente, ma non sono in grado di percorrere lunghe distanze;
-    \item \textbf{Aeromobili ad ala fissa}: presentano alta efficienza aerodinamica e sono in grado di effettuare lunghe percorrenze, ma hanno necessità di infrastrutture dedicate per il decollo e l'atterraggio.
-\end{itemize}
+Negli ultimi anni, i veicoli aerei a guida autonoma (UAV) hanno rivoluzionato settori che spaziano dalla sorveglianza militare al monitoraggio ambientale. 
+La letteratura tecnica suddivide tipicamente tali velivoli in due macro-categorie: i multirotori, eccellenti nel volo stazionario (hovering) ma limitati nell'autonomia, 
+e gli aeromobili ad ala fissa, efficienti sulle lunghe distanze ma vincolati alla presenza di piste di decollo.
 Le limitazioni di entrambe le configurazioni vengono superate dai VTOL (Vertical Take-Off and Landing), ovvero UAV a configurazione ibrida, i quali presentano superfici aerodinamiche e rotori inclinabili;
 in questo modo offrono la versatilità necessaria per operare in ambienti confinati senza rinunciare a lunghe autonomie di volo.
+Tuttavia, tale ibridazione introduce sfide progettuali non banali: la dinamica risulta fortemente non lineare e tempo-variante, specialmente durante la fase di transizione in 
+cui i regimi aerodinamici dei rotori e delle superfici alari si sovrappongono in modo complesso.
 
-\section{Il Problema Ingegneristico}
-La progettazione di sistemi di controllo per UAV VTOL ibridi presenta sfide non banali, derivanti principalmente dalla natura fortemente non lineare e tempo-variante della loro dinamica.\\
-Durante la transizione tra il volo verticale (hovering) e quello orizzontale (crociera), il velivolo attraversa regimi aerodinamici complessi in cui le forze di portanza, resistenza e i momenti giroscopici risultano strettamente accoppiati.\\
-Il velivolo oggetto di questo studio è un VTOL innovativo, caratterizzato dalla presenza di ali e tre rotori inclinabili: due anteriori e uno posteriore.
-Ciò che rende particolarmente sfidante il controllo dell'inviluppo di volo di questo drone è l'instabilità intrinseca che deriva dall'ultilizzo di tre soli rotori e l'assenza di superfici aerodinamiche a geometria varibile, le quali sono generalmente usate 
-per il controllo di assetto in fase di crociera.
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{dragonfly.png}
     \caption{Dragonfly}
-\end{figure}  
+\end{figure} 
+
+\section{Il velivolo oggetto di studio: Dragonfly}
+Il presente lavoro si focalizza sul sistema "Dragonfly", 
+un VTOL innovativo caratterizzato da una configurazione a tre rotori inclinabili. 
+A differenza di soluzioni presenti in letteratura, come il modello a ali indipendenti proposto in \cite{nam2020} 
+che affida il controllo a superfici mobili, il Dragonfly affronta il volo di crociera in assenza di superfici aerodinamiche 
+a geometria variabile. Questa peculiarità sposta l'intera autorità di controllo sulla modulazione 
+vettoriale della spinta e sul tilting dei rotori, rendendo il sistema intrinsecamente instabile e richiedendo una sintesi di controllo 
+particolarmente robusta. 
 
 \section{Obiettivo della Tesi}
 Il presente lavoro si propone di modificare il modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'intero inviluppo di volo.
@@ -30,31 +30,8 @@ Il presente lavoro si propone di modificare il modello matematico completo a sei
     \item Un algoritmo di \textit{Motor Mixing} sequenziale che traduce i comandi virtuali in riferimenti fisici per i rotori e i servomotori, rispettando i vincoli di equilibrio meccanico del sistema.
 \end{enumerate}
 
-\section{Architettura di Controllo}
-L'architettura non convenzionale del velivolo, caratterizzata da una configurazione a tricottero con rotori anteriori avanzati e un rotore di coda a due gradi di libertà, richiede una gestione dinamica della stabilità differenziata per le diverse condizioni operative.
-
-\subsection{Fase 1: Volo Verticale (Hovering)}
-In questa configurazione, la portanza è generata interamente dai tre rotori. La sfida principale risiede nel \textbf{bilanciamento del momento di imbardata}. Poiché i rotori anteriori sono controrotanti, la coppia di reazione residua prodotta dal motore posteriore deve essere compensata attivamente per evitare rotazioni indesiderate attorno all'asse $Z_b$.
-\begin{itemize}
-    \item \textbf{Strategia:} Si utilizza il grado di libertà di tilting laterale del rotore di coda ($\theta_3$) per generare una componente di spinta trasversale. Tale forza crea un momento di imbardata uguale e opposto alla coppia resistente del motore, garantendo l'equilibrio statico dell'assetto.
-\end{itemize}
-
-\subsection{Fase 2: Transizione}
-Rappresenta la fase a maggiore criticità dinamica, in cui i rotori anteriori ruotano progressivamente verso la configurazione orizzontale per generare spinta propulsiva.
-\begin{itemize}
-    \item \textbf{Sfide:} Il sistema è soggetto a forti non linearità dovute all'interferenza aerodinamica dei flussi dei rotori sulle superfici alari e alla variazione del braccio di leva longitudinale del vettore spinta rispetto al baricentro.
-    \item \textbf{Strategia:} Il drone raggiunge una quota maggiore di quella desiderata, in modo da compensare eventuali perdite durante il \textit{tilting} dei rotori. I rotori anteriori vengono inclinati in avanti e il rotore di coda viene progressivamente spento, fino allo spegnimento definitivo quando il velivolo ha raggiunto la velocità di crociera con cui si genera portanza sufficiente a sostenere il peso del drone.
-\end{itemize}
-
-\subsection{Fase 3: Volo Orizzontale (Crociera)}
-Al raggiungimento della velocità di sostentamento ($v > v_{stall}$), l'ala assume il ruolo di superficie portante principale. 
-\begin{itemize}
-    \item \textbf{Strategia:} Il rotore posteriore viene disattivato ($\omega_3 = 0$). L'autorità di controllo è riallocata esclusivamente sui due rotori anteriori:
-    \begin{itemize}
-        \item \textbf{Rollio:} Gestito tramite tilting differenziale ($\theta_1 \neq \theta_2$).
-        \item \textbf{Imbardata:} Gestita tramite modulazione differenziale della spinta ($\Delta \omega_{1,2}$).
-        \item \textbf{Beccheggio:} Affidato alla stabilità intrinseca del profilo aerodinamico e a correzioni della spinta propulsiva.
-    \end{itemize}
-\end{itemize}
-
-Di seguito si trattano dettagliatamente i controllori delle fasi di volo verticale e orizzontale; si lascia lo sviluppo del controllo di trasizione ad eventuali progetti futuri.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{prototipo.png}
+    \caption{Prototipo Dragonfly}
+\end{figure} 

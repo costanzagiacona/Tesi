@@ -165,7 +165,9 @@ All'interno di questo strato, l'azione di controllo è approssimativamente linea
 % =========================================================
 %   OUTER LOOP
 % =========================================================
-\section{Controllo di Posizione $z$}
+\section{Controllo di Posizione}
+
+\subsection{Controllo di Quota $z$}
 Il controllo della quota $z$ è progettato secondo la tecnica \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi.
 
 Si definiscono l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{sliding surface} come:
@@ -191,6 +193,7 @@ Passando al body frame, la legge di controllo risultante per la spinta richiesta
 \end{equation}
 dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 
+\clearpage
 
 \section{Controllo Planare e Mapping di Assetto}
 
@@ -387,15 +390,15 @@ Il controllo dell'assetto longitudinale richiede la risoluzione di un sistema ci
 
 Il modulo di \textit{mixing} deve quindi determinare la ripartizione ottima delle forze tra il gruppo propulsivo anteriore ($T_{front}$) e il rotore posteriore ($T_{tail}$), risolvendo un sistema algebrico di due equazioni in due incognite derivato dalle condizioni di equilibrio del corpo rigido:
 \begin{enumerate}
-    \item \textbf{Equilibrio alla traslazione verticale:} La risultante delle proiezioni verticali delle spinte deve eguagliare la forza di sostentamento richiesta dal controllore di quota ($F_{z,req}$).
-    \item \textbf{Equilibrio alla rotazione (Beccheggio):} La somma dei momenti generati dalle spinte e dalle componenti dei momenti torcenti deve eguagliare il momento di controllo ($M_{y,req}$) calcolato dall'Inner Loop.
+    \item \textbf{Equilibrio alla traslazione verticale:} La risultante delle proiezioni verticali delle spinte deve eguagliare la forza di sostentamento richiesta dal controllore di quota ($F_{z,req}$, adesso chiamato solo $F_z$).
+    \item \textbf{Equilibrio alla rotazione (Beccheggio):} La somma dei momenti generati dalle spinte e dalle componenti dei momenti torcenti deve eguagliare il momento di controllo ($M_{y,req}$, adesso chiamato solo $M_y$) calcolato dall'Inner Loop.
 \end{enumerate}
 In questa fase, si trascurano i contributi dei momenti torcenti dei rotori anteriori sull'asse $y$. Tale assunzione è giustificata dalla loro disposizione verticale ($\theta_{1,2} = 90^\circ$) e dalla loro natura controrotante, che annulla la proiezione del vettore coppia sull'asse del beccheggio anche in caso di inclinazione dovuta allo \textit{yaw}. 
 
 Considerando i bracci di leva rispetto al baricentro ($d_{mx}$ per i motori anteriori e $d_{tx}$ per il posteriore) e l'angolo di tilt del motore di coda ($\theta_3$), il sistema si formalizza come:
 \begin{equation}
     \begin{cases}
-    (T_1 + T_2) \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z,req} \\
+    (T_1 + T_2) \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z} \\
     (T_1 + T_2) \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_y
     \end{cases}
 \end{equation}
@@ -404,17 +407,17 @@ dove $\theta_3$ rappresenta l'angolo strutturale del braccio posteriore, $T_1 + 
 Esprimendo il Thrust come $T_i = k \omega_i^2$ e sostituendo l'espressione del momento torcente, si può scrivere il sistema come:
 \begin{equation}
     \begin{cases}
-    (k \omega_{1}^2 + k \omega_{2}^2) \cos(\delta) + k \omega_{3}^2 \sin(\theta_3) = F_{z,req} \\
+    (k \omega_{1}^2 + k \omega_{2}^2) \cos(\delta) + k \omega_{3}^2 \sin(\theta_3) = F_{z} \\
     (k \omega_{1}^2 + k \omega_{2}^2) \cos(\delta) d_{mx} + k \omega_{3}^2 \sin(\theta_3) d_{tx} + b \omega_{3}^2 \cos(\theta_{3}) \sin(\theta_{4}) = M_{y}
     \end{cases}
 \end{equation}
 Risolvendo per $\omega_{3}^2$, si ricava la velocità angolare del rotore 3:
 \begin{equation}
-    \omega_3^2 = \frac{M_y - F_{z,req} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)}
+    \omega_3^2 = \frac{M_y - F_{z} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)}
 \end{equation}
 Una volta determinato $T_3 = k \omega_3^2$, è possibile calcolare la spinta che deve essere fornita complessivamente dalla coppia di motori anteriori ($T_{front}$) per garantire il sostentamento del drone:
 \begin{equation}
-    T_{front} = \frac{F_{z,req} - T_3 \sin(\theta_3)}{\cos(\delta)}
+    T_{front} = \frac{F_{z} - T_3 \sin(\theta_3)}{\cos(\delta)}
 \end{equation}
 
 L'imposizione del vincolo $M_y = 0$ all'interno delle equazioni di equilibrio è finalizzata alla determinazione delle condizioni 
@@ -468,6 +471,34 @@ I comandi dati agli attuatori sono quindi i seguenti:
 
 \clearpage
 
+\section{Simulazioni}
+Di seguito sono riportate le simulazioni relative a posizioni e velocità lineari e angolari del tricottero e le simulazioni del thrust e degli angoli di inclinazione dei rotori.
+\\Tali simulazioni sono state fatte in condizioni nominali, con condizioni iniziali nulle per gli angoli di assetto; si lascia al capitolo \ref{ch:montecarlo} il compito di validare il 
+sistema di controllo in condizioni perturbate.
+
+L'obiettivo del controllo è raggiungere la quota $z_{des} = -10$ e mantenere nulle le posizioni su $x$ e $y$ e le velocità.
+
+Per il l'\textit{Outer Loop} sono stati scelti i seguenti parametri:
+\begin{itemize}
+    \item $\lambda_z = 2$ ;   $K_z = 10 $ ;     $\Phi_z = 0.8$
+    \item $\lambda_y = 0.8$ ; $K_y = 1.5$ ;     $\Phi_y = 4$
+    \item $\lambda_x = 0.8$ ; $K_x = 1.5$ ;     $\Phi_x = 4$
+\end{itemize}
+
+Parametri per l'\textit{Inner Loop}:
+\begin{itemize}
+    \item $\lambda_{att} = 12$ ;   $K_{att} = 10 $ ; $\Phi_{att} = 3$ per $\phi$ e $\theta$
+    \item $\lambda_{att,\psi} = 8.4$ ;   $K_{att,\psi} = 8 $ ; $\Phi_{att,\psi} = 3$
+\end{itemize}
+
+La scelta dei parametri segue il principio della separazione spettrale tra i loop esterno e interno; quest'ultimo, infatti, deve essere
+più veloce di diversi ordini di grandezza rispetto a quello esterno.
+La dinamica dell'errore di assetto deve estinguersi molto più velocemente della dinamica dell'errore di posizione. Se le due velocità fossero simili, 
+i due loop entrerebbero in risonanza, portando a oscillazioni divergenti.
+
+Il parametro $\lambda_z$ è più grande rispetto a quelli per i controllori su $x$ e $y$, poiché il controllo 
+di quota ha bisogno di maggiore autorità in quanto risulta critico per la sicurezza del drone, che altrimenti rischierebbe di schiantarsi al suolo.
+\\In ogni caso, viene rispettato il principio di separazione spettrale ma con un margine inferiore.
 
 \begin{figure}[H] % 'H' maiuscola forza la posizione
     \centering
@@ -481,6 +512,9 @@ I comandi dati agli attuatori sono quindi i seguenti:
     \caption{Andamento angoli di Eulero e velocità angolari.}
 \end{figure}
 
+Come si può notare, gli angoli di beccheggio e imbardata rimangono nulli, mentre quello di rollio si stabilizza su un valore diverso da zero ma inferiore a
+$1^\circ$ ($\phi \approx 0.08^\circ$). Questo angolo è necessario per contrastare un fenomeno di deriva lungo $y$ che altrimenti interesserebbe il velivolo.
+
 \begin{figure}[H] % 'H' maiuscola forza la posizione
     \centering
     \includegraphics[width=1\textwidth]{../img/controllo_verticale/thrust.png}
@@ -491,10 +525,4 @@ I comandi dati agli attuatori sono quindi i seguenti:
     \centering
     \includegraphics[width=1\textwidth]{../img/controllo_verticale/tilt_1_2.png}
     \caption{Andamento degli angoli $\theta_1$ e $\theta_2$.}
-\end{figure}
-
-\begin{figure}[H] % 'H' maiuscola forza la posizione
-    \centering
-    \includegraphics[width=1\textwidth]{../img/controllo_verticale/tilt_3.png}
-    \caption{Andamento degli angoli $\theta_3$ e $\theta_4$.}
 \end{figure}

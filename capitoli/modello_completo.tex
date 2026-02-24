@@ -22,8 +22,39 @@ Gli angoli di Eulero sono definiti come:
     \item Yaw $\psi$: angolo di rotazione intorno all'asse $Z_g$
 \end{itemize}
 
+Indichiamo con $\mathbf{V}_b$ le velocità lineari nel body frame $(v_x,v_y,v_z)$ e con $\boldsymbol{\Omega}_b$ le velocità angolari nel body frame $(p,q,r)$ dove:
+\begin{itemize}
+    \item $p =$ roll rate: velocità di rotazione attorno all'asse $x$ del body frame
+    \item $q =$ pitch rate: velocità di rotazione attorno all'asse $y$ del body frame
+    \item $r =$ yaw rate: velocità di rotazione attorno all'asse $z$ del body frame
+\end{itemize}
+
 \subsection{Matrici di Trasformazione}
 La trasformazione delle grandezze vettoriali dal sistema solidale al corpo a quello inerziale avviene tramite la matrice di rotazione ortogonale $\mathbf{R}_{b \to g}$ (secondo la convenzione standard Z-Y-X).\\
+\[
+			R_x(\phi) =
+			\begin{bmatrix}
+				1 & 0 & 0 \\
+				0 & \cos\phi & -\sin\phi \\
+				0 & \sin\phi & \cos\phi
+			\end{bmatrix}, \quad
+			R_y(\theta) =
+			\begin{bmatrix}
+				\cos\theta & 0 & \sin\theta \\
+				0 & 1 & 0 \\
+				-\sin\theta & 0 & \cos\theta
+			\end{bmatrix}\]
+		
+		\begin{equation}\quad
+			R_z(\psi) =
+			\begin{bmatrix}
+				\cos\psi & -\sin\psi & 0 \\
+				\sin\psi & \cos\psi & 0 \\
+				0 & 0 & 1
+			\end{bmatrix}
+			\tag{3.3}
+		\end{equation}
+
 In forma esplicita, utilizzando la notazione $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot}=\sin(\cdot)$:
 \begin{equation}
     \mathbf{R}_{b \to g} = 
@@ -68,8 +99,8 @@ Il modello dinamico è derivato utilizzando la formulazione di Newton-Eulero per
 
 \begin{equation}
     \begin{cases}
-        m \bm{\dot{V}}_b + \bm{\Omega}_b \times (m \bm{V}_b) = \bm{F}_{\text{tot}} \\
-        \mathbf{I}_b \bm{\dot{\Omega}}_b + \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b) = \bm{M}_{\text{tot}}
+        m \bm{\dot{V}}_b + \bm{\Omega}_b \times (m \bm{V}_b) = \bm{F}_{\text{TOT}} \\
+        \mathbf{I}_b \bm{\dot{\Omega}}_b + \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b) = \bm{M}_{\text{TOT}}
     \end{cases}
     \label{eq:newton_euler}
 \end{equation}
@@ -91,9 +122,9 @@ Dove:
 \clearpage
 
 \section{Analisi delle Forze}
-Le forze agenti sul tricottero sono la risultante della spinta dei motori ($\bm{F}_{\text{th}}$), della forza di gravità ($\bm{F}_g$) e delle forze aerodinamiche ($\bm{F}_{\text{aero}}$):
+Le forze agenti sul tricottero sono la risultante della spinta dei motori ($\bm{F}_{\text{TH}}$), della forza di gravità ($\bm{F}_g$) e delle forze aerodinamiche ($\bm{F}_{\text{AERO}}$):
 \begin{equation}
-    \bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}
+    \bm{F}_{\text{TOT}} = \bm{F}_{\text{TH}} + \bm{F}_g + \bm{F}_{\text{AERO}}
 \end{equation}
 
 \subsection{Configurazione Geometrica e Thrust}
@@ -117,29 +148,35 @@ Il rotore di coda possiede due gradi di libertà, potendo ruotare attorno a $Y_b
 Ogni rotore genera una spinta $f_i = k \omega_i^2$, dove $\omega_i$ è la velocità angolare del rotore $i$ e $k$ il coefficiente di spinta (\textit{thrust coefficient})[$N \cdot s^2/rad^2$]. Il vettore forza totale si ottiene sommando i contributi dei tre rotori ruotati dalle rispettive matrici di tilt.
 
 % CORREZIONE: Uso di minipage al posto di subfigure per evitare errori di pacchetti
-\begin{figure}[ht]
+\begin{figure}[htbp]
     \centering
-    % Prima immagine (sinistra)
-    \begin{minipage}{0.48\textwidth}
+    % Prima immagine (sinistra) - [b] allinea alla base
+    \begin{minipage}[b]{0.48\textwidth}
         \centering
+        \vfill % Spinge l'immagine verso il basso se è più bassa dell'altra
         \includegraphics[width=\linewidth]{rotori_1_2.png}
+        \vspace{0pt} % Punto di ancoraggio per l'allineamento
         \caption{Tilt rotori anteriori ($X_b, Z_b$)}
         \label{fig:rotori_ant}
     \end{minipage}
-    \hfill % Spazio flessibile in mezzo
-    % Seconda immagine (destra)
-    \begin{minipage}{0.48\textwidth}
+    \hfill 
+    % Seconda immagine (destra) - [b] allinea alla base
+    \begin{minipage}[b]{0.48\textwidth}
         \centering
+        \vfill
         \includegraphics[width=\linewidth]{rotore_3.png}
+        \vspace{0pt}
         \caption{Tilt rotore coda ($X_b, Y_b, Z_b$)}
         \label{fig:rotore_post}
     \end{minipage}
-    \label{fig:rotori_tilt}
+    % Nota: \label{fig:rotori_tilt} qui non funzionerà correttamente 
+    % se non c'è una \caption generale della figura.
 \end{figure}
 
-Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{th}}$ assume la forma:
+
+Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{TH}}$ assume la forma:
 \begin{equation}
-    \bm{F}_{\text{th}} = 
+    \bm{F}_{\text{TH}} = 
     \begin{bmatrix}
     k\omega_1^2 c_{\theta_1} + k\omega_2^2 c_{\theta_2} + k\omega_3^2 c_{\theta_3} c_{\theta_4} \\
     k\omega_3^2 c_{\theta_3} s_{\theta_4} \\
@@ -147,7 +184,7 @@ Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{
     \end{bmatrix}
 \end{equation}
 
-Inizialmente il design del drone prevedeva che i rotori anteriori fossero in linea con le ali; tuttavia questa cofnigurazione è stata superata 
+Inizialmente il design del drone prevedeva che i rotori anteriori fossero in linea con le ali; tuttavia questa configurazione è stata superata 
 per rispondere a dei requisiti meccanici fondamentiali:
 \begin{itemize}
     \item \textbf{Ottimizzazione del Baricentro (CG):} I motori e i meccanismi di \textit{tilting} rappresentano le masse concentrate maggiori. Avanzarli permette di posizionare il $CG$ del velivolo davanti al Punto Neutro dell'ala. Questa condizione è indispensabile per la stabilità statica longitudinale in volo di crociera, garantendo che il drone sia naturalmente autostabilizzante rispetto alle perturbazioni di beccheggio.
@@ -158,7 +195,7 @@ per rispondere a dei requisiti meccanici fondamentiali:
 \subsection{Gravità e Aerodinamica}
 La forza peso viene ruotata nel sistema solidale al corpo tramite la trasposta della matrice di rotazione:
 \begin{equation}
-    \bm{F}_g = \mathbf{R}_{b \to g}^T \begin{bmatrix} 0 \\ 0 \\ mg \end{bmatrix} = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}
+    \bm{F}_{GRAV} = \mathbf{R}_{b \to g}^T \begin{bmatrix} 0 \\ 0 \\ mg \end{bmatrix} = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}
 \end{equation}
 
 Per una modellazione aerodinamica più fedele al comportamento in fase di crociera, si definiscono l'angolo di attacco $\alpha$ e l'angolo di scivolamento laterale $\beta$ in funzione delle velocità nel body frame:
@@ -166,9 +203,9 @@ Per una modellazione aerodinamica più fedele al comportamento in fase di crocie
     \alpha = \arctan\left(\frac{w}{u}\right), \quad \beta = \arcsin\left(\frac{v}{V_{tas}}\right)
 \end{equation}
 
-Le forze aerodinamiche includono il contributo delle ali ($\bm{F}_{\text{wing}}$) e la resistenza parassita della fusoliera ($\bm{D}_{\text{body}}$):
+Le forze aerodinamiche includono il contributo delle ali ($\bm{F}_{\text{{wing}}}$) e la resistenza della fusoliera ($\bm{D}_{\text{body}}$):
 \begin{equation}
-    \bm{F}_{\text{aero}} = \bm{F}_{\text{wing}} + \bm{D}_{\text{body}}
+    \bm{F}_{\text{AERO}} = \bm{F}_{\text{{wing}}} + \bm{D}_{\text{body}}
 \end{equation}
 
 La resistenza del corpo è modellata lungo gli assi principali in funzione del segno della velocità ($\text{sgn}(v)$) per garantire coerenza fisica:
@@ -183,25 +220,96 @@ La resistenza del corpo è modellata lungo gli assi principali in funzione del s
 
 Per le superfici alari, si considerano Portanza ($L$) e Resistenza ($D$):
 \begin{equation}
-    \bm{F}_{\text{wing}} = 
+	 \mathbf{F}_{\text{wing}} =
+	 \begin{bmatrix}
+	 	F_{D_1} + F_{D_2} \\
+	 	0 \\
+	 	F_{L_1} + F_{L_2} + F_{D_{z1}} + F_{D_{z2}}
+	 \end{bmatrix}
+\end{equation}
+
+dove si è considerata nulla (per simmetria) la componente della forza esercitata lungo l'asse $Y_{b}$ e con: 
+\begin{itemize}
+    \item $F_{D_i}$ : forza di resistenza (drag) lungo l'asse $X_{b}$ generata dalla superficie alare $i$-esima
+    \item $F_{L_i}$ : forza di portanza (lift) generata dalla superficie alare $i$-esima
+    \item $F_{D_{zi}}$ : forza di resistenza (drag) lungo l'asse $Z_{b}$ generata dalla superficie alare $i$	-esima
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{forze_x.jpg}
+    \caption{Portanza e Resistenza lungo l'asse $X_b$}
+\end{figure}
+
+\begin{equation}
+    \bm{F}_{\text{{wing}}} = 
     \begin{bmatrix}
         -\frac{1}{2}\rho S C_D(u) u |u| \\
         0 \\
-        -\frac{1}{2}\rho S C_L(u) u^2
+        -\frac{1}{2}\rho S C_L(u) u^2 - -\frac{1}{2}\rho S C_{Dz} w^2
     \end{bmatrix}
 \end{equation}
+
+dove:
+\begin{itemize}
+    \item $u$ : velocità [$m/s$] lungo l'asse $X_{B}$
+    \item $w$ : velocità [$m/s$] lungo l'asse $Z_{B}$
+    \item $\rho$ : densità dell'aria [$kg/m^3$]
+    \item $S$ : superficie alare  [$m^2$]
+    \item $C_D$ : coefficiente di resistenza aerodinamica lungo l'asse $X_{b}$
+    \item $C_L$ : coefficiente di portanza 
+    \item $C_{D_{z}}$ : coefficiente di resistenza aerodinamica lungo l'asse $Z_{b}$
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{forze_z.jpg}
+    \caption{Resistenza lungo l'asse $Z_b$}
+\end{figure}
 \clearpage
 
 \section{Analisi dei Momenti}
+Dall'equazione della dinamica otteniamo che :
+	  
+\begin{equation}
+I_B \, \dot{\boldsymbol{\Omega}}_B +
+\underbrace{\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B)}_{\text{Momento giroscopico del corpo (tricottero)}}
+= \mathbf{M}_{\text{TOT}}
+\tag{3.27}
+\end{equation}
+
+\vspace{0.3cm}
+dove la matrice di inerzia del tricottero è pari a :
+
+\begin{equation*}
+\mathbf{I}_{\text{B}} =
+\begin{bmatrix}
+    I_{\text{xx}} & 0 & 0 \\
+    0 & I_{\text{yy}} & 0 \\
+    0 & 0 & I_{\text{zz}}
+\end{bmatrix}
+\end{equation*}
+
+\vspace{0.3cm}
+Di conseguenza otteniamo che :
+
+\begin{equation}
+I_B \, \dot{\boldsymbol{\Omega}}_B =
+\mathbf{M}_{\text{TOT}} -
+\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B)
+\tag{3.28}
+\end{equation}
+
+
 Il momento totale agente sul baricentro è la somma vettoriale delle seguenti componenti:
 \begin{equation}
-    \bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{fin}}
+    \bm{M}_{\text{TOT}} = \bm{M}_{\text{TH}} + \bm{M}_{\text{TOR}} + \bm{M}_{\text{AERO}} + \bm{M}_{\text{GIRO}} + \bm{M}_{\text{PINNA}}
 \end{equation}
 
 \subsection{Momento di Thrust e Torcente}
-Il contributo principale $\bm{M}_{\text{th}}$ deriva dal prodotto vettoriale tra i bracci $\bm{r}_i$ e le forze di spinta. Utilizzando le coordinate geometriche definite in precedenza:
+Il contributo principale $\bm{M}_{\text{TH}}$ deriva dal prodotto vettoriale tra i bracci $\bm{r}_i$ e le forze di spinta. Utilizzando le coordinate geometriche definite in precedenza:
 \begin{equation}
-    \bm{M}_{\text{th}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{\text{th},i}) =
+    \bm{M}_{\text{TH}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{\text{TH},i}) =
     \begin{bmatrix} 
     -d_{my} (k\omega_1^2 s_{\theta_1}) + d_{my} (k\omega_2^2 s_{\theta_2}) \\ 
     d_{mx} (k\omega_1^2 s_{\theta_1}) + d_{mx} (k\omega_2^2 s_{\theta_2}) + d_{tx} (k\omega_3^2 s_{\theta_3}) \\ 
@@ -209,9 +317,9 @@ Il contributo principale $\bm{M}_{\text{th}}$ deriva dal prodotto vettoriale tra
     \end{bmatrix}
 \end{equation}
 
-Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, questo momento deve essere proiettato sugli assi del body frame:
+Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, questo momento deve essere proiettato sugli assi del {body} frame:
 \begin{equation}
-    \bm{M}_{\text{tor}} = 
+    \bm{M}_{\text{TOR}} = 
     \begin{bmatrix} 
     b\omega_1^2 c_{\theta_1} - b\omega_2^2 c_{\theta_2} + b\omega_3^2 c_{\theta_3} c_{\theta_4} \\ 
     b\omega_3^2 c_{\theta_3} s_{\theta_4} \\ 
@@ -220,28 +328,82 @@ Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i
 \end{equation}
 
 \subsection{Effetti Aerodinamici e Giroscopici}
-\begin{itemize}
-    \item \textbf{Momento Aerodinamico ($\bm{M}_{\text{aero}}$):} Include le coppie generate dal disallineamento tra il Centro di Pressione (CP) delle ali e il CoM, oltre ai momenti di resistenza aerodinamica della fusoliera.
-    
-    \item \textbf{Momento Giroscopico ($\bm{M}_{\text{gyro}}$):} Dovuto all'interazione tra la velocità angolare di rotazione dell'elica $\omega_i$ e la velocità di tilting dei servomotori ($\bm{\omega}_{\text{tilt}}$). Questo termine è critico durante le transizioni rapide:
-    \begin{equation}
-        \bm{M}_{\text{gyro}}= \sum_{i=1}^{3} \mathbf{J}_{rot} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{i})
+\textbf{Momento Aerodinamico ($\bm{M}_{\text{AERO}}$):} Include le coppie generate dal disallineamento tra il Centro di Pressione (CP) delle ali e il CoM, oltre ai momenti di resistenza aerodinamica della fusoliera.
+\begin{equation}
+    \bm{M}_{AERO} = 
+    \begin{bmatrix}
+        (l_{sx_{y}}+l_{dx_{y}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) \\[10pt]
+        -\Big[ (l_{sx_{x}}+l_{dx_{x}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) 
+        - (l_{sx_{z}}+l_{dx_{z}})\left(-\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)\right)\Big] \\[10pt]
+        (l_{sx_{y}}+l_{dx_{y}})\,\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)
+    \end{bmatrix}
     \end{equation}
-    
-    \item \textbf{Momento della Pinna ($\bm{M}_{\text{fin}}$):} La superficie verticale di coda garantisce la stabilità direzionale (\textit{Weathercock stability}) e lo smorzamento dell'imbardata. Il modello include ora un termine proporzionale a $\beta$ (stabilità statica) e uno alla velocità angolare $r$ (smorzamento):
-    \begin{equation}
-        \bm{M}_{\text{fin}} = 
-        \frac{1}{2} \rho V_{tas}^2 S_{fin}
-        \begin{bmatrix} 
-        C_{l\beta} \beta + C_{lp} p \\ 
-        0 \\ 
-        C_{n\beta} \beta + C_{nr} r 
-        \end{bmatrix}=
-        \begin{bmatrix} 
-        -p \, K_{d,roll} - \beta \, K_{s,roll} \\ 
-        0 \\ 
-        -r \, K_{d,yaw} - \beta \, K_{s,yaw}
+
+\textbf{Momento Giroscopico ($\bm{M}_{\text{GIRO}}$):} Dovuto all'interazione tra la velocità angolare di rotazione dell'elica $\omega_i$ e la velocità di tilting dei servomotori ($\bm{\omega}_{\text{tilt}}$). Questo termine è critico durante le transizioni rapide:
+\begin{equation}
+    \bm{M}_{\text{GIRO}}= \sum_{i=1}^{3} \mathbf{J}_{rot} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{i})
+\end{equation}
+\begin{equation}
+    \mathbf{M}_{\text{GIRO}} = 
+    \resizebox{0.93\textwidth}{!}{$
+        \begin{bmatrix}
+            -I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{1}} \sin(\theta_{1}) \omega_{1}
+            + I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{2}} \sin(\theta_{2})\omega_{2}
+            - I_{\text{rot}_{3_{z}}}\,\omega_{\text{tilt}_{3,xz}} \sin(\theta_{3}) \omega_{3}
+            - I_{\text{rot}_{3_{y}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \sin(\theta_{4}) \omega_{3} \\[6pt]
+            + I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \cos(\theta_{4})\omega_{3} \\[6pt]
+            -I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{1}} \cos(\theta_{1}) \omega_{1}
+            + I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{2}} \cos(\theta_{2}) \omega_{2}
+            - I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xz}} \cos(\theta_{3}) \cos(\theta_{4}) \omega_{3}
         \end{bmatrix}
-    \end{equation}
-    dove il termine $-\beta \, K_{s,yaw}$ rappresenta la coppia raddrizzante che tende ad annullare lo scivolamento laterale, fondamentale per la dinamica Bank-to-Turn.
-\end{itemize}
+        $}
+\end{equation}
+
+Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rotazione del tricottero nel body frame:
+\begin{equation*}
+        \boldsymbol{M}_{body} =
+        \boldsymbol{\Omega}_{B} \times (I_B \boldsymbol{\Omega}_{B}) =
+            \begin{bmatrix}
+            p \\
+            q \\
+            r
+        \end{bmatrix}
+        \times
+        \begin{bmatrix}
+            I_{\text{xx}} & 0 & 0 \\
+            0 & I_{\text{yy}} & 0 \\
+            0 & 0 & I_{\text{zz}}
+        \end{bmatrix}
+        \begin{bmatrix}
+            p\\
+            q\\
+            r
+        \end{bmatrix}
+        =
+        \end{equation*}
+        
+        \begin{equation}
+        =
+        \begin{bmatrix}
+            (I_{zz}-I_{yy})	qr \\
+            (I_{xx}-I_{zz})	pr\\
+            (I_{yy}-I_{xx})	pq
+        \end{bmatrix}
+        \end{equation}
+
+\textbf{Momento della Pinna ($\bm{M}_{\text{PINNA}}$):} La superficie verticale di coda garantisce la stabilità direzionale (\textit{Weathercock stability}) e lo smorzamento dell'imbardata.
+\begin{equation}
+    \mathbf{M}_{\text{PINNA}} = 
+    \begin{bmatrix}
+    M_{\text{pinna},x} \\ M_{\text{pinna},y} \\ M_{\text{pinna},z}
+    \end{bmatrix} =
+    \begin{bmatrix}
+    -p\alpha_{0x}\ - \alpha_{1x}\,v_y^2 \\
+    0 \\
+    -r\left( \alpha_{0z}\ + \alpha_{1z}\,v_y^2 \right)
+    \end{bmatrix}
+\end{equation}
+La presenza della pinna non era stata inizialmente contemplata nella prototipazione del modello, 
+tuttavia, garantisce una maggiore stabilità di imbardata soprattutto in considerazione della coppia
+di reazione residua prodotta dal rotore di coda.  
+\clearpage

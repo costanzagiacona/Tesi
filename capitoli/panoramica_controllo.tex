@@ -1,27 +1,29 @@
-L'architettura non convenzionale del velivolo, caratterizzata da una configurazione a tricottero con rotori anteriori avanzati e un rotore di coda a due gradi di libertà, richiede una gestione dinamica della stabilità differenziata per le diverse condizioni operative.
+\section{Strategie di Controllo e Definizione dell'Inviluppo di Volo}
+L'architettura non convenzionale del drone, caratterizzata da una configurazione a tricottero con rotori anteriori basculanti e un rotore di coda con due gradi di libertà (tilting longitudinale e trasversale), impone una gestione della stabilità fortemente differenziata in base al regime aerodinamico. 
+\\Di seguito vengono delineate le strategie logiche per le tre macro-fasi del volo, definendo l'autorità dei singoli attuatori e le sfide dinamiche associate.
 
-\section{Fase 1: Volo Verticale (Hovering)}
-In questa configurazione, la portanza è generata interamente dai tre rotori. La sfida principale risiede nel \textbf{bilanciamento del momento di imbardata}. Poiché i rotori anteriori sono controrotanti, la coppia di reazione residua prodotta dal motore posteriore deve essere compensata attivamente per evitare rotazioni indesiderate attorno all'asse $Z_b$.
+\subsection{Fase 1: Volo Verticale (Hovering)}
+In regime di \textit{hovering}, la portanza è generata esclusivamente dalla spinta dei tre rotori. La criticità principale di tale configurazione risiede nel \textbf{bilanciamento del momento di imbardata}. 
+A differenza di un quadricottero convenzionale, la somma delle coppie di reazione dei motori non è nulla; la coppia residua prodotta dal motore posteriore deve pertanto essere compensata attivamente.
 \begin{itemize}
-    \item \textbf{Strategia:} Si utilizza il grado di libertà di tilting laterale del rotore di coda ($\theta_3$) per generare una componente di spinta trasversale. Tale forza crea un momento di imbardata uguale e opposto alla coppia resistente del motore, garantendo l'equilibrio statico dell'assetto.
+    \item \textbf{Strategia di controllo:} Si sfrutta il grado di libertà di \textit{tilting} laterale del rotore di coda ($\theta_3$) per generare una componente di spinta trasversale. Tale forza produce un momento di imbardata attorno all'asse $Z_b$ uguale e opposto alla coppia resistente, garantendo l'equilibrio dell'assetto direzionale.
 \end{itemize}
 
-\section{Fase 2: Transizione}
-Rappresenta la fase a maggiore criticità dinamica, in cui i rotori anteriori ruotano progressivamente verso la configurazione orizzontale per generare spinta propulsiva.
+\subsection{Fase 2: Transizione (Regime Ibrido)}
+La transizione rappresenta l'intervallo a maggiore criticità dinamica, in cui il velivolo passa dal sostentamento propulsivo a quello aerodinamico. Sebbene lo sviluppo di un controllore dedicato per questa fase esuli dagli obiettivi del presente lavoro, se ne delineano i requisiti fisici:
 \begin{itemize}
-    \item \textbf{Sfide:} Il sistema è soggetto a forti non linearità dovute all'interferenza aerodinamica dei flussi dei rotori sulle superfici alari e alla variazione del braccio di leva longitudinale del vettore spinta rispetto al baricentro.
-    \item \textbf{Strategia:} Il drone raggiunge una quota maggiore di quella desiderata, in modo da compensare eventuali perdite durante il \textit{tilting} dei rotori. I rotori anteriori vengono inclinati in avanti e il rotore di coda viene progressivamente spento, fino allo spegnimento definitivo quando il velivolo ha raggiunto la velocità di crociera con cui si genera portanza sufficiente a sostenere il peso del drone.
+    \item \textbf{Sfide dinamiche:} Il sistema è soggetto a forti non linearità e accoppiamenti causati dall'interferenza dei flussi dei rotori sulle ali e dalla variazione del braccio di leva longitudinale dei vettori spinta rispetto al baricentro ($CoG$).
+    \item \textbf{Sequenza logica:} Si prevede una manovra di \textit{pitch-up} o un guadagno preventivo di quota per compensare la momentanea perdita di portanza verticale durante la rotazione dei rotori anteriori. Al raggiungimento della velocità di volo ad ala fissa, il rotore di coda viene progressivamente disattivato.
 \end{itemize}
 
-\section{Fase 3: Volo Orizzontale (Crociera)}
-Al raggiungimento della velocità di sostentamento ($v > v_{stall}$), l'ala assume il ruolo di superficie portante principale. 
+\subsection{Fase 3: Volo Orizzontale (Crociera)}
+Una volta superata la velocità di stallo ($v > v_{stall}$), le superfici alari diventano la fonte primaria di portanza. In questa fase, l'autorità di controllo viene completamente riallocata per massimizzare l'efficienza:
 \begin{itemize}
-    \item \textbf{Strategia:} Il rotore posteriore viene disattivato ($\omega_3 = 0$). L'autorità di controllo è riallocata esclusivamente sui due rotori anteriori:
+    \item \textbf{Configurazione:} Il rotore posteriore viene spento ($\omega_3 = 0$), eliminando la resistenza aerodinamica e il consumo energetico non necessario.
+    \item \textbf{Allocazione dei comandi:}
     \begin{itemize}
-        \item \textbf{Rollio:} Gestito tramite tilting differenziale ($\theta_1 \neq \theta_2$).
-        \item \textbf{Imbardata:} Gestita tramite modulazione differenziale della spinta ($\Delta \omega_{1,2}$).
-        \item \textbf{Beccheggio:} Affidato alla stabilità intrinseca del profilo aerodinamico e a correzioni della spinta propulsiva.
+        \item \textbf{Rollio:} Controllato tramite \textit{tilting} differenziale dei rotori anteriori ($\theta_1 \neq \theta_2$), che genera un momento di rollio aerodinamico e vettoriale.
+        \item \textbf{Imbardata:} Gestita mediante modulazione differenziale della spinta propulsiva ($\Delta \omega_{1,2}$).
+        \item \textbf{Beccheggio:} Garantito dalla stabilità statica longitudinale del profilo alare e supportato da correzioni coordinate della spinta e del \textit{tilt} collettivo.
     \end{itemize}
 \end{itemize}
-
-Di seguito si trattano dettagliatamente i controllori delle fasi di volo verticale e orizzontale; si lascia lo sviluppo del controllo di trasizione ad eventuali progetti futuri.

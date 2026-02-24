@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  23 FEB 2026 19:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  24 FEB 2026 17:57
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -838,14 +838,10 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ]
 Capitolo 1.
 (capitoli/introduzione.tex
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6.
- (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-<./img/dragonfly.png, id=499, 490.08093pt x 366.61969pt>
+<./img/dragonfly.png, id=530, 490.08093pt x 366.61969pt>
 File: ./img/dragonfly.png Graphic file (type png)
 <use ./img/dragonfly.png>
-Package pdftex.def Info: ./img/dragonfly.png  used on input line 20.
+Package pdftex.def Info: ./img/dragonfly.png  used on input line 11.
 (pdftex.def)             Requested size: 341.43437pt x 255.42369pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
@@ -854,84 +850,132 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
 l.23 
       [1
 
-{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] [2 <./img/dragonfly.png>] [3]
-Overfull \hbox (1.27057pt too wide) in paragraph at lines 55--56
-[]\T1/lmr/bx/n/12 (-20) Imbardata: \T1/lmr/m/n/12 (-20) Ge-sti-ta tra-mi-te mo-du-la-zio-ne dif-fe-ren-zia-le del-la spin-ta ($\OT1/lmr/m/n/12 (-20) ^^A\OML/lmm/m/it/12 ![]$\T1/lmr/m/n/12 (-20) ). 
- []
-
-) [4{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+ <./img/dragonfly.png>]
+<./img/prototipo.png, id=537, 874.26625pt x 423.5825pt>
+File: ./img/prototipo.png Graphic file (type png)
+<use ./img/prototipo.png>
+Package pdftex.def Info: ./img/prototipo.png  used on input line 35.
+(pdftex.def)             Requested size: 341.43437pt x 165.42273pt.
+) [2 <./img/prototipo.png (PNG copy)>]
 Capitolo 2.
-(capitoli/stato_arte.tex [5
+(capitoli/stato_arte.tex
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8.
+ (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [3
 
-] [6] [7
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] [4] [5
 
-] [8
+] [6
 
-] [9
+] [7
 
-]
-<./img/coaxial.png, id=553, 376.40625pt x 226.59656pt>
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+<./img/coaxial.png, id=577, 376.40625pt x 226.59656pt>
 File: ./img/coaxial.png Graphic file (type png)
 <use ./img/coaxial.png>
 Package pdftex.def Info: ./img/coaxial.png  used on input line 62.
 (pdftex.def)             Requested size: 213.39568pt x 128.4664pt.
- [10
+ [8
 
  <./img/coaxial.png>]
-<./img/paper5.png, id=562, 586.44093pt x 447.17062pt>
+<./img/paper5.png, id=587, 586.44093pt x 447.17062pt>
 File: ./img/paper5.png Graphic file (type png)
 <use ./img/paper5.png>
 Package pdftex.def Info: ./img/paper5.png  used on input line 81.
 (pdftex.def)             Requested size: 213.39568pt x 162.7144pt.
- [11
+ [9
 
- <./img/paper5.png>] [12
+ <./img/paper5.png>] [10
 
-]) [13
+]) [11
 
 ]
 Capitolo 3.
 (capitoli/modello_completo.tex
-<./img/sist_rif.png, id=583, 1983.41pt x 822.07124pt>
+<./img/sist_rif.png, id=608, 1983.41pt x 822.07124pt>
 File: ./img/sist_rif.png Graphic file (type png)
 <use ./img/sist_rif.png>
 Package pdftex.def Info: ./img/sist_rif.png  used on input line 13.
 (pdftex.def)             Requested size: 405.45047pt x 168.04903pt.
- [14
+ [12
 
- <./img/sist_rif.png (PNG copy)>] [15{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}] [16
+ <./img/sist_rif.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 33--34
+
+ []
+
+[13{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.79 
+     ] [14] [15
 
 ]
-<./img/tricopter_2D.png, id=609, 420.82219pt x 207.02344pt>
+<./img/tricopter_2D.png, id=639, 420.82219pt x 207.02344pt>
 File: ./img/tricopter_2D.png Graphic file (type png)
 <use ./img/tricopter_2D.png>
-Package pdftex.def Info: ./img/tricopter_2D.png  used on input line 103.
+Package pdftex.def Info: ./img/tricopter_2D.png  used on input line 134.
 (pdftex.def)             Requested size: 341.43437pt x 167.9692pt.
-<./img/rotori_1_2.png, id=610, 525.46312pt x 421.575pt>
+<./img/rotori_1_2.png, id=640, 525.46312pt x 421.575pt>
 File: ./img/rotori_1_2.png Graphic file (type png)
 <use ./img/rotori_1_2.png>
-Package pdftex.def Info: ./img/rotori_1_2.png  used on input line 125.
+Package pdftex.def Info: ./img/rotori_1_2.png  used on input line 157.
 (pdftex.def)             Requested size: 204.85802pt x 164.35568pt.
-<./img/rotore_3.png, id=611, 461.47406pt x 356.0803pt>
+<./img/rotore_3.png, id=641, 461.47406pt x 356.0803pt>
 File: ./img/rotore_3.png Graphic file (type png)
 <use ./img/rotore_3.png>
-Package pdftex.def Info: ./img/rotore_3.png  used on input line 133.
+Package pdftex.def Info: ./img/rotore_3.png  used on input line 167.
 (pdftex.def)             Requested size: 204.85802pt x 158.07219pt.
- [17
+ [16
 
- <./img/tricopter_2D.png>] [18 <./img/rotori_1_2.png> <./img/rotore_3.png>] [19] [20
+ <./img/tricopter_2D.png>] [17 <./img/rotori_1_2.png> <./img/rotore_3.png>] [18]
+<./img/forze_x.jpg, id=666, 1525.7pt x 973.6375pt>
+File: ./img/forze_x.jpg Graphic file (type jpg)
+<use ./img/forze_x.jpg>
+Package pdftex.def Info: ./img/forze_x.jpg  used on input line 240.
+(pdftex.def)             Requested size: 298.75264pt x 190.6385pt.
+<./img/forze_z.jpg, id=667, 1316.92pt x 958.58125pt>
+File: ./img/forze_z.jpg Graphic file (type jpg)
+<use ./img/forze_z.jpg>
+Package pdftex.def Info: ./img/forze_z.jpg  used on input line 266.
+(pdftex.def)             Requested size: 298.75264pt x 217.45593pt.
 
-]) [21]
-Capitolo 4.
-(capitoli/sistema_dinamico.tex [22
 
-] [23
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-] [24
+[19 <./img/forze_x.jpg>] [20 <./img/forze_z.jpg>] [21
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.15}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.332 \begin{equation}
+                      
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.15}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.332 \begin{equation}
+                      ]
+Overfull \hbox (34.20049pt too wide) detected at line 340
+[][][]\OML/lmm/b/it/12 M[] \OT1/lmr/m/n/12 = []
+ []
+
+
+Overfull \hbox (21.60725pt too wide) detected at line 360
+[][][]\OT1/lmr/bx/n/12 M[] \OT1/lmr/m/n/12 = []
+ []
+
+[22] [23]) (capitoli/sistema_dinamico.tex [24
 
 ] [25
 
-] [26]
+] [26
+
+] [27
+
+] [28]
 Overfull \hbox (17.34454pt too wide) detected at line 256
 \OT1/lmr/m/n/12 = []+
  []
@@ -942,31 +986,35 @@ Overfull \hbox (14.0319pt too wide) detected at line 265
  []
 
 
-pdfTeX warning (ext4): destination with the same identifier (name{equation.4.3}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.25}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.295 	 \begin{equation}
                         
-pdfTeX warning (ext4): destination with the same identifier (name{equation.4.3}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.25}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.295 	 \begin{equation}
                         
-pdfTeX warning (ext4): destination with the same identifier (name{equation.4.3}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.25}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.295 	 \begin{equation}
                         
-pdfTeX warning (ext4): destination with the same identifier (name{equation.4.3}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.25}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.295 	 \begin{equation}
-                         [27]
-pdfTeX warning (ext4): destination with the same identifier (name{equation.4.3}) has been already used, duplicate ignored
+                         [29]
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.25}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.330 	  \end{align}
-                     [28]) [29]
+                     [30]) [31]
+Capitolo 4.
+(capitoli/panoramica_controllo.tex [32
+
+]) [33]
 Capitolo 5.
 (capitoli/controllo_verticale.tex
 LaTeX Font Info:    External font `lmex10' loaded for size
@@ -975,137 +1023,163 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 133.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 133.
- [30
+ [34
 
-] [31] [32
-
-]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <17.28> on input line 168.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 168.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 168.
-
-[33
+] [35] [36
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 231.
+(Font)              <14.4> on input line 170.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 231.
+(hyperref)                removing `math shift' on input line 170.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 231.
+(hyperref)                removing `math shift' on input line 170.
 
-[34]
+[37
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 251.
-
+]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 251.
+(hyperref)                removing `math shift' on input line 234.
 
-[35] [36
 
-] [37] [38
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 234.
 
-] [39] [40] [41] [42]
-<./img/../img/controllo_verticale/pos_vel.png, id=826, 1245.9047pt x 683.55376pt>
+[38
+
+]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 254.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 254.
+
+[39] [40
+
+] [41] [42
+
+] [43] [44] [45] [46]
+
+LaTeX Warning: Reference `ch:montecarlo' on page 47 undefined on input line 476.
+
+<./img/../img/controllo_verticale/pos_vel.png, id=885, 1244.39906pt x 679.03688pt>
 File: ./img/../img/controllo_verticale/pos_vel.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/pos_vel.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 474.
-(pdftex.def)             Requested size: 426.79135pt x 234.15747pt.
-<./img/../img/controllo_verticale/angoli.png, id=827, 1236.87094pt x 680.5425pt>
+Package pdftex.def Info: ./img/../img/controllo_verticale/pos_vel.png  used on input line 505.
+(pdftex.def)             Requested size: 426.79135pt x 232.88992pt.
+[47
+
+]
+<./img/../img/controllo_verticale/angoli.png, id=890, 1237.62375pt x 676.02562pt>
 File: ./img/../img/controllo_verticale/angoli.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/angoli.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 480.
-(pdftex.def)             Requested size: 426.79135pt x 234.82895pt.
-<./img/../img/controllo_verticale/thrust.png, id=828, 1228.59pt x 668.4975pt>
+Package pdftex.def Info: ./img/../img/controllo_verticale/angoli.png  used on input line 511.
+(pdftex.def)             Requested size: 426.79135pt x 233.12593pt.
+<./img/../img/controllo_verticale/thrust.png, id=891, 1227.08438pt x 676.77844pt>
 File: ./img/../img/controllo_verticale/thrust.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/thrust.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 486.
-(pdftex.def)             Requested size: 426.79135pt x 232.22314pt.
- [43
-
- <./img/../img/controllo_verticale/pos_vel.png> <./img/../img/controllo_verticale/angoli.png>]
-<./img/../img/controllo_verticale/tilt_1_2.png, id=835, 1263.97218pt x 684.30656pt>
+Package pdftex.def Info: ./img/../img/controllo_verticale/thrust.png  used on input line 520.
+(pdftex.def)             Requested size: 426.79135pt x 235.38895pt.
+ [48 <./img/../img/controllo_verticale/pos_vel.png> <./img/../img/controllo_verticale/angoli.png>]
+<./img/../img/controllo_verticale/tilt_1_2.png, id=898, 1221.81468pt x 685.05937pt>
 File: ./img/../img/controllo_verticale/tilt_1_2.png Graphic file (type png)
 <use ./img/../img/controllo_verticale/tilt_1_2.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 492.
-(pdftex.def)             Requested size: 426.79135pt x 231.05313pt.
-<./img/../img/controllo_verticale/tilt_3.png, id=836, 1252.68pt x 682.80093pt>
-File: ./img/../img/controllo_verticale/tilt_3.png Graphic file (type png)
-<use ./img/../img/controllo_verticale/tilt_3.png>
-Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_3.png  used on input line 498.
-(pdftex.def)             Requested size: 426.79135pt x 232.6285pt.
-) [44 <./img/../img/controllo_verticale/thrust.png> <./img/../img/controllo_verticale/tilt_1_2.png>] [45 <./img/../img/controllo_verticale/tilt_3.png>]
+Package pdftex.def Info: ./img/../img/controllo_verticale/tilt_1_2.png  used on input line 526.
+(pdftex.def)             Requested size: 426.79135pt x 239.29352pt.
+) [49 <./img/../img/controllo_verticale/thrust.png> <./img/../img/controllo_verticale/tilt_1_2.png>]
 Capitolo 6.
-(capitoli/controllo_orizzontale.tex [46
+(capitoli/controllo_orizzontale.tex
+<./img/config_orizzontale.png, id=905, 1341.01pt x 775.89874pt>
+File: ./img/config_orizzontale.png Graphic file (type png)
+<use ./img/config_orizzontale.png>
+Package pdftex.def Info: ./img/config_orizzontale.png  used on input line 17.
+(pdftex.def)             Requested size: 341.43437pt x 197.54965pt.
+ [50
 
-] [47] [48
+] [51 <./img/config_orizzontale.png (PNG copy)>] [52] [53
+
+] [54] [55] [56
+
+] [57] [58
+
+] [59]
+
+LaTeX Warning: Reference `ch:montecarlo' on page 60 undefined on input line 290.
+
+<./img/controllo_orizzontale/posizioni.png, id=969, 1233.10687pt x 667.74469pt>
+File: ./img/controllo_orizzontale/posizioni.png Graphic file (type png)
+<use ./img/controllo_orizzontale/posizioni.png>
+Package pdftex.def Info: ./img/controllo_orizzontale/posizioni.png  used on input line 319.
+(pdftex.def)             Requested size: 426.79135pt x 231.10577pt.
+[60
 
 ]
-Overfull \hbox (18.34041pt too wide) in paragraph at lines 169--169
-|[]\T1/lmr/bx/n/14.4 (-20) Implementazione del Con-trol-lo La-te-ra-le (Ou-ter Loop)| 
- []
-
-[49] [50] [51] [52
-
-]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 255.
- [53] [54
-
-]
-Overfull \hbox (1.4342pt too wide) in paragraph at lines 301--302
-\T1/lmr/m/n/10.95 (-20) Il le-ga-me tra i co-man-di vir-tua-li $\OT1/lmr/bx/n/10.95 (-20) u \OT1/lmr/m/n/10.95 (-20) = [\OML/lmm/m/it/10.95 T[]; u[]; u[]; u[]\OT1/lmr/m/n/10.95 (-20) ][]$ \T1/lmr/m/n/10.95 (-20) e gli at-tua-to-ri fi-si-ci $\OT1/lmr/bx/n/10.95 (-20) y \OT1/lmr/m/n/10.95 (-20) = [\OML/lmm/m/it/10.95 T[]; T[]; ^^R[]; ^^R[]\OT1/lmr/m/n/10.95 (-20) ][]$
- []
-
-[55]) [56
-
-]
+<./img/../img/controllo_orizzontale/vel.png, id=974, 1231.60126pt x 657.2053pt>
+File: ./img/../img/controllo_orizzontale/vel.png Graphic file (type png)
+<use ./img/../img/controllo_orizzontale/vel.png>
+Package pdftex.def Info: ./img/../img/controllo_orizzontale/vel.png  used on input line 325.
+(pdftex.def)             Requested size: 426.79135pt x 227.73888pt.
+<./img/../img/controllo_orizzontale/angoli.png, id=975, 1230.84843pt x 677.53125pt>
+File: ./img/../img/controllo_orizzontale/angoli.png Graphic file (type png)
+<use ./img/../img/controllo_orizzontale/angoli.png>
+Package pdftex.def Info: ./img/../img/controllo_orizzontale/angoli.png  used on input line 331.
+(pdftex.def)             Requested size: 426.79135pt x 234.9271pt.
+ [61 <./img/controllo_orizzontale/posizioni.png> <./img/../img/controllo_orizzontale/vel.png>]
+<./img/../img/controllo_orizzontale/thrust.png, id=982, 1230.09563pt x 670.75594pt>
+File: ./img/../img/controllo_orizzontale/thrust.png Graphic file (type png)
+<use ./img/../img/controllo_orizzontale/thrust.png>
+Package pdftex.def Info: ./img/../img/controllo_orizzontale/thrust.png  used on input line 337.
+(pdftex.def)             Requested size: 426.79135pt x 232.7211pt.
+<./img/../img/controllo_orizzontale/tilt_1_2.png, id=983, 1235.36531pt x 685.8122pt>
+File: ./img/../img/controllo_orizzontale/tilt_1_2.png Graphic file (type png)
+<use ./img/../img/controllo_orizzontale/tilt_1_2.png>
+Package pdftex.def Info: ./img/../img/controllo_orizzontale/tilt_1_2.png  used on input line 347.
+(pdftex.def)             Requested size: 426.79135pt x 236.92987pt.
+) [62 <./img/../img/controllo_orizzontale/angoli.png> <./img/../img/controllo_orizzontale/thrust.png>] [63 <./img/../img/controllo_orizzontale/tilt_1_2.png>]
 Capitolo 7.
-(capitoli/dimostrazione_SMC.tex [57
+(capitoli/dimostrazione_SMC.tex [64
 
-] [58] [59]) [60]
+] [65] [66]) [67] [68]
 Capitolo 8.
-(capitoli/analisi_stabilita.tex [61
+(capitoli/analisi_stabilita.tex [69
 
-] [62
+] [70
 
-] [63
+] [71] [72
 
-]) (main.bbl [64]) [65
+]) (main.bbl [73]) [74
 
 ] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6AA9FAF9ED967C44BD9FB9E5030A0F1E;18450.
+(rerunfilecheck)             Checksum: D9FF95CAC66CC543E512CDBBCB5FB5FE;19278.
  ) 
 Here is how much of TeX's memory you used:
- 29681 strings out of 467871
- 550226 string characters out of 5418375
- 984661 words of memory out of 5000000
- 57210 multiletter control sequences out of 15000+600000
- 783599 words of font info for 372 fonts, out of 8000000 for 9000
+ 29595 strings out of 467871
+ 550882 string characters out of 5418375
+ 984525 words of memory out of 5000000
+ 57242 multiletter control sequences out of 15000+600000
+ 751541 words of font info for 284 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,15n,104p,1230b,1065s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (70 pages, 2042511 bytes).
+<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on main.pdf (79 pages, 3179030 bytes).
 PDF statistics:
- 1169 PDF objects out of 1200 (max. 8388607)
- 332 named destinations out of 1000 (max. 500000)
- 82689 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 1235 PDF objects out of 1440 (max. 8388607)
+ 351 named destinations out of 1000 (max. 500000)
+ 66369 words of extra memory for PDF output out of 74296 (max. 10000000)
 

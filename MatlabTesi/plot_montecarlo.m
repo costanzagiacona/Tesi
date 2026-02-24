@@ -2,7 +2,7 @@
 close all; clc;
 files = {'Results_Recovery Hover.mat', ...
          'Results_Takeoff Ground.mat', ...
-         'Results_PID_Cruise Flight.mat'};
+         'Results_Cruise_Flight.mat'};
 
 % files = {'Results_PID_Cruise Flight.mat'};
 % files = {'Results_SMC_Takeoff Ground.mat'};

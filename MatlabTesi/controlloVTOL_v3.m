@@ -52,7 +52,7 @@ switch test_id
         z_des = -10;    vz_des = 0;
         y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
-        psi_des = deg2rad(45);    r_des = 0;
+        psi_des = deg2rad(0);    r_des = 0;
 
         %% =========================================================================
         %   OUTER LOOP: POSITION SMC (Rigorosamente Disaccoppiato)

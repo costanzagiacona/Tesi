@@ -1,10 +1,10 @@
 % !TEX root = ../main.tex
-\section{Introduzione e Configurazione di Crociera}
+\section{Configurazione di Crociera}
 La fase di volo orizzontale (\textit{Forward Flight} o \textit{Fixed-Wing Mode}) rappresenta la condizione operativa di crociera del drone. In questa configurazione, il velivolo si comporta aerodinamicamente come un convertiplano ad ala fissa: la portanza necessaria al sostentamento è generata principalmente dalle superfici alari, mentre la propulsione è garantita dalla componente orizzontale della spinta dei rotori.\\
 Durante questa fase, la configurazione degli attuatori subisce una variazione sostanziale rispetto all'hovering:
 \begin{itemize}
-    \item I \textbf{rotori anteriori} sono posizionati orizzontalmente (o quasi) per massimizzare la spinta propulsiva ($T_x$).
-    \item Il \textbf{rotore posteriore} viene disattivato ($T_{tail} = 0$). Questa scelta è dettata dalla necessità di ridurre i consumi energetici e di evitare instabilità dinamiche indotte dalla coppia di reazione del motore di coda, che in questa fase non è necessario per il bilanciamento.
+    \item I \textbf{rotori anteriori} sono posizionati orizzontalmente (o quasi) per massimizzare la spinta propulsiva.
+    \item Il \textbf{rotore posteriore} viene disattivato ($\omega_{3} = 0$). Questa scelta è dettata dalla necessità di ridurre i consumi energetici e di evitare instabilità dinamiche indotte dalla coppia di reazione del motore di coda.
 \end{itemize}
 Si assume che, in condizioni nominali di crociera, gli angoli di tilt dei rotori anteriori siano prossimi allo zero:
 \begin{equation}
@@ -12,13 +12,19 @@ Si assume che, in condizioni nominali di crociera, gli angoli di tilt dei rotori
 \end{equation}
 Una delle sfide principali di questa configurazione risiede nella \textbf{sotto-attuazione} e nell'assenza di superfici di controllo aerodinamico tradizionali (alettoni, equilibratori, timone). Il controllo dell'assetto e della traiettoria è affidato interamente al \textit{Thrust Vectoring} e alla modulazione differenziale della spinta dei rotori anteriori.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{config_orizzontale.png}
+    \caption{Configurazione di crociera.}
+\end{figure}
+
 \section{Architettura di Controllo}
 Per gestire la complessità del sistema e garantire stabilità e prestazioni elevate, è stata adottata un'architettura di controllo a \textbf{loop in cascata}. Questa strategia permette di disaccoppiare la dinamica traslazionale (lenta) da quella rotazionale (veloce), semplificando la sintesi dei controllori.
 \\L'architettura, illustrata nello schema a blocchi di Figura \ref{fig:control_scheme_horizontal}, si suddivide in tre blocchi funzionali principali:
 \begin{enumerate}
-    \item \textbf{Outer Loop (Guidance):} Opera a bassa frequenza e ha il compito di calcolare le forze inerziali ($F_{x,req}, F_{z,req}$) e i riferimenti di rotta necessari per annullare gli errori di posizione e velocità. Include termini di \textit{feedforward} aerodinamico.
+    \item \textbf{Outer Loop (Guidance):} Opera a bassa frequenza e ha il compito di calcolare la spinta propulsiva ($F_{x,req}$) e l'angolo $\theta_{des}$ di riferimento per il mantenimento di quota.
     \item \textbf{Inner Loop (Attitude):} Opera ad alta frequenza e stabilizza l'assetto del drone ($\phi, \theta, \psi$) inseguendo i riferimenti generati dal loop esterno o imposti per il volo livellato.
-    \item \textbf{Motor Mixing Algorithm (MMA):} È il cuore dell'allocazione di controllo. Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
+    \item \textbf{Motor Mixing Algorithm (MMA):} Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
 \end{enumerate}
 
 \begin{figure}[htbp]
@@ -118,83 +124,75 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
 \clearpage
 
 % =========================================
-% OUTER LOOP
+% OUTER LOOP: GUIDA E NAVIGAZIONE
 % =========================================
-\section{Outer Loop: Guida e Navigazione}
-Il controllore esterno implementa leggi di controllo PID arricchite da termini di feedforward basati sul modello aerodinamico del drone. Questo approccio ibrido permette di migliorare le prestazioni del controllore, compensado le non linearità note.
+\section{Outer Loop Control}
+Il loop esterno (Outer Loop) ha il compito di generare i riferimenti di assetto e di spinta necessari a seguire le traiettorie desiderate. In questa architettura, si è scelto di implementare una struttura di controllo basata su algoritmi PID arricchiti da termini di \textit{feedforward} derivati dal modello analitico delle forze aerodinamiche.
 
-\subsection{Controllo Longitudinale: Quota e Velocità}
-La dinamica longitudinale controlla l'altitudine $z$ e la velocità di avanzamento $v_x$.
-\\Per il \textbf{mantenimento della quota}, definito l'errore $e_z = z_{des} - z$, il controllore calcola un'accelerazione verticale correttiva $a_{z,cmd}$ tramite un PID:
+Questa scelta è giustificata dalla natura intrinsecamente stabile del velivolo in regime di crociera: a velocità elevate, le superfici portanti generano momenti stabilizzatori che rendono il sistema meno sensibile ai disturbi rispetto alla fase di hovering. L'adozione di un controllo lineare, rispetto a tecniche più aggressive come lo \textit{Sliding Mode Control} (SMC), permette di ridurre drasticamente il fenomeno del \textit{chattering} sugli attuatori, garantendo una maggiore efficienza energetica e preservando l'integrità meccanica dei servocomandi.
+
+\subsection{Controllo di Quota}
+Il controllo della quota $z$ non avviene agendo direttamente sulla spinta verticale, bensì sfruttando l'accoppiamento aerodinamico tra l'angolo di beccheggio ($\theta$) e la portanza. Definito l'errore di quota come $e_z = z_{des} - z$, il controllore calcola l'assetto di beccheggio desiderato $\theta_{ref}$ che verrà poi inseguito dal loop interno:
+
 \begin{equation}
-        a_{z,cmd} = K_P e_z + K_I \int e_z dt + K_D \dot{e}_z
-\end{equation} 
-La forza verticale richiesta $F_{z,req}$ è ottenuta dal bilancio delle forze sull'asse $z$:
-\begin{equation}
-    F_{z,req} = m (g - a_{z,cmd}) - L_{wing}(v)
-    \label{eq:fz_req}
+    \theta_{ref} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
 \end{equation}
-dove $L_{wing}$ rappresenta la stima della portanza generata dall'ala:
+
+È fondamentale notare che tale riferimento deve essere opportunamente saturato per evitare che il velivolo raggiunga angoli di attacco prossimi allo stallo, garantendo così la validità del modello lineare di portanza.
+
+\subsection{Controllo di Velocità}
+Per il mantenimento della velocità di crociera $v_x$, si adotta uno schema di controllo accoppiato a una compensazione in anello aperto della resistenza aerodinamica (\textit{Drag}). Definito l'errore di velocità $e_v = v_{x,des} - v_x$, la forza propulsiva richiesta $F_{x,req}$ è data da:
+
 \begin{equation}
-    L_{wing} = \frac{1}{2}\rho S C_L v_x^2
+    F_{x,req} = \hat{D}_x(v) + \underbrace{K_{P_v} e_v + K_{I_v} \int_{0}^{t} e_v(\tau) d\tau}_{\text{Azione PI}}
+    \label{eq:fx}
 \end{equation}
-Il termine $L_{wing}$ agisce come feedforward: alla velocità di crociera di progetto ($v_x = 25$ m/s), la portanza compensa quasi interamente la forza peso ($mg$), riducendo drasticamente lo sforzo richiesto ai motori per il sostentamento verticale e lasciando al PID il solo compito di correggere i disturbi.
-\\Analogamente, per il \textbf{controllo di velocità}, definito l'errore $e_v = v_{x,des} - v_x$, la forza propulsiva richiesta è ottenuta tramite un controllore Proporzionale-Derivativo:
-    \begin{equation}
-        F_{x,req} = D_{x}(v) + \underbrace{K_P e_v + K_I \int e_v dt + K_D \dot{e}_v}_{\text{Azione PI}}
-        \label{eq:fx}
-    \end{equation}
-Anche in questo caso, il termine di resistenza aerodinamica $D_{x}$ viene compensato in anello aperto, migliorando la reattività del sistema alle variazioni di setpoint.
 
-% =======================================
-% BANK TO TURN
-% =======================================
-\section{Bank-to-Turn (BTT)}
+Il termine di feedforward $\hat{D}_x(v)$ rappresenta la stima della resistenza aerodinamica, modellata come:
+\begin{equation}
+    \hat{D}_x(v) = \frac{1}{2} \rho v^2 S C_D
+\end{equation}
+dove $\rho$ è la densità dell'aria, $S$ la superficie di riferimento e $C_D$ il coefficiente di resistenza parassita. 
+L'inserimento di questo termine permette al controllore PI di agire esclusivamente sulle perturbazioni e sugli errori di modellazione, 
+migliorando significativamente la reattività del sistema e riducendo l'errore a regime permanente senza la necessità di guadagni integrali 
+eccessivi.
 
-La manovra di \textit{Bank-to-Turn} è la strategia di virata primaria utilizzata dai velivoli ad ala fissa e dai VTOL in fase di crociera. A differenza della tecnica \textit{Skid-to-Turn} (tipica dei multicotteri in hovering), il BTT sfrutta l'orientamento del vettore portanza per generare la forza centripeta necessaria al cambio di direzione.
-\\Nel caso specifico di un configurazione tricottero sottoattuata, la strategia BTT diviene necessaria. 
-L'autorità di controllo sull'asse di rollio è superiore di ordini di grandezza rispetto all'autorità di imbardata. 
-Pertanto, la curvatura della traiettoria deve essere ottenuta inclinando il vettore spinta principale (Banking), 
-poiché il tentativo di attuare una virata piatta (Skid) porterebbe alla saturazione degli attuatori senza produrre 
-l'accelerazione centripeta richiesta.
+\subsection{Controllo Laterale}
+Il controllo della posizione laterale $y$ è affidato a un regolatore Proporzionale-Derivativo (PD) che 
+agisce sulla coordinata di prua (\textit{heading}) del velivolo. Definito l'errore laterale come 
+$e_y = y_{des} - y$ e la velocità di scostamento $\dot{e}_y = -\dot{y}_{global}$, il riferimento desiderato 
+per l'angolo di imbardata $\psi_{des}$ è calcolato come:
 
-\subsection{Principi Fisici e Modello Matematico}
-In un assetto di volo livellato, la portanza $L$ prodotta dalle ali compensa la forza peso $mg$. Per iniziare una virata, il velivolo ruota attorno all'asse di rollio di un angolo $\phi$. Questo inclina il vettore portanza, la cui componente orizzontale fornisce l'accelerazione radiale:
+\begin{equation}
+    \psi_{des} = K_{P_y} e_y + K_{D_y} \dot{e}_y
+\end{equation}
 
-\[ L \sin(\phi) = m \frac{V_{tas}^2}{R} = m V_{tas} \dot{\psi} \]
-dove $R$ è il raggio di curvatura e $\dot{\psi}$ è la velocità di imbardata (\textit{turn rate}). Dalla condizione di equilibrio verticale $L \cos(\phi) = mg$, si ricava la relazione fondamentale tra l'angolo di rollio desiderato e la dinamica di virata:
+Questa strategia di guida impone al velivolo di ruotare il proprio asse longitudinale verso la linea di rotta 
+desiderata. Si noti che, per un velivolo ad ala fissa, tale approccio risulta efficace principalmente in regimi 
+di bassa dinamica o come anello esterno di un sistema di navigazione a waypoint, dove la prua punta direttamente 
+verso il target (\textit{Look-ahead guidance}). Mentre per dinamiche di volo più complesse è preferibile un controllo
+\textit{Bank-to-turn}, che coordina rollio e velocità di imbardata.
 
-\[ \phi_{des} = \arctan \left( \frac{V_{tas} \dot{\psi}}{g} \right) \]
+\subsection{Analisi nel Wind Frame e Feedforward Aerodinamico}
+Per garantire un controllo accurato della velocità di avanzamento, è necessario modellare le forze aerodinamiche che si oppongono al moto. Tali forze sono naturalmente definite nel \textbf{Wind Frame} ($F_w$), un sistema di riferimento orientato secondo il vettore velocità relativa $V_a$. 
 
-\subsection{Implementazione del Controllo Laterale (Outer Loop)}
-Nell'architettura implementata, il controllo della posizione laterale $y$ è affidato a un regolatore che converte l'errore di scostamento dalla traiettoria in un comando di rollio desiderato. Il comando è generato come:
+Il passaggio dal \textit{Body Frame} al \textit{Wind Frame} è descritto dagli angoli di attacco ($\alpha$) e di schidamento ($\beta$):
+\begin{equation}
+    \alpha = \operatorname{atan2}(w_b, u_b), \quad \beta = \arcsin\left(\frac{v_b}{V_a}\right)
+\end{equation}
+dove $u_b, v_b, w_b$ sono le componenti della velocità nel sistema solidale al corpo.
 
-\[ \phi_{cmd} = K_{p,y} e_y + K_{i,y} \int e_y dt - K_{d,y} v_{y,global} \]
 
-con i seguenti parametri di tuning identificati per la stabilità in crociera:
-\begin{itemize}
-    \item $K_{p,y}$: garantisce un inseguimento dolce della traiettoria.
-    \item $K_{d,y}$: fornisce lo smorzamento necessario per frenare la velocità laterale residua.
-    \item $\phi_{max} = 30^\circ$: limite di saturazione per prevenire stalli o perdite di quota eccessive.
-\end{itemize}
 
-\subsection{Coordinazione dell'Imbardata (Inner Loop)}
-In una virata BTT corretta, lo scivolamento laterale (\textit{sideslip} $\beta$) deve essere nullo. Per ottenere ciò, il controllo di imbardata non persegue un angolo di rotta fisso ($\psi$), ma deve garantire che il rateo di imbardata ($r$) sia cinematicamente coerente con l'angolo di rollio e la velocità corrente.
-\\La relazione cinematica per una virata coordinata stazionaria impone il seguente rateo desiderato:
+La forza aerodinamica risultante nel Wind Frame, composta da resistenza ($D$), portanza ($L$) e forza laterale ($Y$), viene proiettata nel Body Frame tramite la matrice di rotazione $\mathbf{R}_{wb}(\alpha, \beta)$:
+\begin{equation}
+    \mathbf{F}_b = \mathbf{R}_{wb} \begin{bmatrix} -D \\ Y \\ -L \end{bmatrix} = \mathbf{R}_{wb} \begin{bmatrix} -\frac{1}{2}\rho V_a^2 S C_D \\ \frac{1}{2}\rho V_a^2 S C_Y \\ -\frac{1}{2}\rho V_a^2 S C_L \end{bmatrix}
+\end{equation}
 
-\[ r_{req} = \frac{g}{V_{tas}} \sin(\phi) \cos(\theta) \]
-Il controllore (\textit{Yaw Rate Controller}) agisce sui motori tramite spinta differenziale per minimizzare l'errore tra il rateo calcolato e quello misurato dal giroscopio:
-
-\[ u_{yaw,thrust} = K_{p,r} (r_{req} - r_{mis}) \]
-Questa strategia assicura che il muso del velivolo segua naturalmente la curvatura della traiettoria imposta dal rollio, prevenendo lo scivolamento verso l'interno o l'esterno della virata.
-
-\subsection{Compensazione della Portanza in Virata}
-Durante il \textit{banking}, la componente verticale della portanza diminuisce ($L \cos(\phi) < L$). Per mantenere la quota $z_{des}$, è necessario incrementare la forza totale affinché la sua proiezione verticale eguagli il peso apparente.
-\\La spinta richiesta ai motori viene calcolata sottraendo il contributo passivo delle ali al carico totale compensato:
-
-\[ F_{z,req} = \left( \frac{m(g - a_{z,cmd})}{\cos(\phi)} \right) - F_{lift,wing} \]
-Il termine $1/\cos(\phi)$ rappresenta il fattore di carico ($n$): all'aumentare dell'inclinazione laterale, la richiesta di spinta aumenta esponenzialmente per contrastare la perdita di quota.
+Nel calcolo della spinta richiesta lungo l'asse $x$ (Eq. \ref{eq:fx}), il termine di feedforward $\hat{D}_x$ non considera quindi solo il drag parassita del corpo, ma l'intera proiezione della forza aerodinamica totale lungo l'asse longitudinale. Questo permette di compensare preventivamente la perdita di spinta dovuta all'incremento di portanza o a variazioni dell'angolo di attacco durante le manovre di variazione quota.
 \clearpage
+
+
 
 % ==========================================================================
 % INNER LOOP
@@ -204,113 +202,82 @@ Il termine $1/\cos(\phi)$ rappresenta il fattore di carico ($n$): all'aumentare 
 Il loop interno (\textit{Inner Loop}) governa la dinamica rotazionale veloce del velivolo. Operando in regime di crociera (\textit{Forward Flight}, $V \approx 25$ m/s), la strategia di controllo adotta un'architettura \textbf{SISO Disaccoppiata}. 
 Si assume di poter controllare i tre assi di rotazione (Beccheggio, Rollio, Imbardata) indipendentemente, demandando a una matrice di miscelazione (\textit{Mixer}) il compito di combinare i comandi per gli attuatori.
 
-\subsection{Algoritmo di Controllo PID}
-Per ciascun asse, un controllore PID calcola il momento virtuale necessario per annullare l'errore angolare. La legge di controllo nel dominio del tempo è:
 
+\subsection{Dinamica di Beccheggio (Pitch)}
+Il controllo del pitch è critico per la stabilità longitudinale e il mantenimento della quota. Dato l'errore $e_\theta = \theta_{ref} - \theta$, il momento richiesto $M_y$ è calcolato tramite un controllore PID:
 \begin{equation}
-    u(t) = K_P \cdot e(t) + K_I \int_{0}^{t} e(\tau) d\tau + K_D \cdot \frac{d e(t)}{dt}
+    M_y = K_{P_\theta} e_\theta + K_{I_\theta} \int e_\theta dt + K_{D_\theta} (q_{ref} - q)
 \end{equation}
+Si assuma $q_{ref} = 0$ per stabilizzare il velivolo in assetto statico. L'utilizzo della velocità angolare $q$ (misurata dal giroscopio) come derivata dell'errore permette di smorzare efficacemente le oscillazioni senza amplificare eccessivamente il rumore derivante dal calcolo numerico della derivata di $\theta$.
 
-Nello specifico per i tre assi:
+\subsection{Dinamica di Rollio e Imbardata (Roll \& Yaw)}
+Per gli assi di rollio e imbardata, la struttura di controllo adottata è di tipo Proporzionale-Derivativo (PD). La scelta di omettere il termine integrale è motivata dalla necessità di una risposta rapida e dalla minore presenza di disturbi costanti su questi assi rispetto a quello longitudinale.
 
-\begin{itemize}
-    \item \textbf{Beccheggio ($\theta$):} Mantiene l'incidenza della fusoliera (target $\theta_{des} \approx 0$).
-    \begin{equation}
-        u_\theta = \text{PID}_{\theta}(\theta_{des} - \theta_{body})
-    \end{equation}
-    
-    \item \textbf{Rollio ($\phi$):} Mantiene le ali livellate all'orizzonte ($\phi_{des} = 0$).
-    \begin{equation}
-        u_\phi = \text{PID}_{\phi}(\phi_{des} - \phi_{body})
-    \end{equation}
-    
-    \item \textbf{Imbardata ($\psi$):} Insegue il riferimento di rotta ($\psi_{des}$).
-    \begin{equation}
-        u_\psi = \text{PID}_{\psi}(\psi_{des} - \psi_{body})
-    \end{equation}
-\end{itemize}
+I momenti di comando sono definiti come:
+\begin{equation}
+    M_x = K_{P_\phi} (\phi_{des} - \phi) - K_{D_\phi} p
+\end{equation}
+\begin{equation}
+    M_z = K_{P_\psi} (\psi_{des} - \psi) - K_{D_\psi} r
+\end{equation}
+dove $p, r$ sono le velocità angolari nel sistema di riferimento \textit{Body}. 
 
+
+
+\subsection{Separazione delle Scale Temporali}
+Affinché l'architettura a cascata sia stabile, i guadagni $K_{P_{\phi,\theta,\psi}}$ sono stati tarati per garantire una banda passante superiore rispetto ai loop di posizione. Questo permette di considerare la dinamica dell'assetto come istantanea dal punto di vista dell'Outer Loop, semplificando il problema della sintesi dei controllori di navigazione.
 \subsection{Fisica degli Attuatori: Thrust Vectoring}
 In configurazione di volo avanzato, i motori generano spinta propulsiva lungo l'asse longitudinale. Il controllo dei momenti avviene tramite la vettorizzazione della spinta (\textit{Thrust Vectoring}):
 
 \begin{enumerate}
     \item \textbf{Controllo Pitch (Collective Tilt):}
-    Il comando $u_\theta$ agisce sull'inclinazione simultanea di entrambi i servi ($\theta_1, \theta_2 \uparrow$). La componente verticale della spinta genera il momento $M_y$.
+    Il comando $u_\theta$ agisce sull'inclinazione simultanea di entrambi i servomotori ($\theta_1, \theta_2$). La componente verticale della spinta genera il momento $M_y$ (analogo agli elevatori).
     
     \item \textbf{Controllo Roll (Differential Tilt):}
-    Il comando $u_\phi$ agisce in modo differenziale sui servi ($\theta_1 \neq \theta_2$). Inclinando un motore verso l'alto e l'altro verso il basso, si generano forze verticali opposte sulle semiali, creando un momento di rollio $M_x$ (analogo agli alettoni).
+    Il comando $u_\phi$ agisce in modo differenziale sui servomotori ($\theta_1 \neq \theta_2$). Inclinando un motore verso l'alto e l'altro verso il basso, si generano forze verticali opposte sulle semiali, creando un momento di rollio $M_x$ (analogo agli alettoni).
     
     \item \textbf{Controllo Yaw (Differential Thrust):}
     Il comando $u_\psi$ agisce sulla differenza di spinta ($T_1 \neq T_2$). La trazione asimmetrica genera un momento di imbardata $M_z$ (analogo al timone).
 \end{enumerate}
 
-\subsection{Validità dell'Approssimazione Lineare}
-Sebbene la relazione fisica tra l'angolo del servo e la forza generata sia non lineare ($F_z = T \sin \theta_s$), il modello utilizza una mappatura lineare. Questa scelta è ingegneristicamente giustificata da due fattori:
-
-\begin{itemize}
-    \item \textbf{Ipotesi dei Piccoli Angoli:} In crociera le correzioni sono minime ($\theta_{1,2} < 15^\circ$). Lo sviluppo di Taylor arrestato al primo ordine ($\sin x \approx x$) introduce un errore trascurabile ($< 1\%$).
-    \item \textbf{Compensazione Integrale:} Eventuali inesattezze del modello o accoppiamenti residui vengono assorbiti dal termine Integrale ($K_I$) del PID, che adatta l'output fino all'annullamento dell'errore statico.
-\end{itemize}
-\vspace{0.5cm}
-\small{\textit{Nota sulla nomenclatura: Nel testo, $\theta$ indica l'angolo di beccheggio del corpo del velivolo (variabile di stato), mentre $\theta_1$ e $\theta_2$ indicano gli angoli di rotazione dei servomotori (variabili di controllo).}}
 \clearpage
 
-% ================================================
-% MIXER 
-% ================================================
+% =================================================
+% ALGORITMO DI MIXING
+% =================================================
 \section{Motor Mixing Algorithm}
-Il modulo Mixer rappresenta l'elemento critico per la gestione del \textit{Thrust Vectoring}. Esso converte le richieste vettoriali ($F_{req}, \mathbf{u}_{momenti}$) nei comandi scalari per i motori (Left/Right) e per i servomotori di tilt.
-\\Il processo di allocazione avviene in tre fasi sequenziali.
+L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo e l'hardware del drone. 
+Il suo compito è trasformare le richieste astratte di forza propulsiva ($F_{x,req}$) e momenti di assetto 
+($\mathbf{M}$) nei segnali specifici per i regolatori di velocità dei motori e per i servocomandi dei 
+meccanismi di \textit{tilt}. 
 
-\subsubsection{1. Sintesi del Vettore Spinta Inerziale}
-Dalle forze richieste $F_{x,req}$ e $F_{z,req}$, si calcola il modulo della spinta totale $T_{tot}$ e il suo angolo di inclinazione $\alpha_{inertial}$ rispetto all'orizzonte terrestre:
-\begin{align}
-    T_{tot} &= \sqrt{F_{x,req}^2 + F_{z,req}^2} \\
-    \alpha_{inertial} &= \arctan2\left( F_{z,req}, F_{x,req} \right)
-\end{align}
-L'uso della funzione $\arctan2$ è fondamentale per risolvere correttamente l'orientamento del vettore in tutti i quadranti.
+In regime di crociera, il mixer gestisce una configurazione bimotore con motori basculanti, 
+mantenendo spento il propulsore di coda.
 
-\subsubsection{2. Trasformazione di Coordinate (Disaccoppiamento)}
-Poiché i servomotori sono solidali al telaio del drone, l'angolo di spinta effettivo deve tenere conto dell'assetto istantaneo del velivolo. Si applica la trasformazione dal sistema inerziale al sistema corpo (\textit{Body Frame}):
+\subsection{Mixing della Spinta e Controllo di Imbardata}
+La spinta totale richiesta per vincere il drag e mantenere la velocità di avanzamento viene ripartita tra i due motori principali. L'imbardata ($M_z$) viene controllata tramite un \textbf{mixing differenziale} della spinta:
 \begin{equation}
-    \alpha_{base} = \alpha_{inertial} - \theta_{body}
-    \label{eq:decoupling}
+    T_{2,1} = \frac{F_{x,req}}{2} \pm \frac{M_{z,req}}{2 d_{m_y}}
 \end{equation}
-L'Equazione \ref{eq:decoupling} esprime il principio di disaccoppiamento geometrico: se il drone subisce una perturbazione di beccheggio ($\theta \neq 0$), i servi ruotano automaticamente in direzione opposta per mantenere il vettore spinta fisso nello spazio inerziale, garantendo che la propulsione e il sostentamento non vengano influenzati dalle oscillazioni dell'assetto.
+dove $d_{m_y}$ è la distanza laterale dei motori dall'asse di simmetria. Questo approccio permette di correggere la prua senza superfici mobili, sebbene l'autorità di comando sia proporzionale alla capacità dei motori di variare rapidamente il regime di rotazione.
 
-\subsubsection{3. Distribuzione agli Attuatori}
-Infine, i comandi di stabilizzazione ($u_\phi, u_\theta, u_\psi$) vengono miscelati al vettore base.
-\\La spinta dei motori gestisce la propulsione totale e il controllo di imbardata tramite spinta differenziale:
+\subsection{Mixing del Tilt per il Controllo di Rollio e Beccheggio}
+Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), l'algoritmo di mixing sfrutta la vettorizzazione della spinta tramite l'inclinazione dei rotori. Sotto l'ipotesi di piccoli angoli di tilt ($\delta$), la relazione geometrica viene invertita per ottenere i riferimenti angolari:
+
 \begin{equation}
-    \begin{cases}
-        T_{1} = \frac{T_{tot}}{2} - u_{\psi} \\
-        T_{2}  = \frac{T_{tot}}{2} + u_{\psi}
-    \end{cases}
+    \delta_{pitch} = \frac{M_{y,req}}{T_{tot} \cdot d_{m_x}}, \quad \delta_{roll} = \frac{M_{x,req}}{T_{tot} \cdot d_{m_y}}
 \end{equation}
-Da cui si ricavano le velocità angolari di riferimento: $\omega_{i} = \sqrt{T_{i}/K}$.
-\\Gli angoli dei servomotori gestiscono l'orientamento del vettore spinta. Il controllo di beccheggio ($u_\theta$) è sommato in modo collettivo, mentre il controllo di rollio ($u_\phi$) agisce in modo differenziale (tilt differenziale):
+
+Il comando finale inviato ai singoli servi ($\delta_1, \delta_2$) è il risultato di un mixing additivo/sottrattivo dei contributi di assetto:
 \begin{equation}
     \begin{cases}
-        \theta_1 &= \theta_{base} + u_\theta - u_\phi \\
-        \theta_2 &= \theta_{base} + u_\theta + u_\phi
+        \theta_{1} = \delta_{pitch} - \delta_{roll} \\
+        \theta_{2} = \delta_{pitch} + \delta_{roll}
     \end{cases}
 \end{equation}
-Questa configurazione permette di controllare tutti i gradi di libertà necessari utilizzando solo due gruppi propulsori vettorizzabili.
 
-\subsection{Matrice di Mixing}
-Il legame tra i comandi virtuali $\mathbf{u} = [T_{req}, u_\psi, u_\theta, u_\phi]^T$ e gli attuatori fisici $\mathbf{y} = [T_1, T_2, \theta_1, \theta_2]^T$ è riassunto da una \textbf{Matrice di Miscelazione Statica}:
-
-\begin{equation}
-    \begin{bmatrix} T_1 \\ T_2 \\ \theta_1 \\ \theta_2 \end{bmatrix} = 
-    \begin{bmatrix} 
-        0.5 & -1 & 0 & 0 \\ 
-        0.5 & +1 & 0 & 0 \\ 
-        0 & 0 & +1 & -1 \\ 
-        0 & 0 & +1 & +1 
-    \end{bmatrix} 
-    \cdot 
-    \begin{bmatrix} T_{req} \\ u_\psi \\ u_\theta \\ u_\phi \end{bmatrix}
-\end{equation}
+\subsection{Protezioni e Limiti Fisici del Mixer}
+Data la struttura matematica del mixer, emerge una criticità: l'autorità di controllo sugli assi $x$ e $y$ svanisce se la spinta totale $T_{tot}$ è nulla. Per prevenire instabilità numeriche, l'algoritmo integra una soglia minima di sicurezza $T_{safe}$ al denominatore. Inoltre, il mixer applica saturazioni \textit{hard} per rispettare i limiti meccanici dei servocomandi ($\pm 45^\circ$) e i limiti di potenza dei motori, garantendo che le richieste del controllore non eccedano le capacità fisiche degli attuatori.
 \clearpage
 
 
@@ -318,10 +285,65 @@ Il legame tra i comandi virtuali $\mathbf{u} = [T_{req}, u_\psi, u_\theta, u_\ph
 % SIMULAZIONI
 % =========================================
 
-\section{Scenari di Validazione}
-La strategia di controllo è stata verificata in simulazione considerando tre scenari operativi distinti, scelti per stressare specifiche funzionalità dell'architettura:
-\begin{enumerate}
-    \item \textbf{Nominal Cruise:} Volo stazionario a $v_x = 25$ m/s. Si verifica la capacità di mantenere quota e rotta con errore nullo in condizioni ideali.
-    \item \textbf{Low Speed Recovery:} Volo a bassa velocità ($v_x = 20$ m/s). In questa condizione, la portanza alare è insufficiente a sostenere il drone ($L_{wing} < mg$). Il controllore deve automaticamente saturare il tilt in avanti o aumentare la spinta verticale (aumentando $\alpha_{inertial}$) per compensare il deficit di portanza.
-    \item \textbf{Attitude Recovery:} Iniezione di disturbi impulsivi sugli angoli di assetto ($\phi, \theta, \psi$). Si verifica la reiezione dei disturbi da parte dell'Inner Loop e l'efficacia del disaccoppiamento nel mantenere la traiettoria invariata nonostante le oscillazioni del corpo.
-\end{enumerate}
+\section{Simulazioni}
+Di seguito sono riportate le simulazioni relative a posizioni e velocità lineari e angolari del tricottero e le simulazioni del thrust e degli angoli di inclinazione dei rotori.
+\\Tali simulazioni sono state fatte in condizioni nominali, con condizioni iniziali nulle per gli angoli di assetto; si lascia al capitolo \ref{ch:montecarlo} il compito di validare il 
+sistema di controllo in condizioni perturbate.
+
+L'obiettivo del controllo è mantenere la quota $z_{des} = -10$ raggiunta durante la fase di volo verticale e raggiungere e mantenere la velocità $v_{x,des} = 25 m/s$, necessaria per generare la portanza.
+
+Per il l'\textit{Outer Loop} sono stati scelti i seguenti parametri:
+\begin{itemize}
+    \item $\lambda_z = 2$ ;   $K_z = 10 $ ;     $\Phi_z = 0.8$
+    \item $\lambda_y = 0.8$ ; $K_y = 1.5$ ;     $\Phi_y = 4$
+    \item $\lambda_x = 0.8$ ; $K_x = 1.5$ ;     $\Phi_x = 4$
+\end{itemize}
+
+Parametri per l'\textit{Inner Loop}:
+\begin{itemize}
+    \item $\lambda_{att} = 12$ ;   $K_{att} = 10 $ ; $\Phi_{att} = 3$ per $\phi$ e $\theta$
+    \item $\lambda_{att,\psi} = 8.4$ ;   $K_{att,\psi} = 8 $ ; $\Phi_{att,\psi} = 3$
+\end{itemize}
+
+La scelta dei parametri segue il principio della separazione spettrale tra i loop esterno e interno; quest'ultimo, infatti, deve essere
+più veloce di diversi ordini di grandezza rispetto a quello esterno.
+La dinamica dell'errore di assetto deve estinguersi molto più velocemente della dinamica dell'errore di posizione. Se le due velocità fossero simili, 
+i due loop entrerebbero in risonanza, portando a oscillazioni divergenti.
+
+Il parametro $\lambda_z$ è più grande rispetto a quelli per i controllori su $x$ e $y$, poiché il controllo 
+di quota ha bisogno di maggiore autorità in quanto risulta critico per la sicurezza del drone, che altrimenti rischierebbe di schiantarsi al suolo.
+\\In ogni caso, viene rispettato il principio di separazione spettrale ma con un margine inferiore.
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{controllo_orizzontale/posizioni.png}
+    \caption{Posizioni lungo gli assi inerziali.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_orizzontale/vel.png}
+    \caption{Andamento delle velocità lineari.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_orizzontale/angoli.png}
+    \caption{Andamento angoli di Eulero e velocità angolari.}
+\end{figure}
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_orizzontale/thrust.png}
+    \caption{Thrust generato dai rotori.}
+\end{figure}
+
+Il thrust generato in questa fase di volo è inferiore rispetto a quella precedente, nonostante l'utilizzo di due soli rotori. 
+Questo risultato è coerente con il modello del velivolo che, alla velocità di crociera, genera portanza sufficienza affiché siano le
+ali a sostenere il peso del drone e lascia che i motori si occupino delle altre azioni correttive.
+
+\begin{figure}[H] % 'H' maiuscola forza la posizione
+    \centering
+    \includegraphics[width=1\textwidth]{../img/controllo_orizzontale/tilt_1_2.png}
+    \caption{Andamento degli angoli $\theta_1$ e $\theta_2$.}
+\end{figure}
