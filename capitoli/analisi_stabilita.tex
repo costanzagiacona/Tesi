@@ -1,62 +1,105 @@
-% !TEX root = ../main.tex
-\section{Introduzione all'Analisi Lineare}
-L'obiettivo di questo capitolo è dimostrare la stabilità asintotica locale del velivolo VTOL nelle sue configurazioni operative critiche. La dinamica del sistema, intrinsecamente non lineare e tempo-variante, è descritta da un vettore di stato $\mathbf{x} \in \mathbb{R}^{30}$, che include posizioni, velocità, assetti angolari, ratei e gli stati integrativi dei regolatori PID.
+\section{Strategia di Linearizzazione Numerica}
+L'analisi di stabilità locale del velivolo VTOL richiede lo studio della matrice dinamica del sistema in un intorno infinitesimo di una specifica condizione di equilibrio. 
 
-\section{Metodologia di Linearizzazione e Criterio di Lyapunov}
-Per ogni punto di equilibrio $(\mathbf{x}_e, \mathbf{u}_e)$, il sistema è stato linearizzato tramite il calcolo della matrice Jacobiana $\mathbf{A}$:
-\[ \mathbf{A} = \left. \frac{\partial \mathbf{f}(\mathbf{x}, \mathbf{u})}{\partial \mathbf{x}} \right|_{\mathbf{x}_e, \mathbf{u}_e} \]
+Data l'elevata non-linearità del modello aerodinamico, l'impiego di matrici di rotazione tridimensionali e la dimensionalità dello spazio di stato, il calcolo analitico dello Jacobiano risulta estremamente oneroso e soggetto a errori algebrici. Si è pertanto optato per una \textbf{linearizzazione numerica differenziale ad anello chiuso}. In questo approccio, il velivolo e la legge di controllo vengono trattati come un unico sistema dinamico autonomo:
+\begin{equation}
+    \dot{x} = f_{cl}(x) = f(x, u(x))
+\end{equation}
+dove $x \in \mathbb{R}^n$ è il vettore di stato e $f_{cl}$ rappresenta il campo vettoriale complessivo. La matrice d'anello chiuso $A_{cl}$ viene estratta sollecitando numericamente il sistema con perturbazioni simmetriche e misurandone la risposta dinamica.
 
-Secondo il \textbf{Primo Metodo di Lyapunov}, la stabilità asintotica del punto di equilibrio è garantita se tutti gli autovalori $\lambda_i = \sigma_i \pm j\omega_i$ della matrice $\mathbf{A}$ presentano una parte reale $\sigma_i < 0$. Per ogni modo complesso coniugato, definiamo lo smorzamento $\zeta$ come la capacità del sistema di dissipare l'energia delle perturbazioni:
-\[ \zeta = \frac{-\sigma}{\sqrt{\sigma^2 + \omega^2}} \]
-
-\clearpage
-\section{Analisi dell'Assetto di Hovering}
-In fase di hovering ($V_x \approx 0$), il velivolo opera in un regime quasi-statico dove la portanza alare è nulla. Il sostentamento e il controllo del posizionamento sono affidati interamente alla spinta vettoriale dei tre rotori principali.
-
-\subsection{Sintesi del Controllore}
-Il sistema di controllo per l'hovering adotta una struttura gerarchica a doppio loop. Il loop esterno (\textit{Outer Loop}) implementa una strategia di \textbf{Sliding Mode Control (SMC)} per la regolazione della quota $z$ e delle posizioni $x, y$. L'utilizzo della funzione di commutazione $\tanh(s/\Phi)$ permette di gestire le non-linearità del modello garantendo robustezza alle perturbazioni esterne.
-
-Il loop interno (\textit{Inner Loop}) riceve i riferimenti di assetto ($\phi_{des}, \theta_{des}$) calcolati dal controllo SMC e utilizza regolatori di tipo \textbf{PID} per stabilizzare gli angoli di Eulero. In questa fase, il momento di imbardata è controllato tramite il tilt differenziale dei rotori anteriori ($\delta_{tilt, yaw}$), mentre il rotore di coda è mantenuto all'angolo ideale $\theta_{3,ideal}$ per bilanciare la coppia residua del sistema.
-
-\subsection{Interpretazione dei Risultati e Modi Dominanti}
-L'analisi degli autovalori nel punto di equilibrio ($V_x \approx 0, z = -10$ m) conferma la stabilità asintotica locale del sistema. I risultati possono essere raggruppati secondo la separazione delle scale temporali:
-
+\section{Definizione dello Spazio di Stato}
+La dimensione $n$ dello spazio di stato non è costante, ma evolve in funzione della fase di volo per riflettere i cambiamenti nell'architettura del controllore:
 \begin{itemize}
-    \item \textbf{Modi ad Alta Frequenza (85.49 rad/s, $\zeta = 0.815$):} Questi autovalori sono associati alla dinamica veloce degli attuatori e ai loop interni di assetto. L'elevato smorzamento ($\zeta > 0.8$) indica che i regolatori PID sono stati correttamente tarati per prevenire risonanze strutturali e oscillazioni nei comandi di spinta.
-    \item \textbf{Modi di Traiettoria (2.32 - 3.01 rad/s, $\zeta > 0.8$):} Questi modi descrivono la risposta del sistema SMC nel controllo della posizione. L'assenza di accoppiamenti aerodinamici significativi tipica del volo stazionario permette una regolazione quasi "morta" (deadbeat), dove il drone ritorna al setpoint di posizione senza sovraelongazioni apprezzabili.
-    \item \textbf{Modo di Traslazione Lenta (0.44 rad/s):} Rappresenta la dinamica di deriva dovuta alla sotto-attuazione intrinseca del velivolo. Nonostante la frequenza ridotta, lo smorzamento ($\zeta = 0.578$) è sufficiente a garantire una correzione stabile della posizione orizzontale tramite il beccheggio e il rollio.
+    \item \textbf{Hovering ($n=26$):} In questa fase si utilizza una logica Proporzionale-Derivativa (PD) o Sliding Mode. Poiché l'azione di controllo dipende esclusivamente dall'errore istantaneo e dalla sua derivata, il controllore non introduce nuovi stati dinamici. Il vettore comprende i 12 stati cinematici del corpo rigido e i 14 stati associati alla dinamica del secondo ordine dei 7 attuatori.
+    \item \textbf{Crociera ($n=30$):} L'inseguimento della velocità e della quota richiede l'azzeramento dell'errore a regime tramite un'azione integrale (PID). Ogni integratore introduce un'equazione differenziale aggiuntiva ($\dot{\sigma} = e$), portando la dimensionalità a $n=30$ (\textit{Augmented State Space}).
 \end{itemize}
 
+\section{Regolarizzazione del Modello}
+Affinché lo sviluppo in serie di Taylor alla base della linearizzazione sia matematicamente ben posto, il campo vettoriale $f_{cl}(x)$ deve essere di classe $C^1$ nel punto di equilibrio. Per soddisfare tale requisito, il modello è stato regolarizzato esclusivamente per la fase di estrazione dello Jacobiano:
+\begin{enumerate}
+    \item \textbf{Rimozione delle saturazioni:} Assumendo l'analisi valida per perturbazioni infinitesime $\delta x$, si garantisce che gli attuatori operino nel loro regime lineare, rendendo superflue le funzioni di saturazione.
+    \item \textbf{Approssimazione dello Sliding Mode:} La funzione discontinua $\text{sgn}(s)$ è stata sostituita con la funzione continua $\tanh(s/\Phi)$. Sviluppando in serie di Maclaurin per $s \to 0$ (condizione di equilibrio):
+    \begin{equation}
+        K \tanh\left(\frac{s}{\Phi}\right) = K \left( \frac{s}{\Phi} - \frac{s^3}{3\Phi^3} + \dots \right) \approx \frac{K}{\Phi}s
+    \end{equation}
+    Tale equivalenza dimostra che il controllo non lineare, nell'intorno dell'origine, si comporta come un guadagno lineare equivalente $K/\Phi$, garantendo la differenziabilità richiesta.
+\end{enumerate}
+
+\section{Metodo delle Differenze Finite Centrali}
+Per il calcolo degli elementi della matrice Jacobiana $A_{cl}$, si è scelto il metodo delle \textbf{differenze finite centrali} per superare il limite di accuratezza del primo ordine tipico delle differenze in avanti.
+Valutando lo sviluppo di Taylor della funzione $f_i(x)$ in un intorno perturbato simmetricamente $x_j \pm h$:
+\begin{equation}
+    A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
+\end{equation}
+Sottraendo le espansioni di Taylor, i termini contenenti le derivate di ordine pari si elidono, garantendo un errore di troncamento quadratico $\mathcal{O}(h^2)$. Il passo di perturbazione è stato impostato a $h = 10^{-6}$, valore ottimale per minimizzare l'errore di troncamento senza incorrere in errori di arrotondamento numerico (\textit{round-off error}).
+
+\section{Analisi Modale e Matrice di Partecipazione}
+Sebbene il segno della parte reale degli autovalori ($\text{Re}(\lambda_i) < 0$) sia sufficiente per decretare la stabilità, esso non fornisce informazioni sull'accoppiamento fisico tra variabili di stato e modi dinamici. 
+Si è quindi implementata l'analisi tramite la \textbf{Matrice di Partecipazione} $P$. Definiti la matrice degli autovettori destri $V$ e quella degli autovettori sinistri $W = V^{-1}$, il fattore di partecipazione adimensionale tra lo stato $k$-esimo e il modo $i$-esimo è:
+\begin{equation}
+    P_{ki} = \left| V_{ki} W_{ik} \right|
+\end{equation}
+L'estrazione di questa matrice ha permesso di validare la \textbf{separazione delle frequenze} imposta dal controllo: i modi lenti ($\sim 10^{-1}$ rad/s) risultano dominati dagli stati di posizione, i modi intermedi ($\sim 10^{1}$ rad/s) dalla dinamica di assetto, e i modi ad alta frequenza ($\sim 10^{2}$ rad/s) dagli attuatori.
 \clearpage
 
-\section{Analisi dell'Assetto di Crociera (Cruise)}
-La transizione al volo orizzontale ($V_x = 25$ m/s) sposta il sistema in un regime dominato dalle forze aerodinamiche. Qui, la stabilità è influenzata dalla sotto-attuazione: il drone non può variare la quota senza influenzare il beccheggio e la velocità.
+\section{Analisi della Condizione di Hovering}
+La prima fase della validazione riguarda la condizione di volo stazionario (\textit{hovering}). In questo scenario, il sistema deve sostenere il proprio peso e mantenere l'assetto nullo, garantendo la stabilità locale a fronte di piccole perturbazioni.
 
-\subsection{Sintesi del Controllore}
-Il controllo adottato è un \textit{Coordinated Bank-to-Turn}. La sfida principale è stata smorzare il modo di \textbf{Phugoid}, ovvero lo scambio energetico tra quota e velocità. Per farlo, si è agito massicciamente sui loop esterni:
+\subsection{Definizione del Punto di Equilibrio}
+Il punto di equilibrio $x_{eq} \in \mathbb{R}^{26}$ è stato calcolato imponendo la stazionarietà delle equazioni del moto ($\dot{x} = 0$). Per una quota di riferimento $z = -10$ m, lo stato di equilibrio prevede i tilt anteriori in posizione verticale ($\theta_{1,2} = \pi/2$), mentre l'angolo del rotore di coda $\theta_3$ è ricavato per bilanciare i momenti longitudinali.
+
+Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la spinta totale $T_{tot}$ eguagli il peso $mg$, con una ripartizione tale da garantire momento nullo al baricentro.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$).}
+    \vspace{0.3cm} 
+    \label{tab:trim_values}
+    \small
+    \renewcommand{\arraystretch}{1.3} % Migliora la leggibilità
+    \begin{tabularx}{\textwidth}{llllX}
+        \toprule
+        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Unità} & \textbf{Valore di Trim} \\
+        \midrule
+        \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati Cinematici (Corpo Rigido)}} \\
+        $1 \dots 2$     & $x, y$           & Posizione piano orizzontale & [m]            & $0$ \\
+        $3$             & $z$              & Quota di riferimento       & [m]            & $-10$ \\
+        $4 \dots 6$     & $u, v, w$        & Velocità lineari (Body)    & [m/s]          & $0$ \\
+        $7$             & $\phi$           & Angolo di Rollio           & [rad]          & $0.08$ \\
+        $8, 9$          & $\theta, \psi$   & Angoli di Eulero           & [rad]          & $0$ \\
+        $10 \dots 12$   & $p, q, r$        & Velocità angolari          & [rad/s]        & $0$ \\
+        
+        \\
+        \midrule
+        \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati degli Attuatori (Servomotori e Rotori)}} \\
+        $13, 15$        & $\alpha_{1,2}$   & Tilt motori anteriori      & [rad]          & $\pi/2$ \\
+        $17$            & $\theta_{3}$     & Tilt motore di coda        & [rad]          & $\theta_{3,ideal}$ \\
+        $14, 16, 18 \dots$ & $\dot{\alpha}, \dots$ & Derivate stati interni & [rad/s]     & $0$ \\
+        $21, 23, 25$    & $\omega_{1,2,3}$ & Velocità angolari rotori   & [rad/s]        & $\omega_{trim, i}$ \\
+        $22, 24, 26$    & $\dot{\omega}_{i}$ & Dinamica motori (II ordine) & [rad/s$^2$]  & $0$ \\
+        \bottomrule
+    \end{tabularx}
+    
+    \vspace{0.5cm} % Sostituisce il vecchio errore \pave
+    \begin{minipage}{\textwidth}
+        \footnotesize
+        \textit{Nota:} Gli stati degli attuatori includono la dinamica del secondo ordine; all'equilibrio, le derivate prime sono nulle e le uscite corrispondono ai valori di regime necessari per il sostentamento del peso.
+    \end{minipage}
+\end{table}
+
+\subsection{Analisi della Stabilità e Matrice di Partecipazione}
+L'estrazione dello Jacobiano nel punto $x_{eq}$ conferma la \textbf{stabilità asintotica locale} del sistema ad anello chiuso, con tutti gli autovalori caratterizzati da parte reale negativa ($\text{Re}(\lambda_i) < 0$). Il polo dominante è situato a $s = -0.3358$, valore che garantisce un ritorno all'equilibrio sufficientemente rapido per le dinamiche di traslazione.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{controllo_verticale/autovalori.png}
+    \caption{Analisi della partecipazione aggregata ai modi dinamici in hovering.}
+    \label{fig:partecipazione_hover}
+\end{figure}
+
+L'analisi della \textbf{Matrice di Partecipazione} (Fig. \ref{fig:partecipazione_hover}) permette di validare fisicamente l'architettura di controllo attraverso l'osservazione della separazione spettrale dei modi:
 \begin{itemize}
-    \item Il guadagno $K_{p,x} = 12.0$ vincola rigidamente la velocità orizzontale, impedendo le oscillazioni energetiche.
-    \item Il termine $K_{d,z} = 10.0$ agisce come uno smorzatore sintetico sulla velocità verticale $V_z$, "frenando" i moti oscillatori lenti.
+    \item \textbf{Modi Lenti ($\lambda \in [-0.34, -1.99]$):} Presentano una partecipazione dominante (superiore al 70\%) delle variabili di \textit{Posizione} e \textit{Velocità Lineare}. Questo conferma che la dinamica a bassa frequenza è correttamente governata dai cicli esterni di navigazione.
+    \item \textbf{Modi Intermedi ($\lambda \in [-2.00, -20.68]$):} Sono dominati dalle variabili di \textit{Assetto} ($\phi, \theta, \psi$) e dalle \textit{Velocità Angolari}. In particolare, il polo a $-2.00$ mostra una partecipazione dell'assetto prossima all'85\%, validando la prontezza del ciclo interno di stabilizzazione.
+    \item \textbf{Modi Veloci ($\lambda \in [-41.16, -87.55]$):} Risultano quasi esclusivamente legati alla \textit{Dinamica degli Attuatori} (oltre il 90\% di partecipazione). La netta separazione tra questi poli e quelli del corpo rigido indica che i ritardi degli attuatori non interferiscono negativamente con le prestazioni del controllore di volo.
 \end{itemize}
-
-\subsection{Discussione critica dei modi al limite}
-L'analisi ha evidenziato due modi con smorzamento ridotto ($\zeta \approx 0.24$):
-\begin{enumerate}
-    \item \textbf{Modo Traiettoria/Dutch Roll ($2.59$ rad/s):} Rappresenta l'oscillazione accoppiata tra imbardata e rollio. Nonostante la coordinazione implementata ($K_{coord} = 0.2$), lo smorzamento rimane limitato dall'autorità dei rotori anteriori in fase di crociera.
-    \item \textbf{Modo Longitudinale ($2.53$ rad/s):} È il residuo del modo di periodo corto. 
-\end{enumerate}
-
-\subsection{Vincoli di Attuazione e Trade-off dello Smorzamento}
-L'analisi sperimentale condotta in regime non lineare ha evidenziato un limite fondamentale nella sintesi del guadagno derivativo $k_{d,\theta}$. Sebbene la teoria lineare suggerisca un incremento di tale parametro per migliorare lo smorzamento del modo di periodo corto, le simulazioni mostrano l'insorgere di vibrazioni ad alta frequenza sia nell'angolo di beccheggio ($\theta$) che negli angoli di tilt dei rotori anteriori.
-\\Tale fenomeno è riconducibile alla natura della componente derivativa, che agisce come un amplificatore delle alte frequenze. Quando il guadagno $k_{d,\theta}$ eccede una soglia critica, il sistema di controllo tenta di rispondere a variazioni più rapide della larghezza di banda degli attuatori (fissati a circa $15$ Hz nel modello dinamico). Il risultato è un'instabilità numerica che evolve in un \textbf{ciclo limite}, dove i rotori oscillano tra i propri limiti di saturazione, degradando la stabilità globale del velivolo invece di migliorarla.
-\\Lo smorzamento del modo longitudinale a valori prossimi a $\zeta = 0.25$ per l'assetto di crociera rappresenta la massima autorità di controllo esercitabile senza innescare risonanze distruttive negli attuatori.
-
-\section{Separazione delle Scale Temporali}
-L'architettura di controllo implementata si basa sul principio della separazione delle scale temporali, fondamentale per la stabilità di sistemi sotto-attuati. Tale approccio permette di decomporre il problema del controllo in due sottosistemi gerarchici:
-
-\begin{enumerate}
-    \item \textbf{Inner Loop (Dinamica Veloce):} Preposto alla stabilizzazione dei momenti e degli assetti angolari ($\phi, \theta, \psi$). I risultati della linearizzazione mostrano frequenze proprie comprese tra $60$ e $95$ rad/s, garantendo una risposta quasi istantanea alle richieste di coppia.
-    \item \textbf{Outer Loop (Dinamica Lenta):} Preposto alla navigazione e al mantenimento della quota e velocità. Le frequenze dominanti in questa scala sono significativamente inferiori ($0.1 - 3$ rad/s).
-\end{enumerate}
-
-La validità di questa decomposizione è confermata dal rapporto tra le frequenze dei modi dominanti, che risulta superiore a un fattore 10 in ogni condizione di volo analizzata. Questa separazione garantisce che le correzioni di assetto avvengano a una velocità tale da poter essere considerate "stazionarie" dal punto di vista del controllo di traiettoria, minimizzando le interferenze dinamiche tra i loop e prevenendo l'insorgere di instabilità dovute all'accoppiamento dei guadagni.

@@ -50,6 +50,70 @@ fprintf('Autovalori:\n');
 disp(autov_hover);
 
 %% =========================================================================
+% ANALISI DELLA PARTECIPAZIONE AGGREGATA (Macro-Sistemi)
+% =========================================================================
+fprintf('\n--- CALCOLO MATRICE DI PARTECIPAZIONE AGGREGATA ---\n');
+
+% 1. Ricalcolo P_norm (se non ce l'hai già in memoria)
+[V, D] = eig(A_hover);
+autovalori = diag(D);
+W = inv(V);
+% 3. Calcolo Matrice di Partecipazione P (modulo) - CORRETTO
+% V ha (stati x modi). W.' ha (stati x modi).
+P = abs(V .* W.');
+
+% 4. Normalizzazione (la somma degli stati per ogni singolo modo deve fare 100%)
+P_norm = (P ./ sum(P, 1)) * 100;
+
+% 2. Aggregazione degli stati per significato fisico
+P_macro = zeros(5, 26);
+P_macro(1, :) = sum(P_norm(1:3, :), 1);   % Posizione (XYZ)
+P_macro(2, :) = sum(P_norm(4:6, :), 1);   % Vel. Lineare (uvw)
+P_macro(3, :) = sum(P_norm(7:9, :), 1);   % Assetto (Eulero)
+P_macro(4, :) = sum(P_norm(10:12, :), 1); % Vel. Angolare (pqr)
+P_macro(5, :) = sum(P_norm(13:26, :), 1); % Attuatori (Motori e Servi)
+
+% Per rendere il grafico ancora più pulito, ordiniamo gli autovalori dal 
+% più lento (Re più vicina a 0) al più veloce (Re più negativa)
+[~, sort_idx] = sort(real(autovalori), 'descend');
+autovalori_sorted = autovalori(sort_idx);
+P_macro_sorted = P_macro(:, sort_idx);
+
+%% VISUALIZZAZIONE AGGREGATA E ORDINATA
+figure('Name', 'Partecipazione per Sottosistemi Fisici', 'Position', [100, 100, 1200, 600]);
+
+% Creazione grafico a barre impilate (trasposto)
+b = bar(P_macro_sorted', 'stacked', 'EdgeColor', 'black', 'LineWidth', 0.5);
+
+% Colori specifici per facilitare la lettura visiva
+b(1).FaceColor = [0.2 0.6 0.8]; % Blu (Posizione)
+b(2).FaceColor = [0.4 0.8 0.9]; % Ciano (Vel. Lineare)
+b(3).FaceColor = [0.9 0.4 0.1]; % Arancio scuro (Assetto)
+b(4).FaceColor = [0.9 0.7 0.2]; % Giallo (Vel. Angolare)
+b(5).FaceColor = [0.5 0.5 0.5]; % Grigio (Attuatori)
+
+title('Partecipazione aggregata ai Modi Dinamici', 'FontSize', 15);
+xlabel('Autovalori ordinati (dal più LENTO al più VELOCE \rightarrow)', 'FontSize', 14);
+ylabel('Partecipazione Totale (%)', 'FontSize', 14);
+
+% Legenda chiara e parlante
+lgd = legend({'Posizione (XYZ)', 'Vel. Lineare (uvw)', 'Assetto (\phi, \theta, \psi)', ...
+              'Vel. Angolare (p, q, r)', 'Dinamica Attuatori'}, ...
+             'Location', 'eastoutside', 'FontSize', 12);
+title(lgd, 'Sottosistemi');
+
+% Formattazione asse X (Mostriamo solo la parte reale per brevità)
+labels_sorted = cell(26, 1);
+for i = 1:26
+    labels_sorted{i} = sprintf('%.2f', real(autovalori_sorted(i)));
+end
+xticks(1:26);
+xticklabels(labels_sorted);
+xtickangle(45);
+ylim([0 100]);
+grid on;
+
+%% =========================================================================
 % CASE 2: CRUISE (VOLO ORIZZONTALE) - 30 STATI
 % =========================================================================
 fprintf('--- ANALISI CASO 2: CRUISE (25 m/s) ---\n');

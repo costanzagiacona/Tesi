@@ -1,0 +1,47 @@
+\begin{thebibliography}{1}
+
+\bibitem{chen2017}
+C.~Chen, J.~Zhang, D.~Zhang, and L.~Shen.
+\newblock Control and flight test of a tilt-rotor unmanned aerial vehicle.
+\newblock {\em International Journal of Advanced Robotic Systems}, 14(1), 2017.
+
+\bibitem{cheng2022}
+W.-G. Cheng, R.~Wang, and Y.-H. Li.
+\newblock Robust backstepping sliding mode control for coaxial tilt-rotor uav.
+\newblock In {\em 2022 5th International Symposium on Autonomous Systems
+  (ISAS)}. IEEE, 2022.
+
+\bibitem{mian2008}
+A.~A. Mian and D.~Wang.
+\newblock Modeling and backstepping-based nonlinear control strategy for a 6
+  dof quadrotor helicopter.
+\newblock {\em Chinese Journal of Aeronautics}, 21(3):261--268, 2008.
+
+\bibitem{nam2020}
+K.-J. Nam, J.~Joung, and D.~Har.
+\newblock Tri-copter uav with individually tilted main wings for flight
+  maneuvers.
+\newblock {\em IEEE Access}, 8:46753--46770, 2020.
+
+\bibitem{riboldi2023}
+C.~E.~D. Riboldi and A.~Rolando.
+\newblock Thrust-based flight stabilization and guidance for autonomous
+  airships.
+\newblock In {\em Aerospace Europe Conference 2023 - 10th EUCASS - 9th CEAS},
+  2023.
+\newblock DOI: 10.13009/EUCASS2023-025.
+
+\bibitem{Wang2024}
+Xinhua Wang and Xuerui Mao.
+\newblock Non-overshooting sliding mode for uav control.
+\newblock {\em The Aeronautical Journal}, 2024.
+\newblock arXiv:2405.01087.
+
+\bibitem{yu2022}
+L.~Yu, G.~He, X.~Wang, and S.~Zhao.
+\newblock Robust fixed-time sliding mode attitude control of tilt trirotor uav
+  in helicopter mode.
+\newblock {\em IEEE Transactions on Industrial Electronics},
+  69(10):10322--10332, 2022.
+
+\end{thebibliography}

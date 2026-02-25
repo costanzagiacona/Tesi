@@ -1,4 +1,4 @@
-function PlotMonteCarloStatsAdvanced(csv_filename)
+function PlotMonteCarloStats(csv_filename)
     % =========================================================================
     % ANALISI STATISTICA MONTE CARLO - ADVANCED (PROFESSOR EDITION)
     % =========================================================================

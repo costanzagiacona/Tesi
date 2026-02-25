@@ -75,11 +75,11 @@
 \@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces ingressi di controllo del tricottero UAV VTOL}}{26}{table.3.2}\protected@file@percent }
 \newlabel{tab:ingressi_controllo}{{3.2}{26}{ingressi di controllo del tricottero UAV VTOL}{table.3.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3.6}Dinamica del Sistema}{27}{section.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle accelerazioni lineari}{27}{subsubsection*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle velocità angolari}{28}{subsubsection*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle accelerazioni angolari}{29}{subsubsection*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alla dinamica di tilting dei rotori}{30}{subsubsection*.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alla dinamica dei rotori}{31}{subsubsection*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle accelerazioni lineari}{27}{subsubsection*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle velocità angolari}{28}{subsubsection*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alle accelerazioni angolari}{29}{subsubsection*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alla dinamica di tilting dei rotori}{30}{subsubsection*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Equazioni relative alla dinamica dei rotori}{31}{subsubsection*.17}\protected@file@percent }
 \@writefile{toc}{\contentsline {chapter}{\numberline {4}Architettura di Controllo Proposta}{32}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
@@ -106,8 +106,8 @@
 \@writefile{toc}{\contentsline {section}{\numberline {5.6}Controllo di Assetto}{40}{section.5.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.6.1}Modello Dinamico e Inversione}{40}{subsection.5.6.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.6.2}Sintesi del Controllore Sliding Mode}{40}{subsection.5.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Rollio ($\phi $) e Beccheggio ($\theta $)}{41}{subsubsection*.17}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Imbardata ($\psi $)}{41}{subsubsection*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Rollio ($\phi $) e Beccheggio ($\theta $)}{41}{subsubsection*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Imbardata ($\psi $)}{41}{subsubsection*.19}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5.7}Motor Mixing Algorithm}{42}{section.5.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.7.1}Angolo di Equilibrio $\theta _{3}$}{42}{subsection.5.7.1}\protected@file@percent }
 \newlabel{eq:equilibrio_momenti_theta_3}{{5.23}{42}{Angolo di Equilibrio \texorpdfstring {$\theta _{3}$}{theta 3}}{equation.5.23}{}}
@@ -166,18 +166,70 @@
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \newlabel{ch:stabilita}{{8}{69}{Analisi di Stabilità}{chapter.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8.1}Introduzione all'Analisi Lineare}{69}{section.8.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{69}{section.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.3}Analisi dell'Assetto di Hovering}{70}{section.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.1}Sintesi del Controllore}{70}{subsection.8.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.2}Interpretazione dei Risultati e Modi Dominanti}{70}{subsection.8.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.4}Analisi dell'Assetto di Crociera (Cruise)}{72}{section.8.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4.1}Sintesi del Controllore}{72}{subsection.8.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4.2}Discussione critica dei modi al limite}{72}{subsection.8.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{72}{subsection.8.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.1}Strategia di Linearizzazione Numerica}{69}{section.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.2}Definizione dello Spazio di Stato}{69}{section.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.3}Regolarizzazione del Modello}{70}{section.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.4}Metodo delle Differenze Finite Centrali}{70}{section.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.5}Analisi Modale e Matrice di Partecipazione}{71}{section.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.6}Analisi della Condizione di Hovering}{72}{section.8.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6.1}Definizione del Punto di Equilibrio}{72}{subsection.8.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8.1}{\ignorespaces Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$).}}{72}{table.8.1}\protected@file@percent }
+\newlabel{tab:trim_values}{{8.1}{72}{Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$)}{table.8.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6.2}Analisi della Stabilità e Matrice di Partecipazione}{73}{subsection.8.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8.1}{\ignorespaces Analisi della partecipazione aggregata ai modi dinamici in hovering.}}{73}{figure.8.1}\protected@file@percent }
+\newlabel{fig:partecipazione_hover}{{8.1}{73}{Analisi della partecipazione aggregata ai modi dinamici in hovering}{figure.8.1}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {9}Validazione della Robustezza tramite Analisi Monte Carlo}{74}{chapter.9}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:montecarlo}{{9}{74}{Validazione della Robustezza tramite Analisi Monte Carlo}{chapter.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.1}Obiettivo dell'Analisi}{74}{section.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.2}Definizione delle Condizioni Iniziali Perturbate}{74}{section.9.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9.1}{\ignorespaces Deviazioni standard ($\sigma $) per la perturbazione degli stati iniziali nei tre scenari di test.}}{75}{table.9.1}\protected@file@percent }
+\newlabel{tab:montecarlo_sigma}{{9.1}{75}{Deviazioni standard ($\sigma $) per la perturbazione degli stati iniziali nei tre scenari di test}{table.9.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.1}{\ignorespaces Dispersione stocastica delle traiettorie spaziali 3D del velivolo durante le simulazioni Monte Carlo.}}{75}{figure.9.1}\protected@file@percent }
+\newlabel{fig:mc_traj3d}{{9.1}{75}{Dispersione stocastica delle traiettorie spaziali 3D del velivolo durante le simulazioni Monte Carlo}{figure.9.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.1}Scenario 1: Takeoff}{75}{subsection.9.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9.2}{\ignorespaces Evoluzione delle posizioni durante il takeoff.}}{76}{figure.9.2}\protected@file@percent }
+\newlabel{fig:takeoff_kinematics}{{9.2}{76}{Evoluzione delle posizioni durante il takeoff}{figure.9.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.3}{\ignorespaces Evoluzione delle velocità lineari durante il takeoff.}}{77}{figure.9.3}\protected@file@percent }
+\newlabel{fig:takeoff_vel}{{9.3}{77}{Evoluzione delle velocità lineari durante il takeoff}{figure.9.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.4}{\ignorespaces Evoluzione degli angoli di Eulero durante il takeoff.}}{77}{figure.9.4}\protected@file@percent }
+\newlabel{fig:takeoff_assetto}{{9.4}{77}{Evoluzione degli angoli di Eulero durante il takeoff}{figure.9.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.5}{\ignorespaces Evoluzione delle velocità angolari durante il takeoff.}}{78}{figure.9.5}\protected@file@percent }
+\newlabel{fig:takeoff_vel_ang}{{9.5}{78}{Evoluzione delle velocità angolari durante il takeoff}{figure.9.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.6}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il takeoff.}}{78}{figure.9.6}\protected@file@percent }
+\newlabel{fig:takeoff_tilt}{{9.6}{78}{Evoluzione degli angoli di tilt dei rotori durante il takeoff}{figure.9.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.7}{\ignorespaces Evoluzione del thrust generato dai rotori durante il takeoff.}}{79}{figure.9.7}\protected@file@percent }
+\newlabel{fig:takeoff_thrust}{{9.7}{79}{Evoluzione del thrust generato dai rotori durante il takeoff}{figure.9.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.2}Scenario 2: Hovering}{79}{subsection.9.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9.8}{\ignorespaces Evoluzione delle posizioni in hovering.}}{80}{figure.9.8}\protected@file@percent }
+\newlabel{fig:hovering_kinematics}{{9.8}{80}{Evoluzione delle posizioni in hovering}{figure.9.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.9}{\ignorespaces Evoluzione delle velocità lineari in hovering.}}{80}{figure.9.9}\protected@file@percent }
+\newlabel{fig:hovering_vel}{{9.9}{80}{Evoluzione delle velocità lineari in hovering}{figure.9.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.10}{\ignorespaces Evoluzione degli angoli di Eulero in hovering.}}{81}{figure.9.10}\protected@file@percent }
+\newlabel{fig:hovering_assetto}{{9.10}{81}{Evoluzione degli angoli di Eulero in hovering}{figure.9.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.11}{\ignorespaces Evoluzione delle velocità angolari in hovering.}}{81}{figure.9.11}\protected@file@percent }
+\newlabel{fig:hovering_vel_ang}{{9.11}{81}{Evoluzione delle velocità angolari in hovering}{figure.9.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.12}{\ignorespaces Evoluzione degli angoli di tilt dei rotori in hovering.}}{82}{figure.9.12}\protected@file@percent }
+\newlabel{fig:hovering_tilt}{{9.12}{82}{Evoluzione degli angoli di tilt dei rotori in hovering}{figure.9.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.13}{\ignorespaces Evoluzione del thrust generato dai rotori in hovering.}}{82}{figure.9.13}\protected@file@percent }
+\newlabel{fig:hovering_thrust}{{9.13}{82}{Evoluzione del thrust generato dai rotori in hovering}{figure.9.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.3}Scenario 3: Cruise}{82}{subsection.9.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9.14}{\ignorespaces Evoluzione delle posizioni durante il volo traslato.}}{83}{figure.9.14}\protected@file@percent }
+\newlabel{fig:cruise_kinematics}{{9.14}{83}{Evoluzione delle posizioni durante il volo traslato}{figure.9.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.15}{\ignorespaces Evoluzione delle velocità lineari durante il volo traslato.}}{84}{figure.9.15}\protected@file@percent }
+\newlabel{fig:cruise_vel}{{9.15}{84}{Evoluzione delle velocità lineari durante il volo traslato}{figure.9.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.16}{\ignorespaces Evoluzione degli angoli di Eulero durante il volo traslato.}}{84}{figure.9.16}\protected@file@percent }
+\newlabel{fig:cruise_assetto}{{9.16}{84}{Evoluzione degli angoli di Eulero durante il volo traslato}{figure.9.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.17}{\ignorespaces Evoluzione delle velocità angolari durante il volo traslato.}}{85}{figure.9.17}\protected@file@percent }
+\newlabel{fig:cruise_vel_ang}{{9.17}{85}{Evoluzione delle velocità angolari durante il volo traslato}{figure.9.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.18}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il volo traslato.}}{86}{figure.9.18}\protected@file@percent }
+\newlabel{fig:cruise_tilt}{{9.18}{86}{Evoluzione degli angoli di tilt dei rotori durante il volo traslato}{figure.9.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.19}{\ignorespaces Evoluzione del thrust generato dai rotori durante il volo traslato.}}{86}{figure.9.19}\protected@file@percent }
+\newlabel{fig:cruise_thrust}{{9.19}{86}{Evoluzione del thrust generato dai rotori durante il volo traslato}{figure.9.19}{}}
 \bibstyle{plain}
 \bibdata{bibliografia}
-\@writefile{toc}{\contentsline {section}{\numberline {8.5}Separazione delle Scale Temporali}{73}{section.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.4}Conclusione sulla Robustezza}{87}{subsection.9.2.4}\protected@file@percent }
 \bibcite{chen2017}{1}
 \bibcite{cheng2022}{2}
 \bibcite{mian2008}{3}
@@ -185,4 +237,4 @@
 \bibcite{riboldi2023}{5}
 \bibcite{Wang2024}{6}
 \bibcite{yu2022}{7}
-\gdef \@abspage@last{79}
+\gdef \@abspage@last{95}

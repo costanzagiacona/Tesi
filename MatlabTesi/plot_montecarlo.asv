@@ -1,8 +1,8 @@
 %% PLOT PRESENTATION SUITE - Kinematic, Dynamic & Actuator Analysis
-close all; clc;
+close all; 
 files = {'Results_Recovery Hover.mat', ...
-         'Results1_Takeoff Ground.mat', ...
-         'Results1_Cruise Flight.mat'};
+         'Results_Takeoff Ground.mat', ...
+         'Results_Cruise Flight.mat'};
 
 % files = {'Results_PID_Cruise Flight.mat'};
 % files = {'Results_SMC_Takeoff Ground.mat'};
@@ -60,8 +60,8 @@ function Plot_State_Overview(risultati, label)
     num_rotors = length(idx_rotors);
     % Mappatura corretta per estrarre solo gli angoli (saltando le derivate)
     idx_tilt_vec = [13, 15, 17];
-    rotor_names_tilt = {'Tilt Rotore 2', 'Tilt Rotore 1', 'Tilt Rotore 3'}; 
-    rotor_names_thrust = {'Thrust Rotore 2', 'Thrust Rotore 1', 'Thrust Rotore 3'}; 
+    rotor_names_tilt = {'Tilt 2', 'Tilt 1', 'Tilt 3'}; 
+    rotor_names_thrust = {'Rotore Front-Left', 'Rotore Front-Right', 'Rotore Rear'}; 
     rotor_colors = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.4660 0.6740 0.1880];
 
     % =====================================================================
@@ -99,8 +99,8 @@ function Plot_State_Overview(risultati, label)
             
             % Attuatori: Tilt
             set(0, 'CurrentFigure', figs(5));
-            for r = 1:2
-                subplot(2, 1, r); hold on;
+            for r = 1:num_rotors
+                subplot(num_rotors, 1, r); hold on;
                 plot(t, rad2deg(X(:, idx_tilt_vec(r))), 'Color', [rotor_colors(r,:), 0.25], 'LineWidth', 1.0);
             end
             
@@ -109,7 +109,6 @@ function Plot_State_Overview(risultati, label)
             for r = 1:num_rotors
                 subplot(num_rotors, 1, r); hold on;
                 thrust_r = k_thrust * (X(:, idx_rotors(r)).^2);
-                ylim([-5, 110]);
                 plot(t, thrust_r, 'Color', [rotor_colors(r,:), 0.25], 'LineWidth', 1.0);
             end
         end
@@ -144,8 +143,8 @@ function Plot_State_Overview(risultati, label)
     
     % Fig 5: Tilt
     set(0, 'CurrentFigure', figs(5));
-    for r = 1:2
-        subplot(2, 1, r); grid on;
+    for r = 1:num_rotors
+        subplot(num_rotors, 1, r); grid on;
         ylabel(['\delta_{', num2str(r), '} [deg]']); title(rotor_names_tilt{r});
         yline(90, '--k', 'Alpha', 0.2); yline(0, '--k', 'Alpha', 0.2); ylim([-5, 95]);
         if r == num_rotors; xlabel('Tempo [s]'); end

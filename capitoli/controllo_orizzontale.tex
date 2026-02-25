@@ -268,7 +268,7 @@ Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), l'algoritmo di mi
     \delta_{pitch} = \frac{M_{y,req}}{T_{tot} \cdot d_{m_x}}, \quad \delta_{roll} = \frac{M_{x,req}}{T_{tot} \cdot d_{m_y}}
 \end{equation}
 
-Il comando finale inviato ai singoli servi ($\delta_1, \delta_2$) è il risultato di un mixing additivo/sottrattivo dei contributi di assetto:
+Il comando finale inviato ai singoli servi ($\theta_1, \theta_2$) è il risultato di un mixing additivo/sottrattivo dei contributi di assetto:
 \begin{equation}
     \begin{cases}
         \theta_{1} = \delta_{pitch} - \delta_{roll} \\

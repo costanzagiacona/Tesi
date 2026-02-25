@@ -28,11 +28,11 @@
 \contentsline {subsection}{\numberline {3.5.1}Variabili di Stato}{25}{subsection.3.5.1}%
 \contentsline {subsection}{\numberline {3.5.2}Ingressi di Controllo}{26}{subsection.3.5.2}%
 \contentsline {section}{\numberline {3.6}Dinamica del Sistema}{27}{section.3.6}%
-\contentsline {subsubsection}{Equazioni relative alle accelerazioni lineari}{27}{subsubsection*.6}%
-\contentsline {subsubsection}{Equazioni relative alle velocità angolari}{28}{subsubsection*.9}%
-\contentsline {subsubsection}{Equazioni relative alle accelerazioni angolari}{29}{subsubsection*.12}%
-\contentsline {subsubsection}{Equazioni relative alla dinamica di tilting dei rotori}{30}{subsubsection*.15}%
-\contentsline {subsubsection}{Equazioni relative alla dinamica dei rotori}{31}{subsubsection*.16}%
+\contentsline {subsubsection}{Equazioni relative alle accelerazioni lineari}{27}{subsubsection*.7}%
+\contentsline {subsubsection}{Equazioni relative alle velocità angolari}{28}{subsubsection*.10}%
+\contentsline {subsubsection}{Equazioni relative alle accelerazioni angolari}{29}{subsubsection*.13}%
+\contentsline {subsubsection}{Equazioni relative alla dinamica di tilting dei rotori}{30}{subsubsection*.16}%
+\contentsline {subsubsection}{Equazioni relative alla dinamica dei rotori}{31}{subsubsection*.17}%
 \contentsline {chapter}{\numberline {4}Architettura di Controllo Proposta}{32}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Strategie di Controllo e Definizione dell'Inviluppo di Volo}{32}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}Fase 1: Volo Verticale (Hovering)}{32}{subsection.4.1.1}%
@@ -51,8 +51,8 @@
 \contentsline {section}{\numberline {5.6}Controllo di Assetto}{40}{section.5.6}%
 \contentsline {subsection}{\numberline {5.6.1}Modello Dinamico e Inversione}{40}{subsection.5.6.1}%
 \contentsline {subsection}{\numberline {5.6.2}Sintesi del Controllore Sliding Mode}{40}{subsection.5.6.2}%
-\contentsline {subsubsection}{Rollio ($\phi $) e Beccheggio ($\theta $)}{41}{subsubsection*.17}%
-\contentsline {subsubsection}{Imbardata ($\psi $)}{41}{subsubsection*.18}%
+\contentsline {subsubsection}{Rollio ($\phi $) e Beccheggio ($\theta $)}{41}{subsubsection*.18}%
+\contentsline {subsubsection}{Imbardata ($\psi $)}{41}{subsubsection*.19}%
 \contentsline {section}{\numberline {5.7}Motor Mixing Algorithm}{42}{section.5.7}%
 \contentsline {subsection}{\numberline {5.7.1}Angolo di Equilibrio $\theta _{3}$}{42}{subsection.5.7.1}%
 \contentsline {subsection}{\numberline {5.7.2}Thrust}{43}{subsection.5.7.2}%
@@ -87,13 +87,18 @@
 \contentsline {subsection}{\numberline {7.1.4}Analisi di Stabilità e Tempo di Raggiungimento}{66}{subsection.7.1.4}%
 \contentsline {subsection}{\numberline {7.1.5}Regolarizzazione e Mitigazione del Chattering}{67}{subsection.7.1.5}%
 \contentsline {chapter}{\numberline {8}Analisi di Stabilità}{69}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Introduzione all'Analisi Lineare}{69}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Metodologia di Linearizzazione e Criterio di Lyapunov}{69}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Analisi dell'Assetto di Hovering}{70}{section.8.3}%
-\contentsline {subsection}{\numberline {8.3.1}Sintesi del Controllore}{70}{subsection.8.3.1}%
-\contentsline {subsection}{\numberline {8.3.2}Interpretazione dei Risultati e Modi Dominanti}{70}{subsection.8.3.2}%
-\contentsline {section}{\numberline {8.4}Analisi dell'Assetto di Crociera (Cruise)}{72}{section.8.4}%
-\contentsline {subsection}{\numberline {8.4.1}Sintesi del Controllore}{72}{subsection.8.4.1}%
-\contentsline {subsection}{\numberline {8.4.2}Discussione critica dei modi al limite}{72}{subsection.8.4.2}%
-\contentsline {subsection}{\numberline {8.4.3}Vincoli di Attuazione e Trade-off dello Smorzamento}{72}{subsection.8.4.3}%
-\contentsline {section}{\numberline {8.5}Separazione delle Scale Temporali}{73}{section.8.5}%
+\contentsline {section}{\numberline {8.1}Strategia di Linearizzazione Numerica}{69}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Definizione dello Spazio di Stato}{69}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Regolarizzazione del Modello}{70}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Metodo delle Differenze Finite Centrali}{70}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Analisi Modale e Matrice di Partecipazione}{71}{section.8.5}%
+\contentsline {section}{\numberline {8.6}Analisi della Condizione di Hovering}{72}{section.8.6}%
+\contentsline {subsection}{\numberline {8.6.1}Definizione del Punto di Equilibrio}{72}{subsection.8.6.1}%
+\contentsline {subsection}{\numberline {8.6.2}Analisi della Stabilità e Matrice di Partecipazione}{73}{subsection.8.6.2}%
+\contentsline {chapter}{\numberline {9}Validazione della Robustezza tramite Analisi Monte Carlo}{74}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Obiettivo dell'Analisi}{74}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Definizione delle Condizioni Iniziali Perturbate}{74}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}Scenario 1: Takeoff}{75}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}Scenario 2: Hovering}{79}{subsection.9.2.2}%
+\contentsline {subsection}{\numberline {9.2.3}Scenario 3: Cruise}{82}{subsection.9.2.3}%
+\contentsline {subsection}{\numberline {9.2.4}Conclusione sulla Robustezza}{87}{subsection.9.2.4}%

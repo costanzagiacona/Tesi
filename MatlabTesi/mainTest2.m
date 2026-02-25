@@ -16,9 +16,9 @@ tspan = [0 30];              % intervallo di simulazione
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
-fase = 3;       
+fase = 1;       
 
-test_casi = 2;  % flag per cambiare le condizioni di simulazione
+test_casi = 1;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero

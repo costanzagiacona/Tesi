@@ -60,11 +60,11 @@ u = controlloVTOL_v3(t, params, x, test_id, target);
 
 % rotori anteriori
 zeta = 0.8;
-omega_n = 2*pi*15;
+omega_n = 2*pi*2;
 
 % tail rotor
 zeta_tail = 0.8;
-omega_n_tail = 2*pi*15;
+omega_n_tail = 2*pi*4;
 
 
 % dinamica eliche rotori

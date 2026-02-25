@@ -10,7 +10,7 @@ function MonteCarloVTOL(params)
     cfg_rec.name = 'Recovery Hover';
     cfg_rec.test_id = 1; 
     cfg_rec.target = [0; 0; -10]; 
-    cfg_rec.tspan = [0 100]; 
+    cfg_rec.tspan = [0 30]; 
     cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(15), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; 
     cfg_rec.n_states = 26; % Esplicito la dimensione dello stato
@@ -22,7 +22,7 @@ function MonteCarloVTOL(params)
     cfg_take.name = 'Takeoff Ground';
     cfg_take.test_id = 1; 
     cfg_take.target = [0; 0; -10]; 
-    cfg_take.tspan = [0 50]; 
+    cfg_take.tspan = [0 30]; 
     cfg_take.sigma = struct('pos', 1, 'vel', 0.5, 'att', deg2rad(3), 'omega', deg2rad(1));
     cfg_take.x0_type = 'takeoff'; 
     cfg_take.n_states = 26;
@@ -34,8 +34,8 @@ function MonteCarloVTOL(params)
     cfg_cru.name = 'Cruise Flight';
     cfg_cru.test_id = 2; 
     cfg_cru.target = [25; 0; -10]; 
-    cfg_cru.tspan = [0 60]; 
-    cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(10), 'omega', deg2rad(2)); % Ripristinata incertezza omega
+    cfg_cru.tspan = [0 40]; 
+    cfg_cru.sigma = struct('pos', 5.0, 'vel', 7.0, 'att', deg2rad(10), 'omega', deg2rad(2)); % Ripristinata incertezza omega
     cfg_cru.x0_type = 'cruise'; 
     cfg_cru.n_states = 30; % Modello con dinamica estesa per il cruise
     
@@ -47,7 +47,7 @@ end
 
 %% --- FUNZIONE CORE: Esecuzione Campagna ---
 function RunCampaign(cfg, params)
-    N_sim = 100;
+    N_sim = 200;
     fprintf('>> Scenario: %s (Test ID %d) | %d Simulazioni\n', cfg.name, cfg.test_id, N_sim);
     
     % CORREZIONE: Preallocazione rigorosa
@@ -123,8 +123,8 @@ function RunCampaign(cfg, params)
     n_crash = sum([stats.crashed]);
     fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
     
-    save(['Results_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_' cfg.name '.csv']);
+    save(['Results1_' cfg.name '.mat'], 'risultati', 'cfg');
+    GenerateFullCSV(stats, ['Analysis1_' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
