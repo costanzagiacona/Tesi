@@ -29,16 +29,7 @@ La matrice di covarianza diagonale $\Sigma$ è definita dalle deviazioni standar
     }
 \end{table}
 
-In ogni iterazione, un \textit{Watchdog Detector} ha monitorato il verificarsi di condizioni di fallimento critico (crash), definite come l'impatto col suolo ($Z > 0.1$ m), la divergenza di quota ($Z < -200$ m), o il raggiungimento di angoli di Eulero incompatibili con il volo controllato ($\phi, \theta > \pm 80^\circ$).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{example-image-a}
-    \caption{Dispersione stocastica delle traiettorie spaziali 3D del velivolo durante le simulazioni Monte Carlo.}
-    \label{fig:mc_traj3d}
-\end{figure}
-
-
+\clearpage
 
 \subsection{Scenario 1: Takeoff}
 Lo scenario di decollo valuta la stabilità della macchina durante la delicata transizione dal suolo al volo stazionario, in presenza di piccole asimmetrie iniziali (perturbazioni di posizione, velocità e assetto tipiche del distacco da terra). I risultati mostrano una traiettoria di salita rigorosa e ben condizionata (Figura \ref{fig:takeoff_kinematics}). 
@@ -88,6 +79,8 @@ Sul piano orizzontale, le derive iniziali lungo $X$ e $Y$, indotte dagli errori 
     \caption{Evoluzione del thrust generato dai rotori durante il takeoff.}
     \label{fig:takeoff_thrust}
 \end{figure}
+
+\clearpage
 
 \subsection{Scenario 2: Hovering}
 In questo scenario, l'obiettivo è validare la capacità del sistema di recuperare una condizione di volo stazionario a quota di sicurezza ($10$ metri) partendo da un inviluppo di volo fortemente perturbato. L'analisi della cinematica, illustrata in Figura \ref{fig:rec_kinematics}, evidenzia l'efficacia dell'architettura di controllo in cascata: mentre la dinamica veloce dell'anello interno stabilizza l'assetto (rollio, beccheggio e imbardata) entro i primi $15$ secondi, l'anello esterno gestisce il rientro planare in modo asintotico. 
@@ -173,7 +166,7 @@ Le condizioni iniziali perturbate in questo regime assumono un significato fisic
 \end{figure}
 
 
-Come si evince dall'analisi dei ratei angolari (Figura \ref{fig:cruise_rates}), la reazione del sistema nei primi $10$ secondi è violenta. I ratei saturano i limiti fisici ($\pm 100$ deg/s), innescati sia dai disturbi aerodinamici sia dal \textit{Derivative Kick} intrinseco nell'azione derivativa del controllore PD d'assetto a fronte dell'errore a gradino. L'asse di imbardata (rateo $r$) risulta particolarmente sollecitato: essendo il rotore di coda spento in crociera, il momento di imbardata è interamente generato dal differenziale di spinta dei due rotori anteriori.
+Come si evince dall'analisi dei ratei angolari (Figura \ref{fig:cruise_vel_ang}), la reazione del sistema nei primi $10$ secondi è violenta. I ratei saturano i limiti fisici ($\pm 100$ deg/s), innescati sia dai disturbi aerodinamici sia dal \textit{Derivative Kick} intrinseco nell'azione derivativa del controllore PD d'assetto a fronte dell'errore a gradino. L'asse di imbardata (rateo $r$) risulta particolarmente sollecitato: essendo il rotore di coda spento in crociera, il momento di imbardata è interamente generato dal differenziale di spinta dei due rotori anteriori.
 
 \begin{figure}[H]
     \centering
@@ -189,7 +182,7 @@ Come si evince dall'analisi dei ratei angolari (Figura \ref{fig:cruise_rates}), 
     \label{fig:cruise_thrust}
 \end{figure}
 
-L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_actuators}) conferma l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a saturare in modo netto e ripetuto al limite imposto di $100$ N. Una volta dissipata l'energia del transitorio iniziale, il sistema converge egregiamente: la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt si allineano alla configurazione aerodinamica ottimale.
+L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_thrust}) conferma l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a saturare in modo netto e ripetuto al limite imposto di $100$ N. Una volta dissipata l'energia del transitorio iniziale, il sistema converge egregiamente: la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt si allineano alla configurazione aerodinamica ottimale.
 
 Dal punto di vista della teoria dei controlli, la capacità del sistema di assorbire uno shock iniziale di tale magnitudo e riconvergere al target in circa $20$ secondi rappresenta una solida dimostrazione della stabilità asintotica globale del controllore. Tuttavia, si sottolinea criticamente che, in vista di una validazione sperimentale, l'entità delle oscillazioni strutturali imporrà l'adozione di un pre-filtro passa-basso (generatore di traiettoria) sui riferimenti, al fine di ammorbidire l'errore visto dal controllore e prevenire danni meccanici alla cellula e agli attuatori.
 

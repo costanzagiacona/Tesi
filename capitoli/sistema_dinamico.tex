@@ -1,5 +1,5 @@
 \section{Sistema Dinamico}
-Una volta definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentano l'evoluzione temporale dello stato.
+Definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentano l'evoluzione temporale dello stato.
 \\Le equazioni di stato sono formulate come:
 \begin{equation}
     \dot{x}(t) = f(x(t), u(t), t)
@@ -78,11 +78,11 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 
 \subsubsection{Equazioni relative alle accelerazioni lineari}
            \vspace{0.5cm}
-     Dalla (3.9) e (3.10) si ottiene che le accelerazioni lineari nel body frame 
+     Dalle equazioni della dinamica \ref{eq:newton_euler} si ottiene che le accelerazioni lineari nel body frame 
      sono date da:
      
-     \[
-     \begin{bmatrix}
+     \begin{equation}
+		\begin{bmatrix}
      	\dot{x}_4 \\ \dot{x}_5 \\ \dot{x}_6
      \end{bmatrix}
      =
@@ -97,8 +97,7 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
      	x_4 \\ x_5 \\ x_6
      \end{bmatrix}
      \right)
-     \tag{4.3}
-     \]
+	 \end{equation}
      
            \vspace{0.5cm}
      dove dalla (3.26) :
@@ -163,16 +162,15 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
      		-\tfrac{1}{2}\rho\, x_4^2\, s\,(C_l + C_l)
      		-\operatorname{sgn}(x_6)\,\tfrac{1}{2}\rho\, x_6^2\, s\,(C_{d,z} + C_{d,z})
      	\end{bmatrix}
-     	\tag{4.4}
      \end{equation}
      
-     \newpage
+     \clearpage
       \subsubsection{Equazioni relative alle velocità angolari}
      \vspace{0.5cm}
      Dalla (3.7):
      
-      \[
-     \begin{bmatrix}
+	 \begin{equation}
+		\begin{bmatrix}
      	\dot{x}_7 \\[4pt]
      	\dot{x}_8 \\[4pt]
      	\dot{x}_9
@@ -182,13 +180,12 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
      \begin{bmatrix}
      	x_{10} \\ x_{11} \\ x_{12}
      \end{bmatrix}
-     \tag{4.5}
-     \]
-     
+	 \end{equation}
+
      ottenendo  : 
      
-     \[
-     \begin{bmatrix}
+	 \begin{equation}
+		\begin{bmatrix}
      	\dot{x}_7 \\[4pt]
      	\dot{x}_8 \\[4pt]
      	\dot{x}_9
@@ -202,18 +199,17 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
      \begin{bmatrix}
      	x_{10} \\ x_{11} \\ x_{12}
      \end{bmatrix}
-     \tag{4.6}
-     \]
+	 \end{equation}
      
-     \newpage
+     \clearpage
      
      \subsubsection{Equazioni relative alle accelerazioni angolari}
      \vspace{0.5cm}
      Dalla (3.9) e (3.28) si ottiene che le accelerazioni angolari nel body frame 
      sono date da:
 	
-	\[
-	\begin{bmatrix}
+	 \begin{equation}
+		\begin{bmatrix}
 		\dot{x}_{10} \\ \dot{x}_{11} \\ \dot{x}_{12}
 	\end{bmatrix}
 	=
@@ -228,8 +224,7 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 		x_{10} \\ x_{11} \\ x_{12}
 	\end{bmatrix}
 	\right)
-	\tag{4.7}
-	\]
+	 \end{equation}
 	
 	 \vspace{0.5cm}
 	 Dove il termine tra parentesi è dato da :
@@ -305,12 +300,11 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 	 		(I_{xx}-I_{zz})\,x_{10}\,x_{12} \\
 	 		(I_{yy}-I_{xx})\,x_{10}\,x_{11}
 	 	\end{bmatrix}
-	 	\tag{4.8}
 	 \end{equation}
 	 
 
 	  
-	  \newpage
+	  \clearpage
 	  
 	  \subsubsection{Equazioni relative alla dinamica di tilting dei rotori}
 	   	  \vspace{0.5cm}
@@ -329,9 +323,10 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 	  	\dot{x}_{20} &= -2 \zeta_4 \omega_{n,4} x_{20} + \omega_{n,4}^2 (u_7 - x_{19})
 	  \end{align}
 	  
-\newpage
+\clearpage
 
-	  \subsubsection{Equazioni relative alla dinamica dei rotori}
+	  
+\subsubsection{Equazioni relative alla dinamica dei rotori}
 \vspace{0.5cm}
 La dinamica degli attuatori dei rotori è stata modellata come un sistema del secondo ordine, descritta dalle seguenti equazioni (4.9)
 

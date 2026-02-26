@@ -27,100 +27,112 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
     \item \textbf{Motor Mixing Algorithm (MMA):} Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
 \end{enumerate}
 
-\begin{figure}[htbp]
-    \centering
-    \resizebox{0.95\textwidth}{!}{
-    \begin{tikzpicture}[auto, node distance=1.3cm, >=Stealth, thick]
-        % --- STILI ---
-        \tikzset{
-            block/.style={draw, rectangle, minimum height=3em, minimum width=4.5em, align=center, fill=white},
-            sum/.style={draw, circle, inner sep=0pt, minimum size=6mm},
-            input/.style={coordinate},
-            output/.style={coordinate},
-            container/.style={draw, rectangle, rounded corners, dashed, inner sep=0.4cm}
-        }
+% \begin{figure}[htbp]
+%     \centering
+%     \resizebox{0.95\textwidth}{!}{
+%     \begin{tikzpicture}[auto, node distance=1.3cm, >=Stealth, thick]
+%         % --- STILI ---
+%         \tikzset{
+%             block/.style={draw, rectangle, minimum height=3em, minimum width=4.5em, align=center, fill=white},
+%             % Soluzione robusta: usiamo un alias per il nodo corrente
+%             sum/.style={
+%                 draw, circle, inner sep=0pt, minimum size=6mm,
+%                 append after command={
+%                     node [below left, xshift=3.5mm, yshift=2.8mm] at (\tikzlastnode.south) {\tiny $-$}
+%                 }
+%             },
+%             input/.style={coordinate},
+%             output/.style={coordinate},
+%             container/.style={draw, rectangle, rounded corners, dashed, inner sep=0.4cm}
+%         }
 
-        % --- COLONNA 1: OUTER LOOP ---
-        \node [input] (ref_z) {};
-        \node [sum, right=0.8cm of ref_z] (sum_z) {$\Sigma$};
-        \node [block, right=1cm of sum_z] (pid_z) {PID\\$z$};
-        \node [left=0.1cm of ref_z] {$z_{des}$};
+%         % --- COLONNA 1: OUTER LOOP ---
+%         \node [input] (ref_vx) {};
+%         \node [sum, right=0.8cm of ref_vx] (sum_vx) {$\Sigma$};
+%         \node [block, right=1cm of sum_vx] (pid_vx) {PID\\$v_x$};
+%         \node [left=0.1cm of ref_vx] {$v_{x,des}$};
 
-        \node [input, below=1.5cm of ref_z] (ref_vx) {};
-        \node [sum, right=0.8cm of ref_vx] (sum_vx) {$\Sigma$};
-        \node [block, right=1cm of sum_vx] (pid_vx) {PID\\$v_x$};
-        \node [left=0.1cm of ref_vx] {$v_{x,des}$};
+%         \node [input, below=2cm of ref_vx] (ref_z) {};
+%         \node [sum, right=0.8cm of ref_z] (sum_z) {$\Sigma$};
+%         \node [block, right=1cm of sum_z] (pid_z) {PID\\$z$};
+%         \node [left=0.1cm of ref_z] {$z_{des}$};
 
-        \node [input, below=5cm of ref_vx] (ref_y) {};
-        \node [sum, right=0.8cm of ref_y] (sum_y) {$\Sigma$};
-        \node [block, right=1cm of sum_y] (pid_y) {PID\\$y$};
-        \node [left=0.1cm of ref_y] {$y_{des}$};
+%         \node [input, below=2cm of ref_z] (ref_y) {};
+%         \node [sum, right=0.8cm of ref_y] (sum_y) {$\Sigma$};
+%         \node [block, right=1cm of sum_y] (pid_y) {PID\\$y$};
+%         \node [left=0.1cm of ref_y] {$y_{des}$};
 
-        % --- COLONNA 2: INNER LOOP ---
-        \node [sum, right=3cm of pid_vx, yshift=-1.5cm] (sum_theta) {$\Sigma$};
-        \node [block, right=0.8cm of sum_theta] (pid_theta) {PID\\$\theta$};
+%         % --- COLONNA 2: INNER LOOP ---
+%         \node [sum, right=3cm of pid_z] (sum_theta) {$\Sigma$};
+%         \node [block, right=0.8cm of sum_theta] (pid_theta) {PID\\$\theta$};
+
+%         \node [sum, right=3cm of pid_y] (sum_psi) {$\Sigma$};
+%         \node [block, right=0.8cm of sum_psi] (pid_psi) {PID\\$\psi$};
         
-        \node [sum, below=1cm of sum_theta] (sum_phi) {$\Sigma$};
-        \node [block, right=0.8cm of sum_phi] (pid_phi) {PID\\$\phi$};
+%         \node [sum, below=1.5cm of sum_psi] (sum_phi) {$\Sigma$};
+%         \node [block, right=0.8cm of sum_phi] (pid_phi) {PID\\$\phi$};
 
-        \node [sum, right=3cm of pid_y] (sum_psi) {$\Sigma$};
-        \node [block, right=0.8cm of sum_psi] (pid_psi) {PID\\$\psi$};
+%         % --- COLONNA 3: MIXER E DRONE ---
+%         \node [block, right=8.5cm of pid_vx, minimum height=8.5cm, yshift=-3cm] (mixer) {MMA};
+%         \node [block, right=1.5cm of mixer, minimum height=8.5cm] (drone) {DRONE};
+%         \node [output, right=1cm of drone] (drone_out) {};
 
-        % --- COLONNA 3: MIXER E DRONE ---
-        \node [block, right=8.5cm of pid_vx, minimum height=10.5cm, yshift=-2cm] (mixer) {MMA};
-        \node [block, right=1.5cm of mixer, minimum height=8.5cm] (drone) {DRONE};
-        \node [output, right=1cm of drone] (drone_out) {};
+%         % --- CONNESSIONI DIRETTE ---
+%         \draw [->] ($(sum_phi.west)-(0.8,0)$) -- node[above, pos=0] {$\phi_{des}$} (sum_phi.west);
 
-        % --- CONNESSIONI DIRETTE ---
-        \draw [->] ($(sum_theta.west)-(0.8,0)$) -- node[above, pos=0] {$\theta_{des}$} (sum_theta.west);
-        \draw [->] ($(sum_phi.west)-(0.8,0)$) -- node[above, pos=0] {$\phi_{des}$} (sum_phi.west);
+%         \draw [->] (pid_vx.east) -- (mixer.west |- pid_vx.east) node[above, pos=0.15] {$F_{x,req}$};
+%         \draw [->] (pid_z.east) -- node[above] {$\theta_{des}$} (sum_theta.west);
+%         \draw [->] (pid_theta.east) -- (mixer.west |- pid_theta.east) node[above, pos=0.5] {$M_y$};
+%         \draw [->] (pid_phi.east) -- (mixer.west |- pid_phi.east) node[above, pos=0.5] {$M_x$};
+%         \draw [->] (pid_psi.east) -- (mixer.west |- pid_psi.east) node[above, pos=0.5] {$M_z$};
 
-        \draw [->] (pid_z.east) -- (mixer.west |- pid_z.east) node[above, pos=0.15] {$F_{z,req}$};
-        \draw [->] (pid_vx.east) -- (mixer.west |- pid_vx.east) node[above, pos=0.15] {$F_{x,req}$};
-        \draw [->] (pid_theta.east) -- (mixer.west |- pid_theta.east) node[above, pos=0.5] {$\theta_{pitch}$};
-        \draw [->] (pid_phi.east) -- (mixer.west |- pid_phi.east) node[above, pos=0.5] {$\delta$};
-        \draw [->] (pid_psi.east) -- (mixer.west |- pid_psi.east) node[above, pos=0.5] {$\Delta T$};
+%         \draw [->] (ref_vx) -- (sum_vx); \draw [->] (sum_vx) -- (pid_vx);
+%         \draw [->] (ref_z) -- (sum_z); \draw [->] (sum_z) -- (pid_z);
+%         \draw [->] (ref_y) -- (sum_y); \draw [->] (sum_y) -- (pid_y);
+%         \draw [->] (pid_y.east) -- node[above] {$\psi_{des}$} (sum_psi.west);
+%         \draw [->] (sum_theta) -- (pid_theta);
+%         \draw [->] (sum_phi) -- (pid_phi);
+%         \draw [->] (sum_psi) -- (pid_psi);
+%         \draw [->] (mixer) -- (drone);
+%         \draw [->] (drone) -- (drone_out);
 
-        \draw [->] (ref_z) -- (sum_z); \draw [->] (sum_z) -- (pid_z);
-        \draw [->] (ref_vx) -- (sum_vx); \draw [->] (sum_vx) -- (pid_vx);
-        \draw [->] (ref_y) -- (sum_y); \draw [->] (sum_y) -- (pid_y);
-        \draw [->] (pid_y.east) -- node[above] {$\psi_{des}$} (sum_psi.west);
-        \draw [->] (sum_theta) -- (pid_theta);
-        \draw [->] (sum_phi) -- (pid_phi);
-        \draw [->] (sum_psi) -- (pid_psi);
-        \draw [->] (mixer) -- (drone);
-        \draw [->] (drone) -- (drone_out);
+%         % --- FEEDBACK BUS ---
+%         \coordinate (fb_node) at ($(drone.east)+(0.5,0)$);
+%         \coordinate (line_outer) at (0,-10.8); 
+%         \coordinate (line_inner) at (0,-9.5);  
 
-        % --- FEEDBACK BUS RISOLUTIVO ---
-        \coordinate (fb_node) at ($(drone.east)+(0.5,0)$);
-        \coordinate (line_outer) at (0,-10.8); % Bus per Outer Loop
-        \coordinate (line_inner) at (0,-9.5);  % Bus per Inner Loop
+%         \draw (fb_node) |- (line_outer) -- ($(sum_z.west |- line_outer)$);
+%         \draw (fb_node) |- (line_inner) -- ($(sum_theta.west |- line_inner)$);
 
-        % Disegno i rami del bus
-        \draw (fb_node) |- (line_outer) -- ($(sum_z.west |- line_outer)$);
-        \draw (fb_node) |- (line_inner) -- ($(sum_theta.west |- line_inner)$);
+%         % Feedback (Senza nodi manuali, ora gestiti dallo stile sum)
+%         \draw [->] (sum_z.south |- line_outer) -- (sum_z.south);
+%         \draw [->] (sum_vx.south |- line_outer) -- (sum_vx.south);
+%         \draw [->] (sum_y.south |- line_outer) -- (sum_y.south);
 
-        % Feedback Outer Loop (Frecce verticali perfette)
-        \draw [->, shorten >=0.5pt] (sum_z.south |- line_outer) -- (sum_z.south) node[left, pos=0.85] {$-$};
-        \draw [->, shorten >=0.5pt] (sum_vx.south |- line_outer) -- (sum_vx.south) node[left, pos=0.85] {$-$};
-        \draw [->, shorten >=0.5pt] (sum_y.south |- line_outer) -- (sum_y.south) node[left, pos=0.85] {$-$};
+%         \draw [->] (sum_theta.south |- line_inner) -- (sum_theta.south);
+%         \draw [->] (sum_phi.south |- line_inner) -- (sum_phi.south);
+%         \draw [->] (sum_psi.south |- line_inner) -- (sum_psi.south);
 
-        % Feedback Inner Loop (Frecce verticali perfette)
-        \draw [->, shorten >=0.5pt] (sum_theta.south |- line_inner) -- (sum_theta.south) node[left, pos=0.7] {$-$};
-        \draw [->, shorten >=0.5pt] (sum_phi.south |- line_inner) -- (sum_phi.south) node[left, pos=0.7] {$-$};
-        \draw [->, shorten >=0.5pt] (sum_psi.south |- line_inner) -- (sum_psi.south) node[left, pos=0.85] {$-$};
+%         % --- CONTAINERS ---
+%         \begin{scope}[on background layer]
+%             \node [container, fit=(sum_vx) (pid_vx) (sum_y) (pid_y), label={above:\textbf{Outer Loop}}] {};
+%             % Inclusione corretta di pid_psi e sum_phi nel container
+%             \node [container, fit=(sum_theta) (pid_psi) (sum_phi) (pid_phi), label={below:\textbf{Inner Loop}}] {};
+%         \end{scope}
 
-        % --- CONTAINERS ---
-        \begin{scope}[on background layer]
-            \node [container, draw, fit=(sum_z) (pid_z) (sum_y) (pid_y), label={above:\textbf{Outer Loop}}] {};
-            \node [container, draw, fit=(sum_theta) (pid_theta) (sum_psi) (pid_psi), label={below:\textbf{Inner Loop}}] {};
-        \end{scope}
+%     \end{tikzpicture}
+%     }
+%     \caption{Schema a blocchi del controllo orizzontale.}
+%     \label{fig:control_scheme_horizontal}
+% \end{figure}
 
-    \end{tikzpicture}
-    }
+\subsection{Schema a blocchi dell'architettura di controllo}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{controllo_orizzontale/schema_blocchi_H_bianco.png}
     \caption{Schema a blocchi del controllo orizzontale.}
-    \label{fig:control_scheme_horizontal}
 \end{figure}
+
 \clearpage
 
 % =========================================
@@ -246,36 +258,55 @@ In configurazione di volo avanzato, i motori generano spinta propulsiva lungo l'
 % ALGORITMO DI MIXING
 % =================================================
 \section{Motor Mixing Algorithm}
-L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo e l'hardware del drone. 
-Il suo compito è trasformare le richieste astratte di forza propulsiva ($F_{x,req}$) e momenti di assetto 
-($\mathbf{M}$) nei segnali specifici per i regolatori di velocità dei motori e per i servocomandi dei 
-meccanismi di \textit{tilt}. 
+L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo e l'hardware del drone. Il suo compito è trasformare le richieste di forza propulsiva ($F_{x}$) e i momenti di assetto ($\mathbf{M}$) nei segnali specifici per i regolatori di velocità dei motori e per i servocomandi dei meccanismi di \textit{tilt}. 
 
-In regime di crociera, il mixer gestisce una configurazione bimotore con motori basculanti, 
-mantenendo spento il propulsore di coda.
+In regime di crociera, il mixer gestisce una configurazione bimotore con rotori basculanti indipendenti, mantenendo disattivo il propulsore di coda. Per gestire correttamente gli accoppiamenti dinamici non lineari, l'algoritazione procede prima al calcolo degli angoli di tilt e successivamente alla ripartizione differenziale della spinta.
 
-\subsection{Mixing della Spinta e Controllo di Imbardata}
-La spinta totale richiesta per vincere il drag e mantenere la velocità di avanzamento viene ripartita tra i due motori principali. L'imbardata ($M_z$) viene controllata tramite un \textbf{mixing differenziale} della spinta:
+\subsection{Rollio e Beccheggio}
+Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), il sistema sfrutta la vettorizzazione della spinta totale $T_{tot} \approx F_{x,req}$ tramite l'inclinazione dei rotori. Per garantire l'autorità di controllo anche ad ampi angoli di escursione dei servocomandi, si abbandona l'approssimazione lineare e si invertono analiticamente le relazioni geometriche esatte.
+
+Definendo $\alpha$ come l'inclinazione collettiva (per il beccheggio) e $\delta$ come l'inclinazione differenziale (per il rollio), i riferimenti angolari si ottengono tramite l'inversione trigonometrica:
 \begin{equation}
-    T_{2,1} = \frac{F_{x,req}}{2} \pm \frac{M_{z,req}}{2 d_{m_y}}
+    \alpha = \arcsin\left( \frac{M_{y,req}}{T_{tot} \cdot d_{mx}} \right), \quad 
+    \delta = \arcsin\left( \frac{M_{x,req}}{T_{tot} \cdot d_{my}} \right)
 \end{equation}
-dove $d_{m_y}$ è la distanza laterale dei motori dall'asse di simmetria. Questo approccio permette di correggere la prua senza superfici mobili, sebbene l'autorità di comando sia proporzionale alla capacità dei motori di variare rapidamente il regime di rotazione.
+dove $d_{mx}$ e $d_{my}$ rappresentano, rispettivamente, i bracci longitudinali e laterali di applicazione della spinta. 
 
-\subsection{Mixing del Tilt per il Controllo di Rollio e Beccheggio}
-Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), l'algoritmo di mixing sfrutta la vettorizzazione della spinta tramite l'inclinazione dei rotori. Sotto l'ipotesi di piccoli angoli di tilt ($\delta$), la relazione geometrica viene invertita per ottenere i riferimenti angolari:
-
-\begin{equation}
-    \delta_{pitch} = \frac{M_{y,req}}{T_{tot} \cdot d_{m_x}}, \quad \delta_{roll} = \frac{M_{x,req}}{T_{tot} \cdot d_{m_y}}
-\end{equation}
-
-Il comando finale inviato ai singoli servi ($\theta_1, \theta_2$) è il risultato di un mixing additivo/sottrattivo dei contributi di assetto:
+Il comando finale inviato ai singoli servocomandi ($\theta_1$ per il rotore sinistro, $\theta_2$ per il destro) è il risultato di un mixing additivo e sottrattivo dei contributi:
 \begin{equation}
     \begin{cases}
-        \theta_{1} = \delta_{pitch} - \delta_{roll} \\
-        \theta_{2} = \delta_{pitch} + \delta_{roll}
+        \theta_{1} = \alpha - \delta \\
+        \theta_{2} = \alpha + \delta
     \end{cases}
 \end{equation}
 
+\subsection{Controllo di Imbardata e Disaccoppiamento Attivo della Spinta}
+L'imbardata ($M_z$) viene controllata tramite una ripartizione differenziale della spinta tra i due propulsori anteriori. Dall'equilibrio dei momenti attorno all'asse verticale, proiettando le forze nel sistema di riferimento \textit{body}, l'equazione di partenza è:
+\begin{equation}
+    M_z = d_{my} k \omega_2^2 \cos(\theta_2) - d_{my} k \omega_1^2 \cos(\theta_1)
+\end{equation}
+Sostituendo la relazione cinematica dei servocomandi, ovvero $\theta_1 = \alpha - \delta$ e $\theta_2 = \alpha + \delta$ (dove $\alpha$ è il tilt collettivo e $\delta$ il tilt differenziale), ed esplicitando le spinte dei singoli motori $T_i = k \omega_i^2$, la relazione trigonometrica esatta diviene:
+\begin{equation}
+    M_z = d_{my} \left[ T_2 \cos(\alpha + \delta) - T_1 \cos(\alpha - \delta) \right]
+\end{equation}
+Applicando le formule di addizione e sottrazione del coseno e definendo il differenziale di spinta $\Delta T = T_2 - T_1$ e la spinta totale $T_{tot} = T_2 + T_1$, si ottiene l'equazione completa del momento di imbardata:
+\begin{equation}
+    M_z = d_{my} \Delta T \cos(\alpha) \cos(\delta) - d_{my} T_{tot} \sin(\alpha) \sin(\delta)
+\end{equation}
+Da questa formulazione rigorosa si evince un forte accoppiamento dinamico: oltre al termine di controllo desiderato (proporzionale a $\Delta T$), emerge un termine parassita dipendente dalla spinta totale $T_{tot}$ che genera un momento di imbardata involontario ogniqualvolta il velivolo presenti contemporaneamente un angolo di beccheggio ($\alpha \neq 0$) e di rollio ($\delta \neq 0$).
+
+Per garantire il corretto tracciamento della traiettoria e la reiezione dei disturbi senza l'impiego di superfici aerodinamiche mobili, l'algoritmo di mixing deve invertire l'equazione precedente per ricavare l'esatto comando differenziale $\Delta T$ richiesto, implementando un disaccoppiamento attivo (\textit{feedforward}):
+\begin{equation}
+    \Delta T = \frac{M_{z,req}}{d_{my} \cos(\alpha) \cos(\delta)} + T_{tot} \tan(\alpha) \tan(\delta)
+\end{equation}
+I comandi finali di spinta inviati ai singoli motori ($T_1, T_2$) risultano quindi dalla sovrapposizione della spinta necessaria all'avanzamento $F_{x,req}$ e dell'azione di controllo sull'imbardata appena derivata:
+\begin{equation}
+    \begin{cases}
+        T_{1} = \frac{F_{x,req}}{2} - \frac{\Delta T}{2} \\
+        T_{2} = \frac{F_{x,req}}{2} + \frac{\Delta T}{2}
+    \end{cases}
+\end{equation}
+Questo approccio non lineare garantisce un'autorità di comando coerente in tutto l'inviluppo di volo, evitando le pericolose singolarità dinamiche tipiche delle approssimazioni ai piccoli angoli.
 \subsection{Protezioni e Limiti Fisici del Mixer}
 Data la struttura matematica del mixer, emerge una criticità: l'autorità di controllo sugli assi $x$ e $y$ svanisce se la spinta totale $T_{tot}$ è nulla. Per prevenire instabilità numeriche, l'algoritmo integra una soglia minima di sicurezza $T_{safe}$ al denominatore. Inoltre, il mixer applica saturazioni \textit{hard} per rispettare i limiti meccanici dei servocomandi ($\pm 45^\circ$) e i limiti di potenza dei motori, garantendo che le richieste del controllore non eccedano le capacità fisiche degli attuatori.
 \clearpage

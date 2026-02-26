@@ -15,19 +15,6 @@ Per descrivere la dinamica del tricottero VTOL, si adottano due sistemi di rifer
     \label{fig:sist_rif}
 \end{figure}
 
-Gli angoli di Eulero sono definiti come:
-\begin{itemize}
-    \item Roll $\phi$: angolo di rotazione intorno all'asse $X_g$
-    \item Pitch $\theta$: angolo di rotazione intorno all'asse $Y_g$
-    \item Yaw $\psi$: angolo di rotazione intorno all'asse $Z_g$
-\end{itemize}
-
-Indichiamo con $\mathbf{V}_b$ le velocità lineari nel body frame $(v_x,v_y,v_z)$ e con $\boldsymbol{\Omega}_b$ le velocità angolari nel body frame $(p,q,r)$ dove:
-\begin{itemize}
-    \item $p =$ roll rate: velocità di rotazione attorno all'asse $x$ del body frame
-    \item $q =$ pitch rate: velocità di rotazione attorno all'asse $y$ del body frame
-    \item $r =$ yaw rate: velocità di rotazione attorno all'asse $z$ del body frame
-\end{itemize}
 
 \subsection{Matrici di Trasformazione}
 La trasformazione delle grandezze vettoriali dal sistema solidale al corpo a quello inerziale avviene tramite la matrice di rotazione ortogonale $\mathbf{R}_{b \to g}$ (secondo la convenzione standard Z-Y-X).\\
@@ -403,7 +390,8 @@ Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rota
     -r\left( \alpha_{0z}\ + \alpha_{1z}\,v_y^2 \right)
     \end{bmatrix}
 \end{equation}
-La presenza della pinna non era stata inizialmente contemplata nella prototipazione del modello, 
-tuttavia, garantisce una maggiore stabilità di imbardata soprattutto in considerazione della coppia
+La presenza della pinna è stata dibattuta in fase di revisione del modello, 
+tuttavia, si è stabilito il suo inserimento poiché garantisce una maggiore 
+stabilità di imbardata soprattutto in considerazione della coppia
 di reazione residua prodotta dal rotore di coda.  
 \clearpage

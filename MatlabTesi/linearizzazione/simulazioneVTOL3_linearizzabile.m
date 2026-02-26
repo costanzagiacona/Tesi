@@ -133,9 +133,7 @@ z_target = target(3);
 
 if test_id == 2 || test_id == 3
     x27_dot = vx_target - vx_global_curr;
-    x28_dot = theta_target - theta;
-    x29_dot = x(3) - z_target;
-    x30_dot = 0 - x(2);
+    x28_dot = x(3) - z_target;
 end
 
 % === RIMOZIONE RIGOROSA ANTI-WINDUP ===
@@ -168,7 +166,7 @@ if simbolico == 1
 else
     if test_id == 2
         % Modello completo 30 stati per la crociera (PID attivi)
-        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
+        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot];
     elseif test_id == 1
         % Modello a 26 stati per l'hovering
         x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];

@@ -6,7 +6,6 @@ Si adotta un sistema di riferimento \textbf{NED (North-East-Down)}, in cui l'ass
 \subsection{Modellazione della Dinamica}
 La dinamica del sistema viene analizzata nel frame inerziale, poiché il loop di controllo esterno si basa sull'errore di posizione, che perde di significato nel body frame.\\
 Il secondo principio della dinamica, proiettato sull'asse $z$ del sistema inerziale, definisce l'evoluzione del velivolo come:
-
 \begin{equation}
     m\ddot{z} = mg + \cos(\phi)\cos(\theta) F_{\mathrm{aero},z} - \cos(\phi)\cos(\theta) F_{\mathrm{thrust},z} + d(t)
     \label{eq:dynamics_z_final}
@@ -65,7 +64,7 @@ Questa formulazione evidenzia la scomposizione dell'ingresso di controllo in due
     \item Il termine di \textbf{switching} $u_{\mathrm{sw}} = - \frac{m}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma)$ è il contributo discontinuo che, pre-moltiplicato per compensare l'effetto dell'assetto, impone la legge di raggiungimento.
 \end{itemize}
 
-Infine, applicando la legge di controllo $u$ così sintetizzata al sistema perturbato originale, la dinamica a ciclo chiuso proiettata sulla superficie di scorrimento si riduce all'espressione:
+Infine, applicando la legge di controllo $u$ così sintetizzata al sistema perturbato originale, la dinamica a ciclo chiuso proiettata sulla \textit{sliding surface} si riduce all'espressione:
 \begin{equation}
     \dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)
 \end{equation}
@@ -93,7 +92,7 @@ Per soddisfare la condizione di raggiungibilità $\dot{V} \le -\eta |\sigma|$, �
 \begin{equation}
     k - \delta_{\max} \ge \eta \implies k \ge \delta_{\max} + \eta
 \end{equation}
-Sotto questa condizione sul guadagno di discontinuità $k$, il sistema è forzato sulla superficie di scorrimento $\sigma = 0$ in un tempo finito $t_r$. Poiché $\dot{V} \le -\eta |\sigma| = -\eta \sqrt{2V}$, integrando tale disequazione differenziale si ricava infine che il tempo di raggiungimento è limitato superiormente da:
+Sotto questa condizione sul guadagno di discontinuità $k$, il sistema è forzato sulla \textit{sliding surface} $\sigma = 0$ in un tempo finito $t_r$. Poiché $\dot{V} \le -\eta |\sigma| = -\eta \sqrt{2V}$, integrando tale disequazione differenziale si ricava infine che il tempo di raggiungimento è limitato superiormente da:
 \begin{equation}
     t_r \le \frac{|\sigma(0)|}{\eta}
 \end{equation}

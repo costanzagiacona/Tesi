@@ -229,15 +229,9 @@ z_target = target(3);
 if test_id == 2 || test_id == 3
     % Stato 27: Integrale errore Velocità X (Body/Global projection)
     x27_dot = vx_target - vx_global_curr;
-    
-    % Stato 28: Integrale errore Pitch
-    x28_dot = theta_target - theta;
-    
+ 
     % Stato 29: Integrale errore Quota Z
-    x29_dot = x(3) - z_target;
-    
-    % Stato 30: Integrale errore Vy (Sideslip) 
-    x30_dot = 0 - x(2);
+    x28_dot = x(3) - z_target;
     
 end
 
@@ -246,14 +240,8 @@ if simbolico == 0 && test_id == 2
     % Velocità X
     if abs(x(27)) > 20.0 && sign(x27_dot) == sign(x(27)); x27_dot = 0; end
 
-    % Pitch
-    if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end 
-
     % Quota Z
-    if abs(x(29)) > 10.0 && sign(x29_dot) == sign(x(29)); x29_dot = 0; end
-
-    % Integrale y 
-    if abs(x(30)) > 20.0 && sign(x30_dot) == sign(x(30)); x30_dot = 0; end
+    if abs(x(28)) > 10.0 && sign(x28_dot) == sign(x(28)); x28_dot = 0; end
 end
 
 %=====================================================================
@@ -303,7 +291,7 @@ if simbolico == 1
     x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
 else
     if test_id == 2
-        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot; x29_dot; x30_dot];
+        x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot; x27_dot; x28_dot];
     elseif test_id == 1
         x_dot = [x1_dot;x2_dot;x3_dot;x4_dot;x5_dot;x6_dot;x7_dot;x8_dot;x9_dot;x10_dot;x11_dot;x12_dot;x13_dot;x14_dot;x15_dot;x16_dot;x17_dot;x18_dot;x19_dot;x20_dot;x21_dot;x22_dot;x23_dot;x24_dot;x25_dot;x26_dot];
     end

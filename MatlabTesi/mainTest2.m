@@ -16,9 +16,9 @@ tspan = [0 30];              % intervallo di simulazione
 % flag per fase di volo
 % fase = 1 verticale
 % fase = 3 orizzontale
-fase = 1;       
+fase = 3;       
 
-test_casi = 1;  % flag per cambiare le condizioni di simulazione
+test_casi = 3;  % flag per cambiare le condizioni di simulazione
 % CONTROLLO VERTICALE
 % test_casi = 1 => condizioni iniziali ideali
 % test_casi = 2 => condizioni iniziali angoli diverse da zero
@@ -78,8 +78,8 @@ s_body_z = 0.15*0.7;
 
 % scelto in modo tale che sia raggiunta la velocità limite di 50 km/h
 % (13.89 m/s) in caduta libera
-% C_d_z = (m*g)/(rho*s_body_z*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
-C_d_z = 0;
+C_d_z = (m*g)/(rho*s_body_z*(v_limite)^2); % coeff. di resistenza (drag) aerodinamica lungo asse z
+% C_d_z = 0;
 C_d_x = 0.1;
 C_d_y = 3;
 
@@ -114,16 +114,9 @@ I_rotor_tail = I_rotor;
 
 
 C_d = ((m-1)*g)/(rho*s*(v_air)^2); %1.28;  %coeff. di resistenza (drag) aerodinamica lungo asse X
-% C_d = 0.5;
 C_y = 0; % trascurabile
-% scelto in modo tale che se v_x = 90 km/h (25 m/s) la portanza contrasti
-% la gravità
-C_l = (m*g)/(rho*s*(v_air)^2); %0.854; %coeff. di portanza (lift) aerodinamica 
-% In mainTest2.m
+% C_l = (m*g)/(rho*s*(v_air)^2); %0.854; %coeff. di portanza (lift) aerodinamica 
 C_l = (2 * m * g) / (rho * s * v_air^2);
-C_d = (2 * (m-1) * g) / (rho * s * v_air^2); % Se vuoi mantenere la logica m-1
-
-%parametri distanza (m) tra centro di massa e forze aerodinamiche (per il calcolo del momento delle forze aerodinamiche)
 
 l_w_dx_x = 0;%(1/3)*ala_x; % distanza per l'ala dx da centro di massa lungo asse X_body
 l_w_dx_y = (1/2)*ala_y; % distanza per l'ala dx da centro di massa lungo asse Y_body
@@ -217,7 +210,7 @@ parametri.r_aerodyn_w_sx = parametri.l_w_sx;
 if fase == 1
     x0 = zeros(26,1);
 else
-    x0 = zeros(30,1);            % stato iniziale 
+    x0 = zeros(28,1);            % stato iniziale 
 end
 if fase == 1
 
@@ -590,238 +583,238 @@ end
 
 
 %%
-close all
-
-if fase == 1
-    figure(1)
-    set(gcf, 'Position', [100 100 1200 900])
-    
-    subplot(2,1,1);
-    h1 = plot(time, xp, 'r', time, yp, 'b', time, zp, 'g', 'LineWidth',3);
-    yline(10,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
-    % set(h1, 'LineWidth', 2)
-    legend('x_{inertial frame}','y_{inertial frame}','z_{inertial frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    ylim([-10 15]);
-    grid on
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Posizione [m]', 'FontSize', 16)
-    title('Posizione','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    subplot(2,1,2);
-    h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g', 'LineWidth',3);
-    if fase == 1
-        h3 = yline(0,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
-    elseif fase == 3
-        h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
-    end
-    % set(h2, 'LineWidth', 2)
-    legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    ylim([-10 10]); grid on
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Velocità [m/s]', 'FontSize', 16)
-    title('Velocità','FontSize',17)
-    set(gca, 'FontSize', 16)
-end
-
-
-if fase == 3
-    figure(1)
-    set(gcf, 'Position', [100 100 1200 900])
-    
-    subplot(3,1,1);
-    plot(time, xp, 'r', 'LineWidth',3);
-    legend('x_{inertial frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Posizione [m]', 'FontSize', 16)
-    title('Posizione','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    subplot(3,1,2);
-    plot(time, yp, 'b', 'LineWidth',3);
-    legend('y_{inertial frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    ylim([-10 10])
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Posizione [m]', 'FontSize', 16)
-    % title('Posizione','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    subplot(3,1,3);
-    plot( time, zp, 'g', 'LineWidth',3);
-    yline(10,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
-    legend('z_{inertial frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    ylim([5 15])
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Posizione [m]', 'FontSize', 16)
-    % title('Posizione','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    figure(6)
-    set(gcf, 'Position', [100 100 1200 900])
-    
-    subplot(3,1,1);
-    plot(time, xv, 'r', 'LineWidth',3);
-    yline(25,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
-    legend('vx_{body frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    ylim([15 30])
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Velocità [m/s]', 'FontSize', 16)
-    title('Velocità','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    subplot(3,1,2);
-    plot(time, yv, 'b', 'LineWidth',3);
-    legend('vy_{body frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    ylim([-10 10])
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Velocità [m/s]', 'FontSize', 16)
-    % title('Velocità','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-    subplot(3,1,3);
-    plot( time, zv, 'g', 'LineWidth',3);
-    legend('vz_{body frame}', ...
-        'FontSize', 16, 'Interpreter','tex', 'Location','best')
-    grid on
-    ylim([-10 10])
-    xlabel('Time [s]', 'FontSize', 16)
-    ylabel('Velocità [m/s]', 'FontSize', 16)
-    % title('Velocità','FontSize',17)
-    set(gca, 'FontSize', 16)
-
-end
-
-
-
-figure(2)
-set(gcf,'Position',[100 100 1200 800])
-
-% --- ANGOLI ---
-subplot(2,1,1)
-plot(time,phi,'r',time,theta,'b',time,psi,'g','LineWidth',3)
-grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('Angoli [rad]')
-title('Angoli di Eulero')
-legend('\phi','\theta','\psi','Location','best')
-set(gca,'FontSize',16)
-if fase == 1
-    ylim([-1 1]);
-else
-    ylim([-10 10]);
-end
-
-% --- VELOCITÀ ANGOLARI ---
-subplot(2,1,2)
-plot(time,p,'r',time,q,'b',time,r,'g','LineWidth',3)
-grid on
-xlabel('Time [s]')
-ylabel('Vel. angolari [rad/s]')
-title('Velocità angolari')
-legend('p','q','r','Location','best')
-set(gca,'FontSize',16)
-ylim([-1 1])
-
-
-figure(3)
-set(gcf,'Position',[100 100 1200 800])
-
-omega_1 = x(:,21);
-omega_2 = x(:,23);
-omega_3 = x(:,25);
-
-subplot(3,1,1);
-h1 = plot(time, parametri.k*omega_1.^2, 'r','LineWidth',3);
-legend('Thrust_{1}','FontSize',16,'Location','best')
-ylim([0 100]); grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[N]','FontSize',16)
-set(gca,'FontSize',16)
-title('Thrust generato dai rotori','FontSize',17)
-
-subplot(3,1,2);
-h2 = plot(time, parametri.k*omega_2.^2, 'r','LineWidth',3);
-legend('Thrust_{2}','FontSize',16,'Location','best')
-ylim([0 100]); grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[N]','FontSize',16)
-set(gca,'FontSize',16)
-
-subplot(3,1,3);
-h3 = plot(time, parametri.k*omega_3.^2, 'r','LineWidth',3);
-legend('Thrust_{3}','FontSize',16,'Location','best')
-ylim([0 100]); grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[N]','FontSize',16)
-set(gca,'FontSize',16)
-
-
-figure(4)
-set(gcf,'Position',[100 100 1200 900])
-
-theta1 = rad2deg(x(:,13));
-theta2 = rad2deg(x(:,15));
-theta3 = rad2deg(x(:,17));
-theta4 = rad2deg(x(:,19));
-
-subplot(2,1,1);
-h1 = plot(time, theta1, 'r','LineWidth',3);
-legend('\theta_1','FontSize',16,'Location','best')
-xlabel('Time [s]', 'FontSize', 16)
-grid on
-if fase == 1
-    ylim([80 100]);
-else
-    ylim([-10 10]);
-end
-ylabel('[grad]','FontSize',16)
-title('Andamento angoli di tilt dei rotori anteriori','FontSize',17)
-set(gca,'FontSize',16)
-
-subplot(2,1,2);
-h2 = plot(time, theta2, 'b','LineWidth',3);
-legend('\theta_2','FontSize',16,'Location','best')
-grid on
-if fase == 1
-    ylim([80 100]);
-else
-    ylim([-10 10]);
-end
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[grad]','FontSize',16)
-set(gca,'FontSize',16)
-
-figure(5)
-set(gcf, 'Position', [100 100 1200 900])
-subplot(2,1,1);
-h3 = plot(time, theta3, 'g','LineWidth',3);
-legend('\theta_3','FontSize',16,'Location','best')
-grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[grad]','FontSize',16)
-title('Andamento angoli di tilt del rotore posteriore','FontSize',17)
-set(gca,'FontSize',16)
-
-subplot(2,1,2);
-h4 = plot(time, theta4, 'g','LineWidth',3);
-legend('\theta_4','FontSize',16,'Location','best')
-grid on
-xlabel('Time [s]', 'FontSize', 16)
-ylabel('[grad]','FontSize',16)
-set(gca,'FontSize',16)
-
-xlabel('Time [s]')
-
-
+% close all
+% 
+% if fase == 1
+%     figure(1)
+%     set(gcf, 'Position', [100 100 1200 900])
+% 
+%     subplot(2,1,1);
+%     h1 = plot(time, xp, 'r', time, yp, 'b', time, zp, 'g', 'LineWidth',3);
+%     yline(10,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
+%     % set(h1, 'LineWidth', 2)
+%     legend('x_{inertial frame}','y_{inertial frame}','z_{inertial frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     ylim([-10 15]);
+%     grid on
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Posizione [m]', 'FontSize', 16)
+%     title('Posizione','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     subplot(2,1,2);
+%     h2 = plot(time, xv, 'r', time, yv, 'b', time, zv, 'g', 'LineWidth',3);
+%     if fase == 1
+%         h3 = yline(0,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
+%     elseif fase == 3
+%         h3 = yline(25,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
+%     end
+%     % set(h2, 'LineWidth', 2)
+%     legend('vx_{body frame}','vy_{body frame}','vz_{body frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     ylim([-10 10]); grid on
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Velocità [m/s]', 'FontSize', 16)
+%     title('Velocità','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% end
+% 
+% 
+% if fase == 3
+%     figure(1)
+%     set(gcf, 'Position', [100 100 1200 900])
+% 
+%     subplot(3,1,1);
+%     plot(time, xp, 'r', 'LineWidth',3);
+%     legend('x_{inertial frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Posizione [m]', 'FontSize', 16)
+%     title('Posizione','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     subplot(3,1,2);
+%     plot(time, yp, 'b', 'LineWidth',3);
+%     legend('y_{inertial frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     ylim([-10 10])
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Posizione [m]', 'FontSize', 16)
+%     % title('Posizione','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     subplot(3,1,3);
+%     plot( time, zp, 'g', 'LineWidth',3);
+%     yline(10,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
+%     legend('z_{inertial frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     ylim([5 15])
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Posizione [m]', 'FontSize', 16)
+%     % title('Posizione','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     figure(6)
+%     set(gcf, 'Position', [100 100 1200 900])
+% 
+%     subplot(3,1,1);
+%     plot(time, xv, 'r', 'LineWidth',3);
+%     yline(25,'--k','LabelHorizontalAlignment','left','FontSize',14,'LineWidth', 3);
+%     legend('vx_{body frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     ylim([15 30])
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Velocità [m/s]', 'FontSize', 16)
+%     title('Velocità','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     subplot(3,1,2);
+%     plot(time, yv, 'b', 'LineWidth',3);
+%     legend('vy_{body frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     ylim([-10 10])
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Velocità [m/s]', 'FontSize', 16)
+%     % title('Velocità','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+%     subplot(3,1,3);
+%     plot( time, zv, 'g', 'LineWidth',3);
+%     legend('vz_{body frame}', ...
+%         'FontSize', 16, 'Interpreter','tex', 'Location','best')
+%     grid on
+%     ylim([-10 10])
+%     xlabel('Time [s]', 'FontSize', 16)
+%     ylabel('Velocità [m/s]', 'FontSize', 16)
+%     % title('Velocità','FontSize',17)
+%     set(gca, 'FontSize', 16)
+% 
+% end
+% 
+% 
+% 
+% figure(2)
+% set(gcf,'Position',[100 100 1200 800])
+% 
+% % --- ANGOLI ---
+% subplot(2,1,1)
+% plot(time,phi,'r',time,theta,'b',time,psi,'g','LineWidth',3)
+% grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('Angoli [rad]')
+% title('Angoli di Eulero')
+% legend('\phi','\theta','\psi','Location','best')
+% set(gca,'FontSize',16)
+% if fase == 1
+%     ylim([-1 1]);
+% else
+%     ylim([-10 10]);
+% end
+% 
+% % --- VELOCITÀ ANGOLARI ---
+% subplot(2,1,2)
+% plot(time,p,'r',time,q,'b',time,r,'g','LineWidth',3)
+% grid on
+% xlabel('Time [s]')
+% ylabel('Vel. angolari [rad/s]')
+% title('Velocità angolari')
+% legend('p','q','r','Location','best')
+% set(gca,'FontSize',16)
+% ylim([-1 1])
+% 
+% 
+% figure(3)
+% set(gcf,'Position',[100 100 1200 800])
+% 
+% omega_1 = x(:,21);
+% omega_2 = x(:,23);
+% omega_3 = x(:,25);
+% 
+% subplot(3,1,1);
+% h1 = plot(time, parametri.k*omega_1.^2, 'r','LineWidth',3);
+% legend('Thrust_{1}','FontSize',16,'Location','best')
+% ylim([0 100]); grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[N]','FontSize',16)
+% set(gca,'FontSize',16)
+% title('Thrust generato dai rotori','FontSize',17)
+% 
+% subplot(3,1,2);
+% h2 = plot(time, parametri.k*omega_2.^2, 'r','LineWidth',3);
+% legend('Thrust_{2}','FontSize',16,'Location','best')
+% ylim([0 100]); grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[N]','FontSize',16)
+% set(gca,'FontSize',16)
+% 
+% subplot(3,1,3);
+% h3 = plot(time, parametri.k*omega_3.^2, 'r','LineWidth',3);
+% legend('Thrust_{3}','FontSize',16,'Location','best')
+% ylim([0 100]); grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[N]','FontSize',16)
+% set(gca,'FontSize',16)
+% 
+% 
+% figure(4)
+% set(gcf,'Position',[100 100 1200 900])
+% 
+% theta1 = rad2deg(x(:,13));
+% theta2 = rad2deg(x(:,15));
+% theta3 = rad2deg(x(:,17));
+% theta4 = rad2deg(x(:,19));
+% 
+% subplot(2,1,1);
+% h1 = plot(time, theta1, 'r','LineWidth',3);
+% legend('\theta_1','FontSize',16,'Location','best')
+% xlabel('Time [s]', 'FontSize', 16)
+% grid on
+% if fase == 1
+%     ylim([80 100]);
+% else
+%     ylim([-10 10]);
+% end
+% ylabel('[grad]','FontSize',16)
+% title('Andamento angoli di tilt dei rotori anteriori','FontSize',17)
+% set(gca,'FontSize',16)
+% 
+% subplot(2,1,2);
+% h2 = plot(time, theta2, 'b','LineWidth',3);
+% legend('\theta_2','FontSize',16,'Location','best')
+% grid on
+% if fase == 1
+%     ylim([80 100]);
+% else
+%     ylim([-10 10]);
+% end
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[grad]','FontSize',16)
+% set(gca,'FontSize',16)
+% 
+% figure(5)
+% set(gcf, 'Position', [100 100 1200 900])
+% subplot(2,1,1);
+% h3 = plot(time, theta3, 'g','LineWidth',3);
+% legend('\theta_3','FontSize',16,'Location','best')
+% grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[grad]','FontSize',16)
+% title('Andamento angoli di tilt del rotore posteriore','FontSize',17)
+% set(gca,'FontSize',16)
+% 
+% subplot(2,1,2);
+% h4 = plot(time, theta4, 'g','LineWidth',3);
+% legend('\theta_4','FontSize',16,'Location','best')
+% grid on
+% xlabel('Time [s]', 'FontSize', 16)
+% ylabel('[grad]','FontSize',16)
+% set(gca,'FontSize',16)
+% 
+% xlabel('Time [s]')
+% 
+% 

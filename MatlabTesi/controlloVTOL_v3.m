@@ -246,12 +246,11 @@ switch test_id
         % x(27): Int. Err Velocità
         % x(28): Int. Err Pitch
         % x(29): Int. Err Quota
-        if length(x) >= 29
+        if length(x) >= 27
             int_err_v     = x(27); 
-            int_err_theta = x(28); 
-            int_err_z     = x(29);
+            int_err_z     = x(28);
         else
-            int_err_v = 0; int_err_theta = 0; int_err_z = 0;
+            int_err_v = 0; int_err_z = 0;
         end
 
         % =================================================
@@ -260,7 +259,6 @@ switch test_id
         z_des     = target(3); % Quota target (-10 m)
         vx_des    = target(1); % Velocità target (25 m/s)
         phi_des   = 0;
-        psi_des   = 0;
 
         % =================================================
         % 3. OUTER LOOP: CONTROLLO QUOTA (Generazione Theta Rif)
@@ -327,7 +325,7 @@ switch test_id
         kp_th = 5.0; 
         kd_th = 1.8;   
         ki_th = 0.01; 
-        M_y_req = kp_th * e_theta + kd_th * de_theta + ki_th * int_err_theta;
+        M_y_req = kp_th * e_theta + kd_th * de_theta;% + ki_th * int_err_theta;
         
         % --- B. ROLL (Momento X) ---
         kp_phi = 3.0; 
@@ -340,7 +338,7 @@ switch test_id
         M_z_req = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
         
         % =================================================
-        % 6. MIXER 
+        % 6. MIXER (Riveduto, Corretto Formale e Disaccoppiato)
         % =================================================
         
         % Parametri geometrici
@@ -348,43 +346,53 @@ switch test_id
         d_mx = params.d_mx; % Braccio longitudinale
         
         T_base = Fx_req;
+        T_safe_mix = max(T_base, 2.0); % Prevenzione singolarità (T_TOT > 0)
         
-        % YAW (Differenziale di Spinta)
-        % M_z = (T_right - T_left) * d_my => Delta_T = M_z / (2 * d_my)
-        dT_yaw = M_z_req / (2 * d_my);
+        % -------------------------------------------------
+        % FASE A: TILT (Pitch & Roll) - Equazioni Esatte
+        % -------------------------------------------------
+        arg_pitch = M_y_req / (T_safe_mix * d_mx);
+        arg_pitch = max(-1, min(1, arg_pitch));
+        tilt_pitch = asin(arg_pitch); % Angolo collettivo (alpha)
         
+        arg_roll = M_x_req / (T_safe_mix * d_my);
+        arg_roll = max(-1, min(1, arg_roll));
+        tilt_roll = asin(arg_roll); % Angolo differenziale (delta)
+        
+        % -------------------------------------------------
+        % FASE B: YAW (Differenziale di Spinta con Disaccoppiamento)
+        % -------------------------------------------------
+        % Implementazione dell'equazione esatta:
+        % Delta_T = M_z_req / (d_my * cos(alpha) * cos(delta)) + T_tot * tan(alpha) * tan(delta)
+        
+        % Protezione Singolarità Matematiche:
+        % Limitiamo gli angoli usati in questa fase a un massimo di 80 gradi (~1.396 rad)
+        % per evitare divisioni per zero e tangenti infinite se il controllore satura a 90°.
+        limit_angle = deg2rad(80); 
+        alpha_safe = max(-limit_angle, min(limit_angle, tilt_pitch));
+        delta_safe = max(-limit_angle, min(limit_angle, tilt_roll));
+        
+        % Calcolo dei termini separati per chiarezza di debug
+        term_attuazione = M_z_req / (d_my * cos(alpha_safe) * cos(delta_safe));
+        term_disaccoppiamento = T_safe_mix * tan(alpha_safe) * tan(delta_safe);
+        
+        % Differenziale totale richiesto e sua ripartizione a metà sui due motori
+        Delta_T_tot = term_attuazione + term_disaccoppiamento;
+        dT_yaw = Delta_T_tot / 2;
+        
+        % Calcolo spinte individuali
         T_left  = (T_base / 2) + dT_yaw;
         T_right = (T_base / 2) - dT_yaw;
-
-        if T_left > 100; T_left = 100; end
-        if T_right > 100; T_right = 100; end 
         
-        % Protezione saturazione motori (minimo 0)
-        T_left  = max(0, T_left);
-        T_right = max(0, T_right);
+        % Saturazioni motori [0, 100]
+        T_left  = max(0, min(100, T_left));
+        T_right = max(0, min(100, T_right));
         
-        % Ricalcoliamo T_base effettivo dopo le saturazioni per coerenza nel tilt
-        T_base_eff = T_left + T_right;
-        
-        % TILT (Pitch & Roll)
-        % M_y = T_base_eff * sin(theta_tilt_common) * d_mx
-        % M_x = T_base_eff * sin(theta_tilt_diff) * d_my
-        
-        % PROTEZIONE SINGOLARITÀ MIXER
-        % Se la spinta è nulla, non possiamo generare momenti col tilt.
-        % Usiamo un valore "fittizio" al denominatore per evitare divisione per zero.
-        T_safe_mix = max(T_base_eff, 2.0); % Soglia minima 2 Newton
-        
-        % Angolo di tilt collettivo per il Pitch
-        % Approssimazione piccoli angoli: sin(x) ~ x
-        tilt_pitch = M_y_req / (T_safe_mix * d_mx);
-        
-        % Angolo di tilt differenziale per il Roll
-        tilt_roll  = M_x_req / (T_safe_mix * d_my);
-        
-        % Combinazione Output Servi
-        ts1 = tilt_pitch - tilt_roll; 
-        ts2 = tilt_pitch + tilt_roll; 
+        % -------------------------------------------------
+        % FASE C: Combinazione Output Servi
+        % -------------------------------------------------
+        ts1 = tilt_pitch - tilt_roll; % theta_1 = alpha - delta
+        ts2 = tilt_pitch + tilt_roll; % theta_2 = alpha + delta
         
         % Saturazione Servi (Limiti meccanici -45 a +80 gradi)
         ts1 = max(deg2rad(-45), min(deg2rad(80), ts1));
@@ -393,15 +401,12 @@ switch test_id
         % =================================================
         % 7. OUTPUT FINALE (U)
         % =================================================
-        % u(1..3) sono Velocità angolari rotori (rad/s)
-        % u(4..5) sono angoli tilt (rad)
-        
-        u(1) = sqrt(T_right / params.k); % Motore 1 (DX)
-        u(2) = sqrt(T_left / params.k);  % Motore 2 (SX)
-        u(3) = 0;                        % Motore Coda spento in crociera
-        u(4) = ts1;                      % Tilt 1
-        u(5) = ts2;                      % Tilt 2
-        u(6) = 0;                        % Tilt Coda (inutile se spento)
+        u(1) = sqrt(T_right / params.k); 
+        u(2) = sqrt(T_left / params.k);  
+        u(3) = 0;                        
+        u(4) = ts1;                      
+        u(5) = ts2;                      
+        u(6) = 0;                        
         u(7) = 0;
 
     otherwise

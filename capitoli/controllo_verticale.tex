@@ -17,122 +17,129 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 \mathbf{x} = [x, y, z, u, v, w, \phi, \theta, \psi, p, q, r]^T
 \]
 
-% --- DIAGRAMMA A BLOCCHI (Invariato nella struttura, aggiornato concettualmente) ---
-\begin{figure}[htbp]
-    \centering
-    % Resizebox adatta il diagramma alla larghezza del testo
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[auto, node distance=1.5cm, >=latex']
-        % --- STILI ---
-        \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3.5em, align=center, fill=white]
-        \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, node distance=1.5cm]
-        \tikzstyle{input} = [coordinate]
-        \tikzstyle{output} = [coordinate]
-        \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, black!60]
+% % --- DIAGRAMMA A BLOCCHI (Invariato nella struttura, aggiornato concettualmente) ---
+% \begin{figure}[htbp]
+%     \centering
+%     % Resizebox adatta il diagramma alla larghezza del testo
+%     \resizebox{\textwidth}{!}{
+%     \begin{tikzpicture}[auto, node distance=1.5cm, >=latex']
+%         % --- STILI ---
+%         \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=3.5em, align=center, fill=white]
+%         \tikzstyle{sum} = [draw, circle, inner sep=0mm, minimum size=6mm, node distance=1.5cm]
+%         \tikzstyle{input} = [coordinate]
+%         \tikzstyle{output} = [coordinate]
+%         \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, inner sep=0.3cm, black!60]
     
-        % --- 1. RIGA: QUOTA (Z) ---
-        \node [input] (ref_z) {};
-        \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
-        \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
-        \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
+%         % --- 1. RIGA: QUOTA (Z) ---
+%         \node [input] (ref_z) {};
+%         \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
+%         \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
+%         \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
     
-        % --- 2. RIGA: POSIZIONE Y -> ROLL (PHI) ---
-        \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
-        \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
-        \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
-        \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
-        \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {SMC\\$\phi$};
-        \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
+%         % --- 2. RIGA: POSIZIONE Y -> ROLL (PHI) ---
+%         \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
+%         \node [sum, right of=ref_y, node distance=1cm] (sum_y) {$\Sigma$};
+%         \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
+%         \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
+%         \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {SMC\\$\phi$};
+%         \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
     
-        % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
-        \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
-        \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
-        \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
-        \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
-        \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {SMC\\$\theta$};
-        \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
+%         % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
+%         \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
+%         \node [sum, right of=ref_x, node distance=1cm] (sum_x) {$\Sigma$};
+%         \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
+%         \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
+%         \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {SMC\\$\theta$};
+%         \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
     
-        % --- 4. RIGA: YAW (PSI) ---
-        \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
-        \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
-        \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {SMC\\$\psi$}; 
-        \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
+%         % --- 4. RIGA: YAW (PSI) ---
+%         \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
+%         \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
+%         \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {SMC\\$\psi$}; 
+%         \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
     
-        % --- MIXER E DRONE ---
-        \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MMA};
-        \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
+%         % --- MIXER E DRONE ---
+%         \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MMA};
+%         \node [block, right of=mixer, node distance=3.5cm, minimum height=5cm] (drone) {DRONE};
     
-        % --- COLLEGAMENTI FORWARD ---
+%         % --- COLLEGAMENTI FORWARD ---
         
-        % Z Loop
-        \draw [->] (ref_z) -- (sum_z);
-        \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
+%         % Z Loop
+%         \draw [->] (ref_z) -- (sum_z);
+%         \draw [->] (sum_z) -- node[above, font=\footnotesize] {$e_z$} (smc_z);
         
-        % --- CONNESSIONE THRUST (Correzione Rigorosa) ---
+%         % --- CONNESSIONE THRUST (Correzione Rigorosa) ---
         
-        % 1. Definiamo una "x" sicura per il bus verticale (a metà precisa tra le colonne)
-        \coordinate (bus_x) at ($(sum_y.east)!0.5!(smc_phi.west)$);
+%         % 1. Definiamo una "x" sicura per il bus verticale (a metà precisa tra le colonne)
+%         \coordinate (bus_x) at ($(sum_y.east)!0.5!(smc_phi.west)$);
         
-        % 2. Disegniamo la linea principale che scende
-        % Parte da SMC_Z, va giù un po', gira a sinistra fino al bus_x, poi scende fino all'ultimo blocco
-        % \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
-        \draw [->] (smc_z.east) -- node[above, font=\footnotesize] {$F_{z,req}$} (mixer.west |- smc_z.east);
+%         % 2. Disegniamo la linea principale che scende
+%         % Parte da SMC_Z, va giù un po', gira a sinistra fino al bus_x, poi scende fino all'ultimo blocco
+%         % \draw [->] (smc_z.south) -- ++(0,-0.2) -| (bus_x) -- (bus_x |- smc_theta.south);
+%         \draw [->] (smc_z.east) -- node[above, font=\footnotesize] {$F_{z,req}$} (mixer.west |- smc_z.east);
 
-        % Etichetta F_req,z posizionata meglio (sopra il primo tratto orizzontale)
-        % \node[above, font=\footnotesize] at ($(smc_z.east) + (-1, -0.8)$) {$F_{z,req}$};
+%         % Etichetta F_req,z posizionata meglio (sopra il primo tratto orizzontale)
+%         % \node[above, font=\footnotesize] at ($(smc_z.east) + (-1, -0.8)$) {$F_{z,req}$};
 
-        % 3. Collegamento a SMC Phi (Ingresso dall'alto pulito)
-        % Partiamo dal bus all'altezza del blocco -> SALIAMO -> ENTRIAMO da sopra
-        % \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
+%         % 3. Collegamento a SMC Phi (Ingresso dall'alto pulito)
+%         % Partiamo dal bus all'altezza del blocco -> SALIAMO -> ENTRIAMO da sopra
+%         % \draw [->] (bus_x |- smc_phi.north) -- ++(0, 0.3) -| (smc_phi.north);
 
-        % 4. Collegamento a SMC Theta (Ingresso dall'alto pulito)
-        % \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
-        % Y -> Phi Loop
-        \draw [->] (ref_y) -- (sum_y);
-        \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
-        \draw [->] (smc_phi) -- node[above, font=\footnotesize] {$\phi_{des}$} (sum_roll);
-        \draw [->] (sum_roll) -- node[above, font=\footnotesize] {$e_\phi$} (pid_roll);
-        \draw [->] (pid_roll) -- node[above, near end, font=\footnotesize] {$M_x$} (mixer.west |- pid_roll);
+%         % 4. Collegamento a SMC Theta (Ingresso dall'alto pulito)
+%         % \draw [->] (bus_x |- smc_theta.north) -- ++(0, 0.3) -| (smc_theta.north);
+%         % Y -> Phi Loop
+%         \draw [->] (ref_y) -- (sum_y);
+%         \draw [->] (sum_y) -- node[above, font=\footnotesize] {$e_y$} (smc_phi);
+%         \draw [->] (smc_phi) -- node[above, font=\footnotesize] {$\phi_{des}$} (sum_roll);
+%         \draw [->] (sum_roll) -- node[above, font=\footnotesize] {$e_\phi$} (pid_roll);
+%         \draw [->] (pid_roll) -- node[above, near end, font=\footnotesize] {$M_x$} (mixer.west |- pid_roll);
     
-        % X -> Theta Loop
-        \draw [->] (ref_x) -- (sum_x);
-        \draw [->] (sum_x) -- node[above, font=\footnotesize] {$e_x$} (smc_theta);
-        \draw [->] (smc_theta) -- node[above, font=\footnotesize] {$\theta_{des}$} (sum_pitch);
-        \draw [->] (sum_pitch) -- node[above, font=\footnotesize] {$e_\theta$} (pid_pitch);
-        \draw [->] (pid_pitch) -- node[above, near end, font=\footnotesize] {$M_y$} (mixer.west |- pid_pitch);
+%         % X -> Theta Loop
+%         \draw [->] (ref_x) -- (sum_x);
+%         \draw [->] (sum_x) -- node[above, font=\footnotesize] {$e_x$} (smc_theta);
+%         \draw [->] (smc_theta) -- node[above, font=\footnotesize] {$\theta_{des}$} (sum_pitch);
+%         \draw [->] (sum_pitch) -- node[above, font=\footnotesize] {$e_\theta$} (pid_pitch);
+%         \draw [->] (pid_pitch) -- node[above, near end, font=\footnotesize] {$M_y$} (mixer.west |- pid_pitch);
     
-        % Yaw Loop
-        \draw [->] (ref_psi) -- (sum_yaw);
-        \draw [->] (sum_yaw) -- node[above, font=\footnotesize] {$e_\psi$} (pid_yaw);
-        \draw [->] (pid_yaw) -- node[above, near end, font=\footnotesize] {$M_z$} (mixer.west |- pid_yaw);
+%         % Yaw Loop
+%         \draw [->] (ref_psi) -- (sum_yaw);
+%         \draw [->] (sum_yaw) -- node[above, font=\footnotesize] {$e_\psi$} (pid_yaw);
+%         \draw [->] (pid_yaw) -- node[above, near end, font=\footnotesize] {$M_z$} (mixer.west |- pid_yaw);
     
-        % Mixer -> Drone
-        \draw [->] (mixer) -- (drone);
+%         % Mixer -> Drone
+%         \draw [->] (mixer) -- (drone);
     
-        % --- FEEDBACK LOOP ---
-        \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start) 
-            -- ++(0,-6.5) coordinate (fb_corner) 
-            -- (fb_corner -| sum_z) coordinate (fb_end) -- ++(-1,0); 
+%         % --- FEEDBACK LOOP ---
+%         \draw [->] (drone.east) -- ++(1,0) coordinate (fb_start) 
+%             -- ++(0,-6.5) coordinate (fb_corner) 
+%             -- (fb_corner -| sum_z) coordinate (fb_end) -- ++(-1,0); 
     
-        % Feedback salite (PULITE: Senza etichette e segni meno)
-        \draw [->] (fb_end -| sum_z) -- (sum_z.south);
-        \draw [->] (fb_end -| sum_y) -- (sum_y.south);
-        \draw [->] (fb_end -| sum_x) -- (sum_x.south);
-        \draw [->] (fb_end -| sum_yaw) -- (sum_yaw.south);
-        \draw [->] (fb_end -| sum_roll) -- (sum_roll.south);
-        \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
+%         % Feedback salite (PULITE: Senza etichette e segni meno)
+%         \draw [->] (fb_end -| sum_z) -- (sum_z.south);
+%         \draw [->] (fb_end -| sum_y) -- (sum_y.south);
+%         \draw [->] (fb_end -| sum_x) -- (sum_x.south);
+%         \draw [->] (fb_end -| sum_yaw) -- (sum_yaw.south);
+%         \draw [->] (fb_end -| sum_roll) -- (sum_roll.south);
+%         \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
             
-        % Etichetta feedback centrata
-        \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
+%         % Etichetta feedback centrata
+%         \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
     
-        % --- RIQUADRI LOGICI ---
-        \node [container, fit=(smc_z) (smc_phi) (smc_theta), label=above:\textbf{Outer Loop: Posizione}] {};
-        \node [container, fit=(pid_roll) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop: Assetto}] {};
+%         % --- RIQUADRI LOGICI ---
+%         \node [container, fit=(smc_z) (smc_phi) (smc_theta), label=above:\textbf{Outer Loop: Posizione}] {};
+%         \node [container, fit=(pid_roll) (pid_pitch) (pid_yaw), label=above:\textbf{Inner Loop: Assetto}] {};
     
-    \end{tikzpicture}
-    } % Chiusura resizebox
-    \caption{Schema a blocchi del controllo verticale.}
-    \label{fig:control_scheme_vertical}
+%     \end{tikzpicture}
+%     } % Chiusura resizebox
+%     \caption{Schema a blocchi del controllo verticale.}
+%     \label{fig:control_scheme_vertical}
+% \end{figure}
+
+\subsection{Schema blocchi dell'architettura di controllo}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{controllo_verticale/schema_blocchi_V.png}
+    \caption{Schema a blocchi del controllo.}
 \end{figure}
 \clearpage
 

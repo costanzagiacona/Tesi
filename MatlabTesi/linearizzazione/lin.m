@@ -10,108 +10,108 @@ tol = 1e-8;
 %% =========================================================================
 % CASE 1: HOVERING (VOLO VERTICALE) - 26 STATI
 % =========================================================================
-fprintf('--- ANALISI CASO 1: HOVERING ---\n');
-
-% 1. Definizione Punto di Equilibrio x_eq
-x_eq_hover = zeros(26,1);
-x_eq_hover(3) = -10; % Quota desiderata
-x_eq_hover(13) = pi/2; % Tilt servi anteriori (Verticale)
-x_eq_hover(15) = pi/2;
-theta3_ideal = atan2(((-parametri.d_tx * parametri.k) / parametri.b), 1);
-x_eq_hover(17) = theta3_ideal; % Tilt coda
-x_eq_hover(19) = -pi/2;
-
-% Calcolo spinte di Trim
-Thrust_tot_req = parametri.m * parametri.g;
-F_tail_z = (parametri.d_mx * Thrust_tot_req) / (parametri.d_mx - parametri.d_tx);
-F_front_tot_z = Thrust_tot_req - F_tail_z;
-
-x_eq_hover(21) = sqrt(F_front_tot_z / (2 * parametri.k)); % omega_1
-x_eq_hover(23) = x_eq_hover(21);                          % omega_2
-x_eq_hover(25) = sqrt(F_tail_z / (parametri.k * sin(theta3_ideal))); % omega_3
-
-% 2. Linearizzazione
-A_hover = linearizzaVTOL_ClosedLoop(x_eq_hover, parametri, 1, target);
-autov_hover = eig(A_hover);
-
-% 3. Verifica Stabilità
-re_hover = real(autov_hover);
-if any(re_hover > tol)
-    status_hover = 'SISTEMA INSTABILE';
-elseif all(re_hover < -tol)
-    status_hover = 'SISTEMA ASINTOTICAMENTE STABILE';
-else
-    status_hover = 'SISTEMA SEMPLICEMENTE STABILE (Marginale)';
-end
-
-fprintf('Stato: %s\n', status_hover);
-fprintf('Polo più critico (Max Re): %.4f\n\n', max(re_hover));
-fprintf('Autovalori:\n');
-disp(autov_hover);
-
-%% =========================================================================
-% ANALISI DELLA PARTECIPAZIONE AGGREGATA (Macro-Sistemi)
-% =========================================================================
-fprintf('\n--- CALCOLO MATRICE DI PARTECIPAZIONE AGGREGATA ---\n');
-
-% 1. Ricalcolo P_norm (se non ce l'hai già in memoria)
-[V, D] = eig(A_hover);
-autovalori = diag(D);
-W = inv(V);
-% 3. Calcolo Matrice di Partecipazione P (modulo) - CORRETTO
-% V ha (stati x modi). W.' ha (stati x modi).
-P = abs(V .* W.');
-
-% 4. Normalizzazione (la somma degli stati per ogni singolo modo deve fare 100%)
-P_norm = (P ./ sum(P, 1)) * 100;
-
-% 2. Aggregazione degli stati per significato fisico
-P_macro = zeros(5, 26);
-P_macro(1, :) = sum(P_norm(1:3, :), 1);   % Posizione (XYZ)
-P_macro(2, :) = sum(P_norm(4:6, :), 1);   % Vel. Lineare (uvw)
-P_macro(3, :) = sum(P_norm(7:9, :), 1);   % Assetto (Eulero)
-P_macro(4, :) = sum(P_norm(10:12, :), 1); % Vel. Angolare (pqr)
-P_macro(5, :) = sum(P_norm(13:26, :), 1); % Attuatori (Motori e Servi)
-
-% Per rendere il grafico ancora più pulito, ordiniamo gli autovalori dal 
-% più lento (Re più vicina a 0) al più veloce (Re più negativa)
-[~, sort_idx] = sort(real(autovalori), 'descend');
-autovalori_sorted = autovalori(sort_idx);
-P_macro_sorted = P_macro(:, sort_idx);
-
-%% VISUALIZZAZIONE AGGREGATA E ORDINATA
-figure('Name', 'Partecipazione per Sottosistemi Fisici', 'Position', [100, 100, 1200, 600]);
-
-% Creazione grafico a barre impilate (trasposto)
-b = bar(P_macro_sorted', 'stacked', 'EdgeColor', 'black', 'LineWidth', 0.5);
-
-% Colori specifici per facilitare la lettura visiva
-b(1).FaceColor = [0.2 0.6 0.8]; % Blu (Posizione)
-b(2).FaceColor = [0.4 0.8 0.9]; % Ciano (Vel. Lineare)
-b(3).FaceColor = [0.9 0.4 0.1]; % Arancio scuro (Assetto)
-b(4).FaceColor = [0.9 0.7 0.2]; % Giallo (Vel. Angolare)
-b(5).FaceColor = [0.5 0.5 0.5]; % Grigio (Attuatori)
-
-title('Partecipazione aggregata ai Modi Dinamici', 'FontSize', 15);
-xlabel('Autovalori ordinati (dal più LENTO al più VELOCE \rightarrow)', 'FontSize', 14);
-ylabel('Partecipazione Totale (%)', 'FontSize', 14);
-
-% Legenda chiara e parlante
-lgd = legend({'Posizione (XYZ)', 'Vel. Lineare (uvw)', 'Assetto (\phi, \theta, \psi)', ...
-              'Vel. Angolare (p, q, r)', 'Dinamica Attuatori'}, ...
-             'Location', 'eastoutside', 'FontSize', 12);
-title(lgd, 'Sottosistemi');
-
-% Formattazione asse X (Mostriamo solo la parte reale per brevità)
-labels_sorted = cell(26, 1);
-for i = 1:26
-    labels_sorted{i} = sprintf('%.2f', real(autovalori_sorted(i)));
-end
-xticks(1:26);
-xticklabels(labels_sorted);
-xtickangle(45);
-ylim([0 100]);
-grid on;
+% fprintf('--- ANALISI CASO 1: HOVERING ---\n');
+% 
+% % 1. Definizione Punto di Equilibrio x_eq
+% x_eq_hover = zeros(26,1);
+% x_eq_hover(3) = -10; % Quota desiderata
+% x_eq_hover(13) = pi/2; % Tilt servi anteriori (Verticale)
+% x_eq_hover(15) = pi/2;
+% theta3_ideal = atan2(((-parametri.d_tx * parametri.k) / parametri.b), 1);
+% x_eq_hover(17) = theta3_ideal; % Tilt coda
+% x_eq_hover(19) = -pi/2;
+% 
+% % Calcolo spinte di Trim
+% Thrust_tot_req = parametri.m * parametri.g;
+% F_tail_z = (parametri.d_mx * Thrust_tot_req) / (parametri.d_mx - parametri.d_tx);
+% F_front_tot_z = Thrust_tot_req - F_tail_z;
+% 
+% x_eq_hover(21) = sqrt(F_front_tot_z / (2 * parametri.k)); % omega_1
+% x_eq_hover(23) = x_eq_hover(21);                          % omega_2
+% x_eq_hover(25) = sqrt(F_tail_z / (parametri.k * sin(theta3_ideal))); % omega_3
+% 
+% % 2. Linearizzazione
+% A_hover = linearizzaVTOL_ClosedLoop(x_eq_hover, parametri, 1, target);
+% autov_hover = eig(A_hover);
+% 
+% % 3. Verifica Stabilità
+% re_hover = real(autov_hover);
+% if any(re_hover > tol)
+%     status_hover = 'SISTEMA INSTABILE';
+% elseif all(re_hover < -tol)
+%     status_hover = 'SISTEMA ASINTOTICAMENTE STABILE';
+% else
+%     status_hover = 'SISTEMA SEMPLICEMENTE STABILE (Marginale)';
+% end
+% 
+% fprintf('Stato: %s\n', status_hover);
+% fprintf('Polo più critico (Max Re): %.4f\n\n', max(re_hover));
+% fprintf('Autovalori:\n');
+% disp(autov_hover);
+% 
+% %% =========================================================================
+% % ANALISI DELLA PARTECIPAZIONE AGGREGATA (Macro-Sistemi)
+% % =========================================================================
+% fprintf('\n--- CALCOLO MATRICE DI PARTECIPAZIONE AGGREGATA ---\n');
+% 
+% % 1. Ricalcolo P_norm (se non ce l'hai già in memoria)
+% [V, D] = eig(A_hover);
+% autovalori = diag(D);
+% W = inv(V);
+% % 3. Calcolo Matrice di Partecipazione P (modulo) - CORRETTO
+% % V ha (stati x modi). W.' ha (stati x modi).
+% P = abs(V .* W.');
+% 
+% % 4. Normalizzazione (la somma degli stati per ogni singolo modo deve fare 100%)
+% P_norm = (P ./ sum(P, 1)) * 100;
+% 
+% % 2. Aggregazione degli stati per significato fisico
+% P_macro = zeros(5, 26);
+% P_macro(1, :) = sum(P_norm(1:3, :), 1);   % Posizione (XYZ)
+% P_macro(2, :) = sum(P_norm(4:6, :), 1);   % Vel. Lineare (uvw)
+% P_macro(3, :) = sum(P_norm(7:9, :), 1);   % Assetto (Eulero)
+% P_macro(4, :) = sum(P_norm(10:12, :), 1); % Vel. Angolare (pqr)
+% P_macro(5, :) = sum(P_norm(13:26, :), 1); % Attuatori (Motori e Servi)
+% 
+% % Per rendere il grafico ancora più pulito, ordiniamo gli autovalori dal 
+% % più lento (Re più vicina a 0) al più veloce (Re più negativa)
+% [~, sort_idx] = sort(real(autovalori), 'descend');
+% autovalori_sorted = autovalori(sort_idx);
+% P_macro_sorted = P_macro(:, sort_idx);
+% 
+% %% VISUALIZZAZIONE AGGREGATA E ORDINATA
+% figure('Name', 'Partecipazione per Sottosistemi Fisici', 'Position', [100, 100, 1200, 600]);
+% 
+% % Creazione grafico a barre impilate (trasposto)
+% b = bar(P_macro_sorted', 'stacked', 'EdgeColor', 'black', 'LineWidth', 0.5);
+% 
+% % Colori specifici per facilitare la lettura visiva
+% b(1).FaceColor = [0.2 0.6 0.8]; % Blu (Posizione)
+% b(2).FaceColor = [0.4 0.8 0.9]; % Ciano (Vel. Lineare)
+% b(3).FaceColor = [0.9 0.4 0.1]; % Arancio scuro (Assetto)
+% b(4).FaceColor = [0.9 0.7 0.2]; % Giallo (Vel. Angolare)
+% b(5).FaceColor = [0.5 0.5 0.5]; % Grigio (Attuatori)
+% 
+% title('Partecipazione aggregata ai Modi Dinamici', 'FontSize', 15);
+% xlabel('Autovalori ordinati (dal più LENTO al più VELOCE \rightarrow)', 'FontSize', 14);
+% ylabel('Partecipazione Totale (%)', 'FontSize', 14);
+% 
+% % Legenda chiara e parlante
+% lgd = legend({'Posizione (XYZ)', 'Vel. Lineare (uvw)', 'Assetto (\phi, \theta, \psi)', ...
+%               'Vel. Angolare (p, q, r)', 'Dinamica Attuatori'}, ...
+%              'Location', 'eastoutside', 'FontSize', 12);
+% title(lgd, 'Sottosistemi');
+% 
+% % Formattazione asse X (Mostriamo solo la parte reale per brevità)
+% labels_sorted = cell(26, 1);
+% for i = 1:26
+%     labels_sorted{i} = sprintf('%.2f', real(autovalori_sorted(i)));
+% end
+% xticks(1:26);
+% xticklabels(labels_sorted);
+% xtickangle(45);
+% ylim([0 100]);
+% grid on;
 
 %% =========================================================================
 % CASE 2: CRUISE (VOLO ORIZZONTALE) - 30 STATI
@@ -119,7 +119,7 @@ grid on;
 fprintf('--- ANALISI CASO 2: CRUISE (25 m/s) ---\n');
 
 % 1. Definizione Punto di Equilibrio x_eq_cruise
-x_eq_cruise = zeros(30, 1); 
+x_eq_cruise = zeros(28, 1); 
 x_eq_cruise(3) = -10;
 x_eq_cruise(4) = 25;  % Velocità di avanzamento
 x_eq_cruise(13) = 0;  % Tilt servi anteriori (Orizzontale)
@@ -150,19 +150,104 @@ fprintf('Polo più critico (Max Re): %.4f\n\n', max(re_cruise));
 fprintf('Autovalori:\n');
 disp(autov_cruise);
 
+%%
+% %% =========================================================================
+% % GRAFICI DI CONFRONTO
+% % =========================================================================
+% figure('Name', 'Analisi Spettrale VTOL', 'Position', [100, 100, 1000, 500]);
+% 
+% subplot(1,2,1);
+% plot(real(autov_hover), imag(autov_hover), 'ro', 'MarkerSize', 8, 'LineWidth', 1.5);
+% grid on; xline(0, '--k');
+% title(['Hovering: ', status_hover]);
+% xlabel('Re'); ylabel('Im');
+% 
+% subplot(1,2,2);
+% plot(real(autov_cruise), imag(autov_cruise), 'bd', 'MarkerSize', 8, 'LineWidth', 1.5);
+% grid on; xline(0, '--k');
+% title(['Cruise: ', status_cruise]);
+% xlabel('Re'); ylabel('Im');
+% 
+% --- ANALISI AUTOVALORI NULLI (Chi sono i colpevoli?) ---
+[V_c, D_c] = eig(A_cruise);
+autoval_c = diag(D_c);
+W_c = inv(V_c);
+P_c = abs(V_c .* W_c.'); % Matrice di partecipazione (stati x modi)
+
+% Trova gli indici degli autovalori che sono vicini a zero (es. < 1e-5)
+null_indices = find(abs(autoval_c) < 1e-5);
+
+fprintf('Trovati %d autovalori in zero.\n', length(null_indices));
+
+for k = 1:length(null_indices)
+    idx = null_indices(k);
+    [val, state_idx] = max(P_c(:, idx)); % Trova lo stato con massima partecipazione
+    fprintf('Modo %d (lambda=%.2e): Dominato dallo stato x(%d) con partecipazione del %.1f%%\n', ...
+            k, autoval_c(idx), state_idx, val*100);
+end
+
 %% =========================================================================
-% GRAFICI DI CONFRONTO
+% ANALISI DELLA PARTECIPAZIONE AGGREGATA (Macro-Sistemi)
 % =========================================================================
-figure('Name', 'Analisi Spettrale VTOL', 'Position', [100, 100, 1000, 500]);
+fprintf('\n--- CALCOLO MATRICE DI PARTECIPAZIONE AGGREGATA ---\n');
 
-subplot(1,2,1);
-plot(real(autov_hover), imag(autov_hover), 'ro', 'MarkerSize', 8, 'LineWidth', 1.5);
-grid on; xline(0, '--k');
-title(['Hovering: ', status_hover]);
-xlabel('Re'); ylabel('Im');
+% 1. Ricalcolo P_norm (se non ce l'hai già in memoria)
+[V, D] = eig(A_cruise);
+autovalori = diag(D);
+W = inv(V);
+% 3. Calcolo Matrice di Partecipazione P (modulo) - CORRETTO
+% V ha (stati x modi). W.' ha (stati x modi).
+P = abs(V .* W.');
 
-subplot(1,2,2);
-plot(real(autov_cruise), imag(autov_cruise), 'bd', 'MarkerSize', 8, 'LineWidth', 1.5);
-grid on; xline(0, '--k');
-title(['Cruise: ', status_cruise]);
-xlabel('Re'); ylabel('Im');
+% 4. Normalizzazione (la somma degli stati per ogni singolo modo deve fare 100%)
+P_norm = (P ./ sum(P, 1)) * 100;
+
+% 2. Aggregazione degli stati per significato fisico
+P_macro = zeros(6, 28);
+P_macro(1, :) = sum(P_norm(1:3, :), 1);   % Posizione (XYZ)
+P_macro(2, :) = sum(P_norm(4:6, :), 1);   % Vel. Lineare (uvw)
+P_macro(3, :) = sum(P_norm(7:9, :), 1);   % Assetto (Eulero)
+P_macro(4, :) = sum(P_norm(10:12, :), 1); % Vel. Angolare (pqr)
+P_macro(5, :) = sum(P_norm(13:26, :), 1); % Attuatori (Motori e Servi)
+P_macro(6, :) = sum(P_norm(27:28, :), 1);
+
+% Per rendere il grafico ancora più pulito, ordiniamo gli autovalori dal 
+% più lento (Re più vicina a 0) al più veloce (Re più negativa)
+[~, sort_idx] = sort(real(autovalori), 'descend');
+autovalori_sorted = autovalori(sort_idx);
+P_macro_sorted = P_macro(:, sort_idx);
+
+%% VISUALIZZAZIONE AGGREGATA E ORDINATA
+figure('Name', 'Partecipazione per Sottosistemi Fisici', 'Position', [100, 100, 1200, 600]);
+
+% Creazione grafico a barre impilate (trasposto)
+b = bar(P_macro_sorted', 'stacked', 'EdgeColor', 'black', 'LineWidth', 0.5);
+
+% Colori specifici per facilitare la lettura visiva
+b(1).FaceColor = [0.2 0.6 0.8]; % Blu (Posizione)
+b(2).FaceColor = [0.4 0.8 0.9]; % Ciano (Vel. Lineare)
+b(3).FaceColor = [0.9 0.4 0.1]; % Arancio scuro (Assetto)
+b(4).FaceColor = [0.9 0.7 0.2]; % Giallo (Vel. Angolare)
+b(5).FaceColor = [0.5 0.5 0.5]; % Grigio (Attuatori)
+b(6).FaceColor = [0.1 0.8 0.3]; % integratori
+
+title('Partecipazione aggregata ai Modi Dinamici', 'FontSize', 15);
+xlabel('Autovalori ordinati (dal più LENTO al più VELOCE \rightarrow)', 'FontSize', 14);
+ylabel('Partecipazione Totale (%)', 'FontSize', 14);
+
+% Legenda chiara e parlante
+lgd = legend({'Posizione (XYZ)', 'Vel. Lineare (uvw)', 'Assetto (\phi, \theta, \psi)', ...
+              'Vel. Angolare (p, q, r)', 'Dinamica Attuatori', 'Integratori'}, ...
+             'Location', 'eastoutside', 'FontSize', 12);
+title(lgd, 'Sottosistemi');
+
+% Formattazione asse X (Mostriamo solo la parte reale per brevità)
+labels_sorted = cell(28, 1);
+for i = 1:28
+    labels_sorted{i} = sprintf('%.2f', real(autovalori_sorted(i)));
+end
+xticks(1:28);
+xticklabels(labels_sorted);
+xtickangle(45);
+ylim([0 100]);
+grid on;

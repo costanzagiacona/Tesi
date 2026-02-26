@@ -15,7 +15,7 @@ function MonteCarloVTOL(params)
     cfg_rec.x0_type = 'static'; 
     cfg_rec.n_states = 26; % Esplicito la dimensione dello stato
     
-    RunCampaign(cfg_rec, params);
+    % RunCampaign(cfg_rec, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 2: TAKEOFF ---
@@ -27,7 +27,7 @@ function MonteCarloVTOL(params)
     cfg_take.x0_type = 'takeoff'; 
     cfg_take.n_states = 26;
     
-    RunCampaign(cfg_take, params);
+    % RunCampaign(cfg_take, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE ---
@@ -37,7 +37,7 @@ function MonteCarloVTOL(params)
     cfg_cru.tspan = [0 40]; 
     cfg_cru.sigma = struct('pos', 5.0, 'vel', 7.0, 'att', deg2rad(10), 'omega', deg2rad(2)); % Ripristinata incertezza omega
     cfg_cru.x0_type = 'cruise'; 
-    cfg_cru.n_states = 30; % Modello con dinamica estesa per il cruise
+    cfg_cru.n_states = 28; % Modello con dinamica estesa per il cruise
     
     RunCampaign(cfg_cru, params);
     
