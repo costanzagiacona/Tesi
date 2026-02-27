@@ -136,7 +136,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 % \end{figure}
 
 \subsection{Schema blocchi dell'architettura di controllo}
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{controllo_verticale/schema_blocchi_V.png}
     \caption{Schema a blocchi del controllo.}
@@ -172,9 +172,9 @@ All'interno di questo strato, l'azione di controllo è approssimativamente linea
 % =========================================================
 %   OUTER LOOP
 % =========================================================
-\section{Controllo di Posizione}
+\section{Outer Loop: Controllo di Posizione}
 
-\subsection{Controllo di Quota $z$}
+\subsection{Controllo di Quota \texorpdfstring{$z$}{z}}
 Il controllo della quota $z$ è progettato secondo la tecnica \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi.
 
 Si definiscono l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{sliding surface} come:
@@ -202,7 +202,7 @@ dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 
 \clearpage
 
-\section{Controllo Planare e Mapping di Assetto}
+\subsection{Controllo Planare e Mapping di Assetto}
 
 Il controllo degli spostamenti del drone nel piano $x-y$ implica il controllo di assetto tramite rollio e imbardata, a causa dell'assenza di attuatori diretti lungo questi assi.
 Dunque, i controllori di posizione per $x$ e $y$ generano dei controlli virtuali che servono per calcolare gli angoli di assetto desiderati $\phi_{des}$ e $\theta_{des}$.
@@ -238,7 +238,7 @@ Assumendo di mantenere $\psi = 0$, è possibile scrivere le equazioni delle dina
 \end{equation}
 Dalle quali si ottengono i comandi virtuali per le forze $F_{x,req}, F_{y,req}, F_{z,req}$.
 
-\subsection{Controllo $y$}
+\subsection{Controllo \texorpdfstring{$y$}{y}}
 Per generare la forza virtuale $F_{y,req}$ si utilizza un controllore \textit{Sliding Mode}.
 Analogamente al controllo di quota, si definiscono l'errore di posizione $e_y(t) = y_{des}(t) - y(t)$ e la \textit{sliding surface} $\sigma_y = \dot{e}_y + \lambda_y e_y$.\\
 Si impone la legge di raggiungimento $\dot{\sigma}_y = - K_y \tanh\left(\frac{\sigma_y}{\Phi}\right)$ e, sostituendo la dinamica $y$ nella derivata della \textit{sliding surface}, si ottiene:
@@ -258,7 +258,7 @@ in particolare è stato limitato a $\pm 0.5$ per motivi di sicurezza fisica, ass
 Il controllore appena descritto viene utilizzato sia per compensare errori di posizione laterale che fenomeni di 
 \textit{sideslip}, a causa dei quali il drone potrebbe subire effetti di deriva.
 
-\subsection{Controllo $x$}
+\subsection{Controllo \texorpdfstring{$x$}{x}}
 In modo analogo, per l'asse $x$, si progetta un controllore \textit{Sliding Mode} e si ottiene il controllo virtuale:
 \begin{equation}
     F_{x,req} = -m \left(\ddot{x}_{des} + K_x \tanh\left(\frac{\sigma_x}{\Phi}\right) + \lambda_x \dot{e}_x \right)
@@ -275,7 +275,7 @@ dove $T$ è il modulo del Thrust calcolato attraverso il controllore di quota. S
 % =========================================================
 %   INNER LOOP
 % =========================================================
-\section{Controllo di Assetto}
+\section{Inner Loop: Controllo di Assetto}
 Il loop interno è deputato alla stabilizzazione dell'assetto del velivolo e all'inseguimento dei riferimenti $(\phi_{des}, \theta_{des}, \psi_{des})$ generati dal loop esterno. A differenza della dinamica traslazionale, la dinamica rotazionale del tricottero è governata dalle equazioni di Newton-Eulero per un corpo rigido in rotazione, caratterizzata da forti accoppiamenti non lineari.
 
 \subsection{Modello Dinamico e Inversione}

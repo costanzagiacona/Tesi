@@ -76,98 +76,139 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
 
 \section{Dinamica del Sistema}
 
-\subsubsection{Equazioni relative alle accelerazioni lineari}
-           \vspace{0.5cm}
-     Dalle equazioni della dinamica \ref{eq:newton_euler} si ottiene che le accelerazioni lineari nel body frame 
-     sono date da:
+\subsection{Equazioni relative alle velocità lineari}
      
-     \begin{equation}
+Dalla \ref{eq:pos_global} si ottiene che le derivate delle posizioni nel sistema inerziale 
+sono legate alle velocità espresse nel body frame tramite la matrice di rotazione $R_{b \to g}$:
+
+\begin{equation}
+	\begin{bmatrix}
+		\dot{x}_1 \\
+		\dot{x}_2 \\
+		\dot{x}_3
+		\end{bmatrix}
+		=
+		R_{b \to g}
 		\begin{bmatrix}
-     	\dot{x}_4 \\ \dot{x}_5 \\ \dot{x}_6
-     \end{bmatrix}
-     =
-     \frac{1}{m}\left(
-     \mathbf{F}_{\text{TOT}} -
-     \begin{bmatrix}
-     	x_{10} \\ x_{11} \\ x_{12}
-     \end{bmatrix}
-     \times
-     m
-     \begin{bmatrix}
-     	x_4 \\ x_5 \\ x_6
-     \end{bmatrix}
-     \right)
-	 \end{equation}
+		x_4 \\
+		x_5 \\
+		x_6
+	\end{bmatrix}
+\end{equation}
+
+dove: 
+
+\begin{equation}
+	R_{b \to g} =
+	\resizebox{0.96\textwidth}{!}{$
+	\begin{bmatrix}
+		\cos(x_9)\cos(x_8) & \cos(x_9)\sin(x_8)\sin(x_7) - \sin(x_9)\cos(x_7) & \cos(x_9)\sin(x_8)\cos(x_7) + \sin(x_9)\sin(x_7) \\
+		\sin(x_9)\cos(x_8) & \sin(x_9)\sin(x_8)\sin(x_7) + \cos(x_9)\cos(x_7) & \sin(x_9)\sin(x_8)\cos(x_7) - \cos(x_9)\sin(x_7) \\
+		-\sin(x_8) & \cos(x_8)\sin(x_7) & \cos(x_8)\cos(x_7)
+	\end{bmatrix}
+	$}
+\end{equation}
+
      
-           \vspace{0.5cm}
-     dove dalla (3.26) :
+\clearpage
+
+\subsection{Equazioni relative alle accelerazioni lineari}
+
+Dalle equazioni della dinamica \ref{eq:newton_euler} si ottiene che le accelerazioni lineari nel body frame 
+sono date da:
+
+\begin{equation}
+\begin{bmatrix}
+\dot{x}_4 \\ \dot{x}_5 \\ \dot{x}_6
+\end{bmatrix}
+=
+\frac{1}{m}\left(
+\mathbf{F}_{\text{TOT}} -
+\begin{bmatrix}
+x_{10} \\ x_{11} \\ x_{12}
+\end{bmatrix}
+\times
+m
+\begin{bmatrix}
+x_4 \\ x_5 \\ x_6
+\end{bmatrix}
+\right)
+\end{equation}
+
+
+
+\vspace{0.5cm}
+
+dove dalla \ref{eq:f_tot} :
+
+\begin{equation*}
+\mathbf{F}_{TOT} = \mathbf{F}_{TH} + \mathbf{F}_{GRAV} + \mathbf{F}_{AERO} = 
+\end{equation*}
+
+\begin{equation*}
+=  
+\begin{bmatrix}
+	\cos(\theta_{1}) & \cos(\theta_{2}) & {\cos(\theta_{3})\cos(\theta_{4})} \\
+	0                 & 0                 & {\cos(\theta_{3})\sin(\theta_{4})} \\
+	-\sin(\theta_{1}) & -\sin(\theta_{2}) & {-\sin(\theta_{3})}
+\end{bmatrix}
+\begin{bmatrix}
+	k\omega_{1}^2 \\
+	k\omega_{2}^2 \\
+	k\omega_{3}^2 
+\end{bmatrix} +  \begin{bmatrix}
+	-\sin(\theta) \\
+	\cos(\theta)\sin(\phi) \\
+	\cos(\theta)\cos(\phi) 
+\end{bmatrix} m g +  
+\end{equation*}
+\begin{equation*}
++
+\begin{bmatrix}
+	-\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2\, s\, (C_d + C_d) \\
+	0 \\
+	-\frac{1}{2}\rho\, v_x^2\, s\, (C_l + C_l) - \operatorname{sgn}(v_z)\,\frac{1}{2}\rho\, v_z^2\, s\, (C_{d,z} + C_{d,z})
+\end{bmatrix}
+=
+\end{equation*}
+
+\begin{equation*}
+=
+\begin{bmatrix}
+	\cos(x_{13}) & \cos(x_{15}) & \cos(x_{17})\cos(x_{19}) \\
+	0            & 0            & \cos(x_{17})\sin(x_{19}) \\
+	-\sin(x_{13}) & -\sin(x_{15}) & -\sin(x_{17})
+\end{bmatrix}
+\begin{bmatrix}
+	kx_{21}^2 \\
+	kx_{23}^2  \\
+	kx_{25}^2 
+\end{bmatrix}
++
+\begin{bmatrix}
+	-\sin(x_8) \\
+	\cos(x_8)\sin(x_7) \\
+	\cos(x_8)\cos(x_7)
+\end{bmatrix} m g
++
+\end{equation*}
+
+\begin{equation}
++
+\begin{bmatrix}
+	-\operatorname{sgn}(x_4)\,\tfrac{1}{2}\rho\, x_4^2\, s\,(C_d + C_d) \\
+	0 \\
+	-\tfrac{1}{2}\rho\, x_4^2\, s\,(C_l + C_l)
+	-\operatorname{sgn}(x_6)\,\tfrac{1}{2}\rho\, x_6^2\, s\,(C_{d,z} + C_{d,z})
+\end{bmatrix}
+\end{equation}
      
-      \begin{equation*}
-     	\mathbf{F}_{TOT} = \mathbf{F}_{TH} + \mathbf{F}_{GRAV} + \mathbf{F}_{AERO} = 
-     \end{equation*}
-     
-     \begin{equation*}
-     	=  
-     	\begin{bmatrix}
-     		\cos(\theta_{1}) & \cos(\theta_{2}) & {\cos(\theta_{3})\cos(\theta_{4})} \\
-     		0                 & 0                 & {\cos(\theta_{3})\sin(\theta_{4})} \\
-     		-\sin(\theta_{1}) & -\sin(\theta_{2}) & {-\sin(\theta_{3})}
-     	\end{bmatrix}
-     	\begin{bmatrix}
-     		k\omega_{1}^2 \\
-     		k\omega_{2}^2 \\
-     		k\omega_{3}^2 
-     	\end{bmatrix} +  \begin{bmatrix}
-     		-\sin(\theta) \\
-     		\cos(\theta)\sin(\phi) \\
-     		\cos(\theta)\cos(\phi) 
-     	\end{bmatrix} m g +  
-     \end{equation*}
-     \begin{equation*}
-     	+
-     	\begin{bmatrix}
-     		-\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2\, s\, (C_d + C_d) \\
-     		0 \\
-     		-\frac{1}{2}\rho\, v_x^2\, s\, (C_l + C_l) - \operatorname{sgn}(v_z)\,\frac{1}{2}\rho\, v_z^2\, s\, (C_{d,z} + C_{d,z})
-     	\end{bmatrix}
-     	=
-     \end{equation*}
- 
-     \begin{equation*}
-     	=
-     	\begin{bmatrix}
-     		\cos(x_{13}) & \cos(x_{15}) & \cos(x_{17})\cos(x_{19}) \\
-     		0            & 0            & \cos(x_{17})\sin(x_{19}) \\
-     		-\sin(x_{13}) & -\sin(x_{15}) & -\sin(x_{17})
-     	\end{bmatrix}
-     	\begin{bmatrix}
-     		kx_{21}^2 \\
-     		kx_{23}^2  \\
-     		kx_{25}^2 
-     	\end{bmatrix}
-     	+
-     	\begin{bmatrix}
-     		-\sin(x_8) \\
-     		\cos(x_8)\sin(x_7) \\
-     		\cos(x_8)\cos(x_7)
-     	\end{bmatrix} m g
-     	+
-     \end{equation*}
-     
-     \begin{equation}
-     	+
-     	\begin{bmatrix}
-     		-\operatorname{sgn}(x_4)\,\tfrac{1}{2}\rho\, x_4^2\, s\,(C_d + C_d) \\
-     		0 \\
-     		-\tfrac{1}{2}\rho\, x_4^2\, s\,(C_l + C_l)
-     		-\operatorname{sgn}(x_6)\,\tfrac{1}{2}\rho\, x_6^2\, s\,(C_{d,z} + C_{d,z})
-     	\end{bmatrix}
-     \end{equation}
-     
-     \clearpage
-      \subsubsection{Equazioni relative alle velocità angolari}
+\clearpage
+
+
+\subsection{Equazioni relative alle velocità angolari}
      \vspace{0.5cm}
-     Dalla (3.7):
+     Dalla \ref{eq:vel_ang_global}:
      
 	 \begin{equation}
 		\begin{bmatrix}
@@ -201,134 +242,134 @@ Il vettore degli ingressi di controllo $u \in \mathbb{R}^{7}$ è definito come:
      \end{bmatrix}
 	 \end{equation}
      
-     \clearpage
+\clearpage
      
-     \subsubsection{Equazioni relative alle accelerazioni angolari}
-     \vspace{0.5cm}
-     Dalla (3.9) e (3.28) si ottiene che le accelerazioni angolari nel body frame 
-     sono date da:
-	
-	 \begin{equation}
-		\begin{bmatrix}
-		\dot{x}_{10} \\ \dot{x}_{11} \\ \dot{x}_{12}
-	\end{bmatrix}
-	=
-	\frac{1}{I_B}\left(
-	\mathbf{M}_{\text{TOT}} -
+\subsection{Equazioni relative alle accelerazioni angolari}
+\vspace{0.5cm}
+Dalla \ref{eq:newton_euler} e \ref{eq:eq_momenti_esplicita} si ottiene che le accelerazioni angolari nel body frame 
+sono date da:
+
+\begin{equation}
+\begin{bmatrix}
+\dot{x}_{10} \\ \dot{x}_{11} \\ \dot{x}_{12}
+\end{bmatrix}
+=
+\frac{1}{I_B}\left(
+\mathbf{M}_{\text{TOT}} -
+\begin{bmatrix}
+x_{10} \\ x_{11} \\ x_{12}
+\end{bmatrix}
+\times
+I_B
+\begin{bmatrix}
+x_{10} \\ x_{11} \\ x_{12}
+\end{bmatrix}
+\right)
+\end{equation}
+
+\vspace{0.5cm}
+Dove il termine tra parentesi è dato da :
+
+\begin{equation*}
+= \resizebox{0.99\textwidth}{!}{$
 	\begin{bmatrix}
-		x_{10} \\ x_{11} \\ x_{12}
+		d_{my}\,kx_{23}^2 \sin(x_{15})
+		- d_{my}\,kx_{21}^2 \sin(x_{13})
+		- d_{ty}\,kx_{25}^2 \sin(x_{17})
+		- d_{tz}\,kx_{25}^2 \cos(x_{17})\sin(x_{19}) \\[6pt]
+		d_{mz}\,kx_{21}^2 \cos(x_{13})
+		+ d_{mz}\,kx_{23}^2 \cos(x_{15})
+		+ d_{mx}\,kx_{21}^2 \sin(x_{13})
+		+ d_{mx}\,kx_{23}^2 \sin(x_{15})
+		+ d_{tx}\,kx_{25}^2 \sin(x_{17})
+		+ d_{tz}\,kx_{25}^2 \cos(x_{17})\cos(x_{19}) \\[6pt]
+		d_{my}\,kx_{23}^2 \cos(x_{15})
+		- d_{my}\,kx_{21}^2 \cos(x_{13})
+		- d_{ty}\,kx_{25}^2 \cos(x_{17})\cos(x_{19})
+		+ d_{tx}\,kx_{25}^2 \cos(x_{17})\sin(x_{19})
 	\end{bmatrix}
-	\times
-	I_B
+	$} +
+\end{equation*}
+
+\begin{equation*}
++ \resizebox{0.99\textwidth}{!}{$
 	\begin{bmatrix}
-		x_{10} \\ x_{11} \\ x_{12}
+	(bx_{21}^2+I_{\text{rot}_{12_{z}}}x_{22}) \cos(x_{13}) -	(bx_{23}^2+I_{\text{rot}_{12_{z}}}x_{24}) \cos(x_{15}) + (bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\cos(x_{17})\cos(x_{19}) \\
+	(bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\cos(x_{17})\sin(x_{19}) \\
+	-	(bx_{21}^2+I_{\text{rot}_{12_{z}}}x_{22})\sin(x_{13})+ 	(bx_{23}^2+I_{\text{rot}_{12_{z}}}x_{24})  \sin(x_{15})	-	(bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\sin(x_{17})
+\end{bmatrix}$} +
+\end{equation*}
+
+\begin{equation*}
++
+\begin{bmatrix}
+	(l_{sx_y}+l_{dx_y})\left(-\tfrac{C_l \rho s x_4^2}{2} - \tfrac{C_{d_z} \rho s x_6^2}{2}\,\text{sgn}(x_6)\right) \\[10pt]
+	-\Big[(l_{sx_x}+l_{dx_x})\left(-\tfrac{C_l \rho s x_4^2}{2} - \tfrac{C_{d_z} \rho s x_6^2}{2}\,\text{sgn}(x_6)\right)
+	- (l_{sx_z}+l_{dx_z})\left(-\tfrac{C_d \rho s x_4^2}{2}\,\text{sgn}(x_4)\right)\Big] \\[10pt]
+	(l_{sx_y}+l_{dx_y})\,\tfrac{C_d \rho s x_4^2}{2}\,\text{sgn}(x_4)
+\end{bmatrix}
++
+\end{equation*}
+
+\begin{equation*}
++
+\resizebox{0.93\textwidth}{!}{$
+	\begin{bmatrix}
+		-I_{\text{rot}_{12_{z}}}\,x_{14} \sin(x_{13}) x_{21}
+		+ I_{\text{rot}_{12_{z}}}\,x_{16} \sin(x_{15})x_{23}
+		- I_{\text{rot}_{3_{z}}}\,x_{18} \sin(x_{17}) x_{25}
+		- I_{\text{rot}_{3_{y}}}\,x_{20} \cos(x_{17}) \sin(x_{19}) x_{25} \\[6pt]
+		+ I_{\text{rot}_{3_{x}}}\,x_{20}\cos(x_{17}) \cos(x_{19})x_{25} \\[6pt]
+		-I_{\text{rot}_{12_{x}}}\,x_{14}\cos(x_{13}) x_{21}
+		+ I_{\text{rot}_{12_{x}}}\,x_{16} \cos(x_{15}) x_{23}
+		- I_{\text{rot}_{3_{x}}}\,x_{18} \cos(x_{17}) \cos(x_{19}) x_{25}
 	\end{bmatrix}
-	\right)
-	 \end{equation}
-	
-	 \vspace{0.5cm}
-	 Dove il termine tra parentesi è dato da :
-	 
-	 \begin{equation*}
-	 	= \resizebox{0.99\textwidth}{!}{$
-	 		\begin{bmatrix}
-	 			d_{my}\,kx_{23}^2 \sin(x_{15})
-	 			- d_{my}\,kx_{21}^2 \sin(x_{13})
-	 			- d_{ty}\,kx_{25}^2 \sin(x_{17})
-	 			- d_{tz}\,kx_{25}^2 \cos(x_{17})\sin(x_{19}) \\[6pt]
-	 			d_{mz}\,kx_{21}^2 \cos(x_{13})
-	 			+ d_{mz}\,kx_{23}^2 \cos(x_{15})
-	 			+ d_{mx}\,kx_{21}^2 \sin(x_{13})
-	 			+ d_{mx}\,kx_{23}^2 \sin(x_{15})
-	 			+ d_{tx}\,kx_{25}^2 \sin(x_{17})
-	 			+ d_{tz}\,kx_{25}^2 \cos(x_{17})\cos(x_{19}) \\[6pt]
-	 			d_{my}\,kx_{23}^2 \cos(x_{15})
-	 			- d_{my}\,kx_{21}^2 \cos(x_{13})
-	 			- d_{ty}\,kx_{25}^2 \cos(x_{17})\cos(x_{19})
-	 			+ d_{tx}\,kx_{25}^2 \cos(x_{17})\sin(x_{19})
-	 		\end{bmatrix}
-	 		$} +
-	 \end{equation*}
-	 
-	  \begin{equation*}
-	 	+ \resizebox{0.99\textwidth}{!}{$
-	 		\begin{bmatrix}
-	 		(bx_{21}^2+I_{\text{rot}_{12_{z}}}x_{22}) \cos(x_{13}) -	(bx_{23}^2+I_{\text{rot}_{12_{z}}}x_{24}) \cos(x_{15}) + (bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\cos(x_{17})\cos(x_{19}) \\
-	 		(bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\cos(x_{17})\sin(x_{19}) \\
-	 		-	(bx_{21}^2+I_{\text{rot}_{12_{z}}}x_{22})\sin(x_{13})+ 	(bx_{23}^2+I_{\text{rot}_{12_{z}}}x_{24})  \sin(x_{15})	-	(bx_{25}^2+I_{\text{rot}_{3_{z}}}x_{26})\sin(x_{17})
-	 	\end{bmatrix}$} +
-	 \end{equation*}
-	 
-	 \begin{equation*}
-	 	+
-	 	\begin{bmatrix}
-	 		(l_{sx_y}+l_{dx_y})\left(-\tfrac{C_l \rho s x_4^2}{2} - \tfrac{C_{d_z} \rho s x_6^2}{2}\,\text{sgn}(x_6)\right) \\[10pt]
-	 		-\Big[(l_{sx_x}+l_{dx_x})\left(-\tfrac{C_l \rho s x_4^2}{2} - \tfrac{C_{d_z} \rho s x_6^2}{2}\,\text{sgn}(x_6)\right)
-	 		- (l_{sx_z}+l_{dx_z})\left(-\tfrac{C_d \rho s x_4^2}{2}\,\text{sgn}(x_4)\right)\Big] \\[10pt]
-	 		(l_{sx_y}+l_{dx_y})\,\tfrac{C_d \rho s x_4^2}{2}\,\text{sgn}(x_4)
-	 	\end{bmatrix}
-	 	+
-	 \end{equation*}
-	 
-	 \begin{equation*}
-	 	+
-	 	\resizebox{0.93\textwidth}{!}{$
-	 		\begin{bmatrix}
-	 			-I_{\text{rot}_{12_{z}}}\,x_{14} \sin(x_{13}) x_{21}
-	 			+ I_{\text{rot}_{12_{z}}}\,x_{16} \sin(x_{15})x_{23}
-	 			- I_{\text{rot}_{3_{z}}}\,x_{18} \sin(x_{17}) x_{25}
-	 			- I_{\text{rot}_{3_{y}}}\,x_{20} \cos(x_{17}) \sin(x_{19}) x_{25} \\[6pt]
-	 			+ I_{\text{rot}_{3_{x}}}\,x_{20}\cos(x_{17}) \cos(x_{19})x_{25} \\[6pt]
-	 			-I_{\text{rot}_{12_{x}}}\,x_{14}\cos(x_{13}) x_{21}
-	 			+ I_{\text{rot}_{12_{x}}}\,x_{16} \cos(x_{15}) x_{23}
-	 			- I_{\text{rot}_{3_{x}}}\,x_{18} \cos(x_{17}) \cos(x_{19}) x_{25}
-	 		\end{bmatrix}
-	 		$}
-	 	+
-	 \end{equation*}
-	 
-	 \begin{equation}
-	 	+
-	 	\begin{bmatrix}
-	 		- x_{10}\,\alpha_{0x} - \alpha_{1x}\,x_5^2 \\
-	 		0 \\
-	 		- x_{12}\left(\alpha_{0z} + \alpha_{1z}\,x_5^2\right)
-	 	\end{bmatrix}
-	 	-
-	 	\begin{bmatrix}
-	 		(I_{zz}-I_{yy})\,x_{11}\,x_{12} \\
-	 		(I_{xx}-I_{zz})\,x_{10}\,x_{12} \\
-	 		(I_{yy}-I_{xx})\,x_{10}\,x_{11}
-	 	\end{bmatrix}
-	 \end{equation}
+	$}
++
+\end{equation*}
+
+\begin{equation}
++
+\begin{bmatrix}
+	- x_{10}\,\alpha_{0x} - \alpha_{1x}\,x_5^2 \\
+	0 \\
+	- x_{12}\left(\alpha_{0z} + \alpha_{1z}\,x_5^2\right)
+\end{bmatrix}
+-
+\begin{bmatrix}
+	(I_{zz}-I_{yy})\,x_{11}\,x_{12} \\
+	(I_{xx}-I_{zz})\,x_{10}\,x_{12} \\
+	(I_{yy}-I_{xx})\,x_{10}\,x_{11}
+\end{bmatrix}
+\end{equation}
 	 
 
 	  
-	  \clearpage
-	  
-	  \subsubsection{Equazioni relative alla dinamica di tilting dei rotori}
-	   	  \vspace{0.5cm}
-	  La dinamica di tilting dei rotori è stata modellata come un sistema del secondo ordine, descritta dalle seguenti equazioni (4.9)
-	  
-	  	  \vspace{0.5cm}
-	  
-	  \begin{align}
-	  	\dot{x}_{13} &= x_{14} \\[4pt]
-	  	\dot{x}_{14} &= -2 \zeta_1 \omega_{n,1} x_{14} + \omega_{n,1}^2 (u_4 - x_{13}) \\[6pt]
-	  	\dot{x}_{15} &= x_{16} \\[4pt]
-	  	\dot{x}_{16} &= -2 \zeta_2 \omega_{n,2} x_{16} + \omega_{n,2}^2 (u_5 - x_{15}) \\[6pt]
-	  	\dot{x}_{17} &= x_{18} \\[4pt]
-	  	\dot{x}_{18} &= -2 \zeta_3 \omega_{n,3} x_{18} + \omega_{n,3}^2 (u_6 - x_{17}) \\[6pt]
-	  	\dot{x}_{19} &= x_{20} \\[4pt]
-	  	\dot{x}_{20} &= -2 \zeta_4 \omega_{n,4} x_{20} + \omega_{n,4}^2 (u_7 - x_{19})
-	  \end{align}
+\clearpage
+
+\subsection{Equazioni relative alla dinamica di tilting dei rotori}
+	\vspace{0.5cm}
+La dinamica di tilting dei rotori è stata modellata come un sistema del secondo ordine, descritta dalle seguenti equazioni:
+
+	\vspace{0.5cm}
+
+\begin{align}
+\dot{x}_{13} &= x_{14} \\[4pt]
+\dot{x}_{14} &= -2 \zeta_1 \omega_{n,1} x_{14} + \omega_{n,1}^2 (u_4 - x_{13}) \\[6pt]
+\dot{x}_{15} &= x_{16} \\[4pt]
+\dot{x}_{16} &= -2 \zeta_2 \omega_{n,2} x_{16} + \omega_{n,2}^2 (u_5 - x_{15}) \\[6pt]
+\dot{x}_{17} &= x_{18} \\[4pt]
+\dot{x}_{18} &= -2 \zeta_3 \omega_{n,3} x_{18} + \omega_{n,3}^2 (u_6 - x_{17}) \\[6pt]
+\dot{x}_{19} &= x_{20} \\[4pt]
+\dot{x}_{20} &= -2 \zeta_4 \omega_{n,4} x_{20} + \omega_{n,4}^2 (u_7 - x_{19})
+\end{align}
 	  
 \clearpage
 
 	  
-\subsubsection{Equazioni relative alla dinamica dei rotori}
+\subsection{Equazioni relative alla dinamica dei rotori}
 \vspace{0.5cm}
-La dinamica degli attuatori dei rotori è stata modellata come un sistema del secondo ordine, descritta dalle seguenti equazioni (4.9)
+La dinamica degli attuatori dei rotori è stata modellata come un sistema del secondo ordine, descritta dalle seguenti equazioni:
 
 \vspace{0.5cm}
 

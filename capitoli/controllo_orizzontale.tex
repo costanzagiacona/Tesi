@@ -22,9 +22,9 @@ Una delle sfide principali di questa configurazione risiede nella \textbf{sotto-
 Per gestire la complessità del sistema e garantire stabilità e prestazioni elevate, è stata adottata un'architettura di controllo a \textbf{loop in cascata}. Questa strategia permette di disaccoppiare la dinamica traslazionale (lenta) da quella rotazionale (veloce), semplificando la sintesi dei controllori.
 \\L'architettura, illustrata nello schema a blocchi di Figura \ref{fig:control_scheme_horizontal}, si suddivide in tre blocchi funzionali principali:
 \begin{enumerate}
-    \item \textbf{Outer Loop (Guidance):} Opera a bassa frequenza e ha il compito di calcolare la spinta propulsiva ($F_{x,req}$) e l'angolo $\theta_{des}$ di riferimento per il mantenimento di quota.
-    \item \textbf{Inner Loop (Attitude):} Opera ad alta frequenza e stabilizza l'assetto del drone ($\phi, \theta, \psi$) inseguendo i riferimenti generati dal loop esterno o imposti per il volo livellato.
-    \item \textbf{Motor Mixing Algorithm (MMA):} Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
+    \item \textbf{Outer Loop:} Opera a bassa frequenza e ha il compito di calcolare la spinta propulsiva ($F_{x,req}$) e l'angolo $\theta_{des}$ di riferimento per il mantenimento di quota.
+    \item \textbf{Inner Loop:} Opera ad alta frequenza e stabilizza l'assetto del drone ($\phi, \theta, \psi$) inseguendo i riferimenti generati dal loop esterno o imposti per il volo livellato.
+    \item \textbf{Motor Mixing Algorithm:} Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
 \end{enumerate}
 
 % \begin{figure}[htbp]
@@ -131,6 +131,7 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
     \centering
     \includegraphics[width=1\textwidth]{controllo_orizzontale/schema_blocchi_H_bianco.png}
     \caption{Schema a blocchi del controllo orizzontale.}
+    \label{fig:control_scheme_horizontal}
 \end{figure}
 
 \clearpage
@@ -138,7 +139,7 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
 % =========================================
 % OUTER LOOP: GUIDA E NAVIGAZIONE
 % =========================================
-\section{Outer Loop Control}
+\section{Outer Loop: Controllo di Posizione e Velocità}
 Il loop esterno (Outer Loop) ha il compito di generare i riferimenti di assetto e di spinta necessari a seguire le traiettorie desiderate. In questa architettura, si è scelto di implementare una struttura di controllo basata su algoritmi PID arricchiti da termini di \textit{feedforward} derivati dal modello analitico delle forze aerodinamiche.
 
 Questa scelta è giustificata dalla natura intrinsecamente stabile del velivolo in regime di crociera: a velocità elevate, le superfici portanti generano momenti stabilizzatori che rendono il sistema meno sensibile ai disturbi rispetto alla fase di hovering. L'adozione di un controllo lineare, rispetto a tecniche più aggressive come lo \textit{Sliding Mode Control} (SMC), permette di ridurre drasticamente il fenomeno del \textit{chattering} sugli attuatori, garantendo una maggiore efficienza energetica e preservando l'integrità meccanica dei servocomandi.
@@ -209,7 +210,7 @@ Nel calcolo della spinta richiesta lungo l'asse $x$ (Eq. \ref{eq:fx}), il termin
 % ==========================================================================
 % INNER LOOP
 % ===========================================================================
-\section{Inner Loop: Controllo d'Assetto}
+\section{Inner Loop: Controllo di Assetto}
 
 Il loop interno (\textit{Inner Loop}) governa la dinamica rotazionale veloce del velivolo. Operando in regime di crociera (\textit{Forward Flight}, $V \approx 25$ m/s), la strategia di controllo adotta un'architettura \textbf{SISO Disaccoppiata}. 
 Si assume di poter controllare i tre assi di rotazione (Beccheggio, Rollio, Imbardata) indipendentemente, demandando a una matrice di miscelazione (\textit{Mixer}) il compito di combinare i comandi per gli attuatori.
@@ -280,7 +281,7 @@ Il comando finale inviato ai singoli servocomandi ($\theta_1$ per il rotore sini
     \end{cases}
 \end{equation}
 
-\subsection{Controllo di Imbardata e Disaccoppiamento Attivo della Spinta}
+\subsection{Imbardata}
 L'imbardata ($M_z$) viene controllata tramite una ripartizione differenziale della spinta tra i due propulsori anteriori. Dall'equilibrio dei momenti attorno all'asse verticale, proiettando le forze nel sistema di riferimento \textit{body}, l'equazione di partenza è:
 \begin{equation}
     M_z = d_{my} k \omega_2^2 \cos(\theta_2) - d_{my} k \omega_1^2 \cos(\theta_1)
@@ -309,6 +310,19 @@ I comandi finali di spinta inviati ai singoli motori ($T_1, T_2$) risultano quin
 Questo approccio non lineare garantisce un'autorità di comando coerente in tutto l'inviluppo di volo, evitando le pericolose singolarità dinamiche tipiche delle approssimazioni ai piccoli angoli.
 \subsection{Protezioni e Limiti Fisici del Mixer}
 Data la struttura matematica del mixer, emerge una criticità: l'autorità di controllo sugli assi $x$ e $y$ svanisce se la spinta totale $T_{tot}$ è nulla. Per prevenire instabilità numeriche, l'algoritmo integra una soglia minima di sicurezza $T_{safe}$ al denominatore. Inoltre, il mixer applica saturazioni \textit{hard} per rispettare i limiti meccanici dei servocomandi ($\pm 45^\circ$) e i limiti di potenza dei motori, garantendo che le richieste del controllore non eccedano le capacità fisiche degli attuatori.
+
+\subsection{Comandi di controllo}
+I comandi dati agli attuatori sono quindi i seguenti:
+\begin{gather}
+    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \frac{\Delta T}{2} \right)}\\
+    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \frac{\Delta T}{2} \right)}\\
+    u_3 = \omega_3 = 0\\
+    u_4 = \theta_1 = \alpha - \delta\\
+    u_5 = \theta_2 = \alpha + \delta\\
+    u_6 = \theta_3 = 0\\
+    u_7 = \theta_4 = 0
+\end{gather}
+
 \clearpage
 
 
@@ -321,29 +335,26 @@ Di seguito sono riportate le simulazioni relative a posizioni e velocità linear
 \\Tali simulazioni sono state fatte in condizioni nominali, con condizioni iniziali nulle per gli angoli di assetto; si lascia al capitolo \ref{ch:montecarlo} il compito di validare il 
 sistema di controllo in condizioni perturbate.
 
-L'obiettivo del controllo è mantenere la quota $z_{des} = -10$ raggiunta durante la fase di volo verticale e raggiungere e mantenere la velocità $v_{x,des} = 25 m/s$, necessaria per generare la portanza.
+L'obiettivo del controllo è mantenere la quota $z_{des} = -10 m$ raggiunta durante la fase di volo verticale e raggiungere e mantenere la velocità $v_{x,des} = 25 m/s$, necessaria per generare la portanza.
 
 Per il l'\textit{Outer Loop} sono stati scelti i seguenti parametri:
 \begin{itemize}
-    \item $\lambda_z = 2$ ;   $K_z = 10 $ ;     $\Phi_z = 0.8$
-    \item $\lambda_y = 0.8$ ; $K_y = 1.5$ ;     $\Phi_y = 4$
-    \item $\lambda_x = 0.8$ ; $K_x = 1.5$ ;     $\Phi_x = 4$
+    \item $K_{P_z} = 0.035$ ;   $K_{I_z} = 0.005 $ ;     $K_{D_z} = 0.04$
+    \item $K_{P_v} = 8$ ;       $K_{I_v} = 1.5 $ 
+    \item $K_{P_y} = 0.1$;      $K_{D_y} = 0.5$
 \end{itemize}
 
 Parametri per l'\textit{Inner Loop}:
 \begin{itemize}
-    \item $\lambda_{att} = 12$ ;   $K_{att} = 10 $ ; $\Phi_{att} = 3$ per $\phi$ e $\theta$
-    \item $\lambda_{att,\psi} = 8.4$ ;   $K_{att,\psi} = 8 $ ; $\Phi_{att,\psi} = 3$
+    \item $K_{P_{\theta}} = 5$ ;   $K_{I_{\theta}} = 0.01 $ ;     $K_{D_{\theta}} = 1.8$
+    \item $K_{P_{\phi}} = 3$ ;   $K_{D_{\phi}} = 0.08$
+    \item $K_{P_{\psi}} = 3$ ;   $K_{D_{\psi}} = 1$
 \end{itemize}
 
 La scelta dei parametri segue il principio della separazione spettrale tra i loop esterno e interno; quest'ultimo, infatti, deve essere
 più veloce di diversi ordini di grandezza rispetto a quello esterno.
 La dinamica dell'errore di assetto deve estinguersi molto più velocemente della dinamica dell'errore di posizione. Se le due velocità fossero simili, 
 i due loop entrerebbero in risonanza, portando a oscillazioni divergenti.
-
-Il parametro $\lambda_z$ è più grande rispetto a quelli per i controllori su $x$ e $y$, poiché il controllo 
-di quota ha bisogno di maggiore autorità in quanto risulta critico per la sicurezza del drone, che altrimenti rischierebbe di schiantarsi al suolo.
-\\In ogni caso, viene rispettato il principio di separazione spettrale ma con un margine inferiore.
 
 \begin{figure}[H] % 'H' maiuscola forza la posizione
     \centering

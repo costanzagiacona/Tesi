@@ -1,9 +1,10 @@
 \section{Obiettivo dell'Analisi}
-L'obiettivo primario dell'analisi Monte Carlo in questa trattazione non è la mera generazione stocastica di dati, ma la validazione formale della stabilità e delle prestazioni del sistema chiuso. Nello specifico, si intende verificare la capacità della legge di controllo $\mathbf{u}(t) = \kappa(\mathbf{x}, t)$ di ricondurre il velivolo in condizioni di equilibrio a fronte di perturbazioni severe sullo stato iniziale $\mathbf{x}_0$. 
+L'obiettivo dell'analisi Monte Carlo in questa trattazione è la validazione formale della stabilità e delle prestazioni del sistema chiuso. Nello specifico, si intende verificare la capacità della legge di controllo di ricondurre il velivolo in condizioni di equilibrio a fronte di perturbazioni sullo stato iniziale $\mathbf{x}_0$. 
 
-In un ambiente operativo reale, le stime di stato (posizione, velocità, assetto e ratei angolari) fornite dal filtro di navigazione sono affette da rumore e bias. Per dimostrare la tolleranza ai guasti e la robustezza del miscelatore (Motor Mixing Algorithm), il sistema è stato sottoposto a un volume di simulazioni statisticamente significativo ($N = 200$ per ogni scenario operativo), valutando non solo la convergenza cinematica ai setpoint desiderati, ma anche lo sforzo transitorio richiesto agli attuatori.
+In un ambiente operativo reale, le stime di stato (posizione, velocità, assetto e ratei angolari) fornite dal filtro di navigazione sono affette da rumore e bias. Per dimostrare la tolleranza ai guasti e la robustezza del Motor Mixing Algorithm, il sistema è stato sottoposto a un volume di simulazioni statisticamente significativo ($N = 200$ per ogni scenario operativo), 
+valutando non solo la convergenza ai setpoint desiderati, ma anche lo sforzo transitorio richiesto agli attuatori.
 
-\section{Definizione delle Condizioni Iniziali Perturbate}
+\section{Definizione delle Condizioni Iniziali}
 Per sollecitare la dinamica del drone nelle sue diverse fasi di volo, la campagna di test è stata suddivisa in tre scenari cardine: \textit{Recovery Hover}, \textit{Takeoff Ground} e \textit{Cruise Flight}. 
 
 Le perturbazioni sono state introdotte campionando le deviazioni da distribuzioni normali a media nulla, $\delta \mathbf{x} \sim \mathcal{N}(0, \Sigma)$, sommate allo stato di equilibrio nominale della specifica manovra. Al fine di garantire il realismo fisico, sono state implementate saturazioni di sicurezza (es. per evitare di generare quote sotterranee al decollo o velocità inferiori allo stallo in crociera).
@@ -21,22 +22,21 @@ La matrice di covarianza diagonale $\Sigma$ è definita dalle deviazioni standar
         \toprule
         \textbf{Scenario} & $\mathbf{\sigma}$ \textbf{Pos.} [m] & $\mathbf{\sigma}$ \textbf{Vel.} [m/s] & $\mathbf{\sigma}$ \textbf{Ass.} [deg] & $\mathbf{\sigma}$ \textbf{Rat.} [deg/s] & \textbf{Obiettivo} \\
         \midrule
-        \textbf{Recovery} & 5.0 & 3.0 & 15.0 & 5.0 & Recupero a quota -10 m \\
-        \textbf{Takeoff} & 1.0 & 0.5 & 3.0 & 1.0 & Decollo con asimmetrie \\
+        \textbf{Takeoff} & 0.1 & 0.5 & 3.0 & 1.0 & Decollo con asimmetrie \\
+        \textbf{Hovering} & 5.0 & 3.0 & 15.0 & 5.0 & Recupero a quota -10 m \\       
         \textbf{Cruise} & 5.0 & 5.0 & 10.0 & 2.0 & Volo livellato a 25 m/s \\
         \bottomrule
     \end{tabular}
     }
 \end{table}
 
-\clearpage
-
-\subsection{Scenario 1: Takeoff}
+\section{Scenario 1: Takeoff}
 Lo scenario di decollo valuta la stabilità della macchina durante la delicata transizione dal suolo al volo stazionario, in presenza di piccole asimmetrie iniziali (perturbazioni di posizione, velocità e assetto tipiche del distacco da terra). I risultati mostrano una traiettoria di salita rigorosa e ben condizionata (Figura \ref{fig:takeoff_kinematics}). 
 
-La quota (asse $Z$) evolve in modo estremamente fluido da $0$ a $10$ metri, senza presentare alcuna sovraelongazione (\textit{overshoot}), indicando un'ottima calibrazione del feedforward gravitazionale e del guadagno derivativo. Questo comportamento è confermato dal grafico della velocità verticale ($V_z$), che descrive una campana perfettamente smorzata con un picco di circa $4.5$ m/s, per poi azzerarsi dolcemente in prossimità del target. 
+La quota (asse $z$) evolve in modo estremamente fluido da $0$ a $10$ metri, senza presentare alcuna sovraelongazione, indicando un'ottima calibrazione del feedforward gravitazionale e del guadagno derivativo. 
+Questo comportamento è confermato dal grafico della velocità verticale ($V_z$), che descrive una campana perfettamente smorzata con un picco di circa $4.5$ m/s, per poi azzerarsi dolcemente in prossimità del target. 
 
-Sul piano orizzontale, le derive iniziali lungo $X$ e $Y$, indotte dagli errori di assetto e dai disturbi di velocità, vengono elegantemente neutralizzate in meno di $15$ secondi. In questa fase, il controllore dimostra di saper imporre la spinta necessaria al sollevamento senza mai perdere l'autorità direzionale, garantendo un decollo sicuro e verticalmente vincolato.
+Sul piano orizzontale, le derive iniziali lungo $x$ e $y$, indotte dagli errori di assetto e dai disturbi di velocità, vengono elegantemente neutralizzate in meno di $15$ secondi. In questa fase, il controllore dimostra di saper imporre la spinta necessaria al sollevamento senza mai perdere l'autorità direzionale, garantendo un decollo sicuro e verticalmente vincolato.
 
 \begin{figure}[H]
     \centering
@@ -82,10 +82,10 @@ Sul piano orizzontale, le derive iniziali lungo $X$ e $Y$, indotte dagli errori 
 
 \clearpage
 
-\subsection{Scenario 2: Hovering}
-In questo scenario, l'obiettivo è validare la capacità del sistema di recuperare una condizione di volo stazionario a quota di sicurezza ($10$ metri) partendo da un inviluppo di volo fortemente perturbato. L'analisi della cinematica, illustrata in Figura \ref{fig:rec_kinematics}, evidenzia l'efficacia dell'architettura di controllo in cascata: mentre la dinamica veloce dell'anello interno stabilizza l'assetto (rollio, beccheggio e imbardata) entro i primi $15$ secondi, l'anello esterno gestisce il rientro planare in modo asintotico. 
+\section{Scenario 2: Hovering}
+In questo scenario, l'obiettivo è validare la capacità del sistema di recuperare una condizione di volo stazionario a quota di sicurezza ($10$ metri) partendo da un inviluppo di volo fortemente perturbato. L'analisi della cinematica, illustrata in Figura \ref{fig:hovering_kinematics}, evidenzia l'efficacia dell'architettura di controllo in cascata: mentre la dinamica veloce dell'anello interno stabilizza l'assetto (rollio, beccheggio e imbardata) entro i primi $15$ secondi, l'anello esterno gestisce il rientro planare in modo asintotico. 
 
-È interessante notare il disaccoppiamento temporale delle dinamiche traslazionali: l'errore di quota (asse $Z$) e la deviazione longitudinale (asse $X$) vengono reietti in circa $20$ secondi, mentre il recupero dell'errore laterale (asse $Y$), inizialmente perturbato fino a $\pm 100$ metri, richiede fino a $90$ secondi per convergere morbidamente senza innescare instabilità trasversali. 
+È interessante notare il disaccoppiamento temporale delle dinamiche traslazionali: l'errore di quota (asse $z$) e la deviazione longitudinale (asse $x$) vengono reietti in circa $20$ secondi, mentre il recupero dell'errore laterale (asse $y$), in alcuni casi perturbato fino a $\pm 100$ metri, richiede fino a $90$ secondi per convergere. 
 
 \begin{figure}[H]
     \centering
@@ -116,7 +116,7 @@ In questo scenario, l'obiettivo è validare la capacità del sistema di recupera
 \end{figure}
 
 
-L'analisi degli attuatori (Figura \ref{fig:rec_actuators}) conferma la correttezza della matrice di allocazione a regime: i servomotori di tilt convergono stabilmente a $90^\circ$ e la spinta si ripartisce equamente a circa $22$ N per rotore, bilanciando perfettamente il peso del velivolo. Il transitorio iniziale dei tilt mostra il previsto sforzo di controllo aggressivo (fase bang-bang), necessario per contrastare i severi errori di assetto iniziali.
+L'analisi degli attuatori (Figura \ref{fig:hovering_tilt}) conferma che i servomotori di tilt convergono stabilmente a $90^\circ$ e la spinta si ripartisce equamente a circa $22$ N per rotore, bilanciando perfettamente il peso del velivolo. Il transitorio iniziale dei tilt mostra il previsto sforzo di controllo aggressivo, necessario per contrastare i severi errori di assetto iniziali.
 
 \begin{figure}[H]
     \centering
@@ -132,10 +132,10 @@ L'analisi degli attuatori (Figura \ref{fig:rec_actuators}) conferma la correttez
     \label{fig:hovering_thrust}
 \end{figure}
 
-\subsection{Scenario 3: Cruise}
-L'ultimo scenario analizzato, denominato \textit{Cruise Flight}, si pone l'obiettivo di validare l'architettura di controllo lineare (PID) dedicata al volo traslato ad alta velocità. Il target cinematico impone il mantenimento di una quota costante ($Z = -10$ m) con una velocità di avanzamento longitudinale $V_x = 25$ m/s (pari a $90$ km/h).
+\section{Scenario 3: Cruise}
+L'ultimo scenario analizzato, si pone l'obiettivo di validare l'architettura di controllo lineare (PID) dedicata al volo traslato ad alta velocità. Il target cinematico impone il mantenimento di una quota costante ($z = -10$ m) con una velocità di avanzamento longitudinale $v_x = 25$ m/s (pari a $90$ km/h).
 
-Le condizioni iniziali perturbate in questo regime assumono un significato fisico profondamente diverso rispetto all'hovering. L'inserimento di errori iniziali sull'assetto ($\sigma_{att} = 10^\circ$) e sulle velocità laterali ($\sigma_{vel} = 5.0$ m/s) su un velivolo già in moto a $25$ m/s equivale a imporre istantaneamente angoli di incidenza ($\alpha$) e di derapata ($\beta$) severi. L'elevata pressione dinamica genera un vero e proprio ``shock'' aerodinamico, producendo forze e momenti istantanei di grande entità ancor prima dell'intervento del controllore.
+Le condizioni iniziali perturbate in questo regime assumono un significato fisico profondamente diverso rispetto all'hovering. L'inserimento di errori iniziali sull'assetto ($\sigma_{att} = 10^\circ$) e sulle velocità laterali ($\sigma_{vel} = 5.0$ m/s) su un velivolo già in moto a $25$ m/s equivale a imporre forze e momenti istantanei di grande entità ancor prima dell'intervento del controllore.
 
 \begin{figure}[H]
     \centering
@@ -166,8 +166,6 @@ Le condizioni iniziali perturbate in questo regime assumono un significato fisic
 \end{figure}
 
 
-Come si evince dall'analisi dei ratei angolari (Figura \ref{fig:cruise_vel_ang}), la reazione del sistema nei primi $10$ secondi è violenta. I ratei saturano i limiti fisici ($\pm 100$ deg/s), innescati sia dai disturbi aerodinamici sia dal \textit{Derivative Kick} intrinseco nell'azione derivativa del controllore PD d'assetto a fronte dell'errore a gradino. L'asse di imbardata (rateo $r$) risulta particolarmente sollecitato: essendo il rotore di coda spento in crociera, il momento di imbardata è interamente generato dal differenziale di spinta dei due rotori anteriori.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{montecarlo/cruise/tilt.png}
@@ -182,9 +180,28 @@ Come si evince dall'analisi dei ratei angolari (Figura \ref{fig:cruise_vel_ang})
     \label{fig:cruise_thrust}
 \end{figure}
 
-L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_thrust}) conferma l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a saturare in modo netto e ripetuto al limite imposto di $100$ N. Una volta dissipata l'energia del transitorio iniziale, il sistema converge egregiamente: la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt si allineano alla configurazione aerodinamica ottimale.
+L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_thrust}) conferma 
+l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. 
+Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a 
+saturare in modo netto e ripetuto al limite imposto di $100$ N. 
+Una volta dissipata l'energia del transitorio iniziale, il sistema converge rapidamente: 
+la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt 
+si allineano alla configurazione aerodinamica ottimale.
 
-Dal punto di vista della teoria dei controlli, la capacità del sistema di assorbire uno shock iniziale di tale magnitudo e riconvergere al target in circa $20$ secondi rappresenta una solida dimostrazione della stabilità asintotica globale del controllore. Tuttavia, si sottolinea criticamente che, in vista di una validazione sperimentale, l'entità delle oscillazioni strutturali imporrà l'adozione di un pre-filtro passa-basso (generatore di traiettoria) sui riferimenti, al fine di ammorbidire l'errore visto dal controllore e prevenire danni meccanici alla cellula e agli attuatori.
+Dal punto di vista della teoria dei controlli, la capacità del sistema di assorbire uno 
+shock iniziale di tale magnitudo e riconvergere al target in circa $20$ secondi 
+rappresenta una solida dimostrazione della stabilità asintotica globale del controllore. 
+Tuttavia, si sottolinea criticamente che, in vista di una validazione sperimentale, 
+l'entità delle oscillazioni strutturali imporrà l'adozione di un pre-filtro passa-basso 
+(generatore di traiettoria) sui riferimenti, al fine di ammorbidire l'errore visto dal 
+controllore e prevenire danni meccanici alla cellula e agli attuatori.
 
-\subsection{Conclusione sulla Robustezza}
-La campagna Monte Carlo ha dimostrato che il velivolo gode di un ampio margine di tolleranza rispetto alle incertezze iniziali. Il controllore evita il crash in condizioni severe e garantisce elevata precisione statica. Tuttavia, lo sforzo di controllo richiesto agli attuatori nei primi istanti di correzione evidenzia che, in vista di una reale implementazione hardware, risulterà imperativo introdurre un \textit{Rate Limiter} (ovvero un vincolo sulle derivate $\dot{\delta}$) all'interno della logica di controllo, al fine di mitigare il chattering e preservare l'integrità meccanica dei servomotori.
+\section{Conclusione sulla Robustezza}
+La campagna Monte Carlo ha dimostrato che il velivolo gode di un ampio margine di 
+tolleranza rispetto alle incertezze iniziali. Il controllore evita il crash in 
+condizioni severe e garantisce elevata precisione statica. Tuttavia, lo sforzo di 
+controllo richiesto agli attuatori nei primi istanti di correzione evidenzia che, 
+in vista di una reale implementazione hardware, risulterà necessario introdurre un 
+\textit{Rate Limiter} (ovvero un vincolo sulle derivate $\dot{\delta}$) all'interno 
+della logica di controllo, al fine di mitigare il chattering e preservare l'integrità 
+meccanica dei servomotori.

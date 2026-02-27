@@ -39,7 +39,6 @@ La trasformazione delle grandezze vettoriali dal sistema solidale al corpo a que
 				\sin\psi & \cos\psi & 0 \\
 				0 & 0 & 1
 			\end{bmatrix}
-			\tag{3.3}
 		\end{equation}
 
 In forma esplicita, utilizzando la notazione $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot}=\sin(\cdot)$:
@@ -50,6 +49,7 @@ In forma esplicita, utilizzando la notazione $c_{\cdot}=\cos(\cdot)$ e $s_{\cdot
         s_\psi c_\theta & s_\psi s_\theta s_\phi + c_\psi c_\phi & s_\psi s_\theta c_\phi - c_\psi s_\phi \\
         -s_\theta       & c_\theta s_\phi                        & c_\theta c_\phi
     \end{bmatrix}
+    \label{eq:matrix_R}
 \end{equation}
 Poiché ${R}_{b \to g}$ è una matrice ortogonale, è possibile passare dal sistema inerziale a quello solidale al corpo utilizzando la sua trasposta.
 
@@ -61,15 +61,18 @@ Si definisce adesso  $\mathbf{J}_{b \to g}$, matrice di trasformazione delle vel
         0 & \cos\phi            & -\sin\phi \\
         0 & \frac{\sin\phi}{\cos\theta} & \frac{\cos\phi}{\cos\theta}
     \end{bmatrix}
+    \label{eq:matrix_J}
 \end{equation}
 A differenza di $\mathbf{R}_{b \to g}$, la matrice $\mathbf{J}_{b \to g}$ presenta una singolarità matematica per $\theta = \pm 90^\circ$, nota come \textit{Gimbal Lock}. Questa relazione è cruciale per calcolare correttamente il tasso di virata ($\dot{\psi}$) partendo dal rateo di imbardata ($r$) misurato dai sensori.
 
 Dunque, le equazioni definite nel body frame possono essere trasformate nel sistema di rifeirmento inerziale attraverso le sequenti relazioni:
 \begin{equation}
     \bm{\dot{P}}_g = \mathbf{R}_{b \to g}(\bm{\Theta}_g) \bm{V}_b
+    \label{eq:pos_global}
 \end{equation}
 \begin{equation}
     \bm{\dot{\Theta}}_g = \mathbf{J}_{b \to g}(\bm{\Theta}_g) \bm{\Omega}_b
+    \label{eq:vel_ang_global}
 \end{equation}
 
 È possibile scrivere tali relazioni in forma matriciale:
@@ -77,7 +80,7 @@ Dunque, le equazioni definite nel body frame possono essere trasformate nel sist
         \begin{bmatrix} \bm{\dot{P}}_g \\ \bm{\dot{\Theta}}_g \end{bmatrix} = 
         \begin{bmatrix} \mathbf{R}_{b \to g}(\bm{\Theta}) & \mathbf{0} \\ \mathbf{0} & \mathbf{J}_{b \to g}(\bm{\Theta}) \end{bmatrix}
         \begin{bmatrix} \bm{V}_b \\ \bm{\Omega}_b \end{bmatrix}
-    \end{equation}
+\end{equation}
 
 \clearpage
 
@@ -111,7 +114,7 @@ Dove:
 \section{Analisi delle Forze}
 Le forze agenti sul tricottero sono la risultante della spinta dei motori ($\bm{F}_{\text{TH}}$), della forza di gravità ($\bm{F}_g$) e delle forze aerodinamiche ($\bm{F}_{\text{AERO}}$):
 \begin{equation}
-    \bm{F}_{\text{TOT}} = \bm{F}_{\text{TH}} + \bm{F}_g + \bm{F}_{\text{AERO}}
+    \bm{F}_{\text{TOT}} = \bm{F}_{\text{TH}} + \bm{F}_{GRAV} + \bm{F}_{\text{AERO}}
 \end{equation}
 
 \subsection{Configurazione Geometrica e Thrust}
@@ -169,6 +172,7 @@ Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{
     k\omega_3^2 c_{\theta_3} s_{\theta_4} \\
     -k\omega_1^2 s_{\theta_1} - k\omega_2^2 s_{\theta_2} - k\omega_3^2 s_{\theta_3}
     \end{bmatrix}
+    \label{eq:F_th}
 \end{equation}
 
 Inizialmente il design del drone prevedeva che i rotori anteriori fossero in linea con le ali; tuttavia questa configurazione è stata superata 
@@ -183,6 +187,7 @@ per rispondere a dei requisiti meccanici fondamentiali:
 La forza peso viene ruotata nel sistema solidale al corpo tramite la trasposta della matrice di rotazione:
 \begin{equation}
     \bm{F}_{GRAV} = \mathbf{R}_{b \to g}^T \begin{bmatrix} 0 \\ 0 \\ mg \end{bmatrix} = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}
+    \label{eq:F_grav}
 \end{equation}
 
 Per una modellazione aerodinamica più fedele al comportamento in fase di crociera, si definiscono l'angolo di attacco $\alpha$ e l'angolo di scivolamento laterale $\beta$ in funzione delle velocità nel body frame:
@@ -248,49 +253,82 @@ dove:
     \item $C_{D_{z}}$ : coefficiente di resistenza aerodinamica lungo l'asse $Z_{b}$
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{forze_z.jpg}
     \caption{Resistenza lungo l'asse $Z_b$}
 \end{figure}
+
+\begin{equation*}
+	  	\mathbf{F}_{TOT} = \mathbf{F}_{TH} + \mathbf{F}_{GRAV} + \mathbf{F}_{AERO} = 
+	  	\end{equation*}
+	  	
+	  	 \begin{equation*}
+	  		=  
+	  		\begin{bmatrix}
+	  			\cos(\theta_{1}) & \cos(\theta_{2}) & {\cos(\theta_{3})\cos(\theta_{4})} \\
+	  			0                 & 0                 & {\cos(\theta_{3})\sin(\theta_{4})} \\
+	  			-\sin(\theta_{1}) & -\sin(\theta_{2}) & {-\sin(\theta_{3})}
+	  		\end{bmatrix}
+	  		\begin{bmatrix}
+	  			k\omega_{1}^2 \\
+	  			k\omega_{2}^2 \\
+	  			k\omega_{3}^2 
+	  		\end{bmatrix} +  \begin{bmatrix}
+	  		-\sin(\theta) \\
+	  		\cos(\theta)\sin(\phi) \\
+	  		\cos(\theta)\cos(\phi) 
+	  		\end{bmatrix} m g +  
+	  	\end{equation*}
+	  \begin{equation}
+	  	+
+	   \begin{bmatrix}
+	  	-\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2\, s\, (C_d + C_d) \\
+	  	0 \\
+	  	-\frac{1}{2}\rho\, v_x^2\, s\, (C_l + C_l) - \operatorname{sgn}(v_z)\,\frac{1}{2}\rho\, v_z^2\, s\, (C_{d,z} + C_{d,z})
+	  \end{bmatrix}
+	\label{eq:f_tot}
+\end{equation}
+
 \clearpage
 
 \section{Analisi dei Momenti}
-Dall'equazione della dinamica otteniamo che :
+Dall'equazione della dinamica si ottiene che :
 	  
 \begin{equation}
 I_B \, \dot{\boldsymbol{\Omega}}_B +
 \underbrace{\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B)}_{\text{Momento giroscopico del corpo (tricottero)}}
 = \mathbf{M}_{\text{TOT}}
-\tag{3.27}
+\label{eq:eq_momenti}
 \end{equation}
 
 \vspace{0.3cm}
-dove la matrice di inerzia del tricottero è pari a :
-
-\begin{equation*}
-\mathbf{I}_{\text{B}} =
-\begin{bmatrix}
-    I_{\text{xx}} & 0 & 0 \\
-    0 & I_{\text{yy}} & 0 \\
-    0 & 0 & I_{\text{zz}}
-\end{bmatrix}
-\end{equation*}
-
-\vspace{0.3cm}
-Di conseguenza otteniamo che :
+dove la matrice di inerzia del tricottero è pari a:
 
 \begin{equation}
-I_B \, \dot{\boldsymbol{\Omega}}_B =
-\mathbf{M}_{\text{TOT}} -
-\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B)
-\tag{3.28}
+    \mathbf{I}_{\text{B}} =
+    \begin{bmatrix}
+        I_{\text{xx}} & 0 & 0 \\
+        0 & I_{\text{yy}} & 0 \\
+        0 & 0 & I_{\text{zz}}
+    \end{bmatrix}
+\end{equation}
+
+\vspace{0.3cm}
+Di conseguenza si ottiene che:
+
+\begin{equation}
+    I_B \, \dot{\boldsymbol{\Omega}}_B =
+    \mathbf{M}_{\text{TOT}} -
+    \boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B)
+    \label{eq:eq_momenti_esplicita}
 \end{equation}
 
 
 Il momento totale agente sul baricentro è la somma vettoriale delle seguenti componenti:
 \begin{equation}
     \bm{M}_{\text{TOT}} = \bm{M}_{\text{TH}} + \bm{M}_{\text{TOR}} + \bm{M}_{\text{AERO}} + \bm{M}_{\text{GIRO}} + \bm{M}_{\text{PINNA}}
+    \label{eq:M_tot}
 \end{equation}
 
 \subsection{Momento di Thrust e Torcente}
@@ -302,6 +340,7 @@ Il contributo principale $\bm{M}_{\text{TH}}$ deriva dal prodotto vettoriale tra
     d_{mx} (k\omega_1^2 s_{\theta_1}) + d_{mx} (k\omega_2^2 s_{\theta_2}) + d_{tx} (k\omega_3^2 s_{\theta_3}) \\ 
     -d_{my} (k\omega_1^2 c_{\theta_1}) + d_{my} (k\omega_2^2 c_{\theta_2}) + d_{tx} (k\omega_3^2 c_{\theta_3} s_{\theta_4})
     \end{bmatrix}
+    \label{eq:M_th}
 \end{equation}
 
 Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, questo momento deve essere proiettato sugli assi del {body} frame:
@@ -312,6 +351,7 @@ Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i
     b\omega_3^2 c_{\theta_3} s_{\theta_4} \\ 
     -b\omega_1^2 s_{\theta_1} + b\omega_2^2 s_{\theta_2} - b\omega_3^2 s_{\theta_3}
     \end{bmatrix}
+    \label{eq:M_tor}
 \end{equation}
 
 \subsection{Effetti Aerodinamici e Giroscopici}
@@ -324,7 +364,8 @@ Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i
         - (l_{sx_{z}}+l_{dx_{z}})\left(-\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)\right)\Big] \\[10pt]
         (l_{sx_{y}}+l_{dx_{y}})\,\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)
     \end{bmatrix}
-    \end{equation}
+    \label{eq:M_aero}
+\end{equation}
 
 \textbf{Momento Giroscopico ($\bm{M}_{\text{GIRO}}$):} Dovuto all'interazione tra la velocità angolare di rotazione dell'elica $\omega_i$ e la velocità di tilting dei servomotori ($\bm{\omega}_{\text{tilt}}$). Questo termine è critico durante le transizioni rapide:
 \begin{equation}
@@ -344,6 +385,7 @@ Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i
             - I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xz}} \cos(\theta_{3}) \cos(\theta_{4}) \omega_{3}
         \end{bmatrix}
         $}
+        \label{eq:M_giro}
 \end{equation}
 
 Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rotazione del tricottero nel body frame:
@@ -376,6 +418,7 @@ Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rota
             (I_{xx}-I_{zz})	pr\\
             (I_{yy}-I_{xx})	pq
         \end{bmatrix}
+        \label{eq:M_body}
         \end{equation}
 
 \textbf{Momento della Pinna ($\bm{M}_{\text{PINNA}}$):} La superficie verticale di coda garantisce la stabilità direzionale (\textit{Weathercock stability}) e lo smorzamento dell'imbardata.
@@ -389,9 +432,93 @@ Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rota
     0 \\
     -r\left( \alpha_{0z}\ + \alpha_{1z}\,v_y^2 \right)
     \end{bmatrix}
+    \label{eq:M_pinna}
 \end{equation}
+
 La presenza della pinna è stata dibattuta in fase di revisione del modello, 
 tuttavia, si è stabilito il suo inserimento poiché garantisce una maggiore 
 stabilità di imbardata soprattutto in considerazione della coppia
 di reazione residua prodotta dal rotore di coda.  
+
+\subsection{Momento totale} 
+Utilizzando i risultati ottenuti sopra, si ottiene l'espressione del momento totale:
+
+	    \begin{equation*}
+	    	I_B \, \dot{\boldsymbol{\Omega}}_B =
+	    	\mathbf{M}_{\text{TOT}} -
+	    	\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B) = \mathbf{M}_{\text{TH}} + \mathbf{M}_{\text{TOR}}+\mathbf{M}_{\text{AERO}}  +  \mathbf{M}_{\text{GIRO}} +  \mathbf{M}_{\text{PINNA}}  -
+	    	\boldsymbol{\Omega}_B \times (I_B \boldsymbol{\Omega}_B) =
+	    \end{equation*}
+	    
+	     \begin{equation*}
+	    	 = \resizebox{0.99\textwidth}{!}{$
+	    	 	\begin{bmatrix}
+	    	 		d_{my} \, k \omega_2^2 \sin(\theta_2) 
+	    	 		- d_{my} \, k \omega_1^2 \sin(\theta_1) 
+	    	 		- d_{ty} \, k \omega_3^2 \sin(\theta_3) 
+	    	 		- d_{tz} \, k \omega_3^2 \cos(\theta_3) \sin(\theta_4) \\[6pt]
+	    	 		d_{mz} \, k \omega_1^2 \cos(\theta_1) 
+	    	 		+ d_{mz} \, k \omega_2^2 \cos(\theta_2) 
+	    	 		+ d_{mx} \, k \omega_1^2 \sin(\theta_1) 
+	    	 		+ d_{mx} \, k \omega_2^2 \sin(\theta_2) 
+	    	 		+ d_{tx} \, k \omega_3^2 \sin(\theta_3) 
+	    	 		+ d_{tz} \, k \omega_3^2 \cos(\theta_3) \cos(\theta_4) \\[6pt]
+	    	 		d_{my} \, k \omega_2^2 \cos(\theta_2) 
+	    	 		- d_{my} \, k \omega_1^2 \cos(\theta_1) 
+	    	 		- d_{ty} \, k \omega_3^2 \cos(\theta_3) \cos(\theta_4) 
+	    	 		+ d_{tx} \, k \omega_3^2 \cos(\theta_3) \sin(\theta_4)
+	    	 	\end{bmatrix}
+	    	 	$} +
+	    \end{equation*}
+	    
+	   	  \begin{equation*}
+	  	+	\begin{bmatrix}
+	  		(b\omega_{1}^2+I_{\text{rot}_{12_{z}}}\dot\omega_{1}) \cos(\theta_1) -	(b\omega_{2}^2+I_{\text{rot}_{12_{z}}}\dot\omega_{2}) \cos(\theta_2) + (b\omega_{3}^2+I_{\text{rot}_{3_{z}}}\dot\omega_{3})\cos(\theta_3)\cos(\theta_4) \\
+	  		(b\omega_{3}^2+I_{\text{rot}_{3_{z}}}\dot\omega_{3})\cos(\theta_3)\sin(\theta_4) \\
+	  		-	(b\omega_{1}^2+I_{\text{rot}_{12_{z}}}\dot\omega_{1})\sin(\theta_1)+ 	(b\omega_{2}^2+I_{\text{rot}_{12_{z}}}\dot\omega_{2})  \sin(\theta_2)	-	(b\omega_{3}^2+I_{\text{rot}_{3_{z}}}\dot\omega_{3})\sin(\theta_3)
+	  	\end{bmatrix}+
+	  \end{equation*}
+	    
+	    \begin{equation*}
+	    	+
+	    	\begin{bmatrix}
+	    		(l_{sx_{y}}+l_{dx_{y}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) \\[10pt]
+	    		-\Big[ (l_{sx_{x}}+l_{dx_{x}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) 
+	    		- (l_{sx_{z}}+l_{dx_{z}})\left(-\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)\right)\Big] \\[10pt]
+	    		(l_{sx_{y}}+l_{dx_{y}})\,\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)
+	    	\end{bmatrix}
+	    	+
+	    \end{equation*}
+	    
+	     \begin{equation*}
+	    	+
+	    	 \resizebox{0.93\textwidth}{!}{$
+	    		\begin{bmatrix}
+	    			-I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{1}} \sin(\theta_{1}) \omega_{1}
+	    			+ I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{2}} \sin(\theta_{2})\omega_{2}
+	    			- I_{\text{rot}_{3_{z}}}\,\omega_{\text{tilt}_{3,xz}} \sin(\theta_{3}) \omega_{3}
+	    			- I_{\text{rot}_{3_{y}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \sin(\theta_{4}) \omega_{3} \\[6pt]
+	    			+ I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \cos(\theta_{4})\omega_{3} \\[6pt]
+	    			-I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{1}} \cos(\theta_{1}) \omega_{1}
+	    			+ I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{2}} \cos(\theta_{2}) \omega_{2}
+	    			- I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xz}} \cos(\theta_{3}) \cos(\theta_{4}) \omega_{3}
+	    		\end{bmatrix}
+	    		$}
+	    	+
+	    \end{equation*}
+	    
+	    \begin{equation}
+	    	+
+	    	\begin{bmatrix}
+	    		-p\alpha_{0x}\ - \alpha_{1x}\,v_y^2 \\
+	    		0 \\
+	    		-r\left( \alpha_{0z}\ + \alpha_{1z}\,v_y^2 \right)
+	    	\end{bmatrix}
+	    	- \begin{bmatrix}
+	    		(I_{zz}-I_{yy})	qr \\
+	    		(I_{xx}-I_{zz})	pr\\
+	    		(I_{yy}-I_{xx})	pq
+	    	\end{bmatrix}
+            \label{eq:matrix_M_tot}
+	    \end{equation}
 \clearpage

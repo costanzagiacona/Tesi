@@ -3,7 +3,7 @@
 L'obiettivo di questo capitolo è la sintesi di una legge di controllo robusta per la dinamica traslazionale lungo l'asse verticale $z$ e la dimostrazione della stabilità secondo Lyapunov della \textit{sliding surface} e della legge di controllo.\\
 Si adotta un sistema di riferimento \textbf{NED (North-East-Down)}, in cui l'asse $z$ è orientato verso il centro della Terra; pertanto, valori di $z$ positivi indicano una quota crescente verso il basso.
 
-\subsection{Modellazione della Dinamica}
+\section{Modellazione della Dinamica}
 La dinamica del sistema viene analizzata nel frame inerziale, poiché il loop di controllo esterno si basa sull'errore di posizione, che perde di significato nel body frame.\\
 Il secondo principio della dinamica, proiettato sull'asse $z$ del sistema inerziale, definisce l'evoluzione del velivolo come:
 \begin{equation}
@@ -24,14 +24,14 @@ Normalizzando rispetto alla massa, si ottiene la forma affine al controllo:
 \end{equation}
 In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: $|\Delta(t)| \le \delta_{\max}, \forall t \ge 0$.
 
-\subsection{Definizione della \textit{sliding surface}}
+\section{Definizione della \textit{sliding surface}}
 Sia $z_{\mathrm{des}}(t)$ la quota di riferimento desiderata e $e(t) = z_{\mathrm{des}}(t) - z(t)$ l'errore di tracking. Per un sistema del secondo ordine, si definisce una \textit{sliding surface} $\sigma(t)$ lineare del primo ordine:
 \begin{equation}
     \sigma(t) = \dot{e}(t) + \lambda e(t)
 \end{equation}
 con $\lambda > 0$ costante di progetto. La condizione di regime $\sigma = 0$ definisce una dinamica vincolata (sliding mode) in cui l'errore decade esponenzialmente a zero con una velocità determinata dalla costante di tempo $\tau = 1/\lambda$.
 
-\subsection{Sintesi della Legge di Controllo}
+\section{Sintesi della Legge di Controllo}
 Per ricavare la legge di controllo, si deriva rispetto al tempo la \textit{sliding surface} $\sigma(t)$, ottenendo $\dot{\sigma} = \ddot{z}_{\mathrm{des}} - \ddot{z} + \lambda \dot{e}$. Sostituendo l'espressione della dinamica del sistema proiettata lungo $z$, si ricava la dinamica dell'errore sulla superficie:
 \begin{equation}
     \dot{\sigma} = \ddot{z}_{\mathrm{des}} - g - \cos(\phi)\cos(\theta)\frac{F_{\mathrm{aero},z}}{m} + \cos(\phi)\cos(\theta)\frac{u}{m} - \Delta(t) + \lambda \dot{e}
@@ -70,7 +70,7 @@ Infine, applicando la legge di controllo $u$ così sintetizzata al sistema pertu
 \end{equation}
 Questa forma strutturale chiusa è il punto di partenza per la dimostrazione formale della stabilità, in quanto il parametro $k$ dovrà essere dimensionato opportunamente per dominare il termine incerto $\Delta(t)$.
 
-\subsection{Analisi di Stabilità e Tempo di Raggiungimento}
+\section{Analisi di Stabilità e Tempo di Raggiungimento}
 Per dimostrare la stabilità asintotica e la convergenza in tempo finito alla superficie, si introduce la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$. Il teorema di Lyapunov per la stabilità richiede che $\dot{V}$ sia definita negativa. Inoltre, per assicurare il raggiungimento in tempo finito, si impone la \textit{condizione di raggiungibilità} (o $\eta$-reachability condition):
 \begin{equation}
     \dot{V} \le -\eta |\sigma|, \quad \text{con } \eta > 0
@@ -97,7 +97,7 @@ Sotto questa condizione sul guadagno di discontinuità $k$, il sistema è forzat
     t_r \le \frac{|\sigma(0)|}{\eta}
 \end{equation}
 
-\subsection{Regolarizzazione e Mitigazione del Chattering}
+\section{Regolarizzazione e Mitigazione del Chattering}
 La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce una regolarizzazione tramite uno \textbf{strato limite} (boundary layer) di spessore $\Phi$, sostituendo la funzione segno con una funzione continua (tipicamente la tangente iperbolica):
 \begin{equation}
     F_{\mathrm{req},z} = u_{\mathrm{eq}} - \frac{m}{\cos(\phi)\cos(\theta)} k \tanh\left(\frac{\sigma}{\Phi}\right)

@@ -253,6 +253,27 @@ switch test_id
             int_err_v = 0; int_err_z = 0;
         end
 
+        % WIND FRAME
+        u_b = x(4);
+        v_b = x(5);
+        w_b = x(6);
+
+        Va = norm([u_b, v_b, w_b]);
+
+
+        if Va < 0.1
+            Va = 0.1;
+            alpha = 0;
+            beta = 0;
+        else
+
+            alpha = atan2(w_b, u_b);
+            beta = asin(v_b / Va);
+        end
+
+        [CL_eff,CD_eff]=coeffAero(alpha,beta,params);
+        Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
+
         % =================================================
         % 2. DEFINIZIONE SETPOINT
         % =================================================

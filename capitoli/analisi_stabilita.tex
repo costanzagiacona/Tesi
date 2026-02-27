@@ -11,7 +11,7 @@ dove $x \in \mathbb{R}^n$ è il vettore di stato e $f_{cl}$ rappresenta il campo
 La dimensione $n$ dello spazio di stato non è costante, ma evolve in funzione della fase di volo per riflettere i cambiamenti nell'architettura del controllore:
 \begin{itemize}
     \item \textbf{Hovering ($n=26$):} In questa fase si utilizza una logica Proporzionale-Derivativa (PD) o Sliding Mode. Poiché l'azione di controllo dipende esclusivamente dall'errore istantaneo e dalla sua derivata, il controllore non introduce nuovi stati dinamici. Il vettore comprende i 12 stati cinematici del corpo rigido e i 14 stati associati alla dinamica del secondo ordine dei 7 attuatori.
-    \item \textbf{Crociera ($n=30$):} L'inseguimento della velocità e della quota richiede l'azzeramento dell'errore a regime tramite un'azione integrale (PID). Ogni integratore introduce un'equazione differenziale aggiuntiva ($\dot{\sigma} = e$), portando la dimensionalità a $n=30$ (\textit{Augmented State Space}).
+    \item \textbf{Crociera ($n=28$):} L'inseguimento della velocità e della quota richiede l'azzeramento dell'errore a regime tramite un'azione integrale (PID). Ogni integratore introduce un'equazione differenziale aggiuntiva ($\dot{\sigma} = e$), portando la dimensionalità a $n=28$ (\textit{Augmented State Space}).
 \end{itemize}
 
 \section{Regolarizzazione del Modello}
@@ -104,7 +104,6 @@ L'analisi della \textbf{Matrice di Partecipazione} (Fig. \ref{fig:partecipazione
     \item \textbf{Modi Veloci ($\lambda \in [-41.16, -87.55]$):} Risultano quasi esclusivamente legati alla \textit{Dinamica degli Attuatori} (oltre il 90\% di partecipazione). La netta separazione tra questi poli e quelli del corpo rigido indica che i ritardi degli attuatori non interferiscono negativamente con le prestazioni del controllore di volo.
 \end{itemize}
 
-
 \section{Analisi della Condizione di Crociera}
 La seconda fase della validazione riguarda il volo orizzontale a velocità costante ($v_x = 25$ m/s). In questa configurazione, il velivolo transita in una modalità di volo alare dove la portanza è generata prevalentemente dalle superfici aerodinamiche, mentre i propulsori anteriori forniscono la spinta necessaria a vincere la resistenza all'avanzamento.
 
@@ -144,3 +143,10 @@ L'analisi della matrice di partecipazione chiarisce la natura di tale polo:
 \end{itemize}
 
 In conclusione, sebbene il sistema non sia asintoticamente stabile in senso stretto a causa della deriva libera sulla posizione longitudinale, esso risulta \textbf{asintoticamente stabile rispetto a tutte le variabili di stato rilevanti per la missione di volo} (velocità, quota e assetto).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{controllo_orizzontale/autovalori.png}
+    \caption{Analisi della partecipazione aggregata ai modi dinamici in crociera.}
+    \label{fig:partecipazione_crociera}
+\end{figure}
