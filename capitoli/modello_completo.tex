@@ -135,7 +135,45 @@ I bracci dei rotori sono definiti nel sistema body dai vettori posizione $\bm{r}
 I rotori anteriori hanno un grado di libertà e possono inclinarsi attorno all'asse $Y_b$ rispettivamente di un angolo $\theta_1$ e $\theta_2$.
 Il rotore di coda possiede due gradi di libertà, potendo ruotare attorno a $Y_b$ di un angolo $\theta_3$ e attorno a $Z_b$ di un angolo $\theta_4$.
 
-Ogni rotore genera una spinta $f_i = k \omega_i^2$, dove $\omega_i$ è la velocità angolare del rotore $i$ e $k$ il coefficiente di spinta (\textit{thrust coefficient})[$N \cdot s^2/rad^2$]. Il vettore forza totale si ottiene sommando i contributi dei tre rotori ruotati dalle rispettive matrici di tilt.
+La velocità angolare $\omega_i$ di ciascun rotore genera una forza di spinta $f_i$ lungo l'asse del rotore stesso, secondo la relazione:
+\begin{equation}
+    f_i = k\omega_i^2 \label{eq:f_spinta_quadratica}
+\end{equation}
+dove $k$ [N$\cdot$s$^2$/rad$^2$] rappresenta il coefficiente di spinta.
+
+Per i rotori anteriori, la forza risultante nel sistema body è ottenuta applicando la matrice di rotazione elementare attorno all'asse $Y_b$:
+\begin{equation}
+    \boldsymbol{F}_{TH_{i}} = R_{Y_b}(\theta_i) \begin{bmatrix} k\omega_i^2 \\ 0 \\ 0 \end{bmatrix} = 
+    \begin{bmatrix} 
+        \cos\theta_i k\omega_i^2 \\ 
+        0 \\ 
+        -\sin\theta_i k\omega_i^2 
+    \end{bmatrix} \quad \text{per } i=1,2 \label{eq:F_TH_anteriori}
+\end{equation}
+
+Per il rotore di coda, la direzione della spinta è determinata dalla composizione di due rotazioni ($R_{Z_b}$ seguito da $R_{Y_b}$):
+\begin{equation}
+    \boldsymbol{F}_{TH_{3}} = R_{Z_b}(\theta_4) R_{Y_b}(\theta_3) \begin{bmatrix} k\omega_3^2 \\ 0 \\ 0 \end{bmatrix} \label{eq:F_TH3_rotazione}
+\end{equation}
+Sviluppando il prodotto matriciale, si ottiene il vettore forza per il rotore 3:
+\begin{equation}
+    \boldsymbol{F}_{TH_{3}} = \begin{bmatrix} 
+        \cos\theta_3 \cos\theta_4 k\omega_3^2 \\ 
+        \cos\theta_3 \sin\theta_4 k\omega_3^2 \\ 
+        -\sin\theta_3 k\omega_3^2 
+    \end{bmatrix} \label{eq:F_TH3_finale}
+\end{equation}
+
+Il contributo totale del thrust $\mathbf{F}_{TH}$ è espresso in forma matriciale come:
+\begin{equation}
+    \mathbf{F}_{TH} = \begin{bmatrix} 
+        \cos\theta_1 & \cos\theta_2 & \cos\theta_3 \cos\theta_4 \\ 
+        0 & 0 & \cos\theta_3 \sin\theta_4 \\ 
+        -\sin\theta_1 & -\sin\theta_2 & -\sin\theta_3 
+    \end{bmatrix} \begin{bmatrix} k\omega_1^2 \\ k\omega_2^2 \\ k\omega_3^2 \end{bmatrix}
+    \label{eq:F_th}
+\end{equation}
+
 
 % CORREZIONE: Uso di minipage al posto di subfigure per evitare errori di pacchetti
 \begin{figure}[htbp]
@@ -164,17 +202,6 @@ Ogni rotore genera una spinta $f_i = k \omega_i^2$, dove $\omega_i$ è la veloci
 \end{figure}
 
 
-Espandendo i termini di rotazione, la forza di spinta risultante $\bm{F}_{\text{TH}}$ assume la forma:
-\begin{equation}
-    \bm{F}_{\text{TH}} = 
-    \begin{bmatrix}
-    k\omega_1^2 c_{\theta_1} + k\omega_2^2 c_{\theta_2} + k\omega_3^2 c_{\theta_3} c_{\theta_4} \\
-    k\omega_3^2 c_{\theta_3} s_{\theta_4} \\
-    -k\omega_1^2 s_{\theta_1} - k\omega_2^2 s_{\theta_2} - k\omega_3^2 s_{\theta_3}
-    \end{bmatrix}
-    \label{eq:F_th}
-\end{equation}
-
 Inizialmente il design del drone prevedeva che i rotori anteriori fossero in linea con le ali; tuttavia questa configurazione è stata superata 
 per rispondere a dei requisiti meccanici fondamentiali:
 \begin{itemize}
@@ -183,13 +210,14 @@ per rispondere a dei requisiti meccanici fondamentiali:
 \end{itemize}
 
 
-\subsection{Gravità e Aerodinamica}
+\subsection{Forza di Gravità}
 La forza peso viene ruotata nel sistema solidale al corpo tramite la trasposta della matrice di rotazione:
 \begin{equation}
     \bm{F}_{GRAV} = \mathbf{R}_{b \to g}^T \begin{bmatrix} 0 \\ 0 \\ mg \end{bmatrix} = mg \begin{bmatrix} -\sin\theta \\ \cos\theta \sin\phi \\ \cos\theta \cos\phi \end{bmatrix}
     \label{eq:F_grav}
 \end{equation}
 
+\subsection{Forza Aerodinamica}
 Per una modellazione aerodinamica più fedele al comportamento in fase di crociera, si definiscono l'angolo di attacco $\alpha$ e l'angolo di scivolamento laterale $\beta$ in funzione delle velocità nel body frame:
 \begin{equation}
     \alpha = \arctan\left(\frac{w}{u}\right), \quad \beta = \arcsin\left(\frac{v}{V_{tas}}\right)
@@ -198,6 +226,7 @@ Per una modellazione aerodinamica più fedele al comportamento in fase di crocie
 Le forze aerodinamiche includono il contributo delle ali ($\bm{F}_{\text{{wing}}}$) e la resistenza della fusoliera ($\bm{D}_{\text{body}}$):
 \begin{equation}
     \bm{F}_{\text{AERO}} = \bm{F}_{\text{{wing}}} + \bm{D}_{\text{body}}
+    \label{eq:F_aero}
 \end{equation}
 
 La resistenza del corpo è modellata lungo gli assi principali in funzione del segno della velocità ($\text{sgn}(v)$) per garantire coerenza fisica:
@@ -218,6 +247,13 @@ Per le superfici alari, si considerano Portanza ($L$) e Resistenza ($D$):
 	 	0 \\
 	 	F_{L_1} + F_{L_2} + F_{D_{z1}} + F_{D_{z2}}
 	 \end{bmatrix}
+     = 
+     \begin{bmatrix}
+        -\frac{1}{2}\rho S C_D(u) u |u| \\
+        0 \\
+        -\frac{1}{2}\rho S C_L(u) u^2 - -\frac{1}{2}\rho S C_{Dz} w^2
+    \end{bmatrix}
+    \label{eq:F_wing}
 \end{equation}
 
 dove si è considerata nulla (per simmetria) la componente della forza esercitata lungo l'asse $Y_{b}$ e con: 
@@ -233,14 +269,6 @@ dove si è considerata nulla (per simmetria) la componente della forza esercitat
     \caption{Portanza e Resistenza lungo l'asse $X_b$}
 \end{figure}
 
-\begin{equation}
-    \bm{F}_{\text{{wing}}} = 
-    \begin{bmatrix}
-        -\frac{1}{2}\rho S C_D(u) u |u| \\
-        0 \\
-        -\frac{1}{2}\rho S C_L(u) u^2 - -\frac{1}{2}\rho S C_{Dz} w^2
-    \end{bmatrix}
-\end{equation}
 
 dove:
 \begin{itemize}
@@ -259,6 +287,8 @@ dove:
     \caption{Resistenza lungo l'asse $Z_b$}
 \end{figure}
 
+\subsection{Forza Totale}
+Utilizzando i risultati delle espressioni \ref{eq:F_th}, \ref{eq:F_grav}, \ref{eq:F_aero}, si ottiene la forza totale come:
 \begin{equation*}
 	  	\mathbf{F}_{TOT} = \mathbf{F}_{TH} + \mathbf{F}_{GRAV} + \mathbf{F}_{AERO} = 
 	  	\end{equation*}
@@ -331,108 +361,114 @@ Il momento totale agente sul baricentro è la somma vettoriale delle seguenti co
     \label{eq:M_tot}
 \end{equation}
 
-\subsection{Momento di Thrust e Torcente}
-Il contributo principale $\bm{M}_{\text{TH}}$ deriva dal prodotto vettoriale tra i bracci $\bm{r}_i$ e le forze di spinta. Utilizzando le coordinate geometriche definite in precedenza:
+dove:
+\begin{itemize}
+    \item $\bm{M}_{\text{TH}}$ è il momento generato dalla spinta dei rotori;
+    \item $\bm{M}_{\text{TOR}}$ è il momento torcente generato dai rotori;
+    \item $\bm{M}_{\text{AERO}}$ è il momento dovuto alle forze aerodinamiche;
+    \item $\bm{M}_{\text{GIRO}}$ è il momento giroscopico dovuto al tilting dei servomotori;
+    \item $\bm{M}_{\text{PINNA}}$ è il momento prodotto dalla pinna posizionata in coda.
+\end{itemize}
+
+\subsection{Momento generato dal thrust}
+Il momento generato dal thrust prodotto dal rotore $i$-esimo è definito come:
 \begin{equation}
-    \bm{M}_{\text{TH}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{\text{TH},i}) =
+    \boldsymbol{M}_{TH_{i}} = \boldsymbol{r}_{th_{i}} \times \boldsymbol{F}_{TH_{i}} \label{eq:momento_thrust_generale}
+\end{equation}
+dove:
+\begin{itemize}
+    \item $\boldsymbol{r}_{th_{i}}$ è il vettore posizione dal centro di massa al punto di applicazione del thrust;
+    \item $\boldsymbol{F}_{TH_{i}}$ è il thrust generato dal rotore $i$-esimo.
+\end{itemize}
+
+Per il rotore anteriore 1 (destro), il vettore posizione è definito come:
+\begin{equation}
+    \boldsymbol{r}_{th_1} = \begin{bmatrix} d_{mx} \\ d_{my} \\ d_{mz} \end{bmatrix} \label{eq:pos_r1}
+\end{equation}
+dove $d_{mx}$, $d_{my}$ e $d_{mz}$ rappresentano le distanze lungo gli assi del sistema solidale $X_B, Y_B, Z_B$.
+
+
+Sviluppando il prodotto vettoriale nella \ref{eq:momento_thrust_generale} con le componenti della forza e della posizione, otteniamo per il rotore 1:
+\begin{equation}
+    \boldsymbol{M}_{TH_{1}} = \begin{bmatrix} d_{mx} \\ d_{my} \\ d_{mz} \end{bmatrix} 
+    \times \begin{bmatrix} \cos\theta_1 k\omega_{1}^2 \\ 0 \\ -\sin\theta_1 k\omega_{1}^2 \end{bmatrix} = 
     \begin{bmatrix} 
-    -d_{my} (k\omega_1^2 s_{\theta_1}) + d_{my} (k\omega_2^2 s_{\theta_2}) \\ 
-    d_{mx} (k\omega_1^2 s_{\theta_1}) + d_{mx} (k\omega_2^2 s_{\theta_2}) + d_{tx} (k\omega_3^2 s_{\theta_3}) \\ 
-    -d_{my} (k\omega_1^2 c_{\theta_1}) + d_{my} (k\omega_2^2 c_{\theta_2}) + d_{tx} (k\omega_3^2 c_{\theta_3} s_{\theta_4})
-    \end{bmatrix}
-    \label{eq:M_th}
+        -d_{my} \sin(\theta_{1}) k\omega_{1}^2 \\ 
+        (d_{mz} \cos(\theta_{1}) + d_{mx} \sin(\theta_{1})) k\omega_{1}^2 \\ 
+        -d_{my} \cos(\theta_{1}) k\omega_{1}^2 
+    \end{bmatrix} \label{eq:M_TH1}
 \end{equation}
 
-Inoltre, la rotazione delle eliche genera un momento torcente resistivo ($\tau_i = b \omega_i^2$). Poiché i rotori sono inclinabili, questo momento deve essere proiettato sugli assi del {body} frame:
+Per simmetria rispetto all'asse $X_B$, il vettore posizione del rotore anteriore 2 (sinistro) è:
 \begin{equation}
-    \bm{M}_{\text{TOR}} = 
-    \begin{bmatrix} 
-    b\omega_1^2 c_{\theta_1} - b\omega_2^2 c_{\theta_2} + b\omega_3^2 c_{\theta_3} c_{\theta_4} \\ 
-    b\omega_3^2 c_{\theta_3} s_{\theta_4} \\ 
-    -b\omega_1^2 s_{\theta_1} + b\omega_2^2 s_{\theta_2} - b\omega_3^2 s_{\theta_3}
-    \end{bmatrix}
-    \label{eq:M_tor}
+    \boldsymbol{r}_{th_2} = \begin{bmatrix} d_{mx} \\ -d_{my} \\ d_{mz} \end{bmatrix} \label{eq:pos_r2}
+\end{equation}
+Il momento risultante per il secondo rotore è:
+\begin{equation}
+    \boldsymbol{M}_{TH_{2}} = \begin{bmatrix} 
+        d_{my} \sin(\theta_{2}) k\omega_{2}^2 \\ 
+        (d_{mz} \cos(\theta_{2}) + d_{mx} \sin(\theta_{2})) k\omega_{2}^2 \\ 
+        d_{my} \cos(\theta_{2}) k\omega_{2}^2 
+    \end{bmatrix} \label{eq:M_TH2}
 \end{equation}
 
-\subsection{Effetti Aerodinamici e Giroscopici}
-\textbf{Momento Aerodinamico ($\bm{M}_{\text{AERO}}$):} Include le coppie generate dal disallineamento tra il Centro di Pressione (CP) delle ali e il CoM, oltre ai momenti di resistenza aerodinamica della fusoliera.
+Per il rotore di coda (rotore 3), il vettore posizione è $\boldsymbol{r}_{th_3} = [d_{tx}, d_{ty}, d_{tz}]^T$. Considerando la sua capacità di inclinazione bi-assiale, il momento è:
 \begin{equation}
-    \bm{M}_{AERO} = 
-    \begin{bmatrix}
-        (l_{sx_{y}}+l_{dx_{y}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) \\[10pt]
-        -\Big[ (l_{sx_{x}}+l_{dx_{x}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) 
-        - (l_{sx_{z}}+l_{dx_{z}})\left(-\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)\right)\Big] \\[10pt]
-        (l_{sx_{y}}+l_{dx_{y}})\,\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)
-    \end{bmatrix}
-    \label{eq:M_aero}
+    \boldsymbol{M}_{TH_{3}} = \begin{bmatrix} 
+        (-d_{ty} \sin\theta_{3} - d_{tz} \cos\theta_{3} \sin\theta_{4}) k\omega_{3}^2 \\ 
+        (d_{tx} \sin\theta_{3} + d_{tz} \cos\theta_{3} \cos\theta_{4}) k\omega_{3}^2 \\ 
+        (d_{tx} \cos\theta_{3} \sin\theta_{4} - d_{ty} \cos\theta_{3} \cos\theta_{4}) k\omega_{3}^2 
+    \end{bmatrix} \label{eq:M_TH3}
 \end{equation}
 
-\textbf{Momento Giroscopico ($\bm{M}_{\text{GIRO}}$):} Dovuto all'interazione tra la velocità angolare di rotazione dell'elica $\omega_i$ e la velocità di tilting dei servomotori ($\bm{\omega}_{\text{tilt}}$). Questo termine è critico durante le transizioni rapide:
+Il momento totale generato dal thrust $\boldsymbol{M}_{TH}$ è dato dalla somma vettoriale delle equazioni \ref{eq:M_TH1}, \ref{eq:M_TH2} e \ref{eq:M_TH3}.
+
+\subsection{Momento torcente}
+Il momento torcente generato dai rotori, che include l'effetto della resistenza aerodinamica e l'accelerazione del rotore stesso, è espresso come:
 \begin{equation}
-    \bm{M}_{\text{GIRO}}= \sum_{i=1}^{3} \mathbf{J}_{rot} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{i})
-\end{equation}
-\begin{equation}
-    \mathbf{M}_{\text{GIRO}} = 
-    \resizebox{0.93\textwidth}{!}{$
-        \begin{bmatrix}
-            -I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{1}} \sin(\theta_{1}) \omega_{1}
-            + I_{\text{rot}_{12_{z}}}\,\omega_{\text{tilt}_{2}} \sin(\theta_{2})\omega_{2}
-            - I_{\text{rot}_{3_{z}}}\,\omega_{\text{tilt}_{3,xz}} \sin(\theta_{3}) \omega_{3}
-            - I_{\text{rot}_{3_{y}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \sin(\theta_{4}) \omega_{3} \\[6pt]
-            + I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xy}} \cos(\theta_{3}) \cos(\theta_{4})\omega_{3} \\[6pt]
-            -I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{1}} \cos(\theta_{1}) \omega_{1}
-            + I_{\text{rot}_{12_{x}}}\,\omega_{\text{tilt}_{2}} \cos(\theta_{2}) \omega_{2}
-            - I_{\text{rot}_{3_{x}}}\,\omega_{\text{tilt}_{3,xz}} \cos(\theta_{3}) \cos(\theta_{4}) \omega_{3}
-        \end{bmatrix}
-        $}
-        \label{eq:M_giro}
+    \boldsymbol{\tau}_i = \text{sgn}(\omega_i) \left( b\omega_i^2 + I_{rot,z}\dot{\omega}_i \right) \hat{e}_{thrust,i} \label{eq:torcente_base}
 \end{equation}
 
-Il modello è caratterizzato da un secondo termine giroscopico, dovuto alla rotazione del tricottero nel body frame:
-\begin{equation*}
-        \boldsymbol{M}_{body} =
-        \boldsymbol{\Omega}_{B} \times (I_B \boldsymbol{\Omega}_{B}) =
-            \begin{bmatrix}
-            p \\
-            q \\
-            r
-        \end{bmatrix}
-        \times
-        \begin{bmatrix}
-            I_{\text{xx}} & 0 & 0 \\
-            0 & I_{\text{yy}} & 0 \\
-            0 & 0 & I_{\text{zz}}
-        \end{bmatrix}
-        \begin{bmatrix}
-            p\\
-            q\\
-            r
-        \end{bmatrix}
-        =
-        \end{equation*}
-        
-        \begin{equation}
-        =
-        \begin{bmatrix}
-            (I_{zz}-I_{yy})	qr \\
-            (I_{xx}-I_{zz})	pr\\
-            (I_{yy}-I_{xx})	pq
-        \end{bmatrix}
-        \label{eq:M_body}
-        \end{equation}
+I versori $\hat{e}_{thrust,i}$ seguono le direzioni di inclinazione dei rotori definite precedentemente. Le inerzie dei rotori, riportate al centro di massa tramite il teorema di Huygens-Steiner, sono state semplificate nelle matrici diagonali $\mathbf{I}_{rot_{12}}$ e $\mathbf{I}_{rot_{3}}$.
 
-\textbf{Momento della Pinna ($\bm{M}_{\text{PINNA}}$):} La superficie verticale di coda garantisce la stabilità direzionale (\textit{Weathercock stability}) e lo smorzamento dell'imbardata.
+Il momento torcente totale $\boldsymbol{\tau}$ risultante dalla combinazione dei tre rotori (con 1 e 2 controrotanti) è:
 \begin{equation}
-    \mathbf{M}_{\text{PINNA}} = 
-    \begin{bmatrix}
-    M_{\text{pinna},x} \\ M_{\text{pinna},y} \\ M_{\text{pinna},z}
-    \end{bmatrix} =
-    \begin{bmatrix}
-    -p\alpha_{0x}\ - \alpha_{1x}\,v_y^2 \\
-    0 \\
-    -r\left( \alpha_{0z}\ + \alpha_{1z}\,v_y^2 \right)
-    \end{bmatrix}
-    \label{eq:M_pinna}
+    \boldsymbol{\tau} = \begin{bmatrix}
+        \tau_{1,x} - \tau_{2,x} + \tau_{3,x} \\
+        \tau_{3,y} \\
+        -\tau_{1,z} + \tau_{2,z} - \tau_{3,z}
+    \end{bmatrix} \label{eq:tau_totale}
+\end{equation}
+dove le singole componenti dipendono dagli angoli di tilt $\theta_i$ e dalle velocità $\omega_i$ secondo la proiezione dei versori di spinta.
+
+\subsection{Momento aerodinamico delle ali}
+Le forze aerodinamiche agenti sulle ali generano un momento rispetto al centro di massa:
+\begin{equation}
+    \boldsymbol{M}_{AERO} = \boldsymbol{r}_{ala_{dx}} \times \boldsymbol{F}_{AERO_{dx}} + \boldsymbol{r}_{ala_{sx}} \times \boldsymbol{F}_{AERO_{sx}} \label{eq:Maero_generale}
+\end{equation}
+Sviluppando il calcolo e assumendo simmetria nel profilo aerodinamico, si ottiene:
+\begin{equation}
+    \boldsymbol{M}_{AERO} = \begin{bmatrix}
+        (l_{sx_y}+l_{dx_y})F_{z,aero} \\
+        -[(l_{sx_x}+l_{dx_x})F_{z,aero} - (l_{sx_z}+l_{dx_z})F_{x,aero}] \\
+        (l_{sx_y}+l_{dx_y})F_{x,aero}
+    \end{bmatrix} \label{eq:M_aero_finale}
+\end{equation}
+dove $F_{x,aero}$ e $F_{z,aero}$ sono le componenti di drag e lift definite in funzione della densità dell'aria $\rho$, della superficie alare $s$ e dei coefficienti $C_l, C_d$.
+
+\subsection{Momenti giroscopici e termini inerziali}
+Il sistema è soggetto a due contributi giroscopici principali. Il primo è dovuto al tilt dei rotori in rotazione:
+\begin{equation}
+    \mathbf{M}_{GIRO} = \sum_{i=1}^{3} \boldsymbol{\omega}_{tilt,i} \times \mathbf{I}_{rotor,i} \boldsymbol{\omega}_{i} \label{eq:M_giro_rotori}
+\end{equation}
+Il secondo è il momento giroscopico dovuto al moto del corpo rigido (tricottero):
+\begin{equation}
+    \boldsymbol{M}_{body} = \boldsymbol{\Omega}_{B} \times (I_B \boldsymbol{\Omega}_{B}) = \begin{bmatrix} (I_{zz}-I_{yy}) qr \\ (I_{xx}-I_{zz}) pr \\ (I_{yy}-I_{xx}) pq \end{bmatrix} \label{eq:M_body}
+\end{equation}
+
+Infine, la pinna di coda contribuisce con un momento stabilizzatore $\mathbf{M}_{PINNA}$ dipendente dalle velocità angolari e dalla velocità longitudinale $v_y$:
+\begin{equation}
+    \mathbf{M}_{PINNA} = \begin{bmatrix} -p\alpha_{0x} - \alpha_{1x}v_y^2 \\ 0 \\ -r(\alpha_{0z} + \alpha_{1z}v_y^2) \end{bmatrix} \label{eq:M_pinna}
 \end{equation}
 
 La presenza della pinna è stata dibattuta in fase di revisione del modello, 
@@ -440,9 +476,9 @@ tuttavia, si è stabilito il suo inserimento poiché garantisce una maggiore
 stabilità di imbardata soprattutto in considerazione della coppia
 di reazione residua prodotta dal rotore di coda.  
 
-\subsection{Momento totale} 
-Utilizzando i risultati ottenuti sopra, si ottiene l'espressione del momento totale:
 
+\subsection{Momento totale} 
+Utilizzando i risultati sopra, si ottiene l'espressione del momento totale:
 	    \begin{equation*}
 	    	I_B \, \dot{\boldsymbol{\Omega}}_B =
 	    	\mathbf{M}_{\text{TOT}} -

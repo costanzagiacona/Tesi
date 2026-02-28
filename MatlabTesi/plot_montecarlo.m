@@ -4,7 +4,7 @@ files = {'Results_Recovery Hover.mat', ...
          'Results1_Takeoff Ground.mat', ...
          'Results1_Cruise Flight.mat'};
 
-files = {'Results1_Takeoff Ground.mat'};
+files = {'Results2_Cruise Flight.mat'};
 % files = {'Results_SMC_Takeoff Ground.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica

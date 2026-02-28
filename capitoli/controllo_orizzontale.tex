@@ -264,14 +264,38 @@ L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo
 In regime di crociera, il mixer gestisce una configurazione bimotore con rotori basculanti indipendenti, mantenendo disattivo il propulsore di coda. Per gestire correttamente gli accoppiamenti dinamici non lineari, l'algoritazione procede prima al calcolo degli angoli di tilt e successivamente alla ripartizione differenziale della spinta.
 
 \subsection{Rollio e Beccheggio}
-Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), il sistema sfrutta la vettorizzazione della spinta totale $T_{tot} \approx F_{x,req}$ tramite l'inclinazione dei rotori. Per garantire l'autorità di controllo anche ad ampi angoli di escursione dei servocomandi, si abbandona l'approssimazione lineare e si invertono analiticamente le relazioni geometriche esatte.
+Per generare i momenti di rollio ($M_x$) e beccheggio ($M_y$), il sistema sfrutta la vettorizzazione della spinta totale $T_{tot} \approx F_{x,req}$ tramite l'inclinazione dei rotori. 
+In fase di crociera, è possibile ipotizzare piccoli angoli di inclinazione, per cui si applica l'approssimazione $\sin(\theta) \approx \theta$.
 
-Definendo $\alpha$ come l'inclinazione collettiva (per il beccheggio) e $\delta$ come l'inclinazione differenziale (per il rollio), i riferimenti angolari si ottengono tramite l'inversione trigonometrica:
+Dalle equazioni dei momenti \ref{eq:matrix_M_tot}, si ricava l'espressione del momento intorno all'asse $y$:
 \begin{equation}
-    \alpha = \arcsin\left( \frac{M_{y,req}}{T_{tot} \cdot d_{mx}} \right), \quad 
-    \delta = \arcsin\left( \frac{M_{x,req}}{T_{tot} \cdot d_{my}} \right)
+        M_y = d_{mx} k \omega_1^2 \sin(\theta_1) + d_{mx} k \omega_2^2 \sin(\theta_2)
 \end{equation}
-dove $d_{mx}$ e $d_{my}$ rappresentano, rispettivamente, i bracci longitudinali e laterali di applicazione della spinta. 
+considerando l'inclinazione collettiva di pitch dei rotori $\alpha$ e l'angolo di base $\theta_1 \approx \theta_2 \approx 0$, diventa:
+\begin{equation}
+    \begin{matrix}
+        M_y = d_{mx} k \omega_1^2 \sin(\theta_1 + \alpha) + d_{mx} k \omega_2^2 \sin(\theta_2 + \alpha) \\
+        \implies M_y = d_{mx} T_{tot} \sin(\alpha)
+    \end{matrix}
+\end{equation}
+Dalla quale si ottiene l'espressione di $\alpha$:
+\begin{equation}
+    \alpha = \frac{M_{y,req}}{T_{tot} \cdot d_{mx}}
+\end{equation}
+
+Allo stesso, si ottiene l'espressione dell'angolo di roll $\delta$:
+\begin{equation}
+    \begin{matrix}
+        M_x = d_{my} k \omega_1^2 \sin(\theta_2) - d_{my} k \omega_1^2 \sin(\theta_1)\\
+        \implies M_x = d_{my} k \omega_1^2 \sin(\theta_2 + \delta) - d_{my} k \omega_1^2 \sin(\theta_1 - delta)\\
+        \implies M_x = d_{my} T_{tot} \sin(\delta)
+    \end{matrix}
+\end{equation}
+
+Approssimando per angoli piccoli, si ricava:
+\begin{equation}
+    \delta = \frac{M_{x,req}}{T_{tot} \cdot d_{my}}
+\end{equation}
 
 Il comando finale inviato ai singoli servocomandi ($\theta_1$ per il rotore sinistro, $\theta_2$ per il destro) è il risultato di un mixing additivo e sottrattivo dei contributi:
 \begin{equation}
@@ -296,10 +320,22 @@ Applicando le formule di addizione e sottrazione del coseno e definendo il diffe
 \end{equation}
 Da questa formulazione rigorosa si evince un forte accoppiamento dinamico: oltre al termine di controllo desiderato (proporzionale a $\Delta T$), emerge un termine parassita dipendente dalla spinta totale $T_{tot}$ che genera un momento di imbardata involontario ogniqualvolta il velivolo presenti contemporaneamente un angolo di beccheggio ($\alpha \neq 0$) e di rollio ($\delta \neq 0$).
 
-Per garantire il corretto tracciamento della traiettoria e la reiezione dei disturbi senza l'impiego di superfici aerodinamiche mobili, l'algoritmo di mixing deve invertire l'equazione precedente per ricavare l'esatto comando differenziale $\Delta T$ richiesto, implementando un disaccoppiamento attivo (\textit{feedforward}):
+La presenza di questo termine aggiuntivo e la dipendenza dagli angoli di rollio e beccheggio, producono una richiesta di thrust eccessiva su uno dei due motori in alcune configurazioni iniziali, testate attraverso simulazioni Monte Carlo. 
+Questa richiesta, toglie autorità di controllo ai comandi di rollio e beccheggio, causando instabilità del drone. 
+
+Per tali motivi, è preferibile ipotizzare $\alpha \approx \delta \approx 0$, da cui segue:
 \begin{equation}
-    \Delta T = \frac{M_{z,req}}{d_{my} \cos(\alpha) \cos(\delta)} + T_{tot} \tan(\alpha) \tan(\delta)
+    \begin{matrix}
+        M_z = d_{my} (T_2 - T_1)\\
+        \implies M_z = d_{my} \Delta T
+    \end{matrix}
 \end{equation}
+
+Si ottiene dunque:
+\begin{equation}
+    \Delta T = \frac{M_z}{d_my}
+\end{equation}
+
 I comandi finali di spinta inviati ai singoli motori ($T_1, T_2$) risultano quindi dalla sovrapposizione della spinta necessaria all'avanzamento $F_{x,req}$ e dell'azione di controllo sull'imbardata appena derivata:
 \begin{equation}
     \begin{cases}
@@ -307,7 +343,8 @@ I comandi finali di spinta inviati ai singoli motori ($T_1, T_2$) risultano quin
         T_{2} = \frac{F_{x,req}}{2} + \frac{\Delta T}{2}
     \end{cases}
 \end{equation}
-Questo approccio non lineare garantisce un'autorità di comando coerente in tutto l'inviluppo di volo, evitando le pericolose singolarità dinamiche tipiche delle approssimazioni ai piccoli angoli.
+
+
 \subsection{Protezioni e Limiti Fisici del Mixer}
 Data la struttura matematica del mixer, emerge una criticità: l'autorità di controllo sugli assi $x$ e $y$ svanisce se la spinta totale $T_{tot}$ è nulla. Per prevenire instabilità numeriche, l'algoritmo integra una soglia minima di sicurezza $T_{safe}$ al denominatore. Inoltre, il mixer applica saturazioni \textit{hard} per rispettare i limiti meccanici dei servocomandi ($\pm 45^\circ$) e i limiti di potenza dei motori, garantendo che le richieste del controllore non eccedano le capacità fisiche degli attuatori.
 

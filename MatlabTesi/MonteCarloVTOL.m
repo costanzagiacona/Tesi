@@ -1,4 +1,5 @@
 function MonteCarloVTOL(params)
+    clc; close all;
     % =========================================================================
     % VTOL MONTE CARLO SUITE (PROFESSOR EDITION - REVISED)
     % =========================================================================
@@ -11,7 +12,7 @@ function MonteCarloVTOL(params)
     cfg_rec.test_id = 1; 
     cfg_rec.target = [0; 0; -10]; 
     cfg_rec.tspan = [0 30]; 
-    cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(15), 'omega', deg2rad(5));
+    cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(10), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; 
     cfg_rec.n_states = 26; % Esplicito la dimensione dello stato
     
@@ -27,13 +28,13 @@ function MonteCarloVTOL(params)
     cfg_take.x0_type = 'takeoff'; 
     cfg_take.n_states = 26;
     
-    RunCampaign(cfg_take, params);
+    % RunCampaign(cfg_take, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE ---
     cfg_cru.name = 'Cruise Flight';
     cfg_cru.test_id = 2; 
-    cfg_cru.target = [25; 0; -10]; 
+    cfg_cru.target = [25; 0; -100]; 
     cfg_cru.tspan = [0 40]; 
     cfg_cru.sigma = struct('pos', 5.0, 'vel', 7.0, 'att', deg2rad(10), 'omega', deg2rad(2)); % Ripristinata incertezza omega
     cfg_cru.x0_type = 'cruise'; 
@@ -79,6 +80,10 @@ function RunCampaign(cfg, params)
                 current_reason = 'Nessuno';
             end
             
+            if has_crashed
+                fprintf('Run %d fallita per: %s al tempo %.2f\n', i, current_reason, te(end));
+            end
+
             ok = (t(end) >= cfg.tspan(2)) && ~has_crashed && ~any(isnan(x(:)));
             
             if t(end) > (cfg.tspan(2) * 0.5)
@@ -92,9 +97,11 @@ function RunCampaign(cfg, params)
                 err_data = x(idx_settle, 1:12);
                 if cfg.test_id == 2, err_data(:,1) = 0; end 
                 
-                % NOTA: Per un calcolo RMSE matematicamente corretto sugli angoli (indici 7-9), 
-                % bisognerebbe mappare l'errore nel range [-pi, pi] per evitare discontinuità.
-                rmse_vettore = sqrt(mean((err_data - target_vec).^2, 1));
+                err_raw = err_data - target_vec;
+                for ang_idx = 7:9
+                    err_raw(:, ang_idx) = atan2(sin(err_raw(:, ang_idx)), cos(err_raw(:, ang_idx)));
+                end
+                rmse_vettore = sqrt(mean(err_raw.^2, 1));
             else
                 rmse_vettore = NaN(1,12);
             end
@@ -123,8 +130,8 @@ function RunCampaign(cfg, params)
     n_crash = sum([stats.crashed]);
     fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
     
-    save(['Results1_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis1_' cfg.name '.csv']);
+    save(['Results4_' cfg.name '.mat'], 'risultati', 'cfg');
+    GenerateFullCSV(stats, ['Analysis4_' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---
@@ -141,7 +148,9 @@ function x0 = GenerateX0(cfg, params)
         if x0(3) > -2.0, x0(3) = -2.0; end 
         
         x0(4:6) = randn(3,1) * cfg.sigma.vel;
-        x0(7:9) = randn(3,1) * cfg.sigma.att;
+        x0(7) = randn * cfg.sigma.att;
+        x0(8) = randn * cfg.sigma.att;
+        x0(9) = randn * cfg.sigma.att;
         
         x0(21) = omega_hover + randn()*10;
         x0(23) = omega_hover + randn()*10;
@@ -189,6 +198,7 @@ end
 function [value, isterminal, direction] = CrashDetector(~, x)
     ground_impact = x(3) - 0.1; 
     fly_away = x(3) + 200; 
+    
     
     % CORREZIONE: Eliminata la discontinuità causata da abs() e max()
     limit_rad = deg2rad(80);

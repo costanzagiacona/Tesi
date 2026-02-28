@@ -13,8 +13,6 @@ u = zeros(7,1);
 
 % 2 : Controllo orizzontale 
 
-% 3 : Controllo orizzontale con momenti 
-
 switch test_id
 
     case -1
@@ -229,11 +227,11 @@ switch test_id
         phi = x(7); theta = x(8); psi = x(9);
         p = x(10);  q = x(11);    r = x(12);
 
-        J = matriceJ(phi,theta,psi);
-        Omega = J*[p;q;r];
-        p = Omega(1);
-        q = Omega(2);
-        r = Omega(3);
+        % J = matriceJ(phi,theta,psi);
+        % Omega = J*[p;q;r];
+        % p = Omega(1);
+        % q = Omega(2);
+        % r = Omega(3);
 
         % Matrice di rotazione e Velocità nel riferimento Globale (NED)
         R = matriceRotazione(phi, theta, psi);
@@ -244,35 +242,13 @@ switch test_id
 
         % Lettura Integrali 
         % x(27): Int. Err Velocità
-        % x(28): Int. Err Pitch
-        % x(29): Int. Err Quota
+        % x(28): Int. Err Quota
         if length(x) >= 27
             int_err_v     = x(27); 
             int_err_z     = x(28);
         else
             int_err_v = 0; int_err_z = 0;
         end
-
-        % WIND FRAME
-        u_b = x(4);
-        v_b = x(5);
-        w_b = x(6);
-
-        Va = norm([u_b, v_b, w_b]);
-
-
-        if Va < 0.1
-            Va = 0.1;
-            alpha = 0;
-            beta = 0;
-        else
-
-            alpha = atan2(w_b, u_b);
-            beta = asin(v_b / Va);
-        end
-
-        [CL_eff,CD_eff]=coeffAero(alpha,beta,params);
-        Rwb = matriceRotazioneWingToBodyFrame(alpha,beta);
 
         % =================================================
         % 2. DEFINIZIONE SETPOINT
@@ -282,13 +258,17 @@ switch test_id
         phi_des   = 0;
 
         % =================================================
-        % 3. OUTER LOOP: CONTROLLO QUOTA (Generazione Theta Rif)
+        % OUTER LOOP
+        % ================================================
+
+        % =================================================
+        % CONTROLLO QUOTA (Generazione Theta Rif)
         % =================================================
         
         err_h = x(3) - z_des;     % Errore di posizione
         d_err_h = vz_global;      % Derivata (Velocità verticale)
         
-        % TUNING QUOTA (Rilassato e Smorzato)
+        % TUNING QUOTA 
         kp_z_th = 0.035; 
         kd_z_th = 0.04;  
         ki_z_th = 0.005;
@@ -301,20 +281,18 @@ switch test_id
         theta_ref = max(-max_pitch, min(max_pitch, theta_cmd_raw));
 
         % =================================================
-        % 4. OUTER LOOP: CONTROLLO VELOCITÀ (Generazione Spinta X)
-        % =================================================
-        
+        % CONTROLLO VELOCITÀ (Generazione Spinta X)
+        % =================================================        
         e_v = vx_des - vx_global;
         
         % TUNING VELOCITÀ
         kp_v = 8.0; 
         ki_v = 1.5; 
         
-        % A. Feedforward Aerodinamico (Drag Compensation)
+        % Feedforward Aerodinamico (Drag Compensation)
         F_drag_total = 0.5 * params.rho * (params.s * params.C_d + params.s_body_x * params.C_d_x) * vx_global^2;
         
-        % B. Feedforward Gravitazionale 
-        % Se il drone cabra (theta > 0), il peso lo tira indietro.
+        % Feedforward Gravitazionale 
         F_gravity_x = params.m * params.g * sin(theta);
         
         % Forza Totale Richiesta lungo l'asse X Body
@@ -324,7 +302,7 @@ switch test_id
         if Fx_req < 0; Fx_req = 0; end
 
         % =======================================
-        %   CONTROLLO LUNGO Y
+        %  CONTROLLO Y
         % =======================================
         y_des = 0;
         err_y = y_des - x(2);
@@ -336,84 +314,70 @@ switch test_id
         psi_des = kp_y * err_y + kd_y * de_y;
 
         % =================================================
-        % 5. INNER LOOP: CONTROLLO D'ASSETTO (Momenti)
+        % INNER LOOP: CONTROLLO D'ASSETTO (Momenti)
         % =================================================
         
-        % --- A. PITCH (Momento Y) ---
+        % --- PITCH (Momento Y) ---
         e_theta  = theta_ref - theta;
         de_theta = 0 - q; 
         
         kp_th = 5.0; 
-        kd_th = 1.8;   
-        ki_th = 0.01; 
+        kd_th = 2.5;   
         M_y_req = kp_th * e_theta + kd_th * de_theta;% + ki_th * int_err_theta;
         
-        % --- B. ROLL (Momento X) ---
-        kp_phi = 3.0; 
-        kd_phi = 0.8;
+        % --- ROLL (Momento X) ---
+        kp_phi = 3; 
+        kd_phi = 1.2;
         M_x_req = kp_phi * (phi_des - phi) + kd_phi * (0 - p);
         
-        % --- C. YAW (Momento Z) ---
+        % --- YAW (Momento Z) ---
         kp_psi = 3.0; 
         kd_psi = 1.0;
         M_z_req = kp_psi * (psi_des - psi) + kd_psi * (0 - r);
         
         % =================================================
-        % 6. MIXER (Riveduto, Corretto Formale e Disaccoppiato)
+        % MIXER
         % =================================================
         
         % Parametri geometrici
         d_my = params.d_my; % Braccio laterale
         d_mx = params.d_mx; % Braccio longitudinale
         
+        % Calcolo Spinta Totale (T_base)
+        % Proiezione: T_base * cos(theta) = Fx_req
+        % Protezione: cos(theta) non deve scendere troppo (anche se limitiamo theta a 20°)
         T_base = Fx_req;
-        T_safe_mix = max(T_base, 2.0); % Prevenzione singolarità (T_TOT > 0)
         
-        % -------------------------------------------------
-        % FASE A: TILT (Pitch & Roll) - Equazioni Esatte
-        % -------------------------------------------------
-        arg_pitch = M_y_req / (T_safe_mix * d_mx);
-        arg_pitch = max(-1, min(1, arg_pitch));
-        tilt_pitch = asin(arg_pitch); % Angolo collettivo (alpha)
+        % Differenziale di Spinta per Imbardata
+        dT_yaw = M_z_req / (2 * d_my);
         
-        arg_roll = M_x_req / (T_safe_mix * d_my);
-        arg_roll = max(-1, min(1, arg_roll));
-        tilt_roll = asin(arg_roll); % Angolo differenziale (delta)
-        
-        % -------------------------------------------------
-        % FASE B: YAW (Differenziale di Spinta con Disaccoppiamento)
-        % -------------------------------------------------
-        % Implementazione dell'equazione esatta:
-        % Delta_T = M_z_req / (d_my * cos(alpha) * cos(delta)) + T_tot * tan(alpha) * tan(delta)
-        
-        % Protezione Singolarità Matematiche:
-        % Limitiamo gli angoli usati in questa fase a un massimo di 80 gradi (~1.396 rad)
-        % per evitare divisioni per zero e tangenti infinite se il controllore satura a 90°.
-        limit_angle = deg2rad(80); 
-        alpha_safe = max(-limit_angle, min(limit_angle, tilt_pitch));
-        delta_safe = max(-limit_angle, min(limit_angle, tilt_roll));
-        
-        % Calcolo dei termini separati per chiarezza di debug
-        term_attuazione = M_z_req / (d_my * cos(alpha_safe) * cos(delta_safe));
-        term_disaccoppiamento = T_safe_mix * tan(alpha_safe) * tan(delta_safe);
-        
-        % Differenziale totale richiesto e sua ripartizione a metà sui due motori
-        Delta_T_tot = term_attuazione + term_disaccoppiamento;
-        dT_yaw = Delta_T_tot / 2;
-        
-        % Calcolo spinte individuali
         T_left  = (T_base / 2) + dT_yaw;
         T_right = (T_base / 2) - dT_yaw;
+
+        if T_left > 100; T_left = 100; end
+        if T_right > 100; T_right = 100; end 
         
-        % Saturazioni motori [0, 100]
-        T_left  = max(0, min(100, T_left));
-        T_right = max(0, min(100, T_right));
+        % Protezione saturazione motori (minimo 0)
+        T_left  = max(0, T_left);
+        T_right = max(0, T_right);
         
-        % -------------------------------------------------
-        % FASE C: Combinazione Output Servi
-        % -------------------------------------------------
-        ts1 = tilt_pitch - tilt_roll; % theta_1 = alpha - delta
-        ts2 = tilt_pitch + tilt_roll; % theta_2 = alpha + delta
+        % Ricalcoliamo T_base effettivo dopo le saturazioni per coerenza nel tilt
+        T_base_eff = T_left + T_right;
+       
+        % PROTEZIONE SINGOLARITÀ MIXER
+        % Se la spinta è nulla, non possiamo generare momenti col tilt.
+        % Usiamo un valore "fittizio" al denominatore per evitare divisione per zero.
+        T_safe_mix = max(T_base_eff, 2.0); % Soglia minima 2 Newton
+        
+        % Angolo di tilt collettivo per il Pitch
+        tilt_pitch = M_y_req / (T_safe_mix * d_mx);
+
+        % Angolo di tilt differenziale per il Roll
+        tilt_roll = M_x_req / (T_safe_mix * d_my);
+        
+        % Combinazione Output Servi
+        ts1 = tilt_pitch - tilt_roll; 
+        ts2 = tilt_pitch + tilt_roll; 
         
         % Saturazione Servi (Limiti meccanici -45 a +80 gradi)
         ts1 = max(deg2rad(-45), min(deg2rad(80), ts1));
@@ -422,13 +386,15 @@ switch test_id
         % =================================================
         % 7. OUTPUT FINALE (U)
         % =================================================
-        u(1) = sqrt(T_right / params.k); 
-        u(2) = sqrt(T_left / params.k);  
-        u(3) = 0;                        
-        u(4) = ts1;                      
-        u(5) = ts2;                      
-        u(6) = 0;                        
+        
+        u(1) = sqrt(T_right / params.k); % Motore 1 (DX)
+        u(2) = sqrt(T_left / params.k);  % Motore 2 (SX)
+        u(3) = 0;                        % Motore Coda spento in crociera
+        u(4) = ts1;                      % Tilt 1
+        u(5) = ts2;                      % Tilt 2
+        u(6) = 0;                        % Tilt Coda (inutile se spento)
         u(7) = 0;
+
 
     otherwise
         fprintf("Controllo selezionato non trovato\n");
