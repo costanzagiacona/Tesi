@@ -1,5 +1,5 @@
 \section{Sistema Dinamico}
-Definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentano l'evoluzione temporale dello stato.
+Definite le equazioni che descrivono le forze e i momenti agenti sul tricottero, è necessario tradurre il modello matematico in un sistema dinamico, ovvero un insieme di equazioni differenziali che rappresentino l'evoluzione temporale dello stato.
 \\Le equazioni di stato sono formulate come:
 \begin{equation}
     \dot{x}(t) = f(x(t), u(t), t)
@@ -123,7 +123,7 @@ sono date da:
 \end{bmatrix}
 =
 \frac{1}{m}\left(
-\mathbf{F}_{\text{TOT}} -
+\bm{F}_{\text{TOT}} -
 \begin{bmatrix}
 x_{10} \\ x_{11} \\ x_{12}
 \end{bmatrix}
@@ -142,7 +142,7 @@ x_4 \\ x_5 \\ x_6
 dove dalla \ref{eq:f_tot} :
 
 \begin{equation*}
-\mathbf{F}_{TOT} = \mathbf{F}_{TH} + \mathbf{F}_{GRAV} + \mathbf{F}_{AERO} = 
+\bm{F}_{TOT} = \bm{F}_{TH} + \bm{F}_{GRAV} + \bm{F}_{AERO} = 
 \end{equation*}
 
 \begin{equation*}
@@ -255,7 +255,7 @@ sono date da:
 \end{bmatrix}
 =
 \frac{1}{I_B}\left(
-\mathbf{M}_{\text{TOT}} -
+\bm{M}_{\text{TOT}} -
 \begin{bmatrix}
 x_{10} \\ x_{11} \\ x_{12}
 \end{bmatrix}

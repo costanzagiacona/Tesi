@@ -58,24 +58,31 @@
     
     {\LARGE \textbf{UNIVERSITÀ DEGLI STUDI DI ROMA\\TOR VERGATA}} \\
     \vspace{0.5cm}
-    {\Large Macroarea di Ingegneria} \\
-    \vspace{0.2cm}
-    {\large Corso di Studio in Ingegneria dell'Automazione} \\
-    \vspace{2cm}
+    {\Large \textbf{MACROAREA DI INGEGNERIA}} \\
+    \vspace{0.5cm}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.77\textwidth]{tor_vergata.png}
+    \end{figure}
+    {\Large \textbf{Corso di Studio in}} \\
+    {\Large Ingegneria dell'Automazione}\\
+    \vspace{1cm}
 
-    {\Large Tesi di Laurea in \\ Analisi e Sintesi di Sistemi Non Lineari} \\
-    \vspace{2cm}
+    {\Large \textbf{Tesi di Laurea in} \\ Analisi e Sintesi di Sistemi Non Lineari} \\
+    \vspace{1cm}
 
-    {\Huge \textbf{}} \\
+    {\Large \textbf{Titolo} \\ Modellazione dinamica e design del controllo per un VTOL innovativo}
+
     
-    \vspace{3cm}
+    \vspace{2cm}
 
-    \begin{minipage}[t]{0.45\textwidth}
+    \begin{minipage}[t]{0.48\textwidth}
         \raggedright \large
         \textbf{Relatore:}\\
-        Chiar.mo Prof.\\ Daniele Carnevale\\
+        Chiar.mo Prof. Daniele Carnevale\\
         \vspace{0.5cm}
         \textbf{Correlatore:}\\
+        Andrea Locatelli
         
     \end{minipage}
     \hfill
@@ -121,7 +128,7 @@
 
 % % --- SEZIONE 1: VERTICALE ---
 % \section{Panoramica} 
-\chapter{Architettura di Controllo Proposta}
+\chapter{Architettura di Controllo}
 \label{ch:panoramica}
 \input{capitoli/panoramica_controllo.tex}
 
@@ -135,14 +142,16 @@
 \label{ch:controllo_orizzontale}
 \input{capitoli/controllo_orizzontale.tex} 
 
-\chapter{Analisi di Lyapunov}
-\label{ch:dimostrazione}
-\input{capitoli/dimostrazione_SMC.tex}
+% \chapter{Analisi di Lyapunov}
+% \label{ch:dimostrazione}
+% \input{capitoli/dimostrazione_SMC.tex}
 
 % CAPITOLO 5
 \chapter{Analisi di Stabilità}
 \label{ch:stabilita}
+\input{capitoli/dimostrazione_SMC.tex}
 \input{capitoli/analisi_stabilita.tex}
+
 
 % % CAPITOLO 6 - Qui inseriamo il tuo controllo SMC
 % \chapter{Simulazioni}

@@ -21,11 +21,10 @@ Una delle sfide principali di questa configurazione risiede nella \textbf{sotto-
 \section{Architettura di Controllo}
 Per gestire la complessità del sistema e garantire stabilità e prestazioni elevate, è stata adottata un'architettura di controllo a \textbf{loop in cascata}. Questa strategia permette di disaccoppiare la dinamica traslazionale (lenta) da quella rotazionale (veloce), semplificando la sintesi dei controllori.
 \\L'architettura, illustrata nello schema a blocchi di Figura \ref{fig:control_scheme_horizontal}, si suddivide in tre blocchi funzionali principali:
-\begin{enumerate}
+\begin{itemize}
     \item \textbf{Outer Loop:} Opera a bassa frequenza e ha il compito di calcolare la spinta propulsiva ($F_{x,req}$) e l'angolo $\theta_{des}$ di riferimento per il mantenimento di quota.
     \item \textbf{Inner Loop:} Opera ad alta frequenza e stabilizza l'assetto del drone ($\phi, \theta, \psi$) inseguendo i riferimenti generati dal loop esterno o imposti per il volo livellato.
-    \item \textbf{Motor Mixing Algorithm:} Traduce le richieste di forza e momento in comandi fisici per gli attuatori (velocità dei motori $\omega_i$ e angoli dei servomotori $\delta_i$).
-\end{enumerate}
+\end{itemize}
 
 % \begin{figure}[htbp]
 %     \centering
@@ -127,7 +126,7 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
 % \end{figure}
 
 \subsection{Schema a blocchi dell'architettura di controllo}
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{controllo_orizzontale/schema_blocchi_H_bianco.png}
     \caption{Schema a blocchi del controllo orizzontale.}
@@ -197,9 +196,9 @@ dove $u_b, v_b, w_b$ sono le componenti della velocità nel sistema solidale al 
 
 
 
-La forza aerodinamica risultante nel Wind Frame, composta da resistenza ($D$), portanza ($L$) e forza laterale ($Y$), viene proiettata nel Body Frame tramite la matrice di rotazione $\mathbf{R}_{wb}(\alpha, \beta)$:
+La forza aerodinamica risultante nel Wind Frame, composta da resistenza ($D$), portanza ($L$) e forza laterale ($Y$), viene proiettata nel Body Frame tramite la matrice di rotazione $\bm{R}_{wb}(\alpha, \beta)$:
 \begin{equation}
-    \mathbf{F}_b = \mathbf{R}_{wb} \begin{bmatrix} -D \\ Y \\ -L \end{bmatrix} = \mathbf{R}_{wb} \begin{bmatrix} -\frac{1}{2}\rho V_a^2 S C_D \\ \frac{1}{2}\rho V_a^2 S C_Y \\ -\frac{1}{2}\rho V_a^2 S C_L \end{bmatrix}
+    \bm{F}_b = \bm{R}_{wb} \begin{bmatrix} -D \\ Y \\ -L \end{bmatrix} = \bm{R}_{wb} \begin{bmatrix} -\frac{1}{2}\rho V_a^2 S C_D \\ \frac{1}{2}\rho V_a^2 S C_Y \\ -\frac{1}{2}\rho V_a^2 S C_L \end{bmatrix}
 \end{equation}
 
 Nel calcolo della spinta richiesta lungo l'asse $x$ (Eq. \ref{eq:fx}), il termine di feedforward $\hat{D}_x$ non considera quindi solo il drag parassita del corpo, ma l'intera proiezione della forza aerodinamica totale lungo l'asse longitudinale. Questo permette di compensare preventivamente la perdita di spinta dovuta all'incremento di portanza o a variazioni dell'angolo di attacco durante le manovre di variazione quota.
@@ -216,26 +215,33 @@ Il loop interno (\textit{Inner Loop}) governa la dinamica rotazionale veloce del
 Si assume di poter controllare i tre assi di rotazione (Beccheggio, Rollio, Imbardata) indipendentemente, demandando a una matrice di miscelazione (\textit{Mixer}) il compito di combinare i comandi per gli attuatori.
 
 
-\subsection{Dinamica di Beccheggio (Pitch)}
-Il controllo del pitch è critico per la stabilità longitudinale e il mantenimento della quota. Dato l'errore $e_\theta = \theta_{ref} - \theta$, il momento richiesto $M_y$ è calcolato tramite un controllore PID:
+\subsection{Controllori PID}
+
+Il controllo dell'orientamento del velivolo è affidato a una struttura di controllo di tipo \textbf{Proporzionale-Derivativo (PD)}, applicata indipendentemente ai tre assi principali. La scelta di omettere l'azione integrale è giustificata dalla necessità di massimizzare la prontezza di risposta del sistema e dalla natura intrinsecamente stabile della dinamica angolare considerata.
+
+Il controllore di \textit{pitch} prende come riferimento l'angolo calcolato dal controllo di quota nel loop esterno; questo evidenzia il forte accoppiamento tra i due.
+\\Quello di \textit{yaw} insegue l'angolo calcolato dal controllo su $y$ per riallineare il velivolo all'asse longituidinale del sistema inerziale.
+
+Dati gli errori di assetto definiti come:
 \begin{equation}
-    M_y = K_{P_\theta} e_\theta + K_{I_\theta} \int e_\theta dt + K_{D_\theta} (q_{ref} - q)
+    e_\phi = \phi_{ref} - \phi, \quad e_\theta = \theta_{ref} - \theta, \quad e_\psi = \psi_{ref} - \psi
 \end{equation}
-Si assuma $q_{ref} = 0$ per stabilizzare il velivolo in assetto statico. L'utilizzo della velocità angolare $q$ (misurata dal giroscopio) come derivata dell'errore permette di smorzare efficacemente le oscillazioni senza amplificare eccessivamente il rumore derivante dal calcolo numerico della derivata di $\theta$.
 
-\subsection{Dinamica di Rollio e Imbardata (Roll \& Yaw)}
-Per gli assi di rollio e imbardata, la struttura di controllo adottata è di tipo Proporzionale-Derivativo (PD). La scelta di omettere il termine integrale è motivata dalla necessità di una risposta rapida e dalla minore presenza di disturbi costanti su questi assi rispetto a quello longitudinale.
+i momenti di comando nel sistema di riferimento \textit{Body} sono definiti come:
+\begin{align}
+    M_x &= K_{P_\phi} e_\phi - K_{D_\phi} p \\
+    M_y &= K_{P_\theta} e_\theta - K_{D_\theta} q \\
+    M_z &= K_{P_\psi} e_\psi - K_{D_\psi} r
+\end{align}
 
-I momenti di comando sono definiti come:
-\begin{equation}
-    M_x = K_{P_\phi} (\phi_{des} - \phi) - K_{D_\phi} p
-\end{equation}
-\begin{equation}
-    M_z = K_{P_\psi} (\psi_{des} - \psi) - K_{D_\psi} r
-\end{equation}
-dove $p, r$ sono le velocità angolari nel sistema di riferimento \textit{Body}. 
+L'azione derivativa è implementata mediante il feedback diretto delle velocità angolari $p, q, r$ misurate dai giroscopi di bordo, anziché tramite la derivazione temporale degli angoli di Eulero. Questa scelta è motivata dal fatto che la dinamica del corpo rigido (Equazioni di Eulero) è intrinsecamente legata alle velocità nel sistema \textit{Body}. 
 
-
+L'impiego di $p, q, r$ garantisce:
+\begin{itemize}
+    \item \textbf{Linearità del Damping:} Si agisce direttamente sulle variabili che compongono il vettore del momento angolare, garantendo uno smorzamento più efficace delle oscillazioni transitorie.
+    \item \textbf{Integrità del Segnale:} Si evita l'amplificazione del rumore derivante dalla derivazione numerica e dalle singolarità cinematiche degli angoli di Eulero.
+\end{itemize}
+Per angoli di assetto contenuti ($\theta, \phi < 20^\circ$), l'approssimazione $\dot{\phi} \approx p, \dot{\theta} \approx q, \dot{\psi} \approx r$ risulta matematicamente accettabile e fisicamente superiore in termini di stabilità del ciclo di controllo.
 
 \subsection{Separazione delle Scale Temporali}
 Affinché l'architettura a cascata sia stabile, i guadagni $K_{P_{\phi,\theta,\psi}}$ sono stati tarati per garantire una banda passante superiore rispetto ai loop di posizione. Questo permette di considerare la dinamica dell'assetto come istantanea dal punto di vista dell'Outer Loop, semplificando il problema della sintesi dei controllori di navigazione.
@@ -259,7 +265,7 @@ In configurazione di volo avanzato, i motori generano spinta propulsiva lungo l'
 % ALGORITMO DI MIXING
 % =================================================
 \section{Motor Mixing Algorithm}
-L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo e l'hardware del drone. Il suo compito è trasformare le richieste di forza propulsiva ($F_{x}$) e i momenti di assetto ($\mathbf{M}$) nei segnali specifici per i regolatori di velocità dei motori e per i servocomandi dei meccanismi di \textit{tilt}. 
+L'algoritmo di mixing rappresenta l'interfaccia finale tra le leggi di controllo e l'hardware del drone. Il suo compito è trasformare le richieste di forza propulsiva ($F_{x}$) e i momenti di assetto ($\bm{M}$) nei segnali specifici per i regolatori di velocità dei motori e per i servocomandi dei meccanismi di \textit{tilt}. 
 
 In regime di crociera, il mixer gestisce una configurazione bimotore con rotori basculanti indipendenti, mantenendo disattivo il propulsore di coda. Per gestire correttamente gli accoppiamenti dinamici non lineari, l'algoritazione procede prima al calcolo degli angoli di tilt e successivamente alla ripartizione differenziale della spinta.
 

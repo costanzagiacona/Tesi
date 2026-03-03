@@ -1,20 +1,20 @@
-\section{Strategia di Linearizzazione Numerica}
-L'analisi di stabilità locale del velivolo VTOL richiede lo studio della matrice dinamica del sistema in un intorno infinitesimo di una specifica condizione di equilibrio. 
+\section{Analisi di stabilità tramite linearizzazione}
+L'analisi di stabilità locale del velivolo VTOL è stata effettuata attraverso la linearizzazione del sistema dinamico a ciclo chiuso nell'intorno di un punto di equilibrio diverso per le due fasi di volo.
 
-Data l'elevata non-linearità del modello aerodinamico, l'impiego di matrici di rotazione tridimensionali e la dimensionalità dello spazio di stato, il calcolo analitico dello Jacobiano risulta estremamente oneroso e soggetto a errori algebrici. Si è pertanto optato per una \textbf{linearizzazione numerica differenziale ad anello chiuso}. In questo approccio, il velivolo e la legge di controllo vengono trattati come un unico sistema dinamico autonomo:
+Data l'elevata non-linearità del modello aerodinamico e la dimensionalità dello spazio di stato, il calcolo analitico dello Jacobiano risulta estremamente oneroso e soggetto a errori algebrici. Si è pertanto optato per una \textbf{linearizzazione numerica differenziale ad anello chiuso}. In questo approccio, il velivolo e la legge di controllo vengono trattati come un unico sistema dinamico autonomo:
 \begin{equation}
     \dot{x} = f_{cl}(x) = f(x, u(x))
 \end{equation}
 dove $x \in \mathbb{R}^n$ è il vettore di stato e $f_{cl}$ rappresenta il campo vettoriale complessivo. La matrice d'anello chiuso $A_{cl}$ viene estratta sollecitando numericamente il sistema con perturbazioni simmetriche e misurandone la risposta dinamica.
 
-\section{Definizione dello Spazio di Stato}
+\subsection{Definizione dello Spazio di Stato}
 La dimensione $n$ dello spazio di stato non è costante, ma evolve in funzione della fase di volo per riflettere i cambiamenti nell'architettura del controllore:
 \begin{itemize}
-    \item \textbf{Hovering ($n=26$):} In questa fase si utilizza una logica Proporzionale-Derivativa (PD) o Sliding Mode. Poiché l'azione di controllo dipende esclusivamente dall'errore istantaneo e dalla sua derivata, il controllore non introduce nuovi stati dinamici. Il vettore comprende i 12 stati cinematici del corpo rigido e i 14 stati associati alla dinamica del secondo ordine dei 7 attuatori.
+    \item \textbf{Hovering ($n=26$):} In questa fase il controllore Sliding Mode si comporta come un Proporzionale-Derivativo (PD). Poiché l'azione di controllo dipende esclusivamente dall'errore istantaneo e dalla sua derivata, il controllore non introduce nuovi stati dinamici. Il vettore comprende i 12 stati cinematici del corpo rigido e i 14 stati associati alla dinamica del secondo ordine dei 7 attuatori.
     \item \textbf{Crociera ($n=28$):} L'inseguimento della velocità e della quota richiede l'azzeramento dell'errore a regime tramite un'azione integrale (PID). Ogni integratore introduce un'equazione differenziale aggiuntiva ($\dot{\sigma} = e$), portando la dimensionalità a $n=28$ (\textit{Augmented State Space}).
 \end{itemize}
 
-\section{Regolarizzazione del Modello}
+\subsection{Regolarizzazione del Modello}
 Affinché lo sviluppo in serie di Taylor alla base della linearizzazione sia matematicamente ben posto, il campo vettoriale $f_{cl}(x)$ deve essere di classe $C^1$ nel punto di equilibrio. Per soddisfare tale requisito, il modello è stato regolarizzato esclusivamente per la fase di estrazione dello Jacobiano:
 \begin{enumerate}
     \item \textbf{Rimozione delle saturazioni:} Assumendo l'analisi valida per perturbazioni infinitesime $\delta x$, si garantisce che gli attuatori operino nel loro regime lineare, rendendo superflue le funzioni di saturazione.
@@ -25,28 +25,39 @@ Affinché lo sviluppo in serie di Taylor alla base della linearizzazione sia mat
     Tale equivalenza dimostra che il controllo non lineare, nell'intorno dell'origine, si comporta come un guadagno lineare equivalente $K/\Phi$, garantendo la differenziabilità richiesta.
 \end{enumerate}
 
-\section{Metodo delle Differenze Finite Centrali}
+\subsection{Metodo delle Differenze Finite Centrali}
 Per il calcolo degli elementi della matrice Jacobiana $A_{cl}$, si è scelto il metodo delle \textbf{differenze finite centrali} per superare il limite di accuratezza del primo ordine tipico delle differenze in avanti.
 Valutando lo sviluppo di Taylor della funzione $f_i(x)$ in un intorno perturbato simmetricamente $x_j \pm h$:
 \begin{equation}
     A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
 \end{equation}
-Sottraendo le espansioni di Taylor, i termini contenenti le derivate di ordine pari si elidono, garantendo un errore di troncamento quadratico $\mathcal{O}(h^2)$. Il passo di perturbazione è stato impostato a $h = 10^{-6}$, valore ottimale per minimizzare l'errore di troncamento senza incorrere in errori di arrotondamento numerico (\textit{round-off error}).
+Sottraendo le espansioni di Taylor, i termini contenenti le derivate di ordine pari si elidono, garantendo un errore di troncamento quadratico $\mathcal{O}(h^2)$. Il passo di perturbazione è stato impostato a $h = 10^{-6}$, valore ottimale per minimizzare l'errore di troncamento senza incorrere in errori di arrotondamento numerico.
 
-\section{Analisi Modale e Matrice di Partecipazione}
-Sebbene il segno della parte reale degli autovalori ($\text{Re}(\lambda_i) < 0$) sia sufficiente per decretare la stabilità, esso non fornisce informazioni sull'accoppiamento fisico tra variabili di stato e modi dinamici. 
-Si è quindi implementata l'analisi tramite la \textbf{Matrice di Partecipazione} $P$. Definiti la matrice degli autovettori destri $V$ e quella degli autovettori sinistri $W = V^{-1}$, il fattore di partecipazione adimensionale tra lo stato $k$-esimo e il modo $i$-esimo è:
+\subsection{Analisi Modale e Matrice di Partecipazione}
+Sebbene il segno della parte reale degli autovalori ($\text{Re}(\lambda_i) < 0$) sia sufficiente per decretare la stabilità asintotica, esso non fornisce informazioni sull'accoppiamento fisico tra le variabili di stato e i modi dinamici. 
+Si è quindi implementata l'analisi tramite la \textbf{Matrice di Partecipazione} $P$, adottando l'approccio della \textit{Selective Modal Analysis} (SMA) proposto da \cite{verghese1982selective}. 
+
+Siano $V$ e $W^H$ rispettivamente le matrici degli autovettori destri e sinistri, normalizzate in modo che $W^H V = I$. Il fattore di partecipazione adimensionale tra lo stato $k$-esimo e il modo $i$-esimo è definito come:
 \begin{equation}
-    P_{ki} = \left| V_{ki} W_{ik} \right|
+    P_{ki} = w_{ki}^* v_{ki}
 \end{equation}
-L'estrazione di questa matrice ha permesso di validare la \textbf{separazione delle frequenze} imposta dal controllo: i modi lenti ($\sim 10^{-1}$ rad/s) risultano dominati dagli stati di posizione, i modi intermedi ($\sim 10^{1}$ rad/s) dalla dinamica di assetto, e i modi ad alta frequenza ($\sim 10^{2}$ rad/s) dagli attuatori.
+dove la somma $\sum_{k=1}^n P_{ki} = 1$ garantisce una misura relativa del contributo di ogni stato all'autovalore $\lambda_i$. 
+
+L'estrazione di $P$ ha permesso di validare la \textbf{separazione spettrale} imposta dal controllo. Come mostrato in Fig. \ref{fig:partecipazione_hover}, si osserva una netta corrispondenza tra stati e scale temporali:
+\begin{itemize}
+    \item \textbf{Modi Lenti} ($\sim 10^{-1}$ rad/s): dominati dagli stati di posizione e velocità lineare;
+    \item \textbf{Modi Intermedi} ($\sim 10^{1}$ rad/s): legati alla dinamica di assetto (angoli di Eulero e velocità angolari);
+    \item \textbf{Modi ad Alta Frequenza} ($\sim 10^{2}$ rad/s): associati esclusivamente agli stati degli attuatori.
+\end{itemize}
+Tale distribuzione conferma che la gerarchia dei cicli di controllo è fisicamente coerente e che le dinamiche veloci dei motori risultano opportunamente disaccoppiate dai modi del corpo rigido.
+
 \clearpage
 
 \section{Analisi della Condizione di Hovering}
-La prima fase della validazione riguarda la condizione di volo stazionario (\textit{hovering}). In questo scenario, il sistema deve sostenere il proprio peso e mantenere l'assetto nullo, garantendo la stabilità locale a fronte di piccole perturbazioni.
+La prima fase della linearizzazione riguarda la condizione di volo stazionario (\textit{hovering}). In questo scenario, il sistema deve sostenere il proprio peso e mantenere l'assetto nullo, garantendo la stabilità locale a fronte di piccole perturbazioni.
 
 \subsection{Definizione del Punto di Equilibrio}
-Il punto di equilibrio $x_{eq} \in \mathbb{R}^{26}$ è stato calcolato imponendo la stazionarietà delle equazioni del moto ($\dot{x} = 0$). Per una quota di riferimento $z = -10$ m, lo stato di equilibrio prevede i tilt anteriori in posizione verticale ($\theta_{1,2} = \pi/2$), mentre l'angolo del rotore di coda $\theta_3$ è ricavato per bilanciare i momenti longitudinali.
+Il punto di equilibrio $x_{eq} \in \mathbb{R}^{26}$ è stato calcolato imponendo la stazionarietà delle equazioni del moto ($\dot{x} = 0$). Per una quota di riferimento $z = -10$ m, lo stato di equilibrio prevede i rotori anteriori in posizione verticale ($\theta_{1,2} = \pi/2$), mentre l'angolo del rotore di coda $\theta_3$ è ricavato per bilanciare i momenti longitudinali.
 
 Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la spinta totale $T_{tot}$ eguagli il peso $mg$, con una ripartizione tale da garantire momento nullo al baricentro.
 
@@ -59,7 +70,7 @@ Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la 
     \renewcommand{\arraystretch}{1.3} % Migliora la leggibilità
     \begin{tabularx}{\textwidth}{llllX}
         \toprule
-        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Unità} & \textbf{Valore di Trim} \\
+        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Unità} & \textbf{Valore di Equilibrio} \\
         \midrule
         \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati Cinematici (Corpo Rigido)}} \\
         $1 \dots 2$     & $x, y$           & Posizione piano orizzontale & [m]            & $0$ \\
@@ -72,19 +83,13 @@ Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la 
         \\
         \midrule
         \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati degli Attuatori (Servomotori e Rotori)}} \\
-        $13, 15$        & $\alpha_{1,2}$   & Tilt motori anteriori      & [rad]          & $\pi/2$ \\
+        $13, 15$        & $\theta_{1,2}$   & Tilt motori anteriori      & [rad]          & $\pi/2$ \\
         $17$            & $\theta_{3}$     & Tilt motore di coda        & [rad]          & $\theta_{3,ideal}$ \\
-        $14, 16, 18 \dots$ & $\dot{\alpha}, \dots$ & Derivate stati interni & [rad/s]     & $0$ \\
+        $14, 16, 18 \dots$ & $\dot{\theta}, \dots$ & Velocità di tilt & [rad/s]     & $0$ \\
         $21, 23, 25$    & $\omega_{1,2,3}$ & Velocità angolari rotori   & [rad/s]        & $\omega_{trim, i}$ \\
         $22, 24, 26$    & $\dot{\omega}_{i}$ & Dinamica motori (II ordine) & [rad/s$^2$]  & $0$ \\
         \bottomrule
     \end{tabularx}
-    
-    \vspace{0.5cm} % Sostituisce il vecchio errore \pave
-    \begin{minipage}{\textwidth}
-        \footnotesize
-        \textit{Nota:} Gli stati degli attuatori includono la dinamica del secondo ordine; all'equilibrio, le derivate prime sono nulle e le uscite corrispondono ai valori di regime necessari per il sostentamento del peso.
-    \end{minipage}
 \end{table}
 
 \subsection{Analisi della Stabilità e Matrice di Partecipazione}
@@ -105,21 +110,21 @@ L'analisi della \textbf{Matrice di Partecipazione} (Fig. \ref{fig:partecipazione
 \end{itemize}
 
 \section{Analisi della Condizione di Crociera}
-La seconda fase della validazione riguarda il volo orizzontale a velocità costante ($v_x = 25$ m/s). In questa configurazione, il velivolo transita in una modalità di volo alare dove la portanza è generata prevalentemente dalle superfici aerodinamiche, mentre i propulsori anteriori forniscono la spinta necessaria a vincere la resistenza all'avanzamento.
+La seconda fase della linearizzazione riguarda il volo orizzontale a velocità costante ($v_x = 25$ m/s). In questa configurazione, il velivolo transita in una modalità di volo alare dove la portanza è generata prevalentemente dalle superfici aerodinamiche, mentre i propulsori anteriori forniscono la spinta necessaria a vincere la resistenza all'avanzamento.
 
 \subsection{Definizione del Punto di Equilibrio}
-Il punto di equilibrio $x_{eq} \in \mathbb{R}^{28}$ per la fase di crociera è stato calcolato imponendo una velocità di avanzamento di regime e una quota costante. A differenza della fase di hovering, i tilt dei motori anteriori sono orientati parallelamente all'asse longitudinale del corpo ($\theta_{1,2} = 0$), mentre il rotore di coda è spento ($\omega_3 = 0$), delegando il controllo del beccheggio alla combinazione tra spinta differenziale e momenti aerodinamici.
+Il punto di equilibrio $x_{eq} \in \mathbb{R}^{28}$ per la fase di crociera è stato calcolato imponendo una velocità di avanzamento di regime e una quota costante. A differenza della fase di hovering, i motori anteriori sono orientati parallelamente all'asse longitudinale del corpo ($\theta_{1,2} = 0$), mentre il rotore di coda è spento ($\omega_3 = 0$), delegando il controllo del beccheggio all'inclinazione collettiva dei rotori.
 
 \begin{table}[htbp]
     \centering
-    \caption{Valori di Trim per la condizione di Crociera ($n=28$).}
+    \caption{Valori di Equilibrio per la condizione di Crociera ($n=28$).}
     \vspace{0.3cm}
     \label{tab:trim_cruise}
     \small
     \renewcommand{\arraystretch}{1.3}
     \begin{tabular}{llll}
         \hline
-        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Valore di Trim} \\
+        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Valore di Eauilibrio} \\
         \hline
         3             & $z$              & Quota di riferimento           & $-10$ m \\
         4             & $u$              & Velocità di crociera ($v_x$)   & $25$ m/s \\
@@ -139,7 +144,6 @@ L'analisi della matrice di partecipazione chiarisce la natura di tale polo:
 \begin{itemize}
     \item \textbf{Modo nullo ($\lambda = 0$):} Presenta una partecipazione del 100\% associata allo stato $x(1)$, ovvero la posizione inerziale $X$.
     \item \textbf{Giustificazione fisica:} Tale risultato è una diretta conseguenza della \textit{invarianza per traslazione} del modello e della legge di controllo implementata. Poiché il controllore agisce sulla velocità di avanzamento e non sulla posizione assoluta, il sistema non possiede una forza di richiamo verso una coordinata $X$ specifica. 
-    \item \textbf{Ottimizzazione del modello:} Lo stato $x(28)$ (precedentemente associato all'integrale del beccheggio) è stato rimosso in quanto introduceva un'artificiale stabilità marginale senza apportare benefici dinamici significativi, semplificando la dimensionalità del sistema a $n=28$ senza compromettere la precisione di inseguimento.
 \end{itemize}
 
 In conclusione, sebbene il sistema non sia asintoticamente stabile in senso stretto a causa della deriva libera sulla posizione longitudinale, esso risulta \textbf{asintoticamente stabile rispetto a tutte le variabili di stato rilevanti per la missione di volo} (velocità, quota e assetto).

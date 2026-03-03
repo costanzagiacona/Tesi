@@ -1,9 +1,9 @@
 # Fdb version 4
-["pdflatex"] 1770489427.41154 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1770489433.81227 0
+["pdflatex"] 1772450869.89156 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" "intermedia.pdf" "intermedia" 1772450878.41822 0
   "../../img/VTOL.png" 1769677789 950489 e265faf55272d7e8a865b86254410141 ""
-  "../../img/controllo_verticale/angoli.png" 1769964715 59911 5426e801c1c3f5346c63c303e93c27fb ""
-  "../../img/controllo_verticale/pos_vel.png" 1769964645 77524 8e369bdb4fb04096036a76a39b907ec2 ""
-  "../../img/controllo_verticale/thrust.png" 1769964794 64933 67d6c80f3ebfb6799e7a3a4a840ccf60 ""
+  "../../img/controllo_verticale/angoli.png" 1771927064 54755 3291dd24a72d5643a5af966a13441d3f ""
+  "../../img/controllo_verticale/pos_vel.png" 1771926946 74715 dfd99843d171060233cdab74317988b3 ""
+  "../../img/controllo_verticale/thrust.png" 1771927106 58705 851af1b167bd75e5aec61b97768af139 ""
   "../../img/controllo_verticale/tilt.png" 1769964931 71763 df180d8fdca6021065180446338e139a ""
   "../../img/dragonfly.png" 1769677600 133343 ebc5ce23384ded5fbdd5509df34bf809 ""
   "../../img/fixed_wing.png" 1769340167 2619757 85488331d3e7e63436e3512f685bed87 ""
@@ -14,7 +14,7 @@
   "../../img/sist_rif_body.jpg" 1769594405 64200 2694b23ab9f9a33d616add3b2c1e3d76 ""
   "../../img/sist_rif_global.png" 1769595073 20364 d3355b13c70a11d4e4c67bf1a60f00db ""
   "../../img/tricopter_2D.png" 1769597444 108737 d2b6b6a008aaa1821da6517e89ab949e ""
-  "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1769963964 81088 29d6fa367ac022d1b69251d68c0742e6 ""
+  "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1771685046 82686 2381c3433487640bf26aa76a10db7eb2 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc" 1256929440 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -305,11 +305,11 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/intermedia.tex" 1770489419 77497 bdcaa29a6480169e789afc27f67ea7dc ""
-  "intermedia.aux" 1770489433 11661 a5e855b94d983197936cc5e4c27f6808 "pdflatex"
-  "intermedia.nav" 1770489433 7411 66b41d79f84dd80582789013d8f0a8ed "pdflatex"
-  "intermedia.out" 1770489433 1199 df1e4fc8155246d852e10148bd8f6550 "pdflatex"
+  "intermedia.aux" 1772450877 11661 a5e855b94d983197936cc5e4c27f6808 "pdflatex"
+  "intermedia.nav" 1772450877 7411 66b41d79f84dd80582789013d8f0a8ed "pdflatex"
+  "intermedia.out" 1772450877 1199 df1e4fc8155246d852e10148bd8f6550 "pdflatex"
   "intermedia.tex" 1770489419 77497 bdcaa29a6480169e789afc27f67ea7dc ""
-  "intermedia.toc" 1770489433 518 3a5b507f1a7328b31c86668b712b674e "pdflatex"
+  "intermedia.toc" 1772450877 518 3a5b507f1a7328b31c86668b712b674e "pdflatex"
   (generated)
   "intermedia.aux"
   "intermedia.log"

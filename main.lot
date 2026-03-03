@@ -3,14 +3,13 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Variabili di stato e significato fisico}}{27}{table.3.1}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces ingressi di controllo del tricottero UAV VTOL}}{28}{table.3.2}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Variabili di stato e significato fisico}}{28}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces ingressi di controllo del tricottero UAV VTOL}}{29}{table.3.2}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$).}}{78}{table.7.1}%
+\contentsline {table}{\numberline {7.2}{\ignorespaces Valori di Equilibrio per la condizione di Crociera ($n=28$).}}{80}{table.7.2}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$).}}{77}{table.8.1}%
-\contentsline {table}{\numberline {8.2}{\ignorespaces Valori di Trim per la condizione di Crociera ($n=28$).}}{79}{table.8.2}%
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {9.1}{\ignorespaces Deviazioni standard ($\sigma $) per la perturbazione degli stati iniziali nei tre scenari di test.}}{82}{table.9.1}%
+\contentsline {table}{\numberline {8.1}{\ignorespaces Deviazioni standard ($\sigma $) per la perturbazione degli stati iniziali nei tre scenari di test.}}{83}{table.8.1}%

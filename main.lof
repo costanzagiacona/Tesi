@@ -8,46 +8,45 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Control logic in rotor mode. (a) roll, (b) pitch, (c) thrust, and (d) yaw.}}{9}{figure.2.2}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sistemi di riferimento.}}{12}{figure.3.1}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Configurazione dei rotori.}}{16}{figure.3.2}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{17}{figure.3.3}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Tilt rotore coda ($X_b, Y_b, Z_b$)}}{17}{figure.3.4}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Configurazione dei rotori.}}{15}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Tilt rotori anteriori ($X_b, Z_b$)}}{16}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Tilt rotore coda ($X_b, Y_b, Z_b$)}}{16}{figure.3.4}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Portanza e Resistenza lungo l'asse $X_b$}}{19}{figure.3.5}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Resistenza lungo l'asse $Z_b$}}{20}{figure.3.6}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo.}}{38}{figure.5.1}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Andamento velocità.}}{51}{figure.5.2}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{51}{figure.5.3}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Thrust generato dai rotori.}}{52}{figure.5.4}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{52}{figure.5.5}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Schema a blocchi del controllo.}}{39}{figure.5.1}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Andamento velocità.}}{52}{figure.5.2}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{52}{figure.5.3}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Thrust generato dai rotori.}}{53}{figure.5.4}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{53}{figure.5.5}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Configurazione di crociera.}}{54}{figure.6.1}%
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{55}{figure.6.2}%
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Posizioni lungo gli assi inerziali.}}{66}{figure.6.3}%
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Andamento delle velocità lineari.}}{66}{figure.6.4}%
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{67}{figure.6.5}%
-\contentsline {figure}{\numberline {6.6}{\ignorespaces Thrust generato dai rotori.}}{67}{figure.6.6}%
-\contentsline {figure}{\numberline {6.7}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{68}{figure.6.7}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Configurazione di crociera.}}{55}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Schema a blocchi del controllo orizzontale.}}{56}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Posizioni lungo gli assi inerziali.}}{67}{figure.6.3}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Andamento delle velocità lineari.}}{67}{figure.6.4}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Andamento angoli di Eulero e velocità angolari.}}{68}{figure.6.5}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Thrust generato dai rotori.}}{68}{figure.6.6}%
+\contentsline {figure}{\numberline {6.7}{\ignorespaces Andamento degli angoli $\theta _1$ e $\theta _2$.}}{69}{figure.6.7}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Analisi della partecipazione aggregata ai modi dinamici in hovering.}}{79}{figure.7.1}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Analisi della partecipazione aggregata ai modi dinamici in crociera.}}{81}{figure.7.2}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {8.1}{\ignorespaces Analisi della partecipazione aggregata ai modi dinamici in hovering.}}{78}{figure.8.1}%
-\contentsline {figure}{\numberline {8.2}{\ignorespaces Analisi della partecipazione aggregata ai modi dinamici in crociera.}}{80}{figure.8.2}%
-\addvspace {10\p@ }
-\contentsline {figure}{\numberline {9.1}{\ignorespaces Evoluzione delle posizioni durante il takeoff.}}{83}{figure.9.1}%
-\contentsline {figure}{\numberline {9.2}{\ignorespaces Evoluzione delle velocità lineari durante il takeoff.}}{83}{figure.9.2}%
-\contentsline {figure}{\numberline {9.3}{\ignorespaces Evoluzione degli angoli di Eulero durante il takeoff.}}{84}{figure.9.3}%
-\contentsline {figure}{\numberline {9.4}{\ignorespaces Evoluzione delle velocità angolari durante il takeoff.}}{84}{figure.9.4}%
-\contentsline {figure}{\numberline {9.5}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il takeoff.}}{85}{figure.9.5}%
-\contentsline {figure}{\numberline {9.6}{\ignorespaces Evoluzione del thrust generato dai rotori durante il takeoff.}}{85}{figure.9.6}%
-\contentsline {figure}{\numberline {9.7}{\ignorespaces Evoluzione delle posizioni in hovering.}}{86}{figure.9.7}%
-\contentsline {figure}{\numberline {9.8}{\ignorespaces Evoluzione delle velocità lineari in hovering.}}{87}{figure.9.8}%
-\contentsline {figure}{\numberline {9.9}{\ignorespaces Evoluzione degli angoli di Eulero in hovering.}}{87}{figure.9.9}%
-\contentsline {figure}{\numberline {9.10}{\ignorespaces Evoluzione delle velocità angolari in hovering.}}{88}{figure.9.10}%
-\contentsline {figure}{\numberline {9.11}{\ignorespaces Evoluzione degli angoli di tilt dei rotori in hovering.}}{88}{figure.9.11}%
-\contentsline {figure}{\numberline {9.12}{\ignorespaces Evoluzione del thrust generato dai rotori in hovering.}}{89}{figure.9.12}%
-\contentsline {figure}{\numberline {9.13}{\ignorespaces Evoluzione delle posizioni durante il volo traslato.}}{90}{figure.9.13}%
-\contentsline {figure}{\numberline {9.14}{\ignorespaces Evoluzione delle velocità lineari durante il volo traslato.}}{90}{figure.9.14}%
-\contentsline {figure}{\numberline {9.15}{\ignorespaces Evoluzione degli angoli di Eulero durante il volo traslato.}}{91}{figure.9.15}%
-\contentsline {figure}{\numberline {9.16}{\ignorespaces Evoluzione delle velocità angolari durante il volo traslato.}}{91}{figure.9.16}%
-\contentsline {figure}{\numberline {9.17}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il volo traslato.}}{92}{figure.9.17}%
-\contentsline {figure}{\numberline {9.18}{\ignorespaces Evoluzione del thrust generato dai rotori durante il volo traslato.}}{92}{figure.9.18}%
+\contentsline {figure}{\numberline {8.1}{\ignorespaces Evoluzione delle posizioni durante il takeoff.}}{84}{figure.8.1}%
+\contentsline {figure}{\numberline {8.2}{\ignorespaces Evoluzione delle velocità lineari durante il takeoff.}}{84}{figure.8.2}%
+\contentsline {figure}{\numberline {8.3}{\ignorespaces Evoluzione degli angoli di Eulero durante il takeoff.}}{85}{figure.8.3}%
+\contentsline {figure}{\numberline {8.4}{\ignorespaces Evoluzione delle velocità angolari durante il takeoff.}}{85}{figure.8.4}%
+\contentsline {figure}{\numberline {8.5}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il takeoff.}}{86}{figure.8.5}%
+\contentsline {figure}{\numberline {8.6}{\ignorespaces Evoluzione del thrust generato dai rotori durante il takeoff.}}{86}{figure.8.6}%
+\contentsline {figure}{\numberline {8.7}{\ignorespaces Evoluzione delle posizioni in hovering.}}{87}{figure.8.7}%
+\contentsline {figure}{\numberline {8.8}{\ignorespaces Evoluzione delle velocità lineari in hovering.}}{88}{figure.8.8}%
+\contentsline {figure}{\numberline {8.9}{\ignorespaces Evoluzione degli angoli di Eulero in hovering.}}{88}{figure.8.9}%
+\contentsline {figure}{\numberline {8.10}{\ignorespaces Evoluzione delle velocità angolari in hovering.}}{89}{figure.8.10}%
+\contentsline {figure}{\numberline {8.11}{\ignorespaces Evoluzione degli angoli di tilt dei rotori in hovering.}}{89}{figure.8.11}%
+\contentsline {figure}{\numberline {8.12}{\ignorespaces Evoluzione del thrust generato dai rotori in hovering.}}{90}{figure.8.12}%
+\contentsline {figure}{\numberline {8.13}{\ignorespaces Evoluzione delle posizioni durante il volo traslato.}}{91}{figure.8.13}%
+\contentsline {figure}{\numberline {8.14}{\ignorespaces Evoluzione delle velocità lineari durante il volo traslato.}}{91}{figure.8.14}%
+\contentsline {figure}{\numberline {8.15}{\ignorespaces Evoluzione degli angoli di Eulero durante il volo traslato.}}{92}{figure.8.15}%
+\contentsline {figure}{\numberline {8.16}{\ignorespaces Evoluzione delle velocità angolari durante il volo traslato.}}{92}{figure.8.16}%
+\contentsline {figure}{\numberline {8.17}{\ignorespaces Evoluzione degli angoli di tilt dei rotori durante il volo traslato.}}{93}{figure.8.17}%
+\contentsline {figure}{\numberline {8.18}{\ignorespaces Evoluzione del thrust generato dai rotori durante il volo traslato.}}{93}{figure.8.18}%

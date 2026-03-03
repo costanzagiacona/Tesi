@@ -5,26 +5,11 @@ u = zeros(7,1);
 
 % TEST
 
-% -1 : Debug (tutto simbolico)
-
-% 0 : Nessun controllo (solo gravità)
-
 % 1 : Controllo verticale
 
 % 2 : Controllo orizzontale 
 
 switch test_id
-
-    case -1
-        %debug
-        syms u1 u2 u3 u4 u5 u6 u7
-        
-        % variante in assenza di rotore di coda 
-        u = [u1;u2;0;u4;u5;0;0];
-
-    case 0
-        % Nessun controllo (solo gravità)
-        u = zeros(7,1);
 
     case 1
         % =========================================================================
@@ -46,17 +31,15 @@ switch test_id
         V_global = R * V_body;
         vx_g = V_global(1); vy_g = V_global(2); vz_g = V_global(3);
 
-        % --- 2. Riferimenti (Setpoint) ---
+        % --- 2. Riferimenti ---
         z_des = -10;    vz_des = 0;
         y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
         psi_des = deg2rad(0);    r_des = 0;
 
         %% =========================================================================
-        %   OUTER LOOP: POSITION SMC (Rigorosamente Disaccoppiato)
+        %   OUTER LOOP
         % =========================================================================
-        
-        % --- 1. SINTESI FORZE VIRTUALI (Frame Inerziale) ---
         
         % Asse Z (Quota)
         lambda_z = 2; K_z = 10; Phi_z = 0.8;
@@ -64,7 +47,7 @@ switch test_id
         de_z = vz_des - vz_g;
         s_z = de_z + lambda_z * e_z;
         
-        % U_z: Forza verticale richiesta per contrastare g e inseguire la quota
+        % U_z: Forza verticale richiesta 
         U_z = params.m * (params.g - (lambda_z * de_z + K_z * tanh(s_z / Phi_z)));
         
         % Assi Y e X (Piano Orizzontale)
@@ -85,35 +68,27 @@ switch test_id
         cos_factor_z = max(cos(theta) * cos(phi), 0.1); % Protezione divisione per zero
         Thrust_req = U_z / cos_factor_z;
         
-        % Compensazione del Drag (opzionale, dal modello originale)
+        % Compensazione del Drag
         F_drag_z = -params.rho * params.s_body_z * params.C_d_z * sign(x(6)) * x(6)^2;
         Thrust_req = Thrust_req + F_drag_z;
         
         % Saturazione fisica della spinta (Sicurezza)
         Thrust_req = max(min(Thrust_req, 100), 5);
 
-        % % --- 3. DISACCOPPIAMENTO IMBARDATA (Heading Alignment) ---
-        % % Rotazione delle forze dal Frame Inerziale al Frame locale del drone
-        % U_x_psi =  U_x * cos(psi) + U_y * sin(psi);
-        % U_y_psi = -U_x * sin(psi) + U_y * cos(psi);
-
-        % --- 4. MAPPING DI ASSETTO (Inversione Dinamica Esatta) ---
+        % --- 4. MAPPING DI ASSETTO ---
         
         % ROLLIO (Y -> Phi)
-        % Si calcola per primo poiché l'equazione è indipendente da theta
         sin_phi_des = U_y / Thrust_req;
         phi_des = asin(max(min(sin_phi_des, 0.5), -0.5)); % Saturazione a +/- 30°
         
         % BECCHEGGIO (X -> Theta)
-        % Si utilizza il phi_des appena calcolato per l'inversione esatta
         cos_phi_des = max(cos(phi_des), 0.1); % Protezione da divisione per zero
-        
-        % Nota l'inserimento di cos_phi_des a denominatore!
+
         sin_theta_des = -U_x / (Thrust_req * cos_phi_des); 
         theta_des = asin(max(min(sin_theta_des, 0.5), -0.5)); % Saturazione a +/- 30°
         
         %% =========================================================================
-        %   INNER LOOP: ATTITUDE SMC (Feedback Linearization)
+        %   INNER LOOP
         % =========================================================================
         lambda_att = 12.0; 
         K_att = 10.0;      
@@ -156,22 +131,20 @@ switch test_id
         theta3_actual = x(17); % Angolo di tilt reale del rotore di coda
         theta4 = -pi/2;        % Configurazione laterale fissa del rotore di coda
         
-        % --- 1. Calcolo Preventivo dello Yaw (Tilt dei Rotori Anteriori) ---
-        % Stimiamo la spinta anteriore necessaria per lo Yaw (usiamo Thrust_req come base)
+        % --- YAW - Tilt dei Rotori Anteriori ---
+        % Ipotizziamo che il Thrust sia ripartito equamente tra i tre rotori
         F_front_est = max(Thrust_req * 0.65, 2.0); % Protezione: almeno 2N per garantire autorità di Yaw
         delta_tilt_yaw = Moment_yaw_req / (F_front_est * params.d_my);
         
         % Saturazione di sicurezza per il tilt (circa 25-30 gradi)
-        max_tilt_rad = 0.52; 
+        max_tilt_rad = deg2rad(30); 
         delta_tilt_yaw = max(min(delta_tilt_yaw, max_tilt_rad), -max_tilt_rad);
         
-        % FATTORE CRITICO: proiezione della spinta sul piano verticale
+        % proiezione della spinta sul piano verticale
         % Se delta = 0, cos_delta = 1 (nessuna perdita).
         cos_delta = cos(delta_tilt_yaw);
         
-        % --- 2. Mixing Longitudinale (Z + Pitch) con Proiezione ---
-        % Aggiorniamo il sistema 2x2 considerando che i motori anteriori sono inclinati
-        % La loro efficacia su Z e My è ridotta dal fattore cos_delta
+        % ---  Z + PITCH  ---
         denom_mix = (params.d_mx * params.k * sin(theta3_actual) * cos_delta) ...
               - (params.d_tx * params.k * sin(theta3_actual) * cos_delta) ...
               + (params.b * cos(theta3_actual) * sin(theta4));
@@ -188,15 +161,13 @@ switch test_id
         % Spinta verticale effettiva del rotore di coda
         F_tail_z = omega3_sq * params.k * sin(theta3_actual);
         
-        % --- 3. Mixing Laterale (Roll) e Distribuzione Frontale ---
-        % Calcoliamo la spinta totale che deve essere fornita dai due rotori anteriori
+        % --- ROLL e Distribuzione Frontale ---
         F_front_tot_z = Thrust_req - F_tail_z;
         
         % Calcolo della velocità di base (media) per i motori frontali
-        % Nota: dividiamo per cos_delta per compensare la perdita di spinta dovuta al tilt
         omega_front_sq_base = max(0, F_front_tot_z / (2 * params.k * cos_delta));
         
-        % Differenziale per il Roll (anche questo risente dell'inclinazione)
+        % Differenziale per il Roll 
         delta_omega_sq = Moment_roll_req / (params.k * params.d_my * 2 * cos_delta);
         
         % Velocità finali motori anteriori
@@ -209,8 +180,8 @@ switch test_id
         u(3) = sqrt(omega3_sq);      % Motore Coda
         u(4) = pi/2 + delta_tilt_yaw; % Tilt Motore 1 (Rad)
         u(5) = pi/2 - delta_tilt_yaw; % Tilt Motore 2 (Rad)
-        u(6) = theta3_ideal;         % Tilt strutturale coda
-        u(7) = -pi/2;                % Offset fisso coda
+        u(6) = theta3_ideal;         % Tilt coda
+        u(7) = -pi/2;                % Tilt coda
 
         
 

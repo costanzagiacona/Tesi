@@ -31,6 +31,13 @@ C.~E.~D. Riboldi and A.~Rolando.
   2023.
 \newblock DOI: 10.13009/EUCASS2023-025.
 
+\bibitem{verghese1982selective}
+George~C. Verghese, Ignacio~J. Perez-Arriaga, and Fred~C. Schweppe.
+\newblock A selective modal analysis with applications to electric power
+  systems, part i: Heuristic introduction.
+\newblock {\em IEEE Transactions on Power Apparatus and Systems},
+  PAS-101(9):3117--3125, 1982.
+
 \bibitem{Wang2024}
 Xinhua Wang and Xuerui Mao.
 \newblock Non-overshooting sliding mode for uav control.

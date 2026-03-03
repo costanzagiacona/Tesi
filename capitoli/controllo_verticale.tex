@@ -12,9 +12,9 @@ Si adotta un'architettura di controllo a cascata per disaccoppiare la dinamica t
     A causa della natura sotto-attuata del drone, per modificare la posizione nel piano $x,y$ è necessario cambiare l'orientamento di \textit{roll e yaw}; dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico, traducendo $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
     \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Sliding Mode} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
-Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \mathbb{R}^{12} $:
+Le variabili di stato utilizzate fanno riferimento al vettore $ \bm{x} \in \mathbb{R}^{12} $:
 \[
-\mathbf{x} = [x, y, z, u, v, w, \phi, \theta, \psi, p, q, r]^T
+\bm{x} = [x, y, z, u, v, w, \phi, \theta, \psi, p, q, r]^T
 \]
 
 % % --- DIAGRAMMA A BLOCCHI (Invariato nella struttura, aggiornato concettualmente) ---
@@ -34,7 +34,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 %         \node [input] (ref_z) {};
 %         \node [sum, right of=ref_z, node distance=1cm] (sum_z) {$\Sigma$};
 %         \node [block, right of=sum_z, node distance=2.5cm] (smc_z) {SMC\\Quota $z$};
-%         \node [left of=ref_z, node distance=0.8cm] {$\mathbf{z_{ref}}$}; 
+%         \node [left of=ref_z, node distance=0.8cm] {$\bm{z_{ref}}$}; 
     
 %         % --- 2. RIGA: POSIZIONE Y -> ROLL (PHI) ---
 %         \node [input, below of=ref_z, node distance=2.5cm] (ref_y) {};
@@ -42,7 +42,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 %         \node [block, right of=sum_y, node distance=2.5cm] (smc_phi) {SMC\\$y \to \phi$};
 %         \node [sum, right of=smc_phi, node distance=2.5cm] (sum_roll) {$\Sigma$};
 %         \node [block, right of=sum_roll, node distance=2cm] (pid_roll) {SMC\\$\phi$};
-%         \node [left of=ref_y, node distance=0.8cm] {$\mathbf{y_{ref}}$};
+%         \node [left of=ref_y, node distance=0.8cm] {$\bm{y_{ref}}$};
     
 %         % --- 3. RIGA: POSIZIONE X -> PITCH (THETA) ---
 %         \node [input, below of=ref_y, node distance=2.5cm] (ref_x) {};
@@ -50,13 +50,13 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 %         \node [block, right of=sum_x, node distance=2.5cm] (smc_theta) {SMC\\$x \to \theta$};
 %         \node [sum, right of=smc_theta, node distance=2.5cm] (sum_pitch) {$\Sigma$};
 %         \node [block, right of=sum_pitch, node distance=2cm] (pid_pitch) {SMC\\$\theta$};
-%         \node [left of=ref_x, node distance=0.8cm] {$\mathbf{x_{ref}}$};
+%         \node [left of=ref_x, node distance=0.8cm] {$\bm{x_{ref}}$};
     
 %         % --- 4. RIGA: YAW (PSI) ---
 %         \node [input, below of=ref_x, node distance=2.5cm] (ref_psi) {};
 %         \node [sum, right of=ref_psi, node distance=1cm] (sum_yaw) {$\Sigma$};
 %         \node [block] at (pid_pitch |- sum_yaw) (pid_yaw) {SMC\\$\psi$}; 
-%         \node [left of=ref_psi, node distance=0.8cm] {$\mathbf{\psi_{ref}}$};
+%         \node [left of=ref_psi, node distance=0.8cm] {$\bm{\psi_{ref}}$};
     
 %         % --- MIXER E DRONE ---
 %         \node [block, minimum height=8cm, text width=1.5cm, right of=pid_pitch, xshift=2.5cm, yshift=1.25cm] (mixer) {MMA};
@@ -123,7 +123,7 @@ Le variabili di stato utilizzate fanno riferimento al vettore $ \mathbf{x} \in \
 %         \draw [->] (fb_end -| sum_pitch) -- (sum_pitch.south);
             
 %         % Etichetta feedback centrata
-%         \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\mathbf{x}$ (Feedback)};
+%         \node [below] at ($(fb_corner)!0.5!(fb_end)$) {Stato $\bm{x}$ (Feedback)};
     
 %         % --- RIQUADRI LOGICI ---
 %         \node [container, fit=(smc_z) (smc_phi) (smc_theta), label=above:\textbf{Outer Loop: Posizione}] {};
@@ -323,7 +323,7 @@ I guadagni $\lambda_\psi$ e $K_\psi$ sono riscalati rispetto agli altri assi per
 %   MIXER
 % ==============================================================
 \section{Motor Mixing Algorithm}
-Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\mathbf{u} = [F_z, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servmotori ($\theta_1, \theta_2, \theta_3, \theta_4$).
+Il blocco di \textit{Mixing} ha il compito di mappare il vettore dei comandi virtuali $\bm{u} = [F_z, M_x, M_y, M_z]^T$ sui riferimenti per gli attuatori fisici: le velocità angolari dei tre rotori ($\omega_1, \omega_2, \omega_3$) e gli angoli di inclinazione dei servmotori ($\theta_1, \theta_2, \theta_3, \theta_4$).
 \\A causa della geometria del tricottero e del forte accoppiamento tra le forze, il problema non viene affrontato tramite l'inversione di un'unica matrice (approccio pseudoinverso classico), bensì attraverso una risoluzione algebrica sequenziale. Questo metodo permette di rispettare rigorosamente i vincoli di equilibrio meccanico derivati dal modello dinamico non lineare.
 \\In condizioni di \textit{hovering}, assumiamo la seguente configurazione nominale:
 \begin{itemize}
