@@ -1,10 +1,10 @@
 %% PLOT PRESENTATION SUITE - Kinematic, Dynamic & Actuator Analysis
 close all; clc;
 files = {'Results_Recovery Hover.mat', ...
-         'Results1_Takeoff Ground.mat', ...
-         'Results4_Cruise Flight.mat'};
+         'Results_Takeoff Ground.mat', ...
+         'Results_Cruise Flight.mat'};
 
-files = {'Results4_Cruise Flight.mat'};
+files = {'Results_Cruise Flight.mat'};
 % files = {'Results_SMC_Takeoff Ground.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica
