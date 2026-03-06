@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  3 MAR 2026 17:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  6 MAR 2026 10:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1125,132 +1125,143 @@ Package pdftex.def Info: ./img/../img/controllo_orizzontale/tilt_1_2.png  used o
 (pdftex.def)             Requested size: 426.79135pt x 236.92987pt.
 ) [68 <./img/../img/controllo_orizzontale/angoli.png> <./img/../img/controllo_orizzontale/thrust.png>] [69 <./img/../img/controllo_orizzontale/tilt_1_2.png>]
 Capitolo 7.
-(capitoli/dimostrazione_SMC.tex [70
+(capitoli/dimostrazione_SMC.tex
+Overfull \hbox (29.21709pt too wide) in paragraph at lines 2--2
+|[][]| 
+ []
 
-] [71] [72] [73] [74]) (capitoli/analisi_stabilita.tex [75
 
-] [76] [77] [78
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\hbox' on input line 2.
+
+[70
+
+] [71] [72] [73] [74] [75] [76]) (capitoli/analisi_stabilita.tex [77
+
+] [78] [79] [80
 
 ]
-<./img/controllo_verticale/autovalori.png, id=1304, 1223.32031pt x 685.8122pt>
+<./img/controllo_verticale/autovalori.png, id=1326, 1223.32031pt x 685.8122pt>
 File: ./img/controllo_verticale/autovalori.png Graphic file (type png)
 <use ./img/controllo_verticale/autovalori.png>
-Package pdftex.def Info: ./img/controllo_verticale/autovalori.png  used on input line 100.
+Package pdftex.def Info: ./img/controllo_verticale/autovalori.png  used on input line 101.
 (pdftex.def)             Requested size: 426.79135pt x 239.26347pt.
- [79 <./img/controllo_verticale/autovalori.png>] [80]
-<./img/controllo_orizzontale/autovalori.png, id=1315, 1227.08438pt x 688.82344pt>
+ [81 <./img/controllo_verticale/autovalori.png>] [82]
+<./img/controllo_orizzontale/autovalori.png, id=1337, 1227.08438pt x 688.82344pt>
 File: ./img/controllo_orizzontale/autovalori.png Graphic file (type png)
 <use ./img/controllo_orizzontale/autovalori.png>
-Package pdftex.def Info: ./img/controllo_orizzontale/autovalori.png  used on input line 153.
+Package pdftex.def Info: ./img/controllo_orizzontale/autovalori.png  used on input line 154.
 (pdftex.def)             Requested size: 426.79135pt x 239.5783pt.
-) [81 <./img/controllo_orizzontale/autovalori.png>]
+) [83 <./img/controllo_orizzontale/autovalori.png>]
 Capitolo 8.
-(capitoli/montecarlo.tex [82
+(capitoli/montecarlo.tex [84
 
 ]
-<./img/montecarlo/takeoff/pos.png, id=1327, 1225.57875pt x 681.29532pt>
+<./img/montecarlo/takeoff/pos.png, id=1350, 1225.57875pt x 681.29532pt>
 File: ./img/montecarlo/takeoff/pos.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/pos.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/pos.png  used on input line 43.
 (pdftex.def)             Requested size: 426.79135pt x 237.25102pt.
- [83]
-<./img/montecarlo/takeoff/vel.png, id=1333, 1232.35406pt x 682.04813pt>
+ [85]
+<./img/montecarlo/takeoff/vel.png, id=1355, 1232.35406pt x 682.04813pt>
 File: ./img/montecarlo/takeoff/vel.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/vel.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/vel.png  used on input line 50.
 (pdftex.def)             Requested size: 426.79135pt x 236.20187pt.
-<./img/montecarlo/takeoff/assetto.png, id=1334, 1233.10687pt x 679.78969pt>
+<./img/montecarlo/takeoff/assetto.png, id=1356, 1233.10687pt x 679.78969pt>
 File: ./img/montecarlo/takeoff/assetto.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/assetto.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/assetto.png  used on input line 57.
 (pdftex.def)             Requested size: 426.79135pt x 235.27452pt.
- [84 <./img/montecarlo/takeoff/pos.png> <./img/montecarlo/takeoff/vel.png>]
-<./img/montecarlo/takeoff/ratei.png, id=1341, 1243.64626pt x 679.03688pt>
+ [86 <./img/montecarlo/takeoff/pos.png> <./img/montecarlo/takeoff/vel.png>]
+<./img/montecarlo/takeoff/ratei.png, id=1363, 1243.64626pt x 679.03688pt>
 File: ./img/montecarlo/takeoff/ratei.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/ratei.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/ratei.png  used on input line 64.
 (pdftex.def)             Requested size: 426.79135pt x 233.02463pt.
-<./img/montecarlo/takeoff/tilt.png, id=1342, 1251.17438pt x 685.05937pt>
+<./img/montecarlo/takeoff/tilt.png, id=1364, 1251.17438pt x 685.05937pt>
 File: ./img/montecarlo/takeoff/tilt.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/tilt.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/tilt.png  used on input line 71.
 (pdftex.def)             Requested size: 426.79135pt x 233.68018pt.
- [85 <./img/montecarlo/takeoff/assetto.png> <./img/montecarlo/takeoff/ratei.png>]
-<./img/montecarlo/takeoff/thrust.png, id=1349, 1230.09563pt x 683.55376pt>
+ [87 <./img/montecarlo/takeoff/assetto.png> <./img/montecarlo/takeoff/ratei.png>]
+<./img/montecarlo/takeoff/thrust.png, id=1371, 1230.09563pt x 683.55376pt>
 File: ./img/montecarlo/takeoff/thrust.png Graphic file (type png)
 <use ./img/montecarlo/takeoff/thrust.png>
 Package pdftex.def Info: ./img/montecarlo/takeoff/thrust.png  used on input line 78.
 (pdftex.def)             Requested size: 426.79135pt x 237.16136pt.
- [86 <./img/montecarlo/takeoff/tilt.png> <./img/montecarlo/takeoff/thrust.png>]
-<./img/montecarlo/hovering/pos.png, id=1357, 1238.37656pt x 680.5425pt>
+ [88 <./img/montecarlo/takeoff/tilt.png> <./img/montecarlo/takeoff/thrust.png>]
+<./img/montecarlo/hovering/pos.png, id=1379, 1238.37656pt x 680.5425pt>
 File: ./img/montecarlo/hovering/pos.png Graphic file (type png)
 <use ./img/montecarlo/hovering/pos.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/pos.png  used on input line 92.
 (pdftex.def)             Requested size: 426.79135pt x 234.5382pt.
-<./img/montecarlo/hovering/vel.png, id=1358, 1242.14063pt x 674.52pt>
+<./img/montecarlo/hovering/vel.png, id=1380, 1242.14063pt x 674.52pt>
 File: ./img/montecarlo/hovering/vel.png Graphic file (type png)
 <use ./img/montecarlo/hovering/vel.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/vel.png  used on input line 99.
 (pdftex.def)             Requested size: 426.79135pt x 231.76276pt.
- [87
+ [89
 
  <./img/montecarlo/hovering/pos.png>]
-<./img/montecarlo/hovering/assetto.png, id=1364, 1236.11812pt x 678.28406pt>
+<./img/montecarlo/hovering/assetto.png, id=1387, 1236.11812pt x 678.28406pt>
 File: ./img/montecarlo/hovering/assetto.png Graphic file (type png)
 <use ./img/montecarlo/hovering/assetto.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/assetto.png  used on input line 106.
 (pdftex.def)             Requested size: 426.79135pt x 234.18419pt.
-<./img/montecarlo/hovering/ratei.png, id=1365, 1249.66875pt x 679.03688pt>
+<./img/montecarlo/hovering/ratei.png, id=1388, 1249.66875pt x 679.03688pt>
 File: ./img/montecarlo/hovering/ratei.png Graphic file (type png)
 <use ./img/montecarlo/hovering/ratei.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/ratei.png  used on input line 113.
 (pdftex.def)             Requested size: 426.79135pt x 231.90561pt.
- [88 <./img/montecarlo/hovering/vel.png> <./img/montecarlo/hovering/assetto.png>]
-<./img/montecarlo/hovering/tilt.png, id=1373, 1260.20813pt x 673.01437pt>
+ [90 <./img/montecarlo/hovering/vel.png> <./img/montecarlo/hovering/assetto.png>]
+<./img/montecarlo/hovering/tilt.png, id=1396, 1260.20813pt x 673.01437pt>
 File: ./img/montecarlo/hovering/tilt.png Graphic file (type png)
 <use ./img/montecarlo/hovering/tilt.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/tilt.png  used on input line 123.
 (pdftex.def)             Requested size: 426.79135pt x 227.92842pt.
-<./img/montecarlo/hovering/thrust.png, id=1374, 1260.96094pt x 684.30656pt>
+<./img/montecarlo/hovering/thrust.png, id=1397, 1260.96094pt x 684.30656pt>
 File: ./img/montecarlo/hovering/thrust.png Graphic file (type png)
 <use ./img/montecarlo/hovering/thrust.png>
 Package pdftex.def Info: ./img/montecarlo/hovering/thrust.png  used on input line 130.
 (pdftex.def)             Requested size: 426.79135pt x 231.61697pt.
- [89 <./img/montecarlo/hovering/ratei.png> <./img/montecarlo/hovering/tilt.png>]
-<./img/montecarlo/cruise/pos.png, id=1382, 1232.35406pt x 691.08188pt>
+ [91 <./img/montecarlo/hovering/ratei.png> <./img/montecarlo/hovering/tilt.png>]
+<./img/montecarlo/cruise/pos.png, id=1404, 1232.35406pt x 691.08188pt>
 File: ./img/montecarlo/cruise/pos.png Graphic file (type png)
 <use ./img/montecarlo/cruise/pos.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/pos.png  used on input line 142.
 (pdftex.def)             Requested size: 426.79135pt x 239.33037pt.
- [90 <./img/montecarlo/hovering/thrust.png>]
-<./img/montecarlo/cruise/vel.png, id=1388, 1232.35406pt x 682.80093pt>
+ [92 <./img/montecarlo/hovering/thrust.png>]
+<./img/montecarlo/cruise/vel.png, id=1410, 1232.35406pt x 682.80093pt>
 File: ./img/montecarlo/cruise/vel.png Graphic file (type png)
 <use ./img/montecarlo/cruise/vel.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/vel.png  used on input line 149.
 (pdftex.def)             Requested size: 426.79135pt x 236.46257pt.
-<./img/montecarlo/cruise/assetto.png, id=1389, 1224.07312pt x 674.52pt>
+<./img/montecarlo/cruise/assetto.png, id=1411, 1224.07312pt x 674.52pt>
 File: ./img/montecarlo/cruise/assetto.png Graphic file (type png)
 <use ./img/montecarlo/cruise/assetto.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/assetto.png  used on input line 156.
 (pdftex.def)             Requested size: 426.79135pt x 235.17981pt.
- [91 <./img/montecarlo/cruise/pos.png> <./img/montecarlo/cruise/vel.png>]
-<./img/montecarlo/cruise/ratei.png, id=1396, 1238.37656pt x 685.8122pt>
+ [93 <./img/montecarlo/cruise/pos.png> <./img/montecarlo/cruise/vel.png>]
+<./img/montecarlo/cruise/ratei.png, id=1418, 1238.37656pt x 685.8122pt>
 File: ./img/montecarlo/cruise/ratei.png Graphic file (type png)
 <use ./img/montecarlo/cruise/ratei.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/ratei.png  used on input line 163.
 (pdftex.def)             Requested size: 426.79135pt x 236.35431pt.
-<./img/montecarlo/cruise/tilt.png, id=1397, 1240.635pt x 672.26157pt>
+<./img/montecarlo/cruise/tilt.png, id=1419, 1240.635pt x 672.26157pt>
 File: ./img/montecarlo/cruise/tilt.png Graphic file (type png)
 <use ./img/montecarlo/cruise/tilt.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/tilt.png  used on input line 171.
 (pdftex.def)             Requested size: 426.79135pt x 231.26372pt.
- [92 <./img/montecarlo/cruise/assetto.png> <./img/montecarlo/cruise/ratei.png>]
-<./img/montecarlo/cruise/thrust.png, id=1404, 1232.35406pt x 678.28406pt>
+ [94 <./img/montecarlo/cruise/assetto.png> <./img/montecarlo/cruise/ratei.png>]
+<./img/montecarlo/cruise/thrust.png, id=1426, 1232.35406pt x 678.28406pt>
 File: ./img/montecarlo/cruise/thrust.png Graphic file (type png)
 <use ./img/montecarlo/cruise/thrust.png>
 Package pdftex.def Info: ./img/montecarlo/cruise/thrust.png  used on input line 178.
 (pdftex.def)             Requested size: 426.79135pt x 234.89833pt.
- [93 <./img/montecarlo/cruise/tilt.png> <./img/montecarlo/cruise/thrust.png>]) (main.bbl [94]) [95
+ [95 <./img/montecarlo/cruise/tilt.png> <./img/montecarlo/cruise/thrust.png>]) [96] (capitoli/ringraziamenti.tex [97
+
+] [98]) (main.bbl [99]) [100
 
 ] (main.aux)
  ***********
@@ -1258,20 +1269,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 609ACA6BC704461620B23D6374AF9F12;24088.
+(rerunfilecheck)             Checksum: 0F811D501D05FE79ABA25989C7D3A6FF;24134.
  ) 
 Here is how much of TeX's memory you used:
- 29581 strings out of 467871
- 554354 string characters out of 5418375
- 984061 words of memory out of 5000000
- 57122 multiletter control sequences out of 15000+600000
- 753473 words of font info for 288 fonts, out of 8000000 for 9000
+ 29618 strings out of 467871
+ 554941 string characters out of 5418375
+ 984143 words of memory out of 5000000
+ 57127 multiletter control sequences out of 15000+600000
+ 753982 words of font info for 293 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,15n,104p,1230b,657s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (103 pages, 6095104 bytes).
+Output written on main.pdf (108 pages, 6115242 bytes).
 PDF statistics:
- 1614 PDF objects out of 1728 (max. 8388607)
- 451 named destinations out of 1000 (max. 500000)
+ 1653 PDF objects out of 1728 (max. 8388607)
+ 470 named destinations out of 1000 (max. 500000)
  66652 words of extra memory for PDF output out of 74296 (max. 10000000)
 

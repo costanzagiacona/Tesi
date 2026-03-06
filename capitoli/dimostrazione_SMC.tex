@@ -1,5 +1,5 @@
 % --- Sezione Controllo Verticale ---
-\section{Analisi di Lyapunov}
+\section{\hbox{Analisi di Lyapunov per il controllo verticale}}
 Di seguito è analizzata la stabilità secondo Lyapunov del sistema d'errore attraverso l'applicazione della legge di controllo \textit{Sliding Mode} sviluppata per il volo verticale. Si considera, a titolo esemplificativo, il caso lungo l'asse $z$.\\
 Si adotta un sistema di riferimento \textbf{NED (North-East-Down)}, in cui l'asse $z$ è orientato verso il centro della Terra; pertanto, valori di $z$ positivi indicano una quota crescente verso il basso.
 
@@ -22,7 +22,7 @@ Normalizzando rispetto alla massa, si ottiene la forma affine al controllo:
 \begin{equation}
     \ddot{z} = g + \cos(\phi)\cos(\theta) \left(\frac{F_{\mathrm{aero},z}}{m} - \frac{u}{m} \right) + \Delta(t)
 \end{equation}
-In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: $|\Delta(t)| \le \delta_{\max}, \forall t \ge 0$.
+In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: $|\Delta(t)| \le \Delta_{\max}, \forall t \ge 0$.
 
 \subsection{Definizione della \textit{sliding surface}}
 Sia $z_{\mathrm{des}}(t)$ la quota di riferimento desiderata e $e(t) = z_{\mathrm{des}}(t) - z(t)$ l'errore di tracking. Per un sistema del secondo ordine, si definisce una \textit{sliding surface} $\sigma(t)$ lineare del primo ordine:
@@ -58,11 +58,8 @@ Si ricava la legge di controllo completa:
 
 Affinché l'inversione della dinamica sia matematicamente ben posta, è strettamente necessario introdurre l'assunzione che gli angoli di assetto soddisfino $\phi, \theta \in (-\pi/2, \pi/2)$. Fisicamente, questa condizione evita la singolarità cinematica, garantendo che il velivolo non si trovi in orientamento perfettamente verticale o capovolto, configurazione in cui la spinta non avrebbe alcuna componente utile lungo l'asse $z$ inerziale.
 
-Questa formulazione evidenzia la scomposizione dell'ingresso di controllo in due termini $u = u_{\mathrm{eq}} + u_{\mathrm{sw}}$:
-\begin{itemize}
-    \item Il \textbf{controllo equivalente} $u_{\mathrm{eq}} = \frac{m}{\cos(\phi)\cos(\theta)} \left( g - \ddot{z}_{\mathrm{des}} - \lambda \dot{e} \right) + F_{\mathrm{aero},z}$ annulla esattamente la dinamica propria e nota del sistema.
-    \item Il termine di \textbf{switching} $u_{\mathrm{sw}} = - \frac{m}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma)$ è il contributo discontinuo che, pre-moltiplicato per compensare l'effetto dell'assetto, impone la legge di raggiungimento.
-\end{itemize}
+Una parte del controllo annulla la dinamica nota del sistema e assumiamo che i termini residui di queste cancellazioni vengano assorbiti dall'incertezza $\Delta(t)$; un'altra parte del controllo, 
+ovvero il contributo discontinuo, impone la legge di raggiungimento.
 
 Infine, applicando la legge di controllo $u$ così sintetizzata al sistema perturbato originale, la dinamica a ciclo chiuso proiettata sulla \textit{sliding surface} si riduce all'espressione:
 \begin{equation}
@@ -72,36 +69,60 @@ Questa forma strutturale chiusa è il punto di partenza per la dimostrazione for
 
 
 \subsection{Analisi di Stabilità e Tempo di Raggiungimento}
-Per dimostrare la stabilità asintotica e la convergenza in tempo finito alla superficie, si introduce la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$. Il teorema di Lyapunov per la stabilità richiede che $\dot{V}$ sia definita negativa. Inoltre, per assicurare il raggiungimento in tempo finito, si impone la \textit{condizione di raggiungibilità} (o $\eta$-reachability condition):
+Per dimostrare la stabilità asintotica e la convergenza in tempo finito alla superficie, si introduce la funzione candidata di Lyapunov $V = \frac{1}{2}\sigma^2$. Dalla sua definizione si evince la relazione:
 \begin{equation}
-    \dot{V} \le -\eta |\sigma|, \quad \text{con } \eta > 0
+    \sqrt{2V} = |\sigma|
 \end{equation}
-Calcoliamo la derivata temporale lungo le traiettorie del sistema a ciclo chiuso. Sostituendo $u_{\mathrm{sw}}$ nella dinamica di $\dot{\sigma}$:
-\begin{equation}
-    \dot{\sigma} = \cos(\phi)\cos(\theta)\left( - \frac{1}{\cos(\phi)\cos(\theta)} k \operatorname{sgn}(\sigma) \right) - \Delta(t) = -k \operatorname{sgn}(\sigma) - \Delta(t)
-\end{equation}
-Sostituendo ora $\dot{\sigma}$ in $\dot{V}$:
+
+Calcoliamo la derivata temporale lungo le traiettorie del sistema a ciclo chiuso. Sostituendo la dinamica di $\dot{\sigma}$:
 \begin{align}
     \dot{V} &= \sigma \dot{\sigma} = \sigma \left( -k \operatorname{sgn}(\sigma) - \Delta(t) \right) \nonumber \\
             &= -k|\sigma| - \sigma \Delta(t)
 \end{align}
-Applicando la disuguaglianza triangolare e sapendo che il termine incerto è limitato superiormente, ovvero $-\sigma \Delta(t) \le |\sigma||\Delta(t)| \le |\sigma|\delta_{\max}$, si può maggiorare l'espressione:
+
+Applicando la disuguaglianza triangolare e sapendo che il termine incerto è limitato superiormente ($|\Delta(t)| \le \Delta_{\max}$), si ottiene:
 \begin{equation}
-    \dot{V} \le -k|\sigma| + \delta_{\max}|\sigma| = - (k - \delta_{\max}) |\sigma|
-\end{equation}
-Per soddisfare la condizione di raggiungibilità $\dot{V} \le -\eta |\sigma|$, è necessario e sufficiente imporre che:
-\begin{equation}
-    k - \delta_{\max} \ge \eta \implies k \ge \delta_{\max} + \eta
-\end{equation}
-Sotto questa condizione sul guadagno di discontinuità $k$, il sistema è forzato sulla \textit{sliding surface} $\sigma = 0$ in un tempo finito $t_r$. Poiché $\dot{V} \le -\eta |\sigma| = -\eta \sqrt{2V}$, integrando tale disequazione differenziale si ricava infine che il tempo di raggiungimento è limitato superiormente da:
-\begin{equation}
-    t_r \le \frac{|\sigma(0)|}{\eta}
+    \dot{V} \le -k|\sigma| + \Delta_{\max}|\sigma| = - (k - \Delta_{\max}) |\sigma|
 \end{equation}
 
-Attraverso il criterio di Lyapunov si dimostra la condizione di raggiungibilità, ovvero che la legge di controllo garantisce l'arrivo sulla superficie $\sigma=0$ in tempo finito. Una volta sulla superficie, l'errore è costretto a decadere esponenzialmente a zero poiché $s=0$ è progettata come una varietà asintoticamente stabile.
+Affinché la derivata sia definita negativa, è necessario imporre come condizione di progetto che il guadagno sia superiore all'incertezza massima, ovvero $k > \Delta_{\max}$. Definendo un parametro di margine strettamente positivo $\delta = k - \Delta_{\max}$, e ricordando che $|\sigma| = \sqrt{2V}$, possiamo riscrivere la disequazione differenziale direttamente in termini di $V$:
+\begin{equation}
+    \frac{dV}{dt} \le -\delta \sqrt{2V}
+\end{equation}
 
+Per dimostrare la convergenza in tempo finito, integriamo la disequazione per separazione di variabili. Separando i termini dipendenti da $V$ da quelli in $t$:
+\begin{equation}
+    \frac{dV}{\sqrt{V}} \le -\delta \sqrt{2} \, dt
+\end{equation}
 
-\subsection{Regolarizzazione e Mitigazione del Chattering}
+Integrando ambo i membri tra l'istante iniziale $t=0$ e un generico istante $t$:
+\begin{equation}
+    \int_{V(0)}^{V(t)} V^{-\frac{1}{2}} \, dV \le -\delta \sqrt{2} \int_{0}^{t} d\tau
+\end{equation}
+
+Risolvendo analiticamente l'integrale si ottiene:
+\begin{equation}
+    2\sqrt{V(t)} - 2\sqrt{V(0)} \le -\sqrt{2} \, \delta \, t
+\end{equation}
+
+Dividendo ambo i membri per $\sqrt{2}$ e reintroducendo la relazione iniziale $\sqrt{2V} = |\sigma|$, l'espressione torna nel dominio della variabile di \textit{sliding}:
+\begin{equation}
+    |\sigma(t)| - |\sigma(0)| \le - \delta \, t
+\end{equation}
+
+Da cui si definisce l'evoluzione dell'inviluppo dell'errore nel tempo:
+\begin{equation}
+    0 \le |\sigma(t)| \le |\sigma(0)| - \delta \, t
+\end{equation}
+
+Il tempo di raggiungimento $t_r$ coincide con il momento in cui le traiettorie intersecano per la prima volta la superficie, condizione per la quale si ha $|\sigma(t_r)| = 0$. Sostituendo questa condizione, si ricava il limite superiore per il tempo di convergenza:
+\begin{equation}
+    t_r \le \frac{|\sigma(0)|}{\delta} = \frac{|\sigma(0)|}{k - \Delta_{\max}}
+\end{equation}
+
+Questa dimostrazione prova che, scegliendo un guadagno $k$ sufficientemente grande per dominare le incertezze del modello, le traiettorie del sistema vengono forzate a raggiungere la \textit{sliding surface} in un tempo strettamente finito. Una volta sulla superficie ($\sigma=0$), il sistema esibisce la dinamica nominale asintoticamente stabile imposta da $\sigma = \dot{e} + \lambda e = 0$.
+
+\subsection{Mitigazione del Chattering}
 La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce una regolarizzazione tramite uno \textbf{strato limite} (boundary layer) di spessore $\Phi$, sostituendo la funzione segno con una funzione continua, in questo caso la tangente iperbolica:
 \begin{equation}
     F_{\mathrm{req},z} = u_{\mathrm{eq}} - \frac{m}{\cos(\phi)\cos(\theta)} k \tanh\left(\frac{\sigma}{\Phi}\right)
@@ -117,6 +138,52 @@ Tramite $\Phi$ si definiscono le curve di livello, che rappresentano i bordi del
 
 In tal modo si definisce il \textit{boudary layer} come insieme di livello, ovvero come insieme invariante, $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$. 
 
-L'introduzione dello strato limite trasforma la stabilità del sistema da asintotica a \textbf{Ultimately Uniformly Bounded (UUB)}. In questa configurazione, l'errore di tracking non converge più esattamente a zero, ma rimane confinato in un intorno dell'origine proporzionale alla scelta dei parametri $\Phi$ e $k$.
+L'introduzione dello strato limite trasforma la stabilità del sistema da asintotica a pratica, poiché dipende dal tuning dei parametri. Come riportato in \cite{khalil2002nonlinear}, non stabilizziamo l'origine
+ma raggiungiamo la \textbf{Ultimate Boundedness} con un ultimate bound che può essere ridotto tramite la diminuzione di $\Phi$.
+
+
+Per garantire che le traiettorie convergano verso lo strato limite, è necessario studiare la derivata della funzione di Lyapunov $V = \frac{1}{2}\sigma^2$ applicando il controllo regolarizzato. Sostituendo la nuova dinamica si ottiene:
+\begin{equation}
+    \dot{V} = \sigma \dot{\sigma} = \sigma \left( -k \tanh\left(\frac{\sigma}{\Phi}\right) - \Delta(t) \right)
+\end{equation}
+
+Sfruttando le proprietà della funzione tangente iperbolica e la limitatezza del disturbo $\Delta(t) \le \Delta_{\max}$, possiamo maggiorare l'espressione:
+\begin{equation}
+    \dot{V} \le -k |\sigma| \tanh\left(\frac{|\sigma|}{\Phi}\right) + |\sigma|\Delta_{\max} = -|\sigma| \left( k \tanh\left(\frac{|\sigma|}{\Phi}\right) - \Delta_{\max} \right)
+\end{equation}
+
+Affinché la derivata sia definita negativa ($\dot{V} < 0$), si deve imporre che il termine in parentesi sia strettamente positivo. Poiché ci troviamo al di fuori dello strato limite, vale la condizione $\frac{|\sigma|}{\Phi} > 1$. Il caso peggiore si verifica al margine del \textit{boundary layer}, ovvero quando $|\sigma| \to \Phi$. Pertanto, la condizione di progetto sul guadagno $k$ diventa:
+\begin{equation}
+    k \tanh(1) > \Delta_{\max}
+\end{equation}
+
+Essendo $\tanh(1) \approx 0.76$, questa condizione dimostra che imporre semplicemente $k > \Delta_{\max}$ non è sufficiente in presenza di un \textit{boundary layer}: il guadagno deve essere adeguatamente sovradimensionato per compensare l'addolcimento dell'azione di controllo introdotto dalla funzione continua ai bordi dello strato limite.
+
+Una volta che le traiettorie entrano nello strato limite, l'argomento della tangente iperbolica è piccolo ($\frac{|\sigma|}{\Phi} \le 1$). In questa regione, il controllo si riduce alla sua approssimazione lineare $\tanh(x) \approx x$. La dinamica della variabile di \textit{sliding} diventa pertanto un sistema lineare del primo ordine perturbato:
+\begin{equation}
+    \dot{\sigma} \approx -k \frac{\sigma}{\Phi} - \Delta(t)
+\end{equation}
+
+Questa è un'equazione differenziale lineare non omogenea. Integrandola a partire da un istante $t_0$ (momento in cui la traiettoria entra nel \textit{boundary layer}), la soluzione nel dominio del tempo è:
+\begin{equation}
+    \sigma(t) = \sigma(t_0) e^{-\frac{k}{\Phi}(t-t_0)} - \int_{t_0}^t e^{-\frac{k}{\Phi}(t-\tau)} \Delta(\tau) d\tau
+\end{equation}
+
+Passando ai valori assoluti e applicando la disuguaglianza triangolare, ricordando che il disturbo è limitato da $\Delta_{\max}$, possiamo calcolare l'inviluppo superiore dell'errore:
+\begin{equation}
+    |\sigma(t)| \le |\sigma(t_0)| e^{-\frac{k}{\Phi}(t-t_0)} + \Delta_{\max} \int_{t_0}^t e^{-\frac{k}{\Phi}(t-\tau)} d\tau
+\end{equation}
+
+Risolvendo l'integrale definito si ottiene:
+\begin{equation}
+    |\sigma(t)| \le |\sigma(t_0)| e^{-\frac{k}{\Phi}(t-t_0)} + \frac{\Delta_{\max} \Phi}{k} \left( 1 - e^{-\frac{k}{\Phi}(t-t_0)} \right)
+\end{equation}
+
+Per valutare la condizione di regime, calcoliamo il limite per $t \to +\infty$. Il termine transitorio decade esponenzialmente a zero, fornendo l'Ultimate Bound teorico:
+\begin{equation}
+    \limsup_{t \to +\infty} |\sigma(t)| \le \frac{\Delta_{\max}\Phi}{k}
+\end{equation}
+
+Questa equazione chiude formalmente la dimostrazione. Poiché in sede di progetto abbiamo imposto $k \tanh(1) > \Delta_{\max}$ (e a maggior ragione $k > \Delta_{\max}$), il rapporto $\frac{\Delta_{\max}}{k}$ è strettamente minore di $1$. Da ciò consegue che $\limsup_{t \to +\infty} |\sigma(t)| < \Phi$, dimostrando che le traiettorie, una volta entrate nel \textit{boundary layer}, non possono più uscirne, garantendo la stabilità UUB del sistema.
 
 \clearpage

@@ -89,27 +89,27 @@
 \contentsline {subsection}{\numberline {6.5.4}Comandi di controllo}{65}{subsection.6.5.4}%
 \contentsline {section}{\numberline {6.6}Simulazioni}{66}{section.6.6}%
 \contentsline {chapter}{\numberline {7}Analisi di Stabilità}{70}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Analisi di Lyapunov}{70}{section.7.1}%
+\contentsline {section}{\numberline {7.1}\hbox {Analisi di Lyapunov per il controllo verticale}}{70}{section.7.1}%
 \contentsline {subsection}{\numberline {7.1.1}Modellazione della Dinamica}{70}{subsection.7.1.1}%
 \contentsline {subsection}{\numberline {7.1.2}Definizione della \textit {sliding surface}}{71}{subsection.7.1.2}%
 \contentsline {subsection}{\numberline {7.1.3}Sintesi della Legge di Controllo}{71}{subsection.7.1.3}%
 \contentsline {subsection}{\numberline {7.1.4}Analisi di Stabilità e Tempo di Raggiungimento}{72}{subsection.7.1.4}%
-\contentsline {subsection}{\numberline {7.1.5}Regolarizzazione e Mitigazione del Chattering}{73}{subsection.7.1.5}%
-\contentsline {section}{\numberline {7.2}Analisi di stabilità tramite linearizzazione}{75}{section.7.2}%
-\contentsline {subsection}{\numberline {7.2.1}Definizione dello Spazio di Stato}{75}{subsection.7.2.1}%
-\contentsline {subsection}{\numberline {7.2.2}Regolarizzazione del Modello}{75}{subsection.7.2.2}%
-\contentsline {subsection}{\numberline {7.2.3}Metodo delle Differenze Finite Centrali}{76}{subsection.7.2.3}%
-\contentsline {subsection}{\numberline {7.2.4}Analisi Modale e Matrice di Partecipazione}{76}{subsection.7.2.4}%
-\contentsline {section}{\numberline {7.3}Analisi della Condizione di Hovering}{78}{section.7.3}%
-\contentsline {subsection}{\numberline {7.3.1}Definizione del Punto di Equilibrio}{78}{subsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.3.2}Analisi della Stabilità e Matrice di Partecipazione}{79}{subsection.7.3.2}%
-\contentsline {section}{\numberline {7.4}Analisi della Condizione di Crociera}{80}{section.7.4}%
-\contentsline {subsection}{\numberline {7.4.1}Definizione del Punto di Equilibrio}{80}{subsection.7.4.1}%
-\contentsline {subsection}{\numberline {7.4.2}Analisi della Stabilità e Invarianza per Traslazione}{80}{subsection.7.4.2}%
-\contentsline {chapter}{\numberline {8}Validazione della Robustezza tramite Analisi Monte Carlo}{82}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Obiettivo dell'Analisi}{82}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Definizione delle Condizioni Iniziali}{82}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Scenario 1: Takeoff}{83}{section.8.3}%
-\contentsline {section}{\numberline {8.4}Scenario 2: Hovering}{87}{section.8.4}%
-\contentsline {section}{\numberline {8.5}Scenario 3: Cruise}{90}{section.8.5}%
-\contentsline {section}{\numberline {8.6}Conclusione sulla Robustezza}{94}{section.8.6}%
+\contentsline {subsection}{\numberline {7.1.5}Mitigazione del Chattering}{74}{subsection.7.1.5}%
+\contentsline {section}{\numberline {7.2}Analisi di stabilità tramite linearizzazione}{77}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Definizione dello Spazio di Stato}{77}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Regolarizzazione del Modello}{77}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Metodo delle Differenze Finite Centrali}{78}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}Analisi Modale e Matrice di Partecipazione}{78}{subsection.7.2.4}%
+\contentsline {section}{\numberline {7.3}Analisi della Condizione di Hovering}{80}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Definizione del Punto di Equilibrio}{80}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Analisi della Stabilità e Matrice di Partecipazione}{81}{subsection.7.3.2}%
+\contentsline {section}{\numberline {7.4}Analisi della Condizione di Crociera}{82}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Definizione del Punto di Equilibrio}{82}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Analisi della Stabilità e Invarianza per Traslazione}{82}{subsection.7.4.2}%
+\contentsline {chapter}{\numberline {8}Validazione della Robustezza tramite Analisi Monte Carlo}{84}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Obiettivo dell'Analisi}{84}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Definizione delle Condizioni Iniziali}{84}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Scenario 1: Takeoff}{85}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Scenario 2: Hovering}{89}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Scenario 3: Cruise}{92}{section.8.5}%
+\contentsline {section}{\numberline {8.6}Conclusione sulla Robustezza}{96}{section.8.6}%

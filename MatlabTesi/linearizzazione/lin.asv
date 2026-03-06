@@ -174,26 +174,18 @@ autoval_c = diag(D_c);
 % W_c = inv(V_c);
 % P_c = abs(V_c .* W_c.'); % Matrice di partecipazione (stati x modi)
 
-% Trova gli indici degli autovalori nulli
+% Trova gli indici degli autovalori che sono vicini a zero (es. < 1e-5)
 null_indices = find(abs(autoval_c) < 1e-5);
+
 fprintf('Trovati %d autovalori in zero.\n', length(null_indices));
 
 for k = 1:length(null_indices)
     idx = null_indices(k);
-    
-    % 1. Stampa l'intestazione del blocco per questo autovalore
-    fprintf('\n--- Analisi Autovalore %d ---\n', k);
-    fprintf('Valore: %.4e\n', autoval_c(idx));
-    fprintf('Autovettore associato:\n');
-    
-    % 2. Stampa l'autovettore riga per riga
-    % Usiamo V_c(:, idx) per prendere la colonna specifica
-    v_attuale = V_c(:, idx);
-    
-    for i = 1:length(v_attuale)
-        % Stampa indice dello stato e valore della componente
-        fprintf('  Stato x(%2d): %8.4f\n', i, v_attuale(i));
-    end
+    fprintf(['Autovettori relativi agli autovalori nulli:\n ' ...
+        'autovalore %f, autovettore %8.4f\n'], autoval_c(null_indices), V_c(null_indices,:))
+    % [val, state_idx] = max(P_c(:, idx)); % Trova lo stato con massima partecipazione
+    % fprintf('Modo %d (lambda=%.2e): Dominato dallo stato x(%d) con partecipazione del %.1f%%\n', ...
+    %         k, autoval_c(idx), state_idx, val*100);
 end
 
 % %% =========================================================================

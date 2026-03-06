@@ -11,6 +11,11 @@ W.-G. Cheng, R.~Wang, and Y.-H. Li.
 \newblock In {\em 2022 5th International Symposium on Autonomous Systems
   (ISAS)}. IEEE, 2022.
 
+\bibitem{khalil2002nonlinear}
+Hassan~K. Khalil.
+\newblock {\em Nonlinear Systems}.
+\newblock Prentice-Hall, Upper Saddle River, NJ, 3 edition, 2002.
+
 \bibitem{mian2008}
 A.~A. Mian and D.~Wang.
 \newblock Modeling and backstepping-based nonlinear control strategy for a 6

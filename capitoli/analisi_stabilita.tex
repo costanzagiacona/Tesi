@@ -39,8 +39,9 @@ Si è quindi implementata l'analisi tramite la \textbf{Matrice di Partecipazione
 
 Siano $V$ e $W^H$ rispettivamente le matrici degli autovettori destri e sinistri, normalizzate in modo che $W^H V = I$. Il fattore di partecipazione adimensionale tra lo stato $k$-esimo e il modo $i$-esimo è definito come:
 \begin{equation}
-    P_{ki} = w_{ki}^* v_{ki}
+    P_{ki} = w_{ik} v_{ki}
 \end{equation}
+dove $w_{ik}$ è il $k$-esimo elemento dell' $i$-esimo autovettore sinistro e $v_{ki}$ è il $k$-esimo elemento dell' $i$-esimo autovettore destro e
 dove la somma $\sum_{k=1}^n P_{ki} = 1$ garantisce una misura relativa del contributo di ogni stato all'autovalore $\lambda_i$. 
 
 L'estrazione di $P$ ha permesso di validare la \textbf{separazione spettrale} imposta dal controllo. Come mostrato in Fig. \ref{fig:partecipazione_hover}, si osserva una netta corrispondenza tra stati e scale temporali:
