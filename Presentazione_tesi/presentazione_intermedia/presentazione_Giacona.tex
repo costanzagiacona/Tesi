@@ -29,7 +29,7 @@
 \renewcommand{\figurename}{Fig.}
 
 % --- METADATI ---
-\title{Modellazione dinamica e design del controllo per un innovativo VTOL}
+\title{Modellazione dinamica e design del controllo per un VTOL innovativo}
 \author{Maria Costanza Giacona}
 \date{}
 
@@ -312,18 +312,17 @@
 \end{frame}
 
 % --- SLIDE 5: MOMENTI ATTIVI (Thrust & Torque) ---
-% Raggruppa le slide 16 e 17 originali
 \begin{frame}{Momenti Attivi: Controllo del Velivolo}
     I momenti di controllo sono generati dalla combinazione di spinta e reazione dei rotori.
     
     \vspace{0.3cm}
-    \textbf{1. Momento di Spinta ($\bm{M}_{th}$)}
+    \textbf{Momento di Spinta ($\bm{M}_{th}$)}
     \begin{equation}
         \bm{M}_{\text{th}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{th_{i}})
     \end{equation}
 
     \vspace{0.4cm}
-    \textbf{2. Momento Torcente ($\bm{M}_{tor}$)}
+    \textbf{Momento Torcente ($\bm{M}_{tor}$)}
     \begin{equation}
         \bm{M}_{\text{tor}} = \sum_{i=1}^{3} (b \omega_i^2 + I_{rot} \dot{\omega}_i) \hat{e}_{thrust,i}
     \end{equation}
@@ -360,6 +359,7 @@
         \end{column}
     \end{columns}
 \end{frame}
+
 
 % ==========================================================
 % 3. SISTEMA DINAMICO (RIELABORATO)
@@ -498,7 +498,7 @@
             
             \vspace{0.2cm}
             \begin{alertblock}{Angolo di Equilibrio}
-            Imponendo $M_z^{tot} = 0$:
+            Imponendo $M_{th,z} + M_{tor,z} = 0$:
             \begin{equation}
                 \theta_{3_{eq}} = \arctan\left( -\frac{k \, d_{tx}}{b}\right)
             \end{equation}
@@ -535,7 +535,7 @@
     
     \vspace{0.5cm}
     \begin{block}{Vantaggio dell'Architettura Full SMC}
-        Garantisce prestazioni superiori rispetto al PID classico in presenza di forti non-linearità.
+        Garantisce prestazioni superiori rispetto al PID classico in presenza di incertezze parametriche e non-linearità.
     \end{block}
 \end{frame}
 
@@ -552,113 +552,93 @@
 
 % --- SLIDE 4: SMC QUOTA (INVARIATA) ---
 \begin{frame}{Outer Loop: Controllo di Quota}
-    \begin{columns}[T]
-        \begin{column}{0.6\textwidth}
-            \textbf{Obiettivo:} Robustezza ai disturbi.\\
-            \vspace{0.2cm}
-            \textbf{1. Definizioni:}
-            \begin{itemize}
-                \item Errore: $e_z = z_{des} - z$
-                \item Sliding surface: $\sigma_z = \dot{e}_z + \lambda_z e_z$
-            \end{itemize}
-            \vspace{0.3cm}
-            Genera la richiesta di Thrust ($F_{z,req}$) per portare il drone in quota e mantenerlo in hovering.
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \centering
-            \vspace{0.5cm}
-            \begin{tikzpicture}[scale=0.8, >=latex]
-                \draw[->] (-2,0) -- (2,0) node[right] {$\sigma$};
-                \draw[->] (0,-1.5) -- (0,1.5) node[above] {$u_{rob}$};
-                \draw[red, dashed, thick] (-1.8,-1) -- (0,-1) -- (0,1) -- (1.8,1);
-                \node[red, font=\scriptsize] at (1.5, 1.2) {sgn};
-                \draw[blue, thick, domain=-1.8:1.8, samples=50] plot (\x, {tanh(2*\x)});
-                \node[blue, font=\scriptsize] at (1.5, 0.6) {tanh};
-                \draw[<->, gray] (-0.5, -0.2) -- (0.5, -0.2);
-                \node[gray, below, font=\tiny] at (0, -0.2) {$\Phi$};
-            \end{tikzpicture}
-            \captionof{figure}{\footnotesize Smoothing dell'azione di controllo.}
-        \end{column}
-    \end{columns}
-\end{frame}
 
-% --- SLIDE 5: STABILITÀ (INVARIATA) ---
-\begin{frame}{Analisi di Stabilità}
-    Per garantire la stabilità asintotica globale della \textit{sliding surface} ($\sigma \to 0$), si utilizza il criterio di Lyapunov.
+    \vspace{0.2cm}
+    \textbf{1. Definizioni:}
+    \begin{itemize}
+        \item Errore: $e_z = z_{des} - z$
+        \item Sliding surface: $\sigma_z = \dot{e}_z + \lambda_z e_z$, con $\lambda > 0$
+    \end{itemize}
     \vspace{0.3cm}
-    \begin{columns}[T]
-        \begin{column}{0.6\textwidth}
-            \textbf{1. Funzione Candidata:}
+    Si considera l'equazione della dinamica lungo l'asse $z$ inerziale:
+    \begin{equation}
+        m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
+    \end{equation}
+    Imponendo la \textit{reaching law}: $\dot{\sigma} = -k \tanh\left( \frac{\sigma_z}{\Phi} \right)$.
+    \vspace{0.1cm}
+    \\Genera la richiesta di Thrust ($F_{z,req}$) per portare il drone in quota e mantenerlo in hovering:
+    \begin{equation}
+        F_{z,req} = m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) + \cos(\phi)cos(\theta) F_{aero,z} \right)
+    \end{equation}
+    
+
+\end{frame}
+
+
+% --- SLIDE 1: Fondamenti e Stabilità ---
+\begin{frame}{Analisi di Stabilità per il Controllo di Quota}
+    \begin{block}{Obiettivo del Controllo}
+        Forzare lo stato sulla superficie $\sigma = 0$ in \textbf{tempo finito} e garantire la convergenza dell'errore.
+    \end{block}
+
+    \textbf{Analisi di Lyapunov:}
+    Sia $V = \frac{1}{2}\sigma^2$. La dinamica perturbata è $\dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)$, con $|\Delta(t)| \le \Delta_{max}$.
+    
+    \begin{equation*}
+        \dot{V} = \sigma\dot{\sigma} \le -(k - \Delta_{max})|\sigma| = -\delta \sqrt{2V}
+    \end{equation*}
+
+    \vspace{0.2cm}
+    \begin{columns}[t]
+        \begin{column}{0.45\textwidth}
+            \textbf{1. Robustezza} \\
+            Garantita se il guadagno soddisfa:
             \begin{equation*}
-                V(\sigma) = \frac{1}{2}\sigma^2 > 0
+                k > \Delta_{max}
             \end{equation*}
-            \textbf{2. Derivata Temporale:}
-            Sostituendo la dinamica a ciclo chiuso con disturbo $\Delta$:
-            \begin{align*}
-                \dot{V} &= \sigma \dot{\sigma} \\
-                        &= -k \sigma \text{sgn}(\sigma) + \sigma \Delta \\
-                        &\le -k |\sigma| + |\sigma| \delta_{\max}
-            \end{align*}
         \end{column}
-        \begin{column}{0.4\textwidth}
-            \centering
-            \vspace{1cm}
-            \begin{alertblock}{Condizione di Stabilità}
-                Affinché la funzione decresca ($\dot{V} < 0$), il guadagno deve essere maggiore del disturbo:
-                \vspace{0.2cm}
-                \centering
-                \large
-                \boldmath
-                $k > \delta_{\max}$
-                \unboldmath
-            \end{alertblock}
-            \small \itshape
-            Il sistema è robusto se il guadagno di switching supera il limite superiore dell'incertezza.
+        \begin{column}{0.45\textwidth}
+            \textbf{2. Tempo di Raggiungimento} \\
+            Integrando la disuguaglianza:
+            $$t_r \le \frac{|\sigma(0)|}{k - \Delta_{max}}$$
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 6: GUADAGNI E DISTURBI (INVARIATA) ---
-\begin{frame}{Gestione dei Disturbi e Tuning del Guadagno}
-    Il vantaggio principale dello SMC è che non richiede la conoscenza puntuale del disturbo $d(t)$, ma solo del suo upper bound.
-    \begin{columns}[c]
-        \begin{column}{0.5\textwidth}
-            \textbf{Condizione di Robustezza:}
-            $$ k > |\Delta(t)|_{\max} $$
-            \small
-            \begin{itemize}
-                \item \textcolor{green!60!black}{\textbf{Guadagno Ottimale:}} $k$ leggermente superiore al disturbo massimo atteso. Stabilità garantita e chattering ridotto.
-                \item \textcolor{red}{\textbf{Guadagno Eccessivo:}} Stabilità garantita, ma forte chattering e stress sugli attuatori.
-                \item \textcolor{orange}{\textbf{Guadagno Insufficiente:}} Perdita di stabilità.
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \centering
-            \begin{tikzpicture}[scale=0.8]
-                \draw[->] (0,0) -- (5,0) node[right] {$t$};
-                \draw[->] (0,-2.5) -- (0,2.5) node[above] {Ampiezza};
-                \draw[gray, thick, domain=0:4.5, samples=100] plot (\x, {1.2*sin(deg(\x*3)) + 0.5*sin(deg(\x*10))});
-                \node[gray, right] at (4.5, -0.5) {$d(t)$};
-                \draw[dashed, red] (0, 1.8) -- (4.5, 1.8);
-                \draw[dashed, red] (0, -1.8) -- (4.5, -1.8);
-                \node[red, font=\tiny] at (0.5, 1.9) {$\delta_{max}$};
-                \draw[blue, thick] (0, 2.0) -- (4.5, 2.0) node[right] {$k_{buono}$};
-                \draw[blue, thick] (0, -2.0) -- (4.5, -2.0);
-                \fill[blue, opacity=0.1] (0,-2) rectangle (4.5,2);
-            \end{tikzpicture}
-            \captionof{figure}{\footnotesize Il guadagno $k$ (blu) deve contenere il disturbo (grigio).}
-        \end{column}
-    \end{columns}
+% --- SLIDE 2: Regolarizzazione (Chattering) ---
+\begin{frame}{Regolarizzazione e Boundary Layer}
+    \begin{alertblock}{Il Problema del Chattering}
+        La discontinuità di $\operatorname{sgn}(\sigma)$ causa oscillazioni ad alta frequenza dannose per gli attuatori.
+    \end{alertblock}
+
+    Si introduce un \textbf{boundary layer} $\Phi$ definendo l'approssimazione:
+    \begin{equation*}
+        u_{smc} = -k \tanh\left( \frac{\sigma}{\Phi} \right)
+    \end{equation*}
+
+    Affinché lo strato limite sia attrattivo, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
+    \begin{equation*}
+        \dot{V} \le -\Phi \left( k \tanh(1) - \Delta_{max} \right) < 0
+        \implies k > \frac{\Delta_{max}}{\tanh(1)}
+    \end{equation*}
+
+    \begin{block}{Ultimate Boundedness}
+        Il sistema non converge più asintoticamente a zero, si parla di stabilità pratica. L'errore residuo è dettato dal bilancio tra la pendenza del controllo ($k/\Phi$) e l'incertezza $\Delta(t)$.
+    \end{block}
 \end{frame}
+
 
 % --- SLIDE 7: INVERSIONE CINEMATICA (IL PONTE) ---
 \begin{frame}{Inversione Cinematica: Dal Loop Esterno all'Interno}
-    Le forze virtuali generate dagli SMC di posizione ($F_{x,req}, F_{y,req}$) devono essere tradotte in angoli di assetto.
+    Le forze virtuali generate dagli SMC di posizione devono essere tradotte in angoli di assetto.
     
     \vspace{0.4cm}
     \begin{columns}[c]
         \begin{column}{0.48\textwidth}
             \begin{block}{Generazione Rollio ($\phi_{des}$)}
+                \begin{equation}
+                    F_{y,req} = m \left( K_y \tanh\left(\frac{\sigma_y}{\Phi}\right) + \lambda_y \dot{e}_y \right)
+                \end{equation}
                 \begin{equation}
                     \phi_{des} = \arcsin\left( \frac{F_{y,req}}{T} \right)
                 \end{equation}
@@ -669,6 +649,9 @@
         
         \begin{column}{0.48\textwidth}
             \begin{block}{Generazione Beccheggio ($\theta_{des}$)}
+                \begin{equation}
+                    F_{x,req} = -m \left(K_x \tanh\left(\frac{\sigma_x}{\Phi}\right) + \lambda_x \dot{e}_x \right)
+                \end{equation}
                 \begin{equation}
                     \theta_{des} = \arcsin\left( - \frac{F_{x,req}}{T} \right)
                 \end{equation}
@@ -684,157 +667,120 @@
 \end{frame}
 
 % --- SLIDE 8: INNER LOOP SMC (IL MOTORE DELLA STABILITÀ) ---
-% --- SLIDE 8: INNER LOOP (SMC) ---
+
 \begin{frame}{Inner Loop: Stabilizzazione d'Assetto}
     L'obiettivo è forzare l'errore d'assetto sulla \textbf{sliding surface}, dove il disturbo viene annullato dalla commutazione del controllo.
     \begin{itemize}
-    \item Definiamo una condizione di equilibrio dinamico verso cui l'errore deve tendere:
+    \item Definiamo la \textit{sliding surface}:
     \begin{equation*}
         \sigma = \dot{e} + \lambda e \quad \longrightarrow \quad \text{se } \sigma=0, \text{ l'errore decade esponenzialmente.}
     \end{equation*}
 
-    \item Attraverso lo SMC vengono generati dei momenti torcenti lungo gli assi $x, y, z$ 
+    \item Attraverso lo SMC vengono generati dei momenti lungo gli assi $x, y, z$ 
     con i quali si raggiungono gli angoli desiderati.
 
     \end{itemize}
+    \begin{align}
+        M_{x,req} = I_{xx} \left[ \ddot{\phi}_{des} + \lambda_{\phi} \dot{e}_\phi + K_{\phi} \tanh\left( \frac{\sigma_\phi}{\Phi_{\phi}} \right) \right] - (I_{yy} - I_{zz})qr \\
+        M_{y,req} = I_{yy} \left[ \ddot{\theta}_{des} + \lambda_{\theta} \dot{e}_\theta + K_{\theta} \tanh\left( \frac{\sigma_\theta}{\Phi_{\theta}} \right) \right] - (I_{zz} - I_{xx})pr\\
+        M_{z,req} = I_{zz} \left[ \ddot{\psi}_{des} + \lambda_\psi \dot{e}_\psi + K_\psi \tanh\left( \frac{\sigma_\psi}{\Phi_{\psi}} \right) \right] - (I_{xx} - I_{yy})pq
+    \end{align}
 
+\end{frame}
+
+
+\begin{frame}{Motor Mixing Algorithm: Thrust e Imbardata}
+    Si ipotizza di ripartire equamente la spinta $F_{z,req}$ fra i tre motori.
+    \begin{equation}
+        \begin{cases}
+            T_{front} = \frac{2}{3}F_{z,req}\\
+            T_{3} = \frac{F_{z,req}}{3}
+        \end{cases}          
+    \end{equation}
+    con $T_{front} = T_1 + T_2$.
+    \vspace{0.2cm}
+
+    Il controllo dell'imbardata è gestito tramite il tilting differenziale dei rotori anteriori. 
+    \\Si usa la relazione tra momento richiesto e angolo di inclinazione:
+    \begin{equation}
+        M_z \approx T_{front} d_{my} \sin(\delta)
+    \end{equation}
+    \begin{equation}
+        \delta = \arcsin\left( \frac{M_z}{T_{front} d_{my}} \right)
+    \end{equation}
 \end{frame}
 
 % --- SLIDE 8: MMA Longitudinale (Condensata) ---
 \begin{frame}{Motor Mixing Algorithm: Longitudinale}
     La dinamica longitudinale richiede la risoluzione di un sistema con Spinta ($F_{z,req}$) e Beccheggio ($M_y$).
     
+    \begin{equation}
+        \begin{cases}
+            (T_1 + T_2) \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z} \\
+            (T_1 + T_2) \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_y
+        \end{cases}
+    \end{equation}
+
     \vspace{0.3cm}
-    \textbf{1. Calcolo Rotore di Coda ($\omega_3$):}
+    \textbf{1. Calcolo Rotore di Coda ($T_3$):}
     Dall'equilibrio dei momenti attorno a Y, si isola il contributo della coda:
     \begin{equation}
-        \omega_3 = \sqrt{\frac{M_{y,req} - F_{z,req} d_{mx}}{k \sin(\theta_3) (d_{tx} - d_{mx}) + b \cos(\theta_3) \sin(\theta_4)}}
+        T_3 = k \left( \frac{M_y - F_{z} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)} \right)
     \end{equation}
     
     \vspace{0.3cm}
     \textbf{2. Calcolo Rotori Anteriori ($T_{front}$):}
     Nota la spinta della coda, il resto del sostentamento è affidato ai rotori anteriori:
     \begin{equation}
-        T_{front} = F_{z,req} - T_3 \sin(\theta_3)
+        T_{front} = \frac{F_{z} - T_3 \sin(\theta_3)}{\cos(\delta)}
     \end{equation}
 \end{frame}
 
 % --- SLIDE 9: MMA Laterale (Condensata) ---
 \begin{frame}{Motor Mixing Algorithm: Latero-Direzionale}
-    Una volta determinato $T_{front}$, questo viene modulato per controllare Roll e Yaw.
-    
-    \vspace{0.5cm}
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \textbf{ROLL (Spinta Differenziale)} \\
-            Si ripartisce la spinta anteriore tra destra ($T_1$) e sinistra ($T_2$):
-            \begin{equation}
-                \Delta T_{des} = \frac{M_{x,req}}{2 d_{my}}
-            \end{equation}
-            \begin{equation}
-                \begin{cases}
-                    T_{1} = \frac{T_{front}}{2} - \Delta T_{des}\\
-                    T_{2} = \frac{T_{front}}{2} + \Delta T_{des}
-                \end{cases}
-            \end{equation}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \textbf{YAW (Tilt Differenziale)} \\
-            Si inclina il vettore spinta anteriore per creare coppia su Z:
-            \begin{equation}
-                \delta_{des} = \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right)
-            \end{equation}
-            \begin{equation}
-                \begin{cases}
-                    \theta_1 = \pi/2 - \delta_{des}\\
-                    \theta_2 = \pi/2 + \delta_{des}
-                \end{cases}
-            \end{equation}
-            
-        \end{column}
-    \end{columns}
+    Una volta determinato $T_{front}$, questo viene modulato per controllare il Rollio, che si ottiene tramite spinta differenziale dei rotori anteriori.
+    \\Il sistema da risolvere è:
+    \begin{equation}
+        \begin{cases}
+        T_1 + T_2 = T_{front} \\
+        (T_2 - T_1) \cos(\delta) d_{my} = M_x
+        \end{cases}
+        \implies
+        \begin{cases}
+        T_1 + T_2 = T_{front} \\
+        \Delta T \cos(\delta) d_{my} = M_x
+        \end{cases}
+    \end{equation}
+    Da cui si ottiene il valore differenziale della spinta:
+    \begin{equation}
+        \Delta T = \frac{M_{x,req}}{2 d_{my} \cos(\delta)}
+    \end{equation}
+    I valori di Thrust per i motori anteriori diventano:
+    \begin{equation}
+        \begin{cases}
+            T_{1} = \frac{T_{front}}{2} - \Delta T\\
+            T_{2} = \frac{T_{front}}{2} + \Delta T
+        \end{cases}
+    \end{equation}           
 \end{frame}
 
-% % ===========================================================
-% % SIMULAZIONI (RIELABORATE)
-% % ==========================================================
-% \section{Simulazioni controllo verticale}
+\begin{frame}{Ingressi di controllo}
+    I comandi dati agli attuatori sono quindi i seguenti:
+    \begin{gather}
+        u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} - \Delta T \right)}\\
+        u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} + \Delta T \right)}\\
+        u_3 = \omega_3 = \sqrt{\frac{T_3}{k}}\\
+        u_4 = \theta_1 = \pi/2 - \delta\\
+        u_5 = \theta_2 = \pi/2 + \delta\\
+        u_6 = \theta_3 = \theta_{3,eq}\\
+        u_7 = \theta_4 = -\pi/2
+    \end{gather}
+\end{frame}
 
-% \begin{frame}
-%     \vfill
-%     \centering
-%     {\Huge \textbf{Risultati Simulazione}}
-%     \vfill
-% \end{frame}
-
-% % --- SLIDE SIMULAZIONI 1: Assetto ---
-% \begin{frame}{Analisi Prestazionale: Assetto}
-%     \begin{columns}[c]
-%         \begin{column}{0.65\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{angoli.png}
-%         \end{column}
-%         \begin{column}{0.35\textwidth}
-%             \textbf{Risposta Angolare:}
-%             \begin{itemize}
-%                 \item \textcolor{blue!80!black}{\textbf{Velocità:}} Settling time < 2s.
-%                 \item \textcolor{blue!80!black}{\textbf{Precisione:}} Errore a regime nullo sugli angoli di Eulero.
-%                 \item \textcolor{blue!80!black}{\textbf{Overshoot:}} Minimo (< 5\%) durante i transitori.
-%             \end{itemize}
-%         \end{column}
-%     \end{columns}
-% \end{frame}
-
-% \begin{frame}{Analisi Prestazionale: Posizione}
-%     \begin{columns}[c]
-%         \begin{column}{0.65\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{pos_vel.png}
-%         \end{column}
-%         \begin{column}{0.35\textwidth}
-%             \textbf{Posizione inerziale:}
-%             \begin{itemize}
-%                 \item \textcolor{blue!80!black}{\textbf{X e Y:}} Il drone rimane fermo lungo gli assi $x$ e $y$.
-%                 \item \textcolor{blue!80!black}{\textbf{Z:}} Viene raggiunta con successo la quota.
-%             \end{itemize}
-%         \end{column}
-%     \end{columns}
-% \end{frame}
-
-% % --- SLIDE SIMULAZIONI 2: Attuatori ---
-% \begin{frame}{Analisi degli Attuatori: Sforzo di Controllo}
-%     \begin{columns}[c]
-%         \begin{column}{0.65\textwidth}
-%             \includegraphics[width=\linewidth]{thrust.png}
-%         \end{column}
-%         \begin{column}{0.35\textwidth}
-%             \textbf{Thrust:}
-%             \begin{itemize}
-%                 \item Nessuna saturazione dei motori (Max 100N).
-%             \end{itemize}
-%         \end{column}
-%     \end{columns}
-% \end{frame}
-
-% % --- SLIDE SIMULAZIONI 2: Attuatori ---
-% \begin{frame}{Analisi degli Attuatori: Sforzo di Controllo}
-%     \begin{columns}[c]
-%         \begin{column}{0.65\textwidth}
-%             \includegraphics[width=\linewidth]{tilt.png}
-%         \end{column}
-%         \begin{column}{0.35\textwidth}
-%             \textbf{Tilt:}
-%             \begin{itemize}
-%                 \item Escursione contenuta ($\pm 5^\circ$) in hovering.
-%                 \item Dinamica compatibile con la banda passante dei servi.
-%             \end{itemize}
-%         \end{column}
-%     \end{columns}
-% \end{frame}
 
 
 % ============================================================
-% 4. CONTROLLO ORIZZONTALE (RIELABORATO)
+% 4. CONTROLLO ORIZZONTALE 
 % ============================================================
 \section{Controllo Volo Orizzontale}
 
@@ -847,7 +793,7 @@
 
 % --- SLIDE 1: CONFIGURAZIONE CROCIERA ---
 \begin{frame}{Configurazione di Crociera (Fixed-Wing Mode)}
-    Durante il volo avanzato, i rotori anteriori generano spinta propulsiva orizzontale.
+    Durante il volo di crociera, i rotori anteriori generano spinta propulsiva orizzontale.
     
     \vspace{0.3cm}
     \begin{columns}[c]
@@ -867,7 +813,6 @@
         
         \begin{column}{0.4\textwidth}
             \centering
-            % Placeholder per immagine drone in volo orizzontale
             \includegraphics[width=0.9\linewidth]{config_orizzontale.png} 
             \captionof{figure}{\footnotesize Configurazione Forward Flight}
         \end{column}
@@ -886,7 +831,7 @@
         \vspace{0.3cm}
         \item \textbf{Inner Loop (Assetto):} \textcolor{red}{\textbf{PID}}.
         \begin{itemize}
-            \item Richiesta di asservimento degli angoli di assetto nulli.
+            \item Richiesta di asservimento degli angoli di assetto.
         \end{itemize}
     \end{itemize}
     
@@ -900,125 +845,31 @@
     \begin{figure}
         \centering
         \resizebox{0.75\textwidth}{!}{
-            \includegraphics{controllo_orizzontale/schema_blocchi_H_t.png}
+            \includegraphics{controllo_orizzontale/schema_blocchi_H.png}
         }
         \caption{Schema a blocchi del controllo orizzontale.}
     \end{figure}
 \end{frame}
 
 
-
-% % --- SLIDE 2: SCHEMA A BLOCCHI (Il tuo TikZ) ---
-% \begin{frame}{Schema a blocchi: Controllo Orizzontale}
-%     \begin{figure}[htbp]
-%     \centering
-%     \resizebox{0.8\textwidth}{!}{
-%     \begin{tikzpicture}[auto, node distance=1.3cm, >=Stealth, thick]
-%         % --- STILI ---
-%         \tikzset{
-%             block/.style={draw, rectangle, minimum height=3em, minimum width=4.5em, align=center, fill=white},
-%             sum/.style={draw, circle, inner sep=0pt, minimum size=6mm},
-%             input/.style={coordinate},
-%             output/.style={coordinate},
-%             container/.style={draw, rectangle, rounded corners, dashed, inner sep=0.4cm}
-%         }
-
-%         % --- COLONNA 1: OUTER LOOP ---
-%         \node [input] (ref_z) {};
-%         \node [sum, right=0.8cm of ref_z] (sum_z) {$\Sigma$};
-%         \node [block, right=1cm of sum_z] (pid_z) {PID\\$z$};
-%         \node [left=0.1cm of ref_z] {$z_{des}$};
-
-%         \node [input, below=1.5cm of ref_z] (ref_vx) {};
-%         \node [sum, right=0.8cm of ref_vx] (sum_vx) {$\Sigma$};
-%         \node [block, right=1cm of sum_vx] (pid_vx) {PID\\$v_x$};
-%         \node [left=0.1cm of ref_vx] {$v_{x,des}$};
-
-%         % \node [input, below=3.5cm of ref_vx] (ref_y) {};
-%         % \node [sum, right=0.8cm of ref_y] (sum_y) {$\Sigma$};
-%         % \node [block, right=1cm of sum_y] (pid_y) {PID\\$y$};
-%         % \node [left=0.1cm of ref_y] {$y_{des}$};
-
-%         % --- COLONNA 2: INNER LOOP ---
-%         \node [sum, right=3cm of pid_vx, yshift=-1.5cm] (sum_theta) {$\Sigma$};
-%         \node [block, right=0.8cm of sum_theta] (pid_theta) {PID\\$\theta$};
-        
-%         \node [sum, below=1cm of sum_theta] (sum_phi) {$\Sigma$};
-%         \node [block, right=0.8cm of sum_phi] (pid_phi) {PID\\$\phi$};
-
-%         \node [sum, below=1cm of sum_phi] (sum_psi) {$\Sigma$};
-%         \node [block, right=0.8cm of sum_psi] (pid_psi) {PID\\$\psi$};
-
-%         % --- COLONNA 3: MIXER E DRONE ---
-%         \node [block, right=8.5cm of pid_vx, minimum height=10.5cm, yshift=-2cm] (mixer) {MMA};
-%         \node [block, right=1.5cm of mixer, minimum height=8.5cm] (drone) {DRONE};
-%         \node [output, right=1cm of drone] (drone_out) {};
-
-%         % --- CONNESSIONI DIRETTE ---
-%         \draw [->] ($(sum_theta.west)-(0.8,0)$) -- node[above, pos=0] {$\theta_{des}$} (sum_theta.west);
-%         \draw [->] ($(sum_phi.west)-(0.8,0)$) -- node[above, pos=0] {$\phi_{des}$} (sum_phi.west);
-%         \draw [->] ($(sum_psi.west)-(0.8,0)$) -- node[above, pos=0] {$\psi_{des}$} (sum_psi.west);
-
-%         \draw [->] (pid_z.east) -- (mixer.west |- pid_z.east) node[above, pos=0.15] {$F_{z,req}$};
-%         \draw [->] (pid_vx.east) -- (mixer.west |- pid_vx.east) node[above, pos=0.15] {$F_{x,req}$};
-%         \draw [->] (pid_theta.east) -- (mixer.west |- pid_theta.east) node[above, pos=0.5] {$\theta_{pitch}$};
-%         \draw [->] (pid_phi.east) -- (mixer.west |- pid_phi.east) node[above, pos=0.5] {$\delta$};
-%         \draw [->] (pid_psi.east) -- (mixer.west |- pid_psi.east) node[above, pos=0.5] {$\Delta \omega$};
-
-%         \draw [->] (ref_z) -- (sum_z); \draw [->] (sum_z) -- (pid_z);
-%         \draw [->] (ref_vx) -- (sum_vx); \draw [->] (sum_vx) -- (pid_vx);
-%         % \draw [->] (ref_y) -- (sum_y); \draw [->] (sum_y) -- (pid_y);
-%         % \draw [->] (pid_y.east) -- node[above] {$\phi_{des}$} (sum_phi.west);
-%         \draw [->] (sum_theta) -- (pid_theta);
-%         \draw [->] (sum_phi) -- (pid_phi);
-%         \draw [->] (sum_psi) -- (pid_psi);
-%         \draw [->] (mixer) -- (drone);
-%         \draw [->] (drone) -- (drone_out);
-
-%         % --- FEEDBACK BUS ---
-%         \coordinate (fb_node) at ($(drone.east)+(0.5,0)$);
-%         \coordinate (line_outer) at (0,-9.8); % Bus per Outer Loop
-%         \coordinate (line_inner) at (0,-9);    % Bus per Inner Loop
-
-%         \draw (fb_node) |- (line_outer) -- ($(sum_z.west |- line_outer)$);
-%         \draw (fb_node) |- (line_inner) -- ($(sum_theta.west |- line_inner)$);
-
-%         \draw [->, shorten >=0.5pt] (sum_z.south |- line_outer) -- (sum_z.south) node[left, pos=0.85] {$-$};
-%         \draw [->, shorten >=0.5pt] (sum_vx.south |- line_outer) -- (sum_vx.south) node[left, pos=0.85] {$-$};
-%         % \draw [->, shorten >=0.5pt] (sum_y.south |- line_outer) -- (sum_y.south) node[left, pos=0.85] {$-$};
-
-%         \draw [->, shorten >=0.5pt] (sum_theta.south |- line_inner) -- (sum_theta.south) node[left, pos=0.7] {$-$};
-%         \draw [->, shorten >=0.5pt] (sum_phi.south |- line_inner) -- (sum_phi.south) node[left, pos=0.7] {$-$};
-%         \draw [->, shorten >=0.5pt] (sum_psi.south |- line_inner) -- (sum_psi.south) node[left, pos=0.85] {$-$};
-
-%         % --- CONTAINERS ---
-%         \begin{scope}[on background layer]
-%             \node [container, draw, fit=(sum_z) (pid_z) (sum_vx) (pid_vx), label={above:\textbf{Outer Loop}}] {};
-%             \node [container, draw, fit=(sum_theta) (pid_theta) (sum_psi) (pid_psi), label={below:\textbf{Inner Loop}}] {};
-%         \end{scope}
-
-%     \end{tikzpicture}
-%     }
-%     \caption{Architettura a Cascata: Guidance (Lento) e Attitude (Veloce).}
-%     \end{figure}
-% \end{frame}
-
 % --- SLIDE 3: OUTER LOOP (UNIFICATA) ---
 \begin{frame}{Outer Loop: Quota e Velocità}
-    L'Outer Loop genera i riferimenti per l'Inner Loop. La strategia di controllo è di tipo Fixed-Wing: la quota è controllata dall'assetto longitudinale (Pitch), mentre la velocità è controllata dalla spinta.
+    
 
     \vspace{0.3cm}
     \begin{columns}[T]
         % Colonna Quota
         \begin{column}{0.48\textwidth}
             \begin{block}{Controllo Quota ($z$) $\rightarrow$ Pitch ($\theta_{ref}$)}
-                Il mantenimento dell'altitudine avviene modulando l'angolo di beccheggio.
-                
+                Il controllore di quota $z$ calcola un angolo di beccheggio desiderato $\theta_{des}$ che verrà poi inseguito dal loop interno:
+
                 \vspace{0.2cm}
                 \textbf{Generazione Riferimento:}
                 \begin{equation}
-                    \theta_{des} = \text{PID}_z (e_z, \dot{e}_z)
+                    \theta_{des} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
                 \end{equation}
+
+                con $e_z = z_{des} - z$.
                 
             \end{block}
         \end{column}
@@ -1026,58 +877,27 @@
         % Colonna Velocità
         \begin{column}{0.48\textwidth}
             \begin{block}{Controllo Velocità ($v_x$) $\rightarrow$ Spinta ($F_{x}$)}
-                Inseguimento del riferimento di velocità con compensazione aerodinamica.
+                Il controllore di velocità genera una forza propulsiva lungo $x$.
                 
                 \vspace{0.2cm}
                 \textbf{Forza Richiesta:}
                 \begin{equation}
-                    F_{x,req} = \text{PI}_{v_x}(e_{v_x}) + \underbrace{D_{tot}(v)}_{\text{Drag Feedforward}}
+                    F_{x,req} = \hat{D}_x(v) + \underbrace{K_{P_v} e_v + K_{I_v} \int_{0}^{t} e_v(\tau) d\tau}_{\text{Azione PI}}
                 \end{equation}
+                con $e_v = v_{x,des} - v_x$.
             \end{block}
         \end{column}
     \end{columns}
 
 \end{frame}
 
-% \begin{frame}{Outer Loop: Inseguimento Traiettoria (PID vs SMC)}
-%     Il loop esterno gestisce la quota ($z$) e la velocità ($v_x$).
-%     \vspace{0.2cm}
-%     Il passaggio allo Sliding Mode risolve i limiti del controllo lineare.
-    
-%     \begin{columns}[T]
-%         \begin{column}{0.48\textwidth}
-%             \begin{block}{Approccio PID + FF}
-%                 \centering 
-%                 $F_{z,req} = m(g - a_{z,PID}) - L_{wing}$ \\
-%                 $F_{x,req} = F_{x,PID} + D_{wing}$
-%                 \begin{itemize}
-%                     \item Richiede errore residuo per compensare mismatch del modello.
-%                     \item Non stressa i motori per fluttuazioni gestibili tramite le ali.
-%                 \end{itemize}
-%             \end{block}
-%         \end{column}
-        
-%         \begin{column}{0.48\textwidth}
-%             \begin{block}{Approccio SMC (Robusto)}
-%                 \centering 
-%                 $F_{z,req} = (m g - L_{wing}) - m K_z \tanh(s_z/\Phi)$ \\
-%                 $F_{x,req} = D_{wing} + K_{v} \tanh(s_v/\Phi)$
-%                 \begin{itemize}
-%                     \item Interviene non appena lo stato si discosta dalla sliding surface, rivelandosi più robusto.
-%                     \item Maggiori consumi e più stress sui motori.
-%                 \end{itemize}
-%             \end{block}
-%         \end{column}
-%     \end{columns}
-%     \vspace{0.3cm}
-%     \textit{Mentre il PID "insegue" l'errore, lo SMC "forza" lo stato sulla superficie desiderata.}
-% \end{frame}
 
 % --- SLIDE 4: INNER LOOP (ANALOGIE) ---
 \begin{frame}{Inner Loop: Thrust Vectoring come Superfici Virtuali}
-    In assenza di superfici aerodinamiche mobili, il mixer emula le superfici di controllo classiche usando i motori.
+    In assenza di superfici aerodinamiche mobili, il MMA emula le superfici di controllo classiche usando i motori.\\
+    I controllori sono dei \textbf{Proporzionali-Derivativi}. 
 
-    \vspace{0.3cm}
+    \vspace{0.15cm}
     \begin{columns}[T]
         \begin{column}{0.32\textwidth}
             \begin{alertblock}{Pitch ($\theta$)}
@@ -1087,8 +907,11 @@
                     \item \textbf{Azione:} Tilt Collettivo.
                     \item $\theta_1 = \theta_2$.
                     \item Ruota il vettore spinta su/giù.
-                    \item PID
                 \end{itemize}
+                \begin{equation}
+                    M_y = K_{P_\theta} e_\theta - K_{D_\theta} \dot{e}_{\theta}
+                \end{equation}
+                
             \end{alertblock}
         \end{column}
 
@@ -1100,8 +923,10 @@
                     \item \textbf{Azione:} Tilt Differenziale.
                     \item $\theta_1 = -\theta_2$.
                     \item Crea coppia torcente sull'asse $X$.
-                    \item PD
                 \end{itemize}
+                \begin{equation}
+                    M_x = K_{P_\phi} e_\phi - K_{D_\phi} \dot{e}_{\phi}
+                \end{equation}
             \end{block}
         \end{column}
 
@@ -1113,95 +938,132 @@
                     \item \textbf{Azione:} Spinta Differenziale.
                     \item $T_1 \neq T_2$.
                     \item Crea coppia torcente sull'asse $Z$.
-                    \item PD
                 \end{itemize}
+                \begin{equation}
+                    M_z = K_{P_\psi} e_\psi - K_{D_\psi} \dot{e}_{\psi}
+                \end{equation}
             \end{exampleblock}
         \end{column}
     \end{columns}
 \end{frame}
 
-% % --- SLIDE 5: ANALISI COMPARATIVA ---
-% \begin{frame}{Analisi Comparativa: Quando usare cosa?}
-%     La scelta tra PID e SMC non è univoca, ma dipende dai requisiti di missione e dall'hardware.
-
-%     \begin{columns}[T]
-%         \begin{column}{0.48\textwidth}
-%             \begin{exampleblock}{Scegliere il PID se...}
-%                 \begin{itemize}
-%                     \item \textbf{Hardware limitato:} Richiede bassa potenza computazionale.
-%                     \item \textbf{Salute Attuatori:} I segnali sono intrinsecamente morbidi (no vibrazioni).
-%                     \item \textbf{Modello Noto:} Il modello fisico è molto preciso.
-%                 \end{itemize}
-%             \end{exampleblock}
-%         \end{column}
-
-%         \begin{column}{0.48\textwidth}
-%             \begin{alertblock}{Scegliere lo SMC se...}
-%                 \begin{itemize}
-%                     \item \textbf{Alta Precisione:} Necessità di tracking millimetrico ($Z, V_x$).
-%                     \item \textbf{Robustezza:} Presenza di disturbi (vento) o incertezze (stallo).
-%                     \item \textbf{Sottosituazione:} Sistemi complessi come i VTOL Tilt-Rotor.
-%                 \end{itemize}
-%             \end{alertblock}
-%         \end{column}
-%     \end{columns}
-%     \vspace{0.3cm}
-%     \centering
-%     \textbf{Conclusione:} Per il prototipo in esame, lo \textbf{SMC} è risultato indispensabile per garantire il 100\% di successo nelle fasi di transizione e crociera.
-% \end{frame}
 
 % --- SLIDE 5: MMA CONCETTO (SINTESI VETTORIALE) ---
 \begin{frame}{Motor Mixing Algorithm: Thrust}
-    Il Mixer mappa i comandi di assetto sui motori (funzione di \textit{Thrust Vectoring}).
 
-    \vspace{0.3cm}
-    \textbf{Assegnazione Spinta (Propulsione)}
-    La spinta totale è determinata dalla richiesta del loop di velocità longitudinale.
-    \begin{equation}
-         T_{tot} = F_{x,req} 
-    \end{equation}
+    \begin{itemize}
+        \item \textbf{Thrust:}
+            La spinta totale è determinata dalla richiesta del loop di velocità longitudinale.
+            \begin{equation}
+                T_{tot} = F_{x,req} 
+            \end{equation}
+        \item \textbf{Beccheggio:} si definisce $\alpha$ come l'inclinazione collettiva dei rotori e si assumono piccoli angoli di inclinazione
+            \begin{equation}
+                M_y = d_{mx} T_{tot} \sin(\alpha)
+                \implies \alpha = \frac{M_{y,req}}{T_{tot} d_{mx}}
+            \end{equation}
 
-    \vspace{0.3cm}
-    Il controllo di quota è garantito indirettamente: il servo picchia ($u_{pitch}$), il drone alza il naso ($\theta$), l'ala genera più portanza.
+        \item \textbf{Rollio:} si definisce $\delta$ come l'inclinazione differenziale dei rotori e si assumono piccoli angoli di inclinazione
+            \begin{equation}
+                M_x = d_{my} T_{tot} \sin(\delta)
+                \implies \delta = \frac{M_{x,req}}{T_{tot} d_{my}}
+            \end{equation}
+
+        \item \textbf{Imbardata:} si definisce la spinta differenziale $\Delta T = T_2 - T_1$
+            \begin{equation}
+                M_z = d_{my} (T_2 - T_1)
+                \implies \Delta T = \frac{M_z}{d_{my}}
+            \end{equation}
+    \end{itemize}
 \end{frame}
 
-% --- SLIDE 6: MMA ATTUAZIONE (EQUAZIONI FINALI) ---
-\begin{frame}{Motor Mixing Algorithm: Leggi di Attuazione}
-    Ai valori di base si sovrappongono i comandi di stabilizzazione ($u_\phi, u_\psi$) dell'Inner Loop.
+\begin{frame}{Ingressi di controllo}
+    I comandi dati agli attuatori sono quindi i seguenti:
+\begin{gather}
+    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \frac{\Delta T}{2} \right)}\\
+    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \frac{\Delta T}{2} \right)}\\
+    u_3 = \omega_3 = 0\\
+    u_4 = \theta_1 = \alpha - \delta\\
+    u_5 = \theta_2 = \alpha + \delta\\
+    u_6 = \theta_3 = 0\\
+    u_7 = \theta_4 = 0
+\end{gather}
+\end{frame}
 
-    \vspace{0.5cm}
-    % L'opzione 'onlytextwidth' assicura che il calcolo delle larghezze sia pulito
-    \begin{columns}[c, onlytextwidth] 
-        \hfill % Margine sinistro (opzionale, per centrare il blocco totale)
-        
-        \begin{column}{0.48\textwidth}
-            \centering % Centra il contenuto dentro la colonna per staccarlo dai bordi
-            \textbf{A. Comandi ai Motori} \\
-            (Controllo Yaw e Spinta)
-            \begin{equation}
-                \begin{cases}
-                    T_{1} = \frac{T_{tot}}{2} - u_{\psi} \\
-                    T_{2} = \frac{T_{tot}}{2} + u_{\psi}
-                \end{cases}
-            \end{equation}
-        \end{column}
-        
-        \hfill % Crea lo spazio centrale tra le due colonne
-        
+
+% ==========================================================
+% ANALISI DI STABILITA'
+% ==========================================================
+\section{Analisi di Stabilità}
+
+\begin{frame}
+    \vfill
+    \centering
+    {\Huge \textbf{Analisi di Stabilità tramite\\ Linearizzazione}}
+    \vfill
+\end{frame}
+
+% SLIDE 1: METODOLOGIA
+\begin{frame}{Metodologia di Linearizzazione}
+    L'analisi della stabilità locale è condotta tramite la \textbf{linearizzazione numerica differenziale} del sistema ad anello chiuso:
+    \begin{equation*}
+        \dot{x} = f_{cl}(x) = f(x, u(x))
+    \end{equation*}
+
+    \begin{block}{Regolarizzazione del Modello ($f_{cl} \in C^1$)}
+        Per garantire la differenziabilità nel punto di equilibrio $x_{eq}$:
+        \begin{itemize}
+            \item \textbf{Rimozione saturazioni:} Ipotesi di piccoli segnali ($\delta x$ infinitesimo).
+            \item \textbf{Approssimazione Sliding Mode:} $K \tanh(s/\Phi) \approx \frac{K}{\Phi}s$.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Differenze Finite Centrali}
+        Calcolo dello Jacobiano $A_{cl}$ con accuratezza $\mathcal{O}(h^2)$ e passo $h=10^{-6}$:
+        \begin{equation*}
+            A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
+        \end{equation*}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Confronto Dinamico: Hovering vs Crociera}
+    \begin{columns}[t]
+        % COLONNA HOVERING
         \begin{column}{0.48\textwidth}
             \centering
-            \textbf{B. Comandi ai Servi} \\
-            (Controllo Pitch e Roll)
-            \begin{equation}
-                \begin{cases}
-                    \theta_{1} = u_{\theta} - u_{\phi} \\
-                    \theta_{2} = u_{\theta} + u_{\phi}
-                \end{cases}
-            \end{equation}
+            \textbf{\alert{Hovering ($n=26$)}}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \textbf{Trim:} $z = -10$ m, $v = 0$.
+                \item \textbf{Controllo:} Sliding Mode (comportamento PD). Nessuno stato aggiuntivo.
+                \item \textbf{Stabilità:} \textbf{Asintotica}.\\
+                $\text{Re}(\lambda_i) < 0 \quad \forall i$.
+                \item \textbf{Polo Critico:} $\lambda = -0.3358$ (decadimento esponenziale).
+            \end{itemize}
         \end{column}
-        
-        \hfill % Margine destro
+
+        \vrule{} % Linea di separazione verticale
+
+        % COLONNA CROCIERA
+        \begin{column}{0.48\textwidth}
+            \centering
+            \textbf{\alert{Crociera ($n=28$)}}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \textbf{Trim:} $v_x = 25$ m/s, $z = -10$ m.
+                \item \textbf{Controllo:} PID con azione integrale su $v_x$ e $z$.
+                \item \textbf{Stabilità:} \textbf{Semplice}.\\
+                Presenza di $\lambda = 0$.
+                \item \textbf{Analisi Spettrale:} Autovettore $v_{\lambda=0}$ associato solo a $x_1$ (invarianza per traslazione).
+            \end{itemize}
+        \end{column}
     \end{columns}
+
+    \vspace{0.4cm}
+    \begin{block}{Sintesi Critica}
+        Entrambe le fasi sono asintoticamente stabili rispetto alle variabili di missione (assetto e velocità).
+    \end{block}
 \end{frame}
 
 % ===========================================================
@@ -1296,32 +1158,9 @@
 \begin{frame}
     \vfill
     \centering
-    {\Huge \textbf{Conclusioni}}
+    {\Huge \textbf{Grazie per l'attenzione}}
     \vfill
 \end{frame}
 
-\begin{frame}{Conclusioni e Sviluppi Futuri}
-    \textbf{Risultati ottenuti:}
-    \begin{itemize}
-        \item Modellazione completa a 6-DOF per tricottero tilting-rotor.
-        \item Sintesi controllore per il volo verticale.
-        \item Sintesi controllore per il volo orizzontale.
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    \textbf{Sviluppi Futuri:}
-    \begin{itemize}
-        \item Sviluppo del controllo laterale per la fase di crociera. 
-        \item Analisi di stabilità tramite linearizzazione.
-    \end{itemize}
-\end{frame}
-
-% \begin{frame}
-%     \centering
-%     \Huge \textbf{Grazie per l'attenzione}
-    
-%     \vspace{1cm}
-%     \Large Domande?
-% \end{frame}
 
 \end{document}

@@ -10,25 +10,25 @@ function MonteCarloVTOL(params)
     % --- SCENARIO 1: RECOVERY ---
     cfg_rec.name = 'Recovery Hover';
     cfg_rec.test_id = 1; 
-    cfg_rec.target = [0; 0; -10]; 
+    cfg_rec.target = [0; 0; -100]; 
     cfg_rec.tspan = [0 30]; 
     cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(10), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; 
     cfg_rec.n_states = 26; % Esplicito la dimensione dello stato
     
-    % RunCampaign(cfg_rec, params);
+    RunCampaign(cfg_rec, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 2: TAKEOFF ---
     cfg_take.name = 'Takeoff Ground';
     cfg_take.test_id = 1; 
-    cfg_take.target = [0; 0; -10]; 
+    cfg_take.target = [0; 0; -100]; 
     cfg_take.tspan = [0 15]; 
     cfg_take.sigma = struct('pos', 0.1, 'vel', 0.05, 'att', deg2rad(3), 'omega', deg2rad(10));
     cfg_take.x0_type = 'takeoff'; 
     cfg_take.n_states = 26;
     
-    % RunCampaign(cfg_take, params);
+    RunCampaign(cfg_take, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE ---
@@ -40,7 +40,7 @@ function MonteCarloVTOL(params)
     cfg_cru.x0_type = 'cruise'; 
     cfg_cru.n_states = 28; % Modello con dinamica estesa per il cruise
     
-    RunCampaign(cfg_cru, params);
+    % RunCampaign(cfg_cru, params);
     
     fprintf('\n================================================\n');
     fprintf(' SUITE COMPLETATA.\n');

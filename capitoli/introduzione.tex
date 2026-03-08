@@ -15,14 +15,14 @@ cui i regimi aerodinamici dei rotori e delle superfici alari si sovrappongono in
 \section{Il velivolo oggetto di studio: Dragonfly}
 Il presente lavoro si focalizza sul sistema "Dragonfly", 
 un VTOL innovativo caratterizzato da una configurazione a tre rotori inclinabili. 
-A differenza di soluzioni presenti in letteratura, come il modello a ali indipendenti proposto in \cite{nam2020} 
+A differenza di soluzioni presenti in letteratura, come il modello ad ali indipendenti proposto in \cite{nam2020} 
 che affida il controllo a superfici mobili, il Dragonfly affronta il volo di crociera in assenza di superfici aerodinamiche 
 a geometria variabile. Questa peculiarità sposta l'intera autorità di controllo sulla modulazione 
 vettoriale della spinta e sul tilting dei rotori, rendendo il sistema intrinsecamente instabile e richiedendo una sintesi di controllo 
 particolarmente robusta. 
 
 \section{Obiettivo della Tesi}
-Il presente lavoro si propone di modificare il modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'intero inviluppo di volo.
+Il presente lavoro si propone di modificare il modello matematico completo a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero e di sintetizzare un'architettura di controllo robusta capace di gestire l'inviluppo di volo.
 \\La strategia proposta si articola su un sistema di controllo gerarchico a cascata:
 \begin{enumerate}
     \item Un \textit{Outer Loop} per la guida del drone, con scelte di controllori differenti tra la fase di hovering e quella di crociera.

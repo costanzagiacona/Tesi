@@ -139,15 +139,15 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
 % OUTER LOOP: GUIDA E NAVIGAZIONE
 % =========================================
 \section{Outer Loop: Controllo di Posizione e Velocità}
-Il loop esterno (Outer Loop) ha il compito di generare i riferimenti di assetto e di spinta necessari a seguire le traiettorie desiderate. In questa architettura, si è scelto di implementare una struttura di controllo basata su algoritmi PID arricchiti da termini di \textit{feedforward} derivati dal modello analitico delle forze aerodinamiche.
+Il loop esterno ha il compito di generare i riferimenti di assetto e di spinta necessari a seguire le traiettorie desiderate. In questa architettura, si è scelto di implementare una struttura di controllo basata su algoritmi PID arricchiti da termini di \textit{feedforward} derivati dal modello analitico delle forze aerodinamiche.
 
 Questa scelta è giustificata dalla natura intrinsecamente stabile del velivolo in regime di crociera: a velocità elevate, le superfici portanti generano momenti stabilizzatori che rendono il sistema meno sensibile ai disturbi rispetto alla fase di hovering. L'adozione di un controllo lineare, rispetto a tecniche più aggressive come lo \textit{Sliding Mode Control} (SMC), permette di ridurre drasticamente il fenomeno del \textit{chattering} sugli attuatori, garantendo una maggiore efficienza energetica e preservando l'integrità meccanica dei servocomandi.
 
 \subsection{Controllo di Quota}
-Il controllo della quota $z$ non avviene agendo direttamente sulla spinta verticale, bensì sfruttando l'accoppiamento aerodinamico tra l'angolo di beccheggio ($\theta$) e la portanza. Definito l'errore di quota come $e_z = z_{des} - z$, il controllore calcola l'assetto di beccheggio desiderato $\theta_{ref}$ che verrà poi inseguito dal loop interno:
+Il controllo della quota $z$ non avviene agendo direttamente sulla spinta verticale, bensì sfruttando l'accoppiamento aerodinamico tra l'angolo di beccheggio ($\theta$) e la portanza. Definito l'errore di quota come $e_z = z_{des} - z$, il controllore calcola l'assetto di beccheggio desiderato $\theta_{des}$ che verrà poi inseguito dal loop interno:
 
 \begin{equation}
-    \theta_{ref} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
+    \theta_{des} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
 \end{equation}
 
 È fondamentale notare che tale riferimento deve essere opportunamente saturato per evitare che il velivolo raggiunga angoli di attacco prossimi allo stallo, garantendo così la validità del modello lineare di portanza.
@@ -229,9 +229,9 @@ Dati gli errori di assetto definiti come:
 
 i momenti di comando nel sistema di riferimento \textit{Body} sono definiti come:
 \begin{align}
-    M_x &= K_{P_\phi} e_\phi - K_{D_\phi} p \\
-    M_y &= K_{P_\theta} e_\theta - K_{D_\theta} q \\
-    M_z &= K_{P_\psi} e_\psi - K_{D_\psi} r
+    M_x &= K_{P_\phi} e_\phi - K_{D_\phi} \dot{e}_{\phi} \\
+    M_y &= K_{P_\theta} e_\theta - K_{D_\theta} \dot{e}_{\theta} \\
+    M_z &= K_{P_\psi} e_\psi - K_{D_\psi} \dot{e}_{\psi}
 \end{align}
 
 L'azione derivativa è implementata mediante il feedback diretto delle velocità angolari $p, q, r$ misurate dai giroscopi di bordo, anziché tramite la derivazione temporale degli angoli di Eulero. Questa scelta è motivata dal fatto che la dinamica del corpo rigido (Equazioni di Eulero) è intrinsecamente legata alle velocità nel sistema \textit{Body}. 
@@ -286,7 +286,7 @@ considerando l'inclinazione collettiva di pitch dei rotori $\alpha$ e l'angolo d
 \end{equation}
 Dalla quale si ottiene l'espressione di $\alpha$:
 \begin{equation}
-    \alpha = \frac{M_{y,req}}{T_{tot} \cdot d_{mx}}
+    \alpha = \frac{M_{y,req}}{T_{tot} d_{mx}}
 \end{equation}
 
 Allo stesso, si ottiene l'espressione dell'angolo di roll $\delta$:
@@ -300,7 +300,7 @@ Allo stesso, si ottiene l'espressione dell'angolo di roll $\delta$:
 
 Approssimando per angoli piccoli, si ricava:
 \begin{equation}
-    \delta = \frac{M_{x,req}}{T_{tot} \cdot d_{my}}
+    \delta = \frac{M_{x,req}}{T_{tot} d_{my}}
 \end{equation}
 
 Il comando finale inviato ai singoli servocomandi ($\theta_1$ per il rotore sinistro, $\theta_2$ per il destro) è il risultato di un mixing additivo e sottrattivo dei contributi:
@@ -339,7 +339,7 @@ Per tali motivi, è preferibile ipotizzare $\alpha \approx \delta \approx 0$, da
 
 Si ottiene dunque:
 \begin{equation}
-    \Delta T = \frac{M_z}{d_my}
+    \Delta T = \frac{M_z}{d_{my}}
 \end{equation}
 
 I comandi finali di spinta inviati ai singoli motori ($T_1, T_2$) risultano quindi dalla sovrapposizione della spinta necessaria all'avanzamento $F_{x,req}$ e dell'azione di controllo sull'imbardata appena derivata:

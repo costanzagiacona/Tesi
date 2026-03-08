@@ -1,5 +1,5 @@
 \section{Strategie di Controllo e Definizione dell'Inviluppo di Volo}
-L'architettura non convenzionale del drone, caratterizzata da una configurazione a tricottero con rotori anteriori basculanti e un rotore di coda con due gradi di libertà (tilting longitudinale e trasversale), impone una gestione della stabilità fortemente differenziata in base al regime aerodinamico. 
+L'architettura non convenzionale del drone, caratterizzata da una configurazione a tricottero con rotori anteriori basculanti e un rotore di coda con due gradi di libertà, impone una gestione della stabilità fortemente differenziata in base al regime aerodinamico. 
 \\Di seguito vengono delineate le strategie logiche per le tre macro-fasi del volo, definendo l'autorità dei singoli attuatori e le sfide dinamiche associate.
 
 \subsection{Fase 1: Volo Verticale (Hovering)}
@@ -22,7 +22,7 @@ Una volta superata la velocità di stallo ($v > v_{stall}$), le superfici alari 
     \item \textbf{Configurazione:} Il rotore posteriore viene spento ($\omega_3 = 0$), eliminando la resistenza aerodinamica e il consumo energetico non necessario.
     \item \textbf{Allocazione dei comandi:}
     \begin{itemize}
-        \item \textbf{Rollio:} Controllato tramite \textit{tilting} differenziale dei rotori anteriori ($\theta_1 \neq \theta_2$), che genera un momento di rollio aerodinamico e vettoriale.
+        \item \textbf{Rollio:} Controllato tramite \textit{tilting} differenziale dei rotori anteriori \hbox{($\theta_1 \neq \theta_2$)}, che genera un momento di rollio aerodinamico e vettoriale.
         \item \textbf{Imbardata:} Gestita mediante modulazione differenziale della spinta propulsiva ($\Delta \omega_{1,2}$).
         \item \textbf{Beccheggio:} Garantito dalla stabilità statica longitudinale del profilo alare e supportato da correzioni coordinate della spinta e del \textit{tilt} collettivo.
     \end{itemize}

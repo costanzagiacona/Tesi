@@ -63,7 +63,7 @@ Si definisce adesso  $\bm{J}_{b \to g}$, matrice di trasformazione delle velocit
     \end{bmatrix}
     \label{eq:matrix_J}
 \end{equation}
-A differenza di $\bm{R}_{b \to g}$, la matrice $\bm{J}_{b \to g}$ presenta una singolarità matematica per $\theta = \pm 90^\circ$, nota come \textit{Gimbal Lock}. Questa relazione è cruciale per calcolare correttamente il tasso di virata ($\dot{\psi}$) partendo dal rateo di imbardata ($r$) misurato dai sensori.
+A differenza di $\bm{R}_{b \to g}$, la matrice $\bm{J}_{b \to g}$ presenta una singolarità matematica per \hbox{$\theta = \pm 90^\circ$}, nota come \textit{Gimbal Lock}. Questa relazione è cruciale per calcolare correttamente il tasso di virata ($\dot{\psi}$) partendo dal rateo di imbardata ($r$) misurato dai sensori.
 
 Dunque, le equazioni definite nel body frame possono essere trasformate nel sistema di rifeirmento inerziale attraverso le sequenti relazioni:
 \begin{equation}
@@ -133,7 +133,7 @@ I bracci dei rotori sono definiti nel body frame dai vettori posizione $\bm{r}_i
 \end{itemize}
 
 I rotori anteriori hanno un grado di libertà e possono inclinarsi attorno all'asse $Y_b$ rispettivamente di un angolo $\theta_1$ e $\theta_2$.
-Il rotore di coda possiede due gradi di libertà, potendo ruotare attorno a $Y_b$ di un angolo $\theta_3$ e attorno a $Z_b$ di un angolo $\theta_4$.
+Il rotore di coda possiede due gradi di libertà, potendo ruotare attorno a $Y_b$ di un angolo $\theta_3$ e attorno a $Z_b$ di un angolo $\theta_4$, come raffigurato nelle figure \ref{fig:rotori_ant} e \ref{fig:rotore_post}.
 
 La velocità angolare $\omega_i$ di ciascun rotore genera una forza di spinta $f_i$ lungo l'asse del rotore stesso, secondo la relazione:
 \begin{equation}
@@ -176,7 +176,7 @@ Il contributo totale del thrust $\bm{F}_{TH}$ è espresso in forma matriciale co
 
 
 % CORREZIONE: Uso di minipage al posto di subfigure per evitare errori di pacchetti
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     % Prima immagine (sinistra) - [b] allinea alla base
     \begin{minipage}[b]{0.48\textwidth}
@@ -218,10 +218,22 @@ La forza peso viene ruotata nel sistema solidale al corpo tramite la trasposta d
 \end{equation}
 
 \subsection{Forza Aerodinamica}
-Per una modellazione aerodinamica più fedele al comportamento in fase di crociera, si definiscono l'angolo di attacco $\alpha$ e l'angolo di sideslip $\beta$ in funzione delle velocità nel body frame:
+Per una modellazione aerodinamica più fedele al comportamento in fase di crociera, è necessario introdurre il \textbf{Wind Frame}, sistema di riferimento con origine nel Centro di Massa.
+\\Tale sistema di riferimento presenta l'asse $X$ orientato nella direzione in cui soffia il vento relativo, ovvero la direzione da cui 
+arriva il vento che investe il velivolo.
+\\Si definiscono l'angolo di attacco $\alpha$ e l'angolo di sideslip $\beta$ in funzione delle velocità nel body frame:
 \begin{equation}
-    \alpha = \arctan\left(\frac{w}{u}\right), \quad \beta = \arcsin\left(\frac{v}{V_{tas}}\right)
+    \alpha = \arctan\left(\frac{v_z}{v_x}\right), \quad \beta = \arcsin\left(\frac{v_y}{V_{a}}\right)
 \end{equation}
+
+con $V_{a} = \sqrt{v_x^2 + v_y ^2 + v_z^2}$, che rappresenta la norma del vettore velocità del centro di massa del velivolo rispetto all'aria.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{wind_frame.png}
+    \caption{Wind Frame.}
+    \label{fig:wind_frame}
+\end{figure}
 
 Le forze aerodinamiche includono il contributo delle ali ($\bm{F}_{\text{{wing}}}$) e la resistenza della fusoliera ($\bm{D}_{\text{body}}$):
 \begin{equation}
@@ -321,20 +333,14 @@ L'espressione della forza aerodinamica completa risulta essere:
 I coefficienti di portanza e resistenza, inizialmente considerati costanti durante tutto l'inviluppo di volo, sono adesso costruiti in
 dipendenza dagli angoli di attacco $\alpha$ e sideslip $\beta$, definiti nel \textit{Wind Frame}.
 
-La relazione tra le velocità nel \textit{Body Frame} $[u_b, v_b, w_b]^T$ e gli angoli aerodinamici è data da:
-
-\begin{equation}
-    \alpha = \arctan\left(\frac{w_b}{u_b}\right), \quad \beta = \arcsin\left(\frac{v_b}{V_a}\right)
-\end{equation}
-
-dove $V_a = \sqrt{u_b^2 + v_b^2 + w_b^2}$ è la velocità anemometrica. Per modellare la transizione verso lo stallo profondo, è stato introdotto un fattore di \textit{blending} $n(\alpha)$ basato su un polinomio di Hermite:
+Per modellare la transizione verso lo stallo profondo, è stato introdotto un fattore di \textit{blending} $n(\alpha)$ basato su un polinomio di Hermite:
 
 \begin{equation}
     n(\alpha) = 1 - (3t^2 - 2t^3), \quad \text{con } t = \text{sat}\left(\frac{|\alpha| - \alpha_{start}}{\alpha_{full} - \alpha_{start}}\right)
 \end{equation}
 
 Questa formulazione permette ai coefficienti di evolvere fluidamente da un regime lineare a uno di stallo, garantendo la continuità delle derivate prime e migliorando drasticamente la stabilità numerica del solutore rispetto a una modellazione a tratti (look-up table discrete).
-
+\clearpage
 
 \subsection{Forza Totale}
 Utilizzando i risultati delle espressioni \ref{eq:F_th}, \ref{eq:F_grav}, \ref{eq:F_aero}, si ottiene la forza totale come:
@@ -536,7 +542,7 @@ Trascuriamo il contributo delle forze di resistenza della fusoliera, poiché ass
 
 
 \subsection{Momenti giroscopici}
-Il sistema è soggetto a due contributi giroscopici principali. Il primo è dovuto al tilting dei rotori in rotazione:
+Il sistema è soggetto a due contributi giroscopici principali. Il primo è dovuto al tilting dei motori in rotazione:
 \begin{equation*}
     \bm{M}_{\text{GIRO}} = \sum_{i=1}^{3} \bm{\omega}_{tilt,i} \times \bm{I}_{rotor,i} \bm{\omega}_{i} \label{eq:M_giro_rotori} =
 \end{equation*}
@@ -566,7 +572,7 @@ Infine, la pinna di coda contribuisce con un momento stabilizzatore dipendente d
 \end{equation}
 
 La presenza della pinna è stata dibattuta in fase di revisione del modello, 
-tuttavia, si è stabilito il suo inserimento poiché garantisce una maggiore 
+tuttavia, è stata inserita poiché garantisce una maggiore 
 stabilità di imbardata soprattutto in considerazione della coppia
 di reazione residua prodotta dal rotore di coda.  
 \clearpage

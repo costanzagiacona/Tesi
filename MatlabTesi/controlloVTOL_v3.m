@@ -32,7 +32,7 @@ switch test_id
         vx_g = V_global(1); vy_g = V_global(2); vz_g = V_global(3);
 
         % --- 2. Riferimenti ---
-        z_des = -10;    vz_des = 0;
+        z_des = -100;    vz_des = 0;
         y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
         psi_des = deg2rad(0);    r_des = 0;
@@ -165,6 +165,7 @@ switch test_id
         F_front_tot_z = Thrust_req - F_tail_z;
         
         % Calcolo della velocità di base (media) per i motori frontali
+        cos_delta = 1;
         omega_front_sq_base = max(0, F_front_tot_z / (2 * params.k * cos_delta));
         
         % Differenziale per il Roll 
@@ -224,7 +225,7 @@ switch test_id
         % =================================================
         % 2. DEFINIZIONE SETPOINT
         % =================================================
-        z_des     = target(3); % Quota target (-10 m)
+        z_des     = -100; % Quota target (-10 m)
         vx_des    = target(1); % Velocità target (25 m/s)
         phi_des   = 0;
 

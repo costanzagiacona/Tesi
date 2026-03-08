@@ -9,7 +9,7 @@ Poiché i rotori anteriori sono controrotanti, il momento torcente residuo è do
 Si adotta un'architettura di controllo a cascata per disaccoppiare la dinamica traslazionale, lenta, da quella rotazionale, veloce:
 \begin{enumerate}
     \item \textbf{Outer Loop (Posizione $x, y, z$):} Utilizza la tecnica \textbf{Sliding Mode Control} per calcolare le forze ($F_{x,req}, F_{y,req}, F_{z,req}$) per annullare l'errore di posizione lungo i tre assi.
-    A causa della natura sotto-attuata del drone, per modificare la posizione nel piano $x,y$ è necessario cambiare l'orientamento di \textit{roll e yaw}; dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico, traducendo $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
+    A causa della natura sotto-attuata del drone, per modificare la posizione nel piano $x,y$ è necessario cambiare l'orientamento tramite \textit{roll e yaw}; dunque l'Outer Loop non si limita a calcolare le forze, ma effettua un mapping cinematico, traducendo $F_{x,req}$ e $F_{y,req}$ in angoli di assetto desiderati ($\phi_{des}, \theta_{des}$).
     \item \textbf{Inner Loop (Assetto $\phi, \theta, \psi$):} Utilizza controllori \textbf{Sliding Mode} per inseguire gli angoli desiderati e stabilizzare le velocità angolari, calcolando i momenti necessari ($M_x, M_y, M_z$).
 \end{enumerate}
 Le variabili di stato utilizzate fanno riferimento al vettore $ \bm{x} \in \mathbb{R}^{12} $:
@@ -164,7 +164,7 @@ L'implementazione pratica della funzione $\text{sgn}(\sigma)$ comporta commutazi
 
 Per mitigare tale effetto, la funzione segno è stata sostituita da un'approssimazione continua basata sulla \textbf{tangente iperbolica}, definendo un \textit{boundary layer} di spessore $\Phi$:
 \begin{equation}
-    u_{sw} = -K \tanh\left(\frac{\sigma}{\Phi}\right)
+    u = -K \tanh\left(\frac{\sigma}{\Phi}\right)
 \end{equation}
 All'interno di questo strato, l'azione di controllo è approssimativamente lineare, eliminando le discontinuità e garantendo una risposta fluida dei rotori al prezzo di un errore a regime non nullo ma limitato (convergenza pratica).
 \clearpage
@@ -175,7 +175,6 @@ All'interno di questo strato, l'azione di controllo è approssimativamente linea
 \section{Outer Loop: Controllo di Posizione}
 
 \subsection{Controllo di Quota \texorpdfstring{$z$}{z}}
-Il controllo della quota $z$ è progettato secondo la tecnica \textit{Sliding Mode} per garantire stabilità robusta rispetto ai disturbi.
 
 Si definiscono l'errore di quota come $e_z(t) = z_{des}(t) - z(t)$ e la \textit{sliding surface} come:
 \begin{equation}
@@ -189,7 +188,7 @@ Si considera l'equazione della dinamica lungo l'asse $z$ inerziale:
 \begin{equation}
     m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
 \end{equation}
-Si ricava un ingresso di controllo virtuale che corrisponde alla spinta necessaria lungo $z$:
+Si ricava un ingresso di controllo virtuale che corrisponde al thrust necessario lungo $z$:
 \begin{equation}
     F_{z,req} = m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) + \cos(\phi)cos(\theta) F_{aero,z} \right)
 \end{equation}
@@ -212,7 +211,7 @@ attraverso un'inversione della dinamica.
 
 Si considera il Thrust nel body frame $T_b = [0, 0, -T]^T$ e si effettua la trasformazione nel frame inerziale attraverso la matrice di rotazione $R_{b \to g}$, ottenendo:
 \begin{equation}
-    T_I =
+    T_I = R_{b \to g} T_b = 
     \begin{bmatrix}
         -T(\cos(\psi)\sin(\theta)\cos(\phi) + \sin(\psi)\sin(\phi))\\
         -T(\sin(\psi)\sin(\theta)\cos(\phi) - \cos(\psi)\sin(\phi))\\
@@ -285,16 +284,16 @@ Le equazioni che descrivono l'evoluzione delle velocità angolari nel sistema di
     \dot{q} &= \frac{I_{zz} - I_{xx}}{I_{yy}} pr + \frac{M_y}{I_{yy}} \\
     \dot{r} &= \frac{I_{xx} - I_{yy}}{I_{zz}} pq + \frac{M_z}{I_{zz}}
 \end{align}
-dove $I_{xx}, I_{yy}, I_{zz}$ sono i momenti d'inerzia principali e $M_x, M_y, M_z$ i momenti risultanti dall'azione dei motori. Ai fini del controllo, si assume l'ipotesi di manovre limitate tale per cui la derivata degli angoli di Eulero coincida con le velocità angolari nel \textit{Body Frame} ($\dot{\phi} \approx p, \dot{\theta} \approx q, \dot{\psi} \approx r$).
+dove $I_{xx}, I_{yy}, I_{zz}$ sono i momenti d'inerzia principali e $M_x, M_y, M_z$ i momenti risultanti dall'azione dei motori. Ai fini del controllo, si assume l'ipotesi di manovre limitate, per cui la derivata degli angoli di Eulero coincide con le velocità angolari nel \textit{Body Frame} ($\dot{\phi} \approx p, \dot{\theta} \approx q, \dot{\psi} \approx r$).
 
 \subsection{Sintesi del Controllore Sliding Mode}
-Per garantire robustezza rispetto alle incertezze parametriche (errori sui tensori d'inerzia) e ai disturbi aerodinamici esterni, è stata adottata una legge di controllo \textit{Sliding Mode} con tecnica di \textit{Feedback Linearization}.
+Per garantire robustezza rispetto alle incertezze parametriche (errori sulle inerzie) e ai disturbi aerodinamici esterni, è stata adottata una legge di controllo \textit{Sliding Mode}.
 
 Per ogni asse, definiamo la superficie di sliding $\sigma$ come:
 \begin{equation}
     \sigma = \dot{e} + \lambda_{att} e
 \end{equation}
-dove l'errore è definito come $e = \eta_{des} - \eta$. Per garantire la convergenza alla superficie e annullare l'errore di tracking, si impone una dinamica della superficie del tipo $\dot{\sigma} = -K_{att} \tanh(\sigma/\Phi)$. 
+dove l'errore è definito come $e = \eta_{des} - \eta$, con $\eta$ che rappresenta l'angolo. Per garantire la convergenza alla superficie e annullare l'errore di tracking, si impone una dinamica della superficie del tipo $\dot{\sigma} = -K_{att} \tanh(\sigma/\Phi)$. 
 
 I parametri scelti garantiscono la separazione delle scale temporali rispetto all'Outer Loop, assicurando che la dinamica d'assetto sia di un ordine di grandezza più rapida di quella di posizione.
 
@@ -314,7 +313,7 @@ Per l'asse di imbardata, si utilizza una metrica di errore periodica per gestire
 \end{equation}
 Il momento di imbardata risultante è:
 \begin{equation}
-    M_{z,req} = I_{zz} \left[ \ddot{\psi}_{des} + \lambda_\psi \dot{e}_\psi + K_\psi \tanh\left( \frac{\sigma_\psi}{\Phi_{att}} \right) \right] - (I_{xx} - I_{yy})pq
+    M_{z,req} = I_{zz} \left[ \ddot{\psi}_{des} + \lambda_\psi \dot{e}_\psi + K_\psi \tanh\left( \frac{\sigma_\psi}{\Phi_{\psi}} \right) \right] - (I_{xx} - I_{yy})pq
 \end{equation}
 I guadagni $\lambda_\psi$ e $K_\psi$ sono riscalati rispetto agli altri assi per assecondare la dinamica del servocomando di \textit{tilt} posteriore, tipicamente più lenta rispetto alla risposta in coppia dei motori.
 \clearpage
@@ -363,10 +362,11 @@ il controllo $z$ dell'Outer Loop. Si ipotizza, inizialmente, di ripartire equame
         \implies 
         \begin{cases}
             T_{front} = \frac{2}{3}F_{z,req}\\
-            T_{tail} = \frac{F_{z,req}}{3}
+            T_{3} = \frac{F_{z,req}}{3}
         \end{cases}        
     \end{matrix}    
 \end{equation}
+con $T_{front} = T_1 + T_2$.\\
 Successivamente, si calcola la ripartizione di Thrust opportuna per raggiungere gli obiettivi desiderati. 
 
 \subsection{Imbardata}
@@ -457,17 +457,21 @@ annullando ogni accoppiamento diretto.
     (T_2 - T_1) \cos(\delta) d_{my} = M_x
     \end{cases}
 \end{equation}
+Si definisce $\Delta T_{des} = (T_2 - T_1)$ e si ottiene:
+\begin{equation}
+    \Delta T_{des} = \frac{M_x}{2 d_{my} \cos(\delta)}
+\end{equation}
 Definendo la spinta media anteriore come $T_i = T_{front} / 2$, le spinte dei singoli motori si ottengono per somma e differenza rispetto al termine differenziale legato al momento:
 \begin{equation}
-    T_1 = T_i - \frac{M_x}{2 d_{my}}, \quad T_2 = T_i + \frac{M_x}{2 d_{my}}
+    T_1 = T_i - \frac{M_x}{2 d_{my} \cos(\delta)}, \quad T_2 = T_i + \frac{M_x}{2 d_{my} \cos(\delta)}
 \end{equation}
 Le rispettive velocità angolari si ricavano infine come $\omega_{1,2} = \sqrt{T_{1,2}/k}$.
 
 \subsection{Comandi di controllo}
 I comandi dati agli attuatori sono quindi i seguenti:
 \begin{gather}
-    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(T_{front} - \frac{M_x}{2 d_{my}} \right)}\\
-    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(T_{front} + \frac{M_x}{2 d_{my}} \right)}\\
+    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} - \Delta T \right)}\\
+    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} + \Delta T \right)}\\
     u_3 = \omega_3 = \sqrt{\frac{T_3}{k}}\\
     u_4 = \theta_1 = \pi/2 - \delta\\
     u_5 = \theta_2 = \pi/2 + \delta\\
@@ -481,7 +485,7 @@ I comandi dati agli attuatori sono quindi i seguenti:
 \section{Simulazioni}
 Di seguito sono riportate le simulazioni relative a posizioni e velocità lineari e angolari del tricottero e le simulazioni del thrust e degli angoli di inclinazione dei rotori.
 \\Tali simulazioni sono state fatte in condizioni nominali, con condizioni iniziali nulle per gli angoli di assetto; si lascia al capitolo \ref{ch:montecarlo} il compito di validare il 
-sistema di controllo in condizioni perturbate.
+sistema di controllo in condizioni iniziali perturbate.
 
 L'obiettivo del controllo è raggiungere la quota $z_{des} = -10$ e mantenere nulle le posizioni su $x$ e $y$ e le velocità.
 
@@ -510,7 +514,7 @@ di quota ha bisogno di maggiore autorità in quanto risulta critico per la sicur
 \begin{figure}[H] % 'H' maiuscola forza la posizione
     \centering
     \includegraphics[width=1\textwidth]{../img/controllo_verticale/pos_vel.png}
-    \caption{Andamento velocità.}
+    \caption{Andamento posizioni e velocità lineari.}
 \end{figure}
 
 \begin{figure}[H] % 'H' maiuscola forza la posizione
