@@ -10,37 +10,37 @@ function MonteCarloVTOL(params)
     % --- SCENARIO 1: RECOVERY ---
     cfg_rec.name = 'Recovery Hover';
     cfg_rec.test_id = 1; 
-    cfg_rec.target = [0; 0; -100]; 
-    cfg_rec.tspan = [0 30]; 
-    cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(10), 'omega', deg2rad(5));
+    cfg_rec.target = [0; 0; -10]; 
+    cfg_rec.tspan = [0 100]; 
+    cfg_rec.sigma = struct('pos', 5.0, 'vel', 3, 'att', deg2rad(15), 'omega', deg2rad(5));
     cfg_rec.x0_type = 'static'; 
     cfg_rec.n_states = 26; % Esplicito la dimensione dello stato
     
-    RunCampaign(cfg_rec, params);
+    % RunCampaign(cfg_rec, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 2: TAKEOFF ---
     cfg_take.name = 'Takeoff Ground';
     cfg_take.test_id = 1; 
-    cfg_take.target = [0; 0; -100]; 
+    cfg_take.target = [0; 0; -10]; 
     cfg_take.tspan = [0 15]; 
     cfg_take.sigma = struct('pos', 0.1, 'vel', 0.05, 'att', deg2rad(3), 'omega', deg2rad(10));
     cfg_take.x0_type = 'takeoff'; 
     cfg_take.n_states = 26;
     
-    RunCampaign(cfg_take, params);
+    % RunCampaign(cfg_take, params);
     fprintf('\n------------------------------------------------\n');
     
     % --- SCENARIO 3: CRUISE ---
     cfg_cru.name = 'Cruise Flight';
     cfg_cru.test_id = 2; 
-    cfg_cru.target = [25; 0; -100]; 
-    cfg_cru.tspan = [0 40]; 
-    cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(8), 'omega', deg2rad(0)); % Ripristinata incertezza omega
+    cfg_cru.target = [25; 0; -10]; 
+    cfg_cru.tspan = [0 25]; 
+    cfg_cru.sigma = struct('pos', 5.0, 'vel', 5.0, 'att', deg2rad(10), 'omega', deg2rad(8)); % Ripristinata incertezza omega
     cfg_cru.x0_type = 'cruise'; 
     cfg_cru.n_states = 28; % Modello con dinamica estesa per il cruise
     
-    % RunCampaign(cfg_cru, params);
+    RunCampaign(cfg_cru, params);
     
     fprintf('\n================================================\n');
     fprintf(' SUITE COMPLETATA.\n');
@@ -130,8 +130,8 @@ function RunCampaign(cfg, params)
     n_crash = sum([stats.crashed]);
     fprintf('   -> Completato. Successi: %d/%d | Crash: %d\n', (N_sim - n_crash), N_sim, n_crash);
     
-    save(['Results_' cfg.name '.mat'], 'risultati', 'cfg');
-    GenerateFullCSV(stats, ['Analysis_' cfg.name '.csv']);
+    save(['Results1_' cfg.name '.mat'], 'risultati', 'cfg');
+    GenerateFullCSV(stats, ['Analysis1_' cfg.name '.csv']);
 end
 
 %% --- FUNZIONE AUSILIARIA: Generazione Condizioni Iniziali ---

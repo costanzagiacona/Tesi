@@ -1,10 +1,12 @@
 %% PLOT PRESENTATION SUITE - Kinematic, Dynamic & Actuator Analysis
 close all; clc;
-files = {'Results_Recovery Hover.mat', ...
-         'Results_Takeoff Ground.mat'};
+files = {'Results1_Recovery Hover.mat', ...
+         'Results1_Takeoff Ground.mat',...
+         'Results1_Cruise Flight.mat'};
 
-% files = {'Results_Cruise Flight.mat'};
-% files = {'Results_SMC_Takeoff Ground.mat'};
+files = {'Results1_Cruise Flight.mat'};
+% files = {'Results1_Takeoff Ground.mat'};
+% files = {'Results2_Recovery Hover.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica
 set(0, 'DefaultAxesFontSize', 15);       
@@ -22,14 +24,14 @@ for k = 1:length(files)
         if isempty(scenarioName), scenarioName = {data.cfg.name}; end
         
         fprintf('Analisi in corso: %s...\n', char(scenarioName));
-        Plot_State_Overview(data.risultati, char(scenarioName));
+        Plot_State_Overview(data.cfg, data.risultati, char(scenarioName));
     end
 end
 
 %% ---------------------------------------------------------
 %  FUNZIONE UNICA: VISUALIZZAZIONE COMPLETA (STATI + ATTUATORI)
 %  ---------------------------------------------------------
-function Plot_State_Overview(risultati, label)
+function Plot_State_Overview(cfg, risultati, label)
     % --- CONFIGURAZIONE INDICI E COSTANTI (DA VERIFICARE) ---
     idx_tilt = 13;          % Indice stato Tilt nel vettore x
     idx_rotors = [21, 23, 25]; % Indici velocità rotori (Omega). Aggiungi altri se necessario
@@ -145,9 +147,14 @@ function Plot_State_Overview(risultati, label)
     set(0, 'CurrentFigure', figs(5));
     for r = 1:2
         subplot(2, 1, r); grid on;
-        ylabel(['\delta_{', num2str(r), '} [deg]']); title(rotor_names_tilt{r});
+        ylabel(['\theta_{', num2str(r), '} [deg]']); title(rotor_names_tilt{r});
         yline(90, '--k', 'Alpha', 0.2); yline(0, '--k', 'Alpha', 0.2); ylim([-5, 95]);
-        if r == num_rotors; xlabel('Tempo [s]'); end
+        if cfg.test_id == 1
+            ylim([40 140]);
+        elseif cfg.test_id == 2
+            ylim([-30 60]);
+        end
+        if r == 2; xlabel('Tempo [s]'); end
     end
     linkaxes(findobj(figs(5), 'Type', 'axes'), 'xy');
     

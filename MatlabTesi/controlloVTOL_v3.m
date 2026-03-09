@@ -32,7 +32,7 @@ switch test_id
         vx_g = V_global(1); vy_g = V_global(2); vz_g = V_global(3);
 
         % --- 2. Riferimenti ---
-        z_des = -100;    vz_des = 0;
+        z_des = -10;    vz_des = 0;
         y_des = 0;      vy_des = 0;
         x_des = 0;      vx_des = 0; 
         psi_des = deg2rad(0);    r_des = 0;
@@ -48,7 +48,7 @@ switch test_id
         s_z = de_z + lambda_z * e_z;
         
         % U_z: Forza verticale richiesta 
-        U_z = params.m * (params.g - (lambda_z * de_z + K_z * tanh(s_z / Phi_z)));
+        U_z = params.m * (params.g - lambda_z * de_z - K_z * tanh(s_z / Phi_z));
         
         % Assi Y e X (Piano Orizzontale)
         lambda_y = 0.8; K_y = 1.5; Phi_y = 4;
@@ -225,7 +225,7 @@ switch test_id
         % =================================================
         % 2. DEFINIZIONE SETPOINT
         % =================================================
-        z_des     = -100; % Quota target (-10 m)
+        z_des     = -10; % Quota target (-10 m)
         vx_des    = target(1); % Velocità target (25 m/s)
         phi_des   = 0;
 
@@ -241,8 +241,8 @@ switch test_id
         d_err_h = vz_global;      % Derivata (Velocità verticale)
         
         % TUNING QUOTA 
-        kp_z_th = 0.035; 
-        kd_z_th = 0.04;  
+        kp_z_th = 0.1; 
+        kd_z_th = 0.09;  
         ki_z_th = 0.005;
         
         theta_cmd_raw = kp_z_th * err_h + kd_z_th * d_err_h + ki_z_th * int_err_z;
@@ -251,6 +251,7 @@ switch test_id
         % In crociera limitiamo il pitch a +/- 20 gradi per evitare stallo
         max_pitch = deg2rad(20); 
         theta_ref = max(-max_pitch, min(max_pitch, theta_cmd_raw));
+        
 
         % =================================================
         % CONTROLLO VELOCITÀ (Generazione Spinta X)
@@ -293,7 +294,7 @@ switch test_id
         e_theta  = theta_ref - theta;
         de_theta = 0 - q; 
         
-        kp_th = 5.0; 
+        kp_th = 5; 
         kd_th = 2.5;   
         M_y_req = kp_th * e_theta + kd_th * de_theta;% + ki_th * int_err_theta;
         
@@ -339,7 +340,7 @@ switch test_id
         % PROTEZIONE SINGOLARITÀ MIXER
         % Se la spinta è nulla, non possiamo generare momenti col tilt.
         % Usiamo un valore "fittizio" al denominatore per evitare divisione per zero.
-        T_safe_mix = max(T_base_eff, 2.0); % Soglia minima 2 Newton
+        T_safe_mix = max(T_base_eff, 15.0); % Soglia minima 2 Newton
         
         % Angolo di tilt collettivo per il Pitch
         tilt_pitch = M_y_req / (T_safe_mix * d_mx);

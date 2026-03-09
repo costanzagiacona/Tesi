@@ -188,14 +188,14 @@ Si considera l'equazione della dinamica lungo l'asse $z$ inerziale:
 \begin{equation}
     m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
 \end{equation}
-Si ricava un ingresso di controllo virtuale che corrisponde al thrust necessario lungo $z$:
+Si ricava un ingresso di controllo virtuale che corrisponde al thrust necessario lungo $z$ inerziale:
 \begin{equation}
-    F_{z,req} = m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) + \cos(\phi)cos(\theta) F_{aero,z} \right)
+    F_{z,req} = \frac{m}{\cos(\phi) \cos(\theta)} \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right) + F_{aero,z}
 \end{equation}
 
 Passando al body frame, la legge di controllo risultante per la spinta richiesta è:
 \begin{equation}
-    F_{z,req} = F_{aero,z} + \frac{m}{\cos(\phi)cos(\theta)} \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right)
+    F_{z,req} = \cos(\phi)cos(\theta) F_{aero,z} + m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right)
 \end{equation}
 dove si assume $\ddot{z}_{des} \approx 0$ in hovering.
 

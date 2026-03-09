@@ -29,8 +29,9 @@
 \renewcommand{\figurename}{Fig.}
 
 % --- METADATI ---
-\title{Modellazione dinamica e design del controllo per un VTOL innovativo}
+\title[Modellazione dinamica e controllo di un VTOL]{Modellazione dinamica e design del controllo per un VTOL innovativo}
 \author{Maria Costanza Giacona}
+\institute[Università Tor Vergata]{}
 \date{}
 
 \begin{document}
@@ -81,7 +82,7 @@
         \centering
         \begin{figure}
             \includegraphics[width=0.6\textwidth]{multicopter.png}
-            \caption{multicottero}
+            \caption{Multicottero}
         \end{figure} 
         
         \column{0.48\textwidth}
@@ -93,7 +94,7 @@
         \centering
         \begin{figure}
             \includegraphics[width=0.6\textwidth]{fixed_wing.png}
-            \caption{aereo}
+            \caption{Aereo}
         \end{figure}       
     \end{columns}
 
@@ -223,9 +224,10 @@
             \end{itemize}
             
             \vspace{0.5cm}
-            \begin{alertblock}{Criticità Dinamica}
-                La spinta totale non è applicata nel CoM. 
-                \textbf{Implicazione:} Il bilanciamento del \textit{Pitch} richiede una ripartizione di potenza asimmetrica tra rotori anteriori e posteriore.
+            
+
+            \begin{alertblock}{Criticità Dinamica e Mixing}
+                Poiché la spinta totale non è applicata nel $CG$, il bilanciamento del \textit{Pitch} richiede una ripartizione asimmetrica della potenza tra i rotori anteriori e quello posteriore.
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -239,7 +241,6 @@
         \column{0.5\textwidth}
         \centering
         \textbf{Rotori Anteriori}
-        % SOSTITUISCI CON 'rotori_1_2.png'
         \includegraphics[width=0.7\textwidth]{rotori_1_2.png}
         \vspace{0.2cm}\\
         \footnotesize{Tilt attorno all'asse $Y_b$.}
@@ -247,7 +248,6 @@
         \column{0.5\textwidth}
         \centering
         \textbf{Rotore di Coda}
-        % SOSTITUISCI CON 'rotore_3.png'
         \includegraphics[width=0.7\textwidth]{rotore_3.png}
         \vspace{0.25cm}\\
         \footnotesize{Tilt su $Y_b$ e $Z_b$.}
@@ -256,7 +256,6 @@
 \end{frame}
 
 % --- SLIDE 3: NEWTON-EULERO ---
-% Forma vettoriale compatta, molto più elegante
 \begin{frame}{Equazioni della Dinamica: Newton-Eulero}
     Il modello del corpo rigido è descritto dalle equazioni cardinali nel \textit{Body Frame}:
     
@@ -264,44 +263,47 @@
     \begin{block}{Dinamica Traslazionale e Rotazionale}
     \begin{equation}
         \begin{cases}
-            m \bm{\dot{V}}_b = \bm{F}_{\text{tot}} - \underbrace{\bm{\Omega}_b \times (m \bm{V}_b)}_{\text{Coriolis}} \\
-            \mathbf{I}_b \bm{\dot{\Omega}}_b = \bm{M}_{\text{tot}} - \underbrace{\bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)}_{\text{Giroscopico Body}}
+            m \bm{\dot{V}}_b = \bm{F}_{\text{TOT}} - \underbrace{\bm{\Omega}_b \times (m \bm{V}_b)}_{\text{Coriolis}} \\
+            \mathbf{I}_b \bm{\dot{\Omega}}_b = \bm{M}_{\text{TOT}} - \underbrace{\bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)}_{\text{Giroscopico Body}}
         \end{cases}
     \end{equation}
     \end{block}
     
     \vspace{0.5cm}
     \textbf{Scomposizione delle Forze e Momenti:}
-    \begin{itemize}
-        \item $\bm{F}_{\text{tot}} = \bm{F}_{\text{th}} + \bm{F}_g + \bm{F}_{\text{aero}}$
-        \item $\bm{M}_{\text{tot}} = \bm{M}_{\text{th}} + \bm{M}_{\text{tor}} + \bm{M}_{\text{aero}} + \bm{M}_{\text{gyro}} + \bm{M}_{\text{pinna}}$
-    \end{itemize}
+    \begin{equation}
+        \bm{F}_{TOT} = \bm{F}_{\text{TH}} + \bm{F}_{\text{GRAV}} + \bm{F}_{\text{AERO}}
+    \end{equation}
+    \begin{equation}
+        \bm{M}_{\text{TOT}} = \bm{M}_{\text{TH}} + \bm{M}_{\text{TOR}} + \bm{M}_{\text{AERO}} + \bm{M}_{\text{GIRO}} + \bm{M}_{\text{PINNA}}
+    \end{equation}
+    
 \end{frame}
 
 % --- SLIDE 4: FORZE ESTERNE ---
-% Condensata: Spinta e Aerodinamica insieme
 \begin{frame}{Analisi delle Forze}
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
-            \textbf{1. Spinta Motori ($\bm{F}_{th}$)} \\
+            \textbf{1. Spinta Motori} \\
             Dipende dall'orientamento ($\theta_i$) e velocità ($\omega_i$) dei rotori:
             \begin{equation*}
-                \bm{F}_{th} = \sum_{i=1}^3 \mathbf{R}_{rot_i \to b}(\theta_i) \cdot [0, 0, k\omega_i^2]^T
+                \bm{F}_{\text{TH}} = \sum_{i=1}^3 \mathbf{R}_{rot_i \to b}(\theta_i) \cdot [0, 0, k\omega_i^2]^T
             \end{equation*}
             
             \vspace{0.2cm}
-            \textbf{2. Gravità ($\bm{F}_g$)} \\
+            \textbf{2. Gravità} \\
             Proiezione del vettore peso nel body frame:
             \begin{equation*}
-                \bm{F}_g = \mathbf{R}_{g \to b} \cdot [0, 0, mg]^T
+                \bm{F}_{\text{GRAV}} = \mathbf{R}_{g \to b} \cdot [0, 0, mg]^T
             \end{equation*}
         \end{column}
         
         \begin{column}{0.5\textwidth}
-            \textbf{3. Aerodinamica ($\bm{F}_{aero}$)} \\
+            \textbf{3. Aerodinamica} \\
             Modello non-lineare per fusoliera e ali:
             \begin{equation*}
-                \bm{F}_{wing} \propto \frac{1}{2}\rho S v^2 \cdot \begin{bmatrix} C_D(\alpha) \\ 0 \\ C_L(\alpha) \end{bmatrix}
+                \bm{F}_{\text{AERO}} = \bm{F}_{wing} + \bm{D}_{body}
+                % \bm{F}_{\text{AERO}} \propto \frac{1}{2}\rho S v^2 \cdot \begin{bmatrix} C_D(\alpha) \\ 0 \\ C_L(\alpha) \end{bmatrix}
             \end{equation*}
             \vspace{0.1cm}
             \centering
@@ -311,53 +313,59 @@
     \end{columns}
 \end{frame}
 
-% --- SLIDE 5: MOMENTI ATTIVI (Thrust & Torque) ---
-\begin{frame}{Momenti Attivi: Controllo del Velivolo}
-    I momenti di controllo sono generati dalla combinazione di spinta e reazione dei rotori.
+
+\begin{frame}{Modellistica dei Momenti: Attivi e Reattivi}
+    \small
+    \vspace{-0.2cm} % Recupera spazio in alto
     
-    \vspace{0.3cm}
-    \textbf{Momento di Spinta ($\bm{M}_{th}$)}
-    \begin{equation}
-        \bm{M}_{\text{th}} = \sum_{i=1}^{3} (\bm{r}_i \times \bm{F}_{th_{i}})
-    \end{equation}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Momenti di Controllo (Attivi)}
 
-    \vspace{0.4cm}
-    \textbf{Momento Torcente ($\bm{M}_{tor}$)}
-    \begin{equation}
-        \bm{M}_{\text{tor}} = \sum_{i=1}^{3} (b \omega_i^2 + I_{rot} \dot{\omega}_i) \hat{e}_{thrust,i}
-    \end{equation}
-\end{frame}
-
-% --- SLIDE 6: MOMENTI REATTIVI (Giroscopico & Pinna) ---
-% Raggruppa le slide 19, 20, 21 originali. 
-% ELIMINATA la matrice gigante del giroscopico tilting a favore della forma vettoriale.
-\begin{frame}{Momenti Reattivi e Dinamica Veloce}
-    Effetti dinamici dovuti alla rotazione dei componenti e alla stabilizzazione passiva.
-
-    \begin{block}{Effetto Giroscopico dei Rotori (Tilting)}
-        Nasce dall'inclinazione dei rotori in azione ($\bm{\omega}_{tilt}$):
-        \begin{equation}
-             \bm{M}_{\text{giro}} = \sum_{i=1}^{3} \mathbf{J}_{r} (\bm{\omega}_{\text{tilt},i} \times \bm{\omega}_{r,i})
-        \end{equation}
-    \end{block}
-
-    \vspace{0.3cm}
-    \begin{columns}[t]
-        \begin{column}{0.5\textwidth}
-            \textbf{Momento Pinna di Coda:}
-            \begin{equation*}
-                M_{z, pinna} \propto -r \cdot v_y^2
-            \end{equation*}
-            Smorzamento naturale sull'asse di imbardata.
+                \begin{itemize}
+                    \item \textbf{Spinta:} 
+                    \begin{equation}
+                        \bm{M}_{\text{TH}} = \textstyle \sum (\bm{r}_i \times \bm{F}_{th,i})
+                    \end{equation}
+                    \item \textbf{Coppia:} 
+                    \begin{equation}
+                        \bm{M}_{\text{TOR}} = \textstyle \sum (b \omega_i^2 + I_{r} \dot{\omega}_i) \hat{e}_{i}
+                    \end{equation}
+                \end{itemize}
+            \end{block}
         \end{column}
-        \begin{column}{0.5\textwidth}
-             \textbf{Giroscopico Body:}
-             \begin{equation*}
-                 \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)
-             \end{equation*}
-             Momento giroscopisco dovuto alla rotazione del velivolo nel \textit{body frame}.
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Dinamica Veloce (Reattivi)}
+
+                \begin{itemize}
+                    \item \textbf{Giroscopico Rotori:}
+                    \begin{equation}
+                        \bm{M}_{\text{GIRO}} = \textstyle \sum \bm{\omega}_{t,i} \times (J_r \bm{\omega}_{r,i})
+                    \end{equation}
+                    \item \textbf{Giroscopico Body:}
+                    \begin{equation}
+                        \bm{M}_{body} = \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)
+                    \end{equation}
+                \end{itemize}
+            \end{block}
         \end{column}
     \end{columns}
+
+    \vspace{0.1cm} % Spazio ridotto tra le righe
+
+    % Blocco Pinna: usiamo minipage per un controllo totale dell'altezza
+    \begin{center}
+        \begin{minipage}{0.9\textwidth}
+            \begin{exampleblock}{Stabilizzazione Passiva: Momento Pinna ($M_{z,p}$)}
+
+                Il piano verticale smorza l'imbardata in base alla velocità laterale $v_y$:
+                \begin{equation}
+                    M_{z,p} = -r(\alpha_{0z} + \alpha_{1z}v_y^2)
+                \end{equation}
+            \end{exampleblock}
+        \end{minipage}
+    \end{center}
 \end{frame}
 
 
@@ -442,7 +450,7 @@
 % --- SLIDE 3: DINAMICA ATTUATORI ---
 % Questa è la slide critica. Sostituisce la cinematica standard con la dinamica realistica
 \begin{frame}{Dinamica degli Attuatori}
-    La modellazione include la dinamica del \textbf{secondo ordine} per distinguere la risposta fisica dei servomotori e dei motori dei rotori.
+    La modellazione include la dinamica del \textbf{secondo ordine} per descrivere la risposta fisica dei servomotori e dei motori dei rotori.
 
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
@@ -568,7 +576,7 @@
     \vspace{0.1cm}
     \\Genera la richiesta di Thrust ($F_{z,req}$) per portare il drone in quota e mantenerlo in hovering:
     \begin{equation}
-        F_{z,req} = m \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) + \cos(\phi)cos(\theta) F_{aero,z} \right)
+        F_{z,req} = \frac{m}{\cos(\phi) \cos(\theta)} \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right) + F_{aero,z}
     \end{equation}
     
 
@@ -582,7 +590,9 @@
     \end{block}
 
     \textbf{Analisi di Lyapunov:}
-    Sia $V = \frac{1}{2}\sigma^2$. La dinamica perturbata è $\dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)$, con $|\Delta(t)| \le \Delta_{max}$.
+    Sia $V = \frac{1}{2}\sigma^2$ e il controllo $u = -k \operatorname{sgn}(\sigma)$.\\
+    \vspace{0.05cm}
+    La dinamica perturbata è $\dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)$, con $|\Delta(t)| \le \Delta_{max}$.
     
     \begin{equation*}
         \dot{V} = \sigma\dot{\sigma} \le -(k - \Delta_{max})|\sigma| = -\delta \sqrt{2V}
@@ -611,9 +621,9 @@
         La discontinuità di $\operatorname{sgn}(\sigma)$ causa oscillazioni ad alta frequenza dannose per gli attuatori.
     \end{alertblock}
 
-    Si introduce un \textbf{boundary layer} $\Phi$ definendo l'approssimazione:
+    Si introduce un \textbf{boundary layer} $\Phi$ definendo il controllo:
     \begin{equation*}
-        u_{smc} = -k \tanh\left( \frac{\sigma}{\Phi} \right)
+        u = -k \tanh\left( \frac{\sigma}{\Phi} \right)
     \end{equation*}
 
     Affinché lo strato limite sia attrattivo, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
@@ -623,7 +633,7 @@
     \end{equation*}
 
     \begin{block}{Ultimate Boundedness}
-        Il sistema non converge più asintoticamente a zero, si parla di stabilità pratica. L'errore residuo è dettato dal bilancio tra la pendenza del controllo ($k/\Phi$) e l'incertezza $\Delta(t)$.
+        Il sistema non converge più asintoticamente a zero, ma entra in tempo finito nel \textit{boundary layer}. Si parla di stabilità pratica, perché dipende dal tuning dei parametri $k$ e $\Phi$.
     \end{block}
 \end{frame}
 
@@ -690,28 +700,35 @@
 
 
 \begin{frame}{Motor Mixing Algorithm: Thrust e Imbardata}
-    Si ipotizza di ripartire equamente la spinta $F_{z,req}$ fra i tre motori.
+    Inizialmente, si ipotizza di ripartire equamente la spinta $F_{z,req}$ fra i tre motori.
     \begin{equation}
         \begin{cases}
             T_{front} = \frac{2}{3}F_{z,req}\\
             T_{3} = \frac{F_{z,req}}{3}
         \end{cases}          
     \end{equation}
-    con $T_{front} = T_1 + T_2$.
+    con $T_{front} = T_1 + T_2$.\\
+    Successivamente il thrust viene distribuito tra i motori anteriori e posteriore in modo da inseguire l'angolo di pitch.
+
     \vspace{0.2cm}
 
     Il controllo dell'imbardata è gestito tramite il tilting differenziale dei rotori anteriori. 
     \\Si usa la relazione tra momento richiesto e angolo di inclinazione:
     \begin{equation}
-        M_z \approx T_{front} d_{my} \sin(\delta)
+        M_z = T_{front} d_{my} \sin(\delta)
     \end{equation}
     \begin{equation}
         \delta = \arcsin\left( \frac{M_z}{T_{front} d_{my}} \right)
+        \implies 
+        \begin{cases}
+            \theta_1 = \pi/2 - \delta \\
+            \theta_2 = \pi/2 + \delta
+        \end{cases}
     \end{equation}
 \end{frame}
 
 % --- SLIDE 8: MMA Longitudinale (Condensata) ---
-\begin{frame}{Motor Mixing Algorithm: Longitudinale}
+\begin{frame}{Motor Mixing Algorithm: Quota e Beccheggio}
     La dinamica longitudinale richiede la risoluzione di un sistema con Spinta ($F_{z,req}$) e Beccheggio ($M_y$).
     
     \begin{equation}
@@ -737,7 +754,7 @@
 \end{frame}
 
 % --- SLIDE 9: MMA Laterale (Condensata) ---
-\begin{frame}{Motor Mixing Algorithm: Latero-Direzionale}
+\begin{frame}{Motor Mixing Algorithm: Rollio}
     Una volta determinato $T_{front}$, questo viene modulato per controllare il Rollio, che si ottiene tramite spinta differenziale dei rotori anteriori.
     \\Il sistema da risolvere è:
     \begin{equation}
@@ -853,23 +870,19 @@
 
 
 % --- SLIDE 3: OUTER LOOP (UNIFICATA) ---
-\begin{frame}{Outer Loop: Quota e Velocità}
+\begin{frame}{Outer Loop: Posizione e Velocità}
     
-
-    \vspace{0.3cm}
     \begin{columns}[T]
         % Colonna Quota
         \begin{column}{0.48\textwidth}
-            \begin{block}{Controllo Quota ($z$) $\rightarrow$ Pitch ($\theta_{ref}$)}
-                Il controllore di quota $z$ calcola un angolo di beccheggio desiderato $\theta_{des}$ che verrà poi inseguito dal loop interno:
-
-                \vspace{0.2cm}
-                \textbf{Generazione Riferimento:}
+            \begin{block}{Controllo Quota ($z$) $\rightarrow$ Pitch ($\theta_{des}$)}
+                Il controllore di quota $z$ calcola un angolo di beccheggio desiderato:
+                % \textbf{Generazione Riferimento:}
                 \begin{equation}
                     \theta_{des} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
                 \end{equation}
 
-                con $e_z = z_{des} - z$.
+                % con $e_z = z_{des} - z$.
                 
             \end{block}
         \end{column}
@@ -878,18 +891,31 @@
         \begin{column}{0.48\textwidth}
             \begin{block}{Controllo Velocità ($v_x$) $\rightarrow$ Spinta ($F_{x}$)}
                 Il controllore di velocità genera una forza propulsiva lungo $x$.
-                
-                \vspace{0.2cm}
-                \textbf{Forza Richiesta:}
+                % \textbf{Forza Richiesta:}
                 \begin{equation}
-                    F_{x,req} = \hat{D}_x(v) + \underbrace{K_{P_v} e_v + K_{I_v} \int_{0}^{t} e_v(\tau) d\tau}_{\text{Azione PI}}
+                    F_{x,req} = \hat{D}_x(v) + K_{P_v} e_v + K_{I_v} \int_{0}^{t} e_v(\tau) d\tau
                 \end{equation}
-                con $e_v = v_{x,des} - v_x$.
+                % con $e_v = v_{x,des} - v_x$.
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.1cm}
+    \begin{columns}[c] 
+        \begin{column}{0.6\textwidth}
+            \begin{block}{Controllo Laterale ($y$) $\rightarrow$ Yaw ($\psi_{des}$)}
+                Il controllore laterale calcola un angolo di imbardata di riferimento con un PD.
+                \begin{equation}
+                    \psi_{des} = K_{P_y} e_y + K_{D_y} \dot{e}_y
+                \end{equation}
+                % con $e_y = y_{des} - y$
             \end{block}
         \end{column}
     \end{columns}
 
 \end{frame}
+
+
 
 
 % --- SLIDE 4: INNER LOOP (ANALOGIE) ---
@@ -949,7 +975,7 @@
 
 
 % --- SLIDE 5: MMA CONCETTO (SINTESI VETTORIALE) ---
-\begin{frame}{Motor Mixing Algorithm: Thrust}
+\begin{frame}{Motor Mixing Algorithm}
 
     \begin{itemize}
         \item \textbf{Thrust:}
@@ -995,11 +1021,11 @@
 % ANALISI DI STABILITA'
 % ==========================================================
 \section{Analisi di Stabilità}
-
 \begin{frame}
     \vfill
-    \centering
-    {\Huge \textbf{Analisi di Stabilità tramite\\ Linearizzazione}}
+    \begin{center}
+        \Huge \textbf{Analisi di Stabilità \\ \vspace{0.2cm} tramite Linearizzazione}
+    \end{center}
     \vfill
 \end{frame}
 
@@ -1030,32 +1056,32 @@
 \begin{frame}{Confronto Dinamico: Hovering vs Crociera}
     \begin{columns}[t]
         % COLONNA HOVERING
-        \begin{column}{0.48\textwidth}
+        \begin{column}{0.47\textwidth}
             \centering
-            \textbf{\alert{Hovering ($n=26$)}}
+            \textbf{\alert{Hovering ($n=26$ stati)}}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \textbf{Trim:} $z = -10$ m, $v = 0$.
+                \item \textbf{P. di Equilibrio:} $z = -10$ m, $v = 0$.
                 \item \textbf{Controllo:} Sliding Mode (comportamento PD). Nessuno stato aggiuntivo.
                 \item \textbf{Stabilità:} \textbf{Asintotica}.\\
                 $\text{Re}(\lambda_i) < 0 \quad \forall i$.
-                \item \textbf{Polo Critico:} $\lambda = -0.3358$ (decadimento esponenziale).
+                \item \textbf{Polo Critico:} $\lambda = -0.3358$.
             \end{itemize}
         \end{column}
 
         \vrule{} % Linea di separazione verticale
 
         % COLONNA CROCIERA
-        \begin{column}{0.48\textwidth}
+        \begin{column}{0.51\textwidth}
             \centering
-            \textbf{\alert{Crociera ($n=28$)}}
+            \textbf{\alert{Crociera ($n=28$ stati)}}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \textbf{Trim:} $v_x = 25$ m/s, $z = -10$ m.
+                \item \textbf{P. di Equilibrio:} $v_x = 25$ m/s, $z = -10$ m.
                 \item \textbf{Controllo:} PID con azione integrale su $v_x$ e $z$.
                 \item \textbf{Stabilità:} \textbf{Semplice}.\\
                 Presenza di $\lambda = 0$.
-                \item \textbf{Analisi Spettrale:} Autovettore $v_{\lambda=0}$ associato solo a $x_1$ (invarianza per traslazione).
+                \item Autovettore $v_{\lambda=0}$ associato solo a $x_1$.
             \end{itemize}
         \end{column}
     \end{columns}
@@ -1067,93 +1093,245 @@
 \end{frame}
 
 % ===========================================================
-% SEZIONE 5: VALIDAZIONE E ROBUSTEZZA (MONTE CARLO)
+% VALIDAZIONE E ROBUSTEZZA (MONTE CARLO)
 % ===========================================================
 \section{Validazione Monte Carlo}
-
 \begin{frame}
     \vfill
-    \centering
-    \Huge \textbf{Validazione Monte Carlo}
+    \begin{center}
+        \Huge \textbf{Analisi Monte Carlo}
+    \end{center}
     \vfill
 \end{frame}
 
-% --- SLIDE 1: METODOLOGIA ---
-\begin{frame}{Metodologia di Validazione}
-    \begin{alertblock}{Stress-Test stocastico ($N=300$)}
-        Il sistema è stato sottoposto a 100 simulazioni per ogni scenario per quantificare la robustezza dei controllori scelti a fronte di incertezze iniziali su assetto e posizione.
-    \end{alertblock}
+\begin{frame}{Metodologia di Validazione: Analisi Monte Carlo}
+    \begin{block}{Obiettivo della Campagna Statistica}
+        Validazione formale della robustezza e della stabilità del sistema a ciclo chiuso a fronte di incertezze sulle stime di navigazione.
+    \end{block}
+
+    \vspace{0.2cm}
+    \begin{columns}[t]
+        % COLONNA SINISTRA: SETUP
+        \begin{column}{0.48\textwidth}
+            \textbf{\alert{Configurazione Stress-Test}}
+            \begin{itemize}
+                \item \textbf{Volume dati:} $N=600$ simulazioni totali ($200$ per scenario).
+                \item \textbf{Perturbazione:} Campionamento stocastico $\delta \mathbf{x} \sim \mathcal{N}(0, \Sigma)$.
+            \end{itemize}
+        \end{column}
+
+        \vrule{} % Separatore
+
+        % DESTRA: SCENARI OPERATIVI
+        \begin{column}{0.48\textwidth}
+            \textbf{\alert{Scenari e Logiche}}
+            \begin{itemize}
+                \item \textbf{Takeoff \& Hovering:} 
+                Controllo \textbf{SMC} per la gestione delle forti non-linearità.
+                \item \textbf{Cruise Flight:}
+                Controllo \textbf{PID} per il volo livellato a $25$ m/s ($90$ km/h).
+            \end{itemize}
+        \end{column}
+    \end{columns}
 
     \vspace{0.3cm}
-            \textbf{Logica di Controllo adottata:}
-            \begin{itemize}
-                \item \textbf{SMC (Takeoff/Recovery):} Scelto per la gestione delle non-linearità e la reiezione dei disturbi in hovering.
-                \item \textbf{PID (Cruise):} Utilizzato come baseline per il volo rettilineo uniforme a $25$ m/s.
-            \end{itemize}
-
+    \begin{table}
+        \centering
+        \scriptsize
+        % \caption{Deviazioni Standard ($\sigma$) principali}
+        \begin{tabular}{lcccc}
+            \toprule
+            \textbf{Scenario} & \textbf{Pos.} [m] & \textbf{Vel.} [m/s] & \textbf{Ass.} [deg] & \textbf{Rat.} [deg/s] \\
+            \midrule
+            Takeoff & 0.1 & 0.05 & 3.0 & 10.0 \\
+            Hovering & 5.0 & 3.0 & 15.0 & 5.0 \\
+            Cruise & 5.0 & 5.0 & 10.0 & 8.0 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
-% --- SLIDE 2: SMC TAKEOFF ---
-\begin{frame}{Scenario 1: Decollo con SMC}
-    \textbf{Obiettivo:} Transizione stabile dal suolo alla quota desiderata.
-    \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_p_v.png}
-        \captionof{figure}{Posizione e velocità durante il Takeoff.}
-    \end{center}       
+% % --- SLIDE 2: SMC TAKEOFF ---
+% \begin{frame}{Scenario 1: Decollo con SMC}
+%     \textbf{Obiettivo:} Transizione stabile dal suolo alla quota desiderata.
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_p_v.png}
+%         \captionof{figure}{Posizione e velocità durante il Takeoff.}
+%     \end{center}       
+% \end{frame}
+
+% \begin{frame}{Scenario 1: Decollo con SMC}
+%     \textbf{Obiettivo:} Stabilizzazione dell'assetto.
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_eulero.png}
+%         \captionof{figure}{Assetto e velocità angolari durante il Takeoff.}
+%     \end{center}
+% \end{frame}
+
+% % --- SLIDE 3: SMC RECOVERY ---
+% \begin{frame}{Scenario 2: Recovery con SMC}
+%     \textbf{Obiettivo:} Mantenimento della posizione e delle velocità.
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/recovery_p_v.png}
+%         \captionof{figure}{Posizione e velocità in Hovering.}
+%     \end{center}  
+% \end{frame}
+
+% \begin{frame}{Scenario 2: Recovery con SMC}
+%     \textbf{Obiettivo:} Stabilizzazione da assetti estremi ($\pm 15^\circ$).
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/recovery_eulero.png}
+%         \captionof{figure}{Assetto e velocità angolari in Hovering.}
+%     \end{center}  
+% \end{frame}
+
+% % --- SLIDE 4: PID CRUISE ---
+% \begin{frame}{Scenario 3: Crociera con PID}
+%     \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/cruise_p_v.png}
+%         \captionof{figure}{Posizione e velocità in Crociera.}
+%     \end{center} 
+% \end{frame}
+
+% \begin{frame}{Scenario 3: Crociera con PID}
+%     \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
+%     \vspace{0.2cm}
+%     \begin{center}
+%         \includegraphics[width=0.8\linewidth]{montecarlo/cruise_eulero.png}
+%         \captionof{figure}{Assetto e velocità angolari in Crociera.}
+%     \end{center} 
+% \end{frame}
+
+% --- SCENARIO 1: TAKEOFF ---
+\begin{frame}{Scenario 1: Analisi del Takeoff (SMC)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/pos.png}
+            \captionof{figure}{Posizioni durante il decollo.}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/assetto.png}
+            \captionof{figure}{Angoli di Eulero.}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.05cm}
+    \begin{block}{Analisi Critica}
+        \begin{itemize}
+            \item \textbf{Tracking $z$:} Salita fluida $0 \to 10$ m senza sovraelongazioni.
+            \item \textbf{Stabilità:} Le derive in $x, y$ vengono neutralizzate in meno di $15$ s.
+            \item \textbf{Controllo:} Il comando SMC mantiene l'autorità nonostante i disturbi al distacco.
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\begin{frame}{Scenario 1: Decollo con SMC}
-    \textbf{Obiettivo:} Stabilizzazione dell'assetto.
-    \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_eulero.png}
-        \captionof{figure}{Assetto e velocità angolari durante il Takeoff.}
-    \end{center}
+\begin{frame}{Scenario 1: Analisi Sforzo di Controllo (SMC)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/takeoff/thrust.png}
+            \captionof{figure}{Spinta Rotori}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/takeoff/tilt.png}
+            \captionof{figure}{Angoli di Tilt}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-% --- SLIDE 3: SMC RECOVERY ---
-\begin{frame}{Scenario 2: Recovery con SMC}
-    \textbf{Obiettivo:} Mantenimento della posizione e delle velocità.
-    \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/recovery_p_v.png}
-        \captionof{figure}{Posizione e velocità in Hovering.}
-    \end{center}  
+% --- SCENARIO 2: HOVERING RECOVERY ---
+\begin{frame}{Scenario 2: Recovery in Hovering (SMC)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/pos.png}
+            \captionof{figure}{Posizioni in hovering.}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/assetto.png}
+            \captionof{figure}{Angoli di Eulero.}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.05cm}
+    \begin{block}{Analisi della Robustezza}
+        \begin{itemize}
+            \item \textbf{Assetto:} Stabilizzazione di angoli estremi ($\pm 15^\circ$) in circa $15$ s.
+            \item \textbf{Disaccoppiamento:} Priorità alla quota ($z$) rispetto al rientro laterale ($y$).
+            \item \textbf{Convergenza:} L'errore laterale reietto asintoticamente entro $90$ s.
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\begin{frame}{Scenario 2: Recovery con SMC}
-    \textbf{Obiettivo:} Stabilizzazione da assetti estremi ($\pm 15^\circ$).
-    \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/recovery_eulero.png}
-        \captionof{figure}{Assetto e velocità angolari in Hovering.}
-    \end{center}  
+\begin{frame}{Scenario 2: Analisi Sforzo di Controllo (SMC)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/hovering/thrust.png}
+            \captionof{figure}{Spinta Rotori}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/hovering/tilt.png}
+            \captionof{figure}{Angoli di Tilt}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-% --- SLIDE 4: PID CRUISE ---
-\begin{frame}{Scenario 3: Crociera con PID}
-    \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
+
+
+% --- SCENARIO 3: CRUISE ---
+\begin{frame}{Scenario 3: Volo in Crociera (PID)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/pos.png}
+            \captionof{figure}{Posizioni in fase di crociera.}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/vel.png}
+            \captionof{figure}{Velocità lineari in fase di crociera.}
+        \end{column}
+    \end{columns}
+
     \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/cruise_p_v.png}
-        \captionof{figure}{Posizione e velocità in Crociera.}
-    \end{center} 
+    \begin{block}{Comportamento in Regime di Crociera}
+        \begin{itemize}
+            \item \textbf{Posizioni:} Sono mantenuti la quota e l'heading del velivolo.
+            \item \textbf{Performance:} Riconvergenza al target di $25$ m/s in circa $20$ secondi.
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\begin{frame}{Scenario 3: Crociera con PID}
-    \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
-    \vspace{0.2cm}
-    \begin{center}
-        \includegraphics[width=0.8\linewidth]{montecarlo/cruise_eulero.png}
-        \captionof{figure}{Assetto e velocità angolari in Crociera.}
-    \end{center} 
+\begin{frame}{Scenario 3: Analisi Sforzo di Controllo (PID)}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/cruise/thrust.png}
+            \captionof{figure}{Spinta Rotori}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{montecarlo/cruise/tilt.png}
+            \captionof{figure}{Angoli di Tilt}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ============================================================
 % 5. CONCLUSIONI
 % ============================================================
-\section{Conclusioni}
 
 \begin{frame}
     \vfill
