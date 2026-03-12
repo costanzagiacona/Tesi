@@ -18,11 +18,11 @@ La dimensione $n$ dello spazio di stato non è costante, ma evolve in funzione d
 Affinché lo sviluppo in serie di Taylor alla base della linearizzazione sia matematicamente ben posto, il campo vettoriale $f_{cl}(x)$ deve essere di classe $C^1$ nel punto di equilibrio. Per soddisfare tale requisito, il modello è stato regolarizzato esclusivamente per la fase di estrazione dello Jacobiano:
 \begin{enumerate}
     \item \textbf{Rimozione delle saturazioni:} Assumendo l'analisi valida per perturbazioni infinitesime $\delta x$, si garantisce che gli attuatori operino nel loro regime lineare, rendendo superflue le funzioni di saturazione.
-    \item \textbf{Approssimazione dello Sliding Mode:} La funzione discontinua $\text{sgn}(s)$ è stata sostituita con la funzione continua $\tanh(s/\Phi)$. Sviluppando in serie di Maclaurin per $s \to 0$ (condizione di equilibrio):
+    \item \textbf{Approssimazione dello Sliding Mode:} Per approssimare la funzione continua $\tanh(\sigma/\Phi)$ si usa lo sviluppo in serie di Maclaurin per $\sigma \to 0$ (condizione di equilibrio):
     \begin{equation}
         K \tanh\left(\frac{s}{\Phi}\right) = K \left( \frac{s}{\Phi} - \frac{s^3}{3\Phi^3} + \dots \right) \approx \frac{K}{\Phi}s
     \end{equation}
-    Tale equivalenza dimostra che il controllo non lineare, nell'intorno dell'origine, si comporta come un guadagno lineare equivalente $K/\Phi$, garantendo la differenziabilità richiesta.
+    Tale relazione dimostra che il controllo non lineare, nell'intorno dell'origine, si comporta come un guadagno lineare equivalente $K/\Phi$, garantendo la differenziabilità richiesta.
 \end{enumerate}
 
 \subsection{Metodo delle Differenze Finite Centrali}
@@ -47,7 +47,7 @@ Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la 
     \centering
     \caption{Valori del vettore di stato all'equilibrio ($x_{eq}$) per la condizione di Hovering ($n=26$).}
     \vspace{0.3cm} 
-    \label{tab:trim_values}
+    \label{tab:trim_hovering}
     \small
     \renewcommand{\arraystretch}{1.3} % Migliora la leggibilità
     \begin{tabularx}{\textwidth}{llllX}
@@ -55,21 +55,22 @@ Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la 
         \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Unità} & \textbf{Valore di Equilibrio} \\
         \midrule
         \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati Cinematici (Corpo Rigido)}} \\
-        $1 \dots 2$     & $x, y$           & Posizione piano orizzontale & [m]            & $0$ \\
+        $1, 2$          & $x, y$           & Posizione orizzontale      & [m]            & $0$ \\
         $3$             & $z$              & Quota di riferimento       & [m]            & $-10$ \\
-        $4 \dots 6$     & $u, v, w$        & Velocità lineari (Body)    & [m/s]          & $0$ \\
-        $7$             & $\phi$           & Angolo di Rollio           & [rad]          & $0.08$ \\
+        $4, 5, 6$       & $v_x, v_y, v_z$  & Velocità lineari (Body)    & [m/s]          & $0$ \\
+        $7$             & $\phi$           & Angolo di Rollio           & [rad]          & $0.0014$ \\
         $8, 9$          & $\theta, \psi$   & Angoli di Eulero           & [rad]          & $0$ \\
-        $10 \dots 12$   & $p, q, r$        & Velocità angolari          & [rad/s]        & $0$ \\
+        $10, 11, 12$    & $p, q, r$        & Velocità angolari          & [rad/s]        & $0$ \\
         
         \\
         \midrule
         \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati degli Attuatori (Servomotori e Rotori)}} \\
         $13, 15$        & $\theta_{1,2}$   & Tilt motori anteriori      & [rad]          & $\pi/2$ \\
         $17$            & $\theta_{3}$     & Tilt motore di coda        & [rad]          & $\theta_{3,ideal}$ \\
-        $14, 16, 18 \dots$ & $\dot{\theta}, \dots$ & Velocità di tilt & [rad/s]     & $0$ \\
-        $21, 23, 25$    & $\omega_{1,2,3}$ & Velocità angolari rotori   & [rad/s]        & $\omega_{trim, i}$ \\
-        $22, 24, 26$    & $\dot{\omega}_{i}$ & Dinamica motori (II ordine) & [rad/s$^2$]  & $0$ \\
+        $19$            & $\theta_{4}$     & Tilt motore di coda        & [rad]          & $-\pi/2$ \\
+        $14, 16, 18, 20$ & $\dot{\theta_i}$ & Velocità di tilt          & [rad/s]        & $0$ \\
+        $21, 23, 25$    & $\omega_{1,2,3}$ & Velocità angolari rotori   & [rad/s]        & $\omega_{eq, i}$ \\
+        $22, 24, 26$    & $\dot{\omega}_{i}$ & Dinamica Motori          & [rad/s$^2$]    & $0$ \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -77,7 +78,7 @@ Le velocità angolari dei rotori ($\omega_i$) sono state calibrate affinché la 
 \subsection{Analisi della Stabilità}
 L'estrazione dello Jacobiano nel punto $x_{eq}$ conferma la \textbf{stabilità asintotica locale} del sistema ad anello chiuso, con tutti gli autovalori caratterizzati da parte reale negativa ($\text{Re}(\lambda_i) < 0$). 
 Il polo più critico, caratterizzato dalla costante di tempo più lenta, è situato in $\lambda = -0.3358$. Poiché tutti i modi naturali decadono esponenzialmente a zero per $t \to \infty$, il sistema è classificato come \textbf{asintoticamente stabile}. Tale condizione garantisce che ogni perturbazione dello stato venga riassorbita, riportando il velivolo alla condizione di equilibrio statico originaria in tutte le sue componenti dinamiche.
-
+\clearpage
 
 
 \section{Analisi della Condizione di Crociera}
@@ -86,32 +87,43 @@ La seconda fase della linearizzazione riguarda il volo orizzontale a velocità c
 \subsection{Definizione del Punto di Equilibrio}
 Il punto di equilibrio $x_{eq} \in \mathbb{R}^{28}$ per la fase di crociera è stato calcolato imponendo una velocità di avanzamento di regime e una quota costante. A differenza della fase di hovering, i motori anteriori sono orientati parallelamente all'asse longitudinale del corpo ($\theta_{1,2} = 0$), mentre il rotore di coda è spento ($\omega_3 = 0$), delegando il controllo del beccheggio all'inclinazione collettiva dei rotori.
 
+Sono riportati i dettagli del punto di equilibrio in tabella \ref{tab:trim_cruise}.
+
 \begin{table}[htbp]
     \centering
     \caption{Valori di Equilibrio per la condizione di Crociera ($n=28$).}
-    \vspace{0.3cm}
+    \vspace{0.3cm} 
     \label{tab:trim_cruise}
     \small
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabular}{llll}
-        \hline
-        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Valore di Eauilibrio} \\
-        \hline
-        3             & $z$              & Quota di riferimento           & $-10$ m \\
-        4             & $u$              & Velocità di crociera ($v_x$)   & $25$ m/s \\
-        13, 15        & $\alpha_{1,2}$   & Tilt motori anteriori          & $0$ rad \\
-        21, 23        & $\omega_{1,2}$   & Velocità rotori anteriori      & $\approx 312$ rad/s \\
-        25            & $\omega_{3}$     & Velocità rotore di coda        & $0$ rad/s \\
-        27            & $\sigma_{v}$     & Integrale errore velocità $x$  & $\sigma_{trim, v}$ \\
-        28            & $\sigma_{z}$     & Integrale errore quota $z$     & $\sigma_{trim, z}$ \\
-        \hline
-    \end{tabular}
+    \renewcommand{\arraystretch}{1.3} % Migliora la leggibilità
+    \begin{tabularx}{\textwidth}{llllX}
+        \toprule
+        \textbf{Indice} & \textbf{Simbolo} & \textbf{Descrizione} & \textbf{Unità} & \textbf{Valore di Equilibrio} \\
+        \midrule
+        \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati Cinematici (Corpo Rigido)}} \\
+        $1$             & $x$               & Posizione longitudinale       & [m]            & $0$ \\
+        $2$             & $y$               & Posizione laterale            & [m]            & $0$ \\
+        $3$             & $z$               & Quota di riferimento          & [m]            & $-10$ \\
+        $4$             & $v_x$               & Velocità di crociera          & [m/s]          & $25$ \\
+        $5, 6$          & $v_y, v_z$            & Velocità lineari (Body)       & [m/s]          & $0$ \\
+        $7, 8, 9$       & $\theta, \psi$    & Angoli di Eulero              & [rad]          & $0$ \\
+        $10, 11, 12$    & $p, q, r$         & Velocità angolari             & [rad/s]        & $0$ \\
+        
+        \\
+        \midrule
+        \rowcolor[gray]{0.9} \multicolumn{5}{l}{\textit{Stati degli Attuatori (Servomotori e Rotori)}} \\
+        $13, 15$            & $\theta_{1,2}$        & Tilt motori anteriori      & [rad]          & $0$ \\
+        $17,19$             & $\theta_{3}$          & Tilt motore di coda        & [rad]          & $0$ \\
+        $14, 16, 18, 20$    & $\dot{\theta_i}$      & Velocità di tilt           & [rad/s]        & $0$ \\
+        $21, 23$            & $\omega_{1,2}$        & Velocità angolari rotori   & [rad/s]        & $\omega_{eq, i}$ \\
+        $25$                & $\omega_{3}$          & Velocità angolari rotori   & [rad/s]        & $\omega_{eq, i}$ \\
+        $22, 24, 26$        & $\dot{\omega}_{i}$    & Dinamica Motori            & [rad/s$^2$]    & $0$ \\
+        \bottomrule
+    \end{tabularx}
 \end{table}
 
-\subsection{Analisi della Stabilità e Invarianza per Traslazione}
+\subsection{Analisi della Stabilità}
 L'analisi spettrale della matrice Jacobiana $A_{cruise}$ indica che il sistema ad anello chiuso è \textbf{semplicemente stabile}. La quasi totalità degli autovalori presenta parte reale negativa, garantendo il decadimento degli errori di assetto, quota e velocità. Tuttavia, si rileva la presenza di un singolo autovalore nell'origine ($\lambda = 0$).
-
-
 
 L'analisi dell'autovettore destro associato al polo nullo, $v_{\lambda=0} = [1, 0, \dots, 0]^T$, rivela un disaccoppiamento strutturale: 
 la dinamica integrativa pura è confinata esclusivamente allo stato $x_1$ (posizione longitudinale). Fisicamente, ciò indica che il velivolo 

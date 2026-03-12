@@ -506,13 +506,6 @@ INPUT ..\..\img\fixed_wing.png
 INPUT ..\..\img\fixed_wing.png
 INPUT ..\..\img\fixed_wing.png
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathsy.enc
-INPUT ..\..\img\VTOL.png
-INPUT ..\..\img\VTOL.png
-INPUT ..\..\img\VTOL.png
-INPUT ..\..\img\VTOL.png
-INPUT ..\..\img\VTOL.png
-INPUT ..\..\img\VTOL.png
-INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmss9.tfm
 INPUT ..\..\img\dragonfly.png
 INPUT ..\..\img\dragonfly.png
 INPUT ..\..\img\dragonfly.png
@@ -583,6 +576,7 @@ INPUT ..\..\img\rotori_1_2.png
 INPUT ..\..\img\rotori_1_2.png
 INPUT ..\..\img\rotori_1_2.png
 INPUT ..\..\img\rotori_1_2.png
+INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmss9.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\rm-lmss9.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmmi9.tfm
 INPUT C:\Users\costa\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmsy9.tfm

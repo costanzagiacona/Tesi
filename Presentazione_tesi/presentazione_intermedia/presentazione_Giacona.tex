@@ -122,38 +122,23 @@
             \item \textbf{Crociera:} Volo aerodinamico (come un aereo) ruotando i propulsori.
         \end{itemize}
         
-        \vspace{0.5cm}
+        Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici a geometria variabile.
+        \vspace{0.2cm}
         \begin{block}{La Sfida Ingegneristica}
             Questa versatilità introduce una \textbf{dinamica complessa} e fortemente accoppiata, 
             richiedendo strategie di controllo avanzate.
         \end{block}
-
+       
         \column{0.4\textwidth}
         \centering
         \begin{figure}
-            \includegraphics[width=0.8\textwidth]{VTOL.png}
-            \caption{\footnotesize Rendering del velivolo.}
-        \end{figure}
-        
-    \end{columns}
-\end{frame}
-
-\begin{frame}{Tricottero tilting-rotor}
-    \begin{columns}[c] % [c] centra verticalmente il contenuto delle colonne
-        \column{0.55\textwidth}
-        Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici geometriche variabili.
-        
-        \vspace{0.5cm} % Un po' di respiro tra i paragrafi
-        Questa configurazione rappresenta una criticità in fase di crociera perché è necessario gestire sia assetto che posizione solo tramite la vettorizzazione della spinta.
-
-        \column{0.45\textwidth}
-        \begin{figure}
-            \centering
             \includegraphics[width=\columnwidth]{dragonfly.png} 
             \caption{Dragonfly.}
         \end{figure}
+        
     \end{columns}
 \end{frame}
+
 
 % ============================================================
 % 2. MODELLAZIONE (RIELABORATA)
@@ -272,7 +257,7 @@
     \vspace{0.5cm}
     \textbf{Scomposizione delle Forze e Momenti:}
     \begin{equation}
-        \bm{F}_{TOT} = \bm{F}_{\text{TH}} + \bm{F}_{\text{GRAV}} + \bm{F}_{\text{AERO}}
+        \bm{F}_{\text{TOT}} = \bm{F}_{\text{TH}} + \bm{F}_{\text{GRAV}} + \bm{F}_{\text{AERO}}
     \end{equation}
     \begin{equation}
         \bm{M}_{\text{TOT}} = \bm{M}_{\text{TH}} + \bm{M}_{\text{TOR}} + \bm{M}_{\text{AERO}} + \bm{M}_{\text{GIRO}} + \bm{M}_{\text{PINNA}}
@@ -286,25 +271,24 @@
         \begin{column}{0.5\textwidth}
             \textbf{1. Spinta Motori} \\
             Dipende dall'orientamento ($\theta_i$) e velocità ($\omega_i$) dei rotori:
-            \begin{equation*}
+            \begin{equation}
                 \bm{F}_{\text{TH}} = \sum_{i=1}^3 \mathbf{R}_{rot_i \to b}(\theta_i) \cdot [0, 0, k\omega_i^2]^T
-            \end{equation*}
+            \end{equation}
             
             \vspace{0.2cm}
             \textbf{2. Gravità} \\
             Proiezione del vettore peso nel body frame:
-            \begin{equation*}
+            \begin{equation}
                 \bm{F}_{\text{GRAV}} = \mathbf{R}_{g \to b} \cdot [0, 0, mg]^T
-            \end{equation*}
+            \end{equation}
         \end{column}
         
         \begin{column}{0.5\textwidth}
             \textbf{3. Aerodinamica} \\
             Modello non-lineare per fusoliera e ali:
-            \begin{equation*}
+            \begin{equation}
                 \bm{F}_{\text{AERO}} = \bm{F}_{wing} + \bm{D}_{body}
-                % \bm{F}_{\text{AERO}} \propto \frac{1}{2}\rho S v^2 \cdot \begin{bmatrix} C_D(\alpha) \\ 0 \\ C_L(\alpha) \end{bmatrix}
-            \end{equation*}
+            \end{equation}
             \vspace{0.1cm}
             \centering
             \includegraphics[width=0.68\linewidth]{forze_x.jpg}
@@ -370,7 +354,7 @@
 
 
 % ==========================================================
-% 3. SISTEMA DINAMICO (RIELABORATO)
+% 3. SISTEMA DINAMICO 
 % ==========================================================
 \section{Sistema Dinamico}
 
@@ -417,13 +401,13 @@
     \begin{columns}[c]
         \begin{column}{0.4\textwidth}
             \centering
-            \begin{equation*}
+            \begin{equation}
                 \mathbf{u} = \begin{bmatrix} 
                 u_1 \\ u_2 \\ u_3 \\ \hline
                 u_4 \\ u_5 \\ \hline
                 u_6 \\ u_7 
                 \end{bmatrix}
-            \end{equation*}
+            \end{equation}
         \end{column}
 
         \begin{column}{0.6\textwidth}
@@ -447,6 +431,32 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}{Sintesi della Dinamica del Sistema}
+    \vspace{-0.2cm}
+    Il modello dello stato $\mathbf{x} \in \mathbb{R}^{26}$ è governato dalle equazioni di Newton-Euler espresse nel \textit{body frame} ($B$) e proiettate nel sistema inerziale ($G$).
+    
+    \begin{block}{Cinematica: Relazione $B \to G$}
+        \centering
+        $\begin{bmatrix} \dot{\mathbf{p}}_g \\ \dot{\boldsymbol{\eta}}_g \end{bmatrix} = 
+        \begin{bmatrix} R_{b \to g}(\boldsymbol{\eta}) & \mathbb{O}_{3\times3} \\ \mathbb{O}_{3\times3} & J_{b \to g}(\boldsymbol{\eta}) \end{bmatrix} 
+        \begin{bmatrix} \mathbf{v}_b \\ \boldsymbol{\omega}_b \end{bmatrix}$
+    \end{block}
+
+    \begin{block}{Dinamica nel Body Frame}
+        \centering
+        $ \dot{\mathbf{v}}_b = \frac{1}{m} \mathbf{F}_{TOT} - \boldsymbol{\omega}_b \times \mathbf{v}_b $ \\
+        $ \dot{\boldsymbol{\omega}}_b = I_B^{-1} \left( \mathbf{M}_{TOT} - \boldsymbol{\omega}_b \times (I_B \boldsymbol{\omega}_b) \right) $
+    \end{block}
+
+    \begin{exampleblock}{Contributi alle Azioni Generalizzate}
+        \small
+        \begin{itemize}
+            \item \textbf{Forze:} $\mathbf{F}_{TH}$ (Thrust motori $x_{21,23,25}$), $\mathbf{F}_{GRAV}(\theta, \phi)$, $\mathbf{F}_{AERO}$ (Drag/Lift).
+            \item \textbf{Momenti:} Bracci motori ($d$), Effetti Giroscopici ($I_{rot} \omega \Omega$), Smorzamenti aerodinamici ($\alpha$) e Coppie di trascinamento ($b \omega^2$).
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
 % --- SLIDE 3: DINAMICA ATTUATORI ---
 % Questa è la slide critica. Sostituisce la cinematica standard con la dinamica realistica
 \begin{frame}{Dinamica degli Attuatori}
@@ -456,23 +466,23 @@
         \begin{column}{0.48\textwidth}
             \begin{block}{Servomotori di Tilting}
             Gestiscono l'orientamento dei rotori ($x_{13} \dots x_{20}$):
-            \begin{equation*}
+            \begin{equation}
                 \begin{cases} 
                 \dot{x}_{i} = x_{i+1} \\ 
                 \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
                 \end{cases}
-            \end{equation*}
+            \end{equation}
             \end{block}
         \end{column}
         \begin{column}{0.48\textwidth}
             \begin{block}{Motori dei Rotori}
             Gestiscono la velocità di rotazione ($x_{21} \dots x_{26}$):
-            \begin{equation*}
+            \begin{equation}
                 \begin{cases} 
                 \dot{x}_{i} = x_{i+1} \\ 
                 \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
                 \end{cases}
-            \end{equation*}
+            \end{equation}
             \end{block}
         \end{column}
     \end{columns}
@@ -492,7 +502,7 @@
 \end{frame}
 
 % --- SLIDE 1: CONFIGURAZIONE & EQUILIBRIO (UNIFICATE) ---
-\begin{frame}{Configurazione di Hovering ed Equilibrio}
+\begin{frame}{Configurazione di Hovering}
     In fase di decollo, i rotori anteriori sono verticali ($\theta_{1,2} = \pi/2$).
     
     \vspace{0.3cm}
@@ -506,7 +516,7 @@
             
             \vspace{0.2cm}
             \begin{alertblock}{Angolo di Equilibrio}
-            Imponendo $M_{th,z} + M_{tor,z} = 0$:
+            Imponendo $M_{TH,z} + M_{TOR,z} = 0$:
             \begin{equation}
                 \theta_{3_{eq}} = \arctan\left( -\frac{k \, d_{tx}}{b}\right)
             \end{equation}
@@ -594,23 +604,25 @@
     \vspace{0.05cm}
     La dinamica perturbata è $\dot{\sigma} = -k \operatorname{sgn}(\sigma) - \Delta(t)$, con $|\Delta(t)| \le \Delta_{max}$.
     
-    \begin{equation*}
+    \begin{equation}
         \dot{V} = \sigma\dot{\sigma} \le -(k - \Delta_{max})|\sigma| = -\delta \sqrt{2V}
-    \end{equation*}
+    \end{equation}
 
     \vspace{0.2cm}
     \begin{columns}[t]
         \begin{column}{0.45\textwidth}
             \textbf{1. Robustezza} \\
             Garantita se il guadagno soddisfa:
-            \begin{equation*}
+            \begin{equation}
                 k > \Delta_{max}
-            \end{equation*}
+            \end{equation}
         \end{column}
         \begin{column}{0.45\textwidth}
             \textbf{2. Tempo di Raggiungimento} \\
             Integrando la disuguaglianza:
-            $$t_r \le \frac{|\sigma(0)|}{k - \Delta_{max}}$$
+            \begin{equation}
+                t_r \le \frac{|\sigma(0)|}{k - \Delta_{max}}
+            \end{equation}
         \end{column}
     \end{columns}
 \end{frame}
@@ -621,18 +633,18 @@
         La discontinuità di $\operatorname{sgn}(\sigma)$ causa oscillazioni ad alta frequenza dannose per gli attuatori.
     \end{alertblock}
 
-    Si introduce un \textbf{boundary layer} $\Phi$ definendo il controllo:
-    \begin{equation*}
+    Si introduce un \textbf{boundary layer} $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$, definendo il controllo:
+    \begin{equation}
         u = -k \tanh\left( \frac{\sigma}{\Phi} \right)
-    \end{equation*}
+    \end{equation}
 
-    Affinché lo strato limite sia attrattivo, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
-    \begin{equation*}
+    Affinché la regione sia attrattiva, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
+    \begin{equation}
         \dot{V} \le -\Phi \left( k \tanh(1) - \Delta_{max} \right) < 0
         \implies k > \frac{\Delta_{max}}{\tanh(1)}
-    \end{equation*}
+    \end{equation}
 
-    \begin{block}{Ultimate Boundedness}
+    \begin{block}{Finite Time Practical Stability}
         Il sistema non converge più asintoticamente a zero, ma entra in tempo finito nel \textit{boundary layer}. Si parla di stabilità pratica, perché dipende dal tuning dei parametri $k$ e $\Phi$.
     \end{block}
 \end{frame}
@@ -678,7 +690,7 @@
 
 % --- SLIDE 8: INNER LOOP SMC (IL MOTORE DELLA STABILITÀ) ---
 
-\begin{frame}{Inner Loop: Stabilizzazione d'Assetto}
+\begin{frame}{Inner Loop: Controllo d'Assetto}
     L'obiettivo è forzare l'errore d'assetto sulla \textbf{sliding surface}, dove il disturbo viene annullato dalla commutazione del controllo.
     \begin{itemize}
     \item Definiamo la \textit{sliding surface}:
@@ -809,12 +821,12 @@
 \end{frame}
 
 % --- SLIDE 1: CONFIGURAZIONE CROCIERA ---
-\begin{frame}{Configurazione di Crociera (Fixed-Wing Mode)}
+\begin{frame}{Configurazione di Crociera}
     Durante il volo di crociera, i rotori anteriori generano spinta propulsiva orizzontale.
     
     \vspace{0.3cm}
     \begin{columns}[c]
-        \begin{column}{0.6\textwidth}
+        \begin{column}{0.55\textwidth}
             \textbf{Configurazione:}
             \begin{itemize}
                 \item Rotori Anteriori: $\theta \approx 0^\circ$ (Orizzontali).
@@ -871,7 +883,7 @@
 
 % --- SLIDE 3: OUTER LOOP (UNIFICATA) ---
 \begin{frame}{Outer Loop: Posizione e Velocità}
-    
+    \vspace{-0.6cm}
     \begin{columns}[T]
         % Colonna Quota
         \begin{column}{0.48\textwidth}
@@ -881,34 +893,32 @@
                 \begin{equation}
                     \theta_{des} = K_{P_{z}} e_z + K_{I_{z}} \int_{0}^{t} e_z(\tau) d\tau + K_{D_{z}} \dot{e}_z
                 \end{equation}
-
-                % con $e_z = z_{des} - z$.
-                
+                con $e_z = z_{des} - z$.             
             \end{block}
         \end{column}
 
         % Colonna Velocità
         \begin{column}{0.48\textwidth}
             \begin{block}{Controllo Velocità ($v_x$) $\rightarrow$ Spinta ($F_{x}$)}
-                Il controllore di velocità genera una forza propulsiva lungo $x$.
+                Il controllore di velocità genera una forza propulsiva lungo $x$:
                 % \textbf{Forza Richiesta:}
                 \begin{equation}
                     F_{x,req} = \hat{D}_x(v) + K_{P_v} e_v + K_{I_v} \int_{0}^{t} e_v(\tau) d\tau
                 \end{equation}
-                % con $e_v = v_{x,des} - v_x$.
+                con $e_v = v_{x,des} - v_x$.
             \end{block}
         \end{column}
     \end{columns}
 
-    \vspace{0.1cm}
+    % \vspace{0.1cm}
     \begin{columns}[c] 
-        \begin{column}{0.6\textwidth}
+        \begin{column}{0.7\textwidth}
             \begin{block}{Controllo Laterale ($y$) $\rightarrow$ Yaw ($\psi_{des}$)}
-                Il controllore laterale calcola un angolo di imbardata di riferimento con un PD.
+                Il controllore laterale calcola un angolo di imbardata di riferimento:
                 \begin{equation}
                     \psi_{des} = K_{P_y} e_y + K_{D_y} \dot{e}_y
                 \end{equation}
-                % con $e_y = y_{des} - y$
+                con $e_y = y_{des} - y$
             \end{block}
         \end{column}
     \end{columns}
@@ -1032,9 +1042,9 @@
 % SLIDE 1: METODOLOGIA
 \begin{frame}{Metodologia di Linearizzazione}
     L'analisi della stabilità locale è condotta tramite la \textbf{linearizzazione numerica differenziale} del sistema ad anello chiuso:
-    \begin{equation*}
+    \begin{equation}
         \dot{x} = f_{cl}(x) = f(x, u(x))
-    \end{equation*}
+    \end{equation}
 
     \begin{block}{Regolarizzazione del Modello ($f_{cl} \in C^1$)}
         Per garantire la differenziabilità nel punto di equilibrio $x_{eq}$:
@@ -1046,9 +1056,9 @@
 
     \begin{block}{Differenze Finite Centrali}
         Calcolo dello Jacobiano $A_{cl}$ con accuratezza $\mathcal{O}(h^2)$ e passo $h=10^{-6}$:
-        \begin{equation*}
+        \begin{equation}
             A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
-        \end{equation*}
+        \end{equation}
     \end{block}
 \end{frame}
 

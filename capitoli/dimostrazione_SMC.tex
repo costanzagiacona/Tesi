@@ -138,9 +138,16 @@ Tramite $\Phi$ si definiscono le curve di livello, che rappresentano i bordi del
 
 In tal modo si definisce il \textit{boudary layer} come insieme di livello, ovvero come insieme invariante, $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$. 
 
-L'introduzione dello strato limite trasforma la stabilità del sistema da asintotica a pratica, poiché dipende dal tuning dei parametri. Come riportato in \cite{khalil2002nonlinear}, non stabilizziamo l'origine
-ma raggiungiamo la \textbf{Ultimate Boundedness} con un ultimate bound che può essere ridotto tramite la diminuzione di $\Phi$.
-
+L'introduzione dello strato limite comporta la perdita della stabilità asintotica
+dell'origine. In presenza della regolarizzazione della legge di controllo, il
+sistema non converge esattamente a $s=0$; tuttavia, le traiettorie raggiungono
+in \textit{tempo finito} un intorno della superficie di sliding (boundary layer)
+e rimangono uniformemente limitate al suo interno. Per questo motivo si parla
+di \textbf{stabilità pratica}. In particolare, come riportato in
+\cite{khalil2002nonlinear}, il sistema risulta \textit{ultimately bounded}, con
+un \textit{ultimate bound} la cui ampiezza dipende dal parametro $\Phi$ e dai
+guadagni del controllore. Riducendo opportunamente il valore di $\Phi$, tale
+bound può essere reso arbitrariamente piccolo.
 
 Per garantire che le traiettorie convergano verso lo strato limite, è necessario studiare la derivata della funzione di Lyapunov $V = \frac{1}{2}\sigma^2$ applicando il controllo regolarizzato. Sostituendo la nuova dinamica $\dot{\sigma}$ si ottiene:
 \begin{equation}

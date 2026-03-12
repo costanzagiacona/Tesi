@@ -2,7 +2,7 @@ function PlotMonteCarloStats(csv_filename)
     % =========================================================================
     % ANALISI STATISTICA MONTE CARLO - ADVANCED (PROFESSOR EDITION)
     % =========================================================================
-    
+    clc; close all;
     if ~isfile(csv_filename)
         error('File %s non trovato. Eseguire prima la simulazione.', csv_filename);
     end

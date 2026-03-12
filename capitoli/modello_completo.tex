@@ -252,94 +252,77 @@ alle forze passive che agiscono sul velivolo durante il volo; questa forza è pr
     \end{bmatrix}
 \end{equation}
 
-dove:
-\begin{itemize}
-    \item $\sgn(.)$: funzione segno
-    \item $v_x$: velocità lungo l'asse $X_b$
-    \item $v_y$: velocità lungo l'asse $Y_b$
-    \item $v_z$: velocità lungo l'asse $Z_b$
-    \item $S_x$: superficie del tricottero sul piano $(Y_b, Z_b)$
-    \item $S_y$: superficie del tricottero sul piano $(X_b, Z_b)$
-    \item $S_z$: superficie del tricottero sul piano $(X_b, Y_b)$
-    \item $C_{Dx}, C_{Dy}, C_{Dz}$: coefficienti di resistenza del tricottero
-\end{itemize}
+dove $S_i$ e $C_{Di}$ rappresentano rispettivamente le superfici di riferimento e i coefficienti di resistenza lungo i tre assi del tricottero.
 
-Per le superfici alari, si considerano Portanza ($L$) e Resistenza ($D$):
+Le forze generate dalle ali (Portanza $L$ e Resistenza $D$) sono definite nel Wind Frame come $\bm{F}_{wing}^w = [-D, 0, -L]^T$ (assumendo forza laterale nulla per simmetria alare). La proiezione nel Body Frame avviene tramite la matrice di rotazione $\bm{R}_{wb}$:
 \begin{equation}
-	 \bm{F}_{\text{wing}} =
-	 \begin{bmatrix}
-	 	F_{D_1} + F_{D_2} \\
-	 	0 \\
-	 	F_{L_1} + F_{L_2} + F_{D_{z1}} + F_{D_{z2}}
-	 \end{bmatrix}
-\end{equation}
-
-dove si è considerata nulla (per simmetria) la componente della forza esercitata lungo l'asse $Y_{b}$ e con: 
-\begin{itemize}
-    \item $F_{D_i}$ : forza di resistenza (drag) lungo l'asse $X_{b}$ generata dalla superficie alare $i$-esima
-    \item $F_{L_i}$ : forza di portanza (lift) generata dalla superficie alare $i$-esima
-    \item $F_{D_{zi}}$ : forza di resistenza (drag) lungo l'asse $Z_{b}$ generata dalla superficie alare $i$	-esima
-\end{itemize}
-
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.7\textwidth]{forze_x.jpg}
-    \caption{Portanza e Resistenza lungo l'asse $X_b$}
-\end{figure}
-
-e da cui risulta:
-
-\begin{equation}
-    \bm{F}_{\text{wing}} =
-    \begin{bmatrix}
-        -\frac{1}{2}\rho S C_D(v_x) v_x |v_x| \\
-        0 \\
-        -\frac{1}{2}\rho S C_L(v_x) v_x^2 -\frac{1}{2}\rho S C_{Dz} v_z^2
+    \bm{R}_{wb}(\alpha, \beta) = 
+    \begin{bmatrix} 
+    \cos\alpha \cos\beta & -\cos\alpha \sin\beta & -\sin\alpha \\ 
+    \sin\beta & \cos\beta & 0 \\ 
+    \sin\alpha \cos\beta & -\sin\alpha \sin\beta & \cos\alpha 
     \end{bmatrix}
-    \label{eq:F_wing}
 \end{equation}
 
-dove:
-\begin{itemize}
-    \item $v_x$ : velocità [$m/s$] lungo l'asse $X_{B}$
-    \item $v_z$ : velocità [$m/s$] lungo l'asse $Z_{B}$
-    \item $\rho$ : densità dell'aria [$kg/m^3$]
-    \item $S$ : superficie alare  [$m^2$]
-    \item $C_D$ : coefficiente di resistenza aerodinamica lungo l'asse $X_{b}$
-    \item $C_L$ : coefficiente di portanza 
-    \item $C_{D_{z}}$ : coefficiente di resistenza aerodinamica lungo l'asse $Z_{b}$
-\end{itemize}
+I coefficienti $C_L(\alpha)$ e $C_D(\alpha)$ variano in funzione dell'angolo d'attacco. Per gestire la transizione verso lo stallo, si utilizza un fattore di \textit{blending} $n(\alpha)$ basato su un polinomio di Hermite:
+\begin{equation}
+    n(\alpha) = 1 - (3t^2 - 2t^3), \quad \text{con } t = \text{sat}\left(\frac{|\alpha| - \alpha_{start}}{\alpha_{full} - \alpha_{start}}\right)
+\end{equation}
+
+Questa formulazione garantisce la continuità $C^1$ dei coefficienti, migliorando la stabilità numerica del simulatore rispetto a modelli lineari a tratti.
+
+Definiamo il vettore delle forze alari nel \textit{Wind Frame} come:
+
+\begin{equation}
+    \bm{F}_{wing}^w = -\frac{1}{2}\rho V_a^2 S 
+    \begin{bmatrix} 
+        C_D \\ 
+        C_Y \\ 
+        C_L 
+    \end{bmatrix}
+\end{equation}
+
+La forza risultante applicata al baricentro nel \textit{Body Frame} si ottiene tramite la trasformazione:
+\begin{equation}
+    \bm{F}_{wing}^b = \bm{R}_{wb}(\alpha, \beta) \bm{F}_{wing}^w
+\end{equation}
+
+Esplicitando il prodotto matrice-vettore, la componente lungo l'asse $X_b$ risulterà influenzata sia dalla portanza che dalla resistenza in funzione dell'angolo d'attacco $\alpha$, garantendo la fedeltà fisica del modello in fase di transizione e crociera.
 
 L'espressione della forza aerodinamica completa risulta essere:
 \begin{equation}
-    \bm{F}_{\text{AERO}} =
+    \resizebox{1\textwidth}{!}{$
+    \bm{F}_{\text{AERO}} = 
+    -\frac{1}{2} \rho 
     \begin{bmatrix}
-	  	-\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2\, s\, (C_d + C_d) -\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2 S_{x} C_{Dx} \\
-	  	-\operatorname{sgn}(v_y)\,\frac{1}{2}\rho\, v_y^2 S_{y} C_{Dy} \\
-	  	-\frac{1}{2}\rho\, v_x^2\, s\, (C_l + C_l) - \operatorname{sgn}(v_z)\,\frac{1}{2}\rho\, v_z^2\, s\, (C_{d,z} + C_{d,z}) - \operatorname{sgn}(v_z) \,\frac{1}{2}\rho\, v_z^2 S_{z} C_{Dz}
-	  \end{bmatrix}
-      \label{eq:F_aero}
+        \operatorname{sgn}(v_x) v_x^2 S_{x} C_{Dx} \\
+        \operatorname{sgn}(v_y) v_y^2 S_{y} C_{Dy} \\
+        \operatorname{sgn}(v_z) v_z^2 S_{z} C_{Dz}
+    \end{bmatrix}
+    +
+    \frac{1}{2}\rho V_a^2 S
+    \begin{bmatrix}
+	  	-C_D \cos(\alpha)\cos(\beta) - C_Y \cos(\alpha) \sin(\beta) + C_L \sin(\alpha) \\
+	  	-C_D \sin(\beta) + C_Y \cos(\beta) \\
+	  	-C_D \sin(\alpha)\cos(\beta) - C_Y \sin(\alpha) \sin(\beta) - C_L \cos(\alpha)
+	\end{bmatrix}
+    $}
+    \label{eq:F_aero}
 \end{equation}
 
-\begin{figure}[H]
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{forze_z.jpg}
     \caption{Resistenza lungo l'asse $Z_b$}
 \end{figure}
 
-\subsection{Evoluzione del Modello Aerodinamico: dai Coefficienti Costanti al Wind Frame}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{forze_x.jpg}
+    \caption{Portanza e Resistenza lungo l'asse $X_b$}
+\end{figure}
 
-I coefficienti di portanza e resistenza, inizialmente considerati costanti durante tutto l'inviluppo di volo, sono adesso costruiti in
-dipendenza dagli angoli di attacco $\alpha$ e sideslip $\beta$, definiti nel \textit{Wind Frame}.
-
-Per modellare la transizione verso lo stallo profondo, è stato introdotto un fattore di \textit{blending} $n(\alpha)$ basato su un polinomio di Hermite:
-
-\begin{equation}
-    n(\alpha) = 1 - (3t^2 - 2t^3), \quad \text{con } t = \text{sat}\left(\frac{|\alpha| - \alpha_{start}}{\alpha_{full} - \alpha_{start}}\right)
-\end{equation}
-
-Questa formulazione permette ai coefficienti di evolvere fluidamente da un regime lineare a uno di stallo, garantendo la continuità delle derivate prime e migliorando drasticamente la stabilità numerica del solutore rispetto a una modellazione a tratti (look-up table discrete).
 \clearpage
 
 \subsection{Forza Totale}
@@ -526,17 +509,24 @@ Il momento torcente totale $\bm{\tau}$ risultante dalla combinazione dei tre rot
 \subsection{Momento aerodinamico}
 Le forze aerodinamiche agenti sulle ali generano un momento rispetto al centro di massa:
 \begin{equation}
-    \bm{M}_{\text{AERO}} = \bm{r}_{ala_{dx}} \times \bm{F}_{AERO_{dx}} + \bm{r}_{ala_{sx}} \times \bm{F}_{AERO_{sx}} \label{eq:Maero_generale}
+    \bm{M}_{\text{AERO}} = \bm{r}_{ala_{dx}} \times \bm{F}_{\text{AERO}_{dx}} + \bm{r}_{ala_{sx}} \times \bm{F}_{\text{AERO}_{sx}} \label{eq:Maero_generale}
 \end{equation}
 Sviluppando il calcolo e assumendo simmetria nel profilo aerodinamico, si ottiene:
 \begin{equation}
-    \bm{M}_{\text{AERO}} = \begin{bmatrix}
-        (l_{sx_y}+l_{dx_y})F_{z,aero} \\
-        -[(l_{sx_x}+l_{dx_x})F_{z,aero} - (l_{sx_z}+l_{dx_z})F_{x,aero}] \\
-        (l_{sx_y}+l_{dx_y})F_{x,aero}
-    \end{bmatrix} \label{eq:M_aero_finale}
+    \bm{M}_{\text{AERO}} = \frac{1}{2}\rho V_a^2 S 
+    \begin{bmatrix} 
+        (l_{sx_y}+l_{dx_y})(C) - (l_{sx_z}+l_{dx_z})(B) \\
+        -(l_{sx_x}+l_{dx_x})(C) - (l_{sx_z}+l_{dx_z})(A) \\
+        (l_{sx_x}+l_{dx_x})(B) - (l_{sx_y}+l_{dx_y})(A)
+    \end{bmatrix} 
+    \label{eq:M_aero_finale}
 \end{equation}
-dove $F_{x,aero}$ e $F_{z,aero}$ sono le componenti di drag e lift definite in funzione della densità dell'aria $\rho$, della superficie alare $s$ e dei coefficienti $C_l, C_d$.
+dove:
+\begin{itemize}
+    \item $A = -C_D \cos(\alpha)\cos(\beta) - C_Y \cos(\alpha) \sin(\beta) + C_L \sin(\alpha)$
+    \item $B = -C_D \sin(\beta) + C_Y \cos(\beta)$
+    \item $C = -C_D \sin(\alpha)\cos(\beta) - C_Y \sin(\alpha) \sin(\beta) - C_L \cos(\alpha)$
+\end{itemize}
 
 Trascuriamo il contributo delle forze di resistenza della fusoliera, poiché assumiamo che siano applicate nel centro di massa e non producano momento.
 
@@ -616,12 +606,14 @@ Sostituendo le espressioni ottenute nella somma del momento totale \ref{eq:eq_mo
 	    
 	    \begin{equation*}
 	    	+
-	    	\begin{bmatrix}
-	    		(l_{sx_{y}}+l_{dx_{y}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) \\[10pt]
-	    		-\Big[ (l_{sx_{x}}+l_{dx_{x}})\left(-\tfrac{C_l \rho s v_x^2}{2} - \tfrac{C_{d_z} \rho s v_z^2}{2}\,\text{sign}(v_z)\right) 
-	    		- (l_{sx_{z}}+l_{dx_{z}})\left(-\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)\right)\Big] \\[10pt]
-	    		(l_{sx_{y}}+l_{dx_{y}})\,\tfrac{C_d \rho s v_x^2}{2}\,\text{sign}(v_x)
-	    	\end{bmatrix}
+            \resizebox{1\textwidth}{!}{$
+	    	\frac{1}{2}\rho V_a^2 S 
+            \begin{bmatrix} 
+                (l_{sx_y}+l_{dx_y})(-C_D \sin(\alpha)\cos(\beta) - C_Y \sin(\alpha) \sin(\beta) - C_L \cos(\alpha)) - (l_{sx_z}+l_{dx_z})(-C_D \sin(\beta) + C_Y \cos(\beta)) \\[6pt]
+                -(l_{sx_x}+l_{dx_x})(-C_D \sin(\alpha)\cos(\beta) - C_Y \sin(\alpha) \sin(\beta) - C_L \cos(\alpha)) - (l_{sx_z}+l_{dx_z})(-C_D \cos(\alpha)\cos(\beta) - C_Y \cos(\alpha) \sin(\beta) + C_L \sin(\alpha)) \\[6pt]
+                (l_{sx_x}+l_{dx_x})(-C_D \sin(\beta) + C_Y \cos(\beta)) - (l_{sx_y}+l_{dx_y})(-C_D \cos(\alpha)\cos(\beta) - C_Y \cos(\alpha) \sin(\beta) + C_L \sin(\alpha))
+            \end{bmatrix} 
+            $}
 	    	+
 	    \end{equation*}
 	    

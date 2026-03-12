@@ -1,5 +1,5 @@
 \section{Obiettivo dell'Analisi}
-L'obiettivo dell'analisi Monte Carlo in questa trattazione è la validazione formale della stabilità e delle prestazioni del sistema chiuso. Nello specifico, si intende verificare la capacità della legge di controllo di ricondurre il velivolo in condizioni di equilibrio a fronte di perturbazioni sullo stato iniziale $\bm{x}_0$. 
+L'obiettivo dell'analisi Monte Carlo in questa trattazione è la validazione formale della stabilità e delle prestazioni del sistema a ciclo chiuso. Nello specifico, si intende verificare la capacità della legge di controllo di ricondurre il velivolo in condizioni di equilibrio a fronte di perturbazioni sullo stato iniziale $\bm{x}_0$. 
 
 In un ambiente operativo reale, le stime di stato (posizione, velocità, assetto e ratei angolari) fornite dal filtro di navigazione sono affette da rumore e bias. Per dimostrare la tolleranza ai guasti e la robustezza del Motor Mixing Algorithm, il sistema è stato sottoposto a un volume di simulazioni statisticamente significativo ($N = 200$ per ogni scenario operativo), 
 valutando non solo la convergenza ai setpoint desiderati, ma anche lo sforzo transitorio richiesto agli attuatori.
@@ -34,7 +34,7 @@ La matrice di covarianza diagonale $\Sigma$ è definita dalle deviazioni standar
 Lo scenario di decollo valuta la stabilità della macchina durante la delicata transizione dal suolo al volo stazionario, in presenza di piccole asimmetrie iniziali (perturbazioni di posizione, velocità e assetto tipiche del distacco da terra). I risultati mostrano una traiettoria di salita rigorosa e ben condizionata (Figura \ref{fig:takeoff_kinematics}). 
 
 La quota (asse $z$) evolve in modo estremamente fluido da $0$ a $10$ metri, senza presentare alcuna sovraelongazione, indicando un'ottima calibrazione del feedforward gravitazionale e del guadagno derivativo. 
-Questo comportamento è confermato dal grafico della velocità verticale ($V_z$), che descrive una campana perfettamente smorzata con un picco di circa $4.5$ m/s, per poi azzerarsi dolcemente in prossimità del target. 
+Questo comportamento è confermato dal grafico della velocità verticale ($v_z$), che descrive una campana perfettamente smorzata con un picco di circa $4.5$ m/s, per poi azzerarsi dolcemente in prossimità del target. 
 
 Sul piano orizzontale, le derive iniziali lungo $x$ e $y$, indotte dagli errori di assetto e dai disturbi di velocità, vengono elegantemente neutralizzate in meno di $15$ secondi. In questa fase, il controllore dimostra di saper imporre la spinta necessaria al sollevamento senza mai perdere l'autorità direzionale, garantendo un decollo sicuro e verticalmente vincolato.
 
@@ -108,6 +108,9 @@ In questo scenario, l'obiettivo è validare la capacità del sistema di recupera
     \label{fig:hovering_assetto}
 \end{figure}
 
+Il grafico \ref{fig:hovering_assetto} evidenzia come la dinamica d'assetto sia molto più veloce di 
+quella di posizione, con una convergenza che non supera mai i 20 secondi.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{montecarlo/hovering/ratei.png}
@@ -180,21 +183,23 @@ Le condizioni iniziali perturbate in questo regime assumono un significato fisic
     \label{fig:cruise_thrust}
 \end{figure}
 
-L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_thrust}) conferma 
-l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. 
-Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a 
-saturare in modo netto e ripetuto al limite imposto di $100$ N. 
-Una volta dissipata l'energia del transitorio iniziale, il sistema converge rapidamente: 
-la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt 
-si allineano alla configurazione aerodinamica ottimale.
+% L'analisi dell'impegno degli attuatori (Figura \ref{fig:cruise_thrust}) conferma 
+% l'intervento dei vincoli di sicurezza implementati nell'algoritmo di \textit{mixing}. 
+% Nei primi istanti, la richiesta di spinta differenziale porta i rotori anteriori a 
+% saturare in modo netto e ripetuto al limite imposto di $100$ N. 
+% Una volta dissipata l'energia del transitorio iniziale, il sistema converge rapidamente: 
+% la spinta si assesta per bilanciare esattamente il \textit{drag} aerodinamico, e i tilt 
+% si allineano alla configurazione aerodinamica ottimale.
 
-Dal punto di vista della teoria dei controlli, la capacità del sistema di assorbire uno 
-shock iniziale di tale magnitudo e riconvergere al target in circa $20$ secondi 
-rappresenta una solida dimostrazione della stabilità asintotica globale del controllore. 
-Tuttavia, si sottolinea criticamente che, in vista di una validazione sperimentale, 
-l'entità delle oscillazioni strutturali imporrà l'adozione di un pre-filtro passa-basso 
-(generatore di traiettoria) sui riferimenti, al fine di ammorbidire l'errore visto dal 
-controllore e prevenire danni meccanici alla cellula e agli attuatori.
+% Dal punto di vista della teoria dei controlli, la capacità del sistema di assorbire uno 
+% shock iniziale di tale magnitudo e riconvergere al target in circa $20$ secondi 
+% rappresenta una solida dimostrazione della stabilità asintotica globale del controllore. 
+% Tuttavia, si sottolinea criticamente che, in vista di una validazione sperimentale, 
+% l'entità delle oscillazioni strutturali imporrà l'adozione di un pre-filtro passa-basso 
+% (generatore di traiettoria) sui riferimenti, al fine di ammorbidire l'errore visto dal 
+% controllore e prevenire danni meccanici alla cellula e agli attuatori.
+
+\clearpage
 
 \section{Conclusione sulla Robustezza}
 La campagna Monte Carlo ha dimostrato che il velivolo gode di un ampio margine di 

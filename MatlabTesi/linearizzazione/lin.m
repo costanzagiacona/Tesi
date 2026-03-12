@@ -15,6 +15,7 @@ fprintf('--- ANALISI CASO 1: HOVERING ---\n');
 % 1. Definizione Punto di Equilibrio x_eq
 x_eq_hover = zeros(26,1);
 x_eq_hover(3) = -10; % Quota desiderata
+x_eq_hover(7) = deg2rad(0.08);
 x_eq_hover(13) = pi/2; % Tilt servi anteriori (Verticale)
 x_eq_hover(15) = pi/2;
 theta3_ideal = atan2(((-parametri.d_tx * parametri.k) / parametri.b), 1);
