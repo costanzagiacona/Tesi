@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1773305580.68053 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex" "presentazione_Giacona.pdf" "presentazione_Giacona" 1773305591.29542 0
+["pdflatex"] 1773847116.82611 "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex" "presentazione_Giacona.pdf" "presentazione_Giacona" 1773847123.24514 0
   "../../img/config_orizzontale.png" 1770544796 336484 ff4ae3898f5de5ac24ba1c32b7632910 ""
   "../../img/controllo_orizzontale/schema_blocchi_H.png" 1772984296 218549 8b8ddf5345d3a65d3252a9a39f580ee6 ""
   "../../img/controllo_verticale/schema_blocchi_V.png" 1772116990 352837 634436f10cda3f5e7ecba41fb0e1867c ""
@@ -93,6 +93,7 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb" 1256929440 31113 04b711c9a4c7f8cb4ed784c6fc4cc1c5 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb" 1256929440 30789 39c6b966e509dbc60e7a1aaaf85d08a0 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb" 1256929440 30635 833ec815d446ec453a4913fc26d24cbc ""
+  "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb" 1256929440 30698 e53a423459271d6c5cdd91f7559396af ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb" 1256929440 30962 0fa65166a316c2ff6663754edfd267df ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb" 1256929440 97408 f595704ec2a07246c2d6f7b602587452 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb" 1256929440 96107 daf52840b555e3b38f9679b629b5e2df ""
@@ -107,6 +108,7 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb" 1256929440 27863 09ce3735688ffde955e72da27c95b61a ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy7.pfb" 1256929440 27941 d1f5d03f61a46c3fcc3a2ba904ddda52 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb" 1256929440 27802 5c876bb2c4040caaf035d60bd74a86bd ""
+  "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb" 1256929440 27835 e135c98a7736a509f536880c6a6e3bd9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/generic/atbegshi/atbegshi.sty" 1575571100 24708 5584a51a7101caf7e6bbf1fc27d8f7b1 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/generic/babel/babel.sty" 1762681668 146027 ef4163b2f3d9457f0205f6d7ce8e5cd4 ""
@@ -315,12 +317,12 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/translator/translator.sty" 1622471510 8765 56d370785f0143111ff9898b5adfe08e ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex" 1773305579 52369 a214664603b021a2e849c509bcd5457a ""
-  "presentazione_Giacona.aux" 1773305590 9531 3ac4e55bf2cb02fc20f04aed1817d068 "pdflatex"
-  "presentazione_Giacona.nav" 1773305590 6277 c88e7214231459e11a2b5aedec32d073 "pdflatex"
-  "presentazione_Giacona.out" 1773305590 1155 bc4a09e5d5387487353dedbf7a6927ea "pdflatex"
-  "presentazione_Giacona.tex" 1773305579 52369 a214664603b021a2e849c509bcd5457a ""
-  "presentazione_Giacona.toc" 1773305590 509 b60d5c8f60fc7111848d4f99a10d8c23 "pdflatex"
+  "c:/Users/costa/Documents/GitHub/Tesi/Presentazione_tesi/presentazione_intermedia/presentazione_Giacona.tex" 1773847116 54318 e38ffb4431a19cd925054c1244b5877a ""
+  "presentazione_Giacona.aux" 1773847122 9145 445534e6eaec548cae9802a47f295ffc "pdflatex"
+  "presentazione_Giacona.nav" 1773847122 5999 f6af9bae0c72e040a5dc92306b985120 "pdflatex"
+  "presentazione_Giacona.out" 1773847122 1155 bc4a09e5d5387487353dedbf7a6927ea "pdflatex"
+  "presentazione_Giacona.tex" 1773847116 54318 e38ffb4431a19cd925054c1244b5877a ""
+  "presentazione_Giacona.toc" 1773847122 509 4fda079fa72b43b38d20a371716b82b3 "pdflatex"
   (generated)
   "presentazione_Giacona.aux"
   "presentazione_Giacona.log"

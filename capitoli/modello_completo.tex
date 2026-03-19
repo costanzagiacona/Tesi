@@ -349,12 +349,21 @@ Utilizzando i risultati delle espressioni \ref{eq:F_th}, \ref{eq:F_grav}, \ref{e
 	  		\end{bmatrix} m g +  
 	  	\end{equation*}
 	  \begin{equation}
-	  	+
-	   \begin{bmatrix}
-	  	-\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2\, s\, (C_d + C_d) -\operatorname{sgn}(v_x) \,\frac{1}{2}\rho\, v_x^2 S_{x} C_{Dx} \\
-	  	-\operatorname{sgn}(v_y)\,\frac{1}{2}\rho\, v_y^2 S_{y} C_{Dy} \\
-	  	-\frac{1}{2}\rho\, v_x^2\, s\, (C_l + C_l) - \operatorname{sgn}(v_z)\,\frac{1}{2}\rho\, v_z^2\, s\, (C_{d,z} + C_{d,z}) - \operatorname{sgn}(v_z) \,\frac{1}{2}\rho\, v_z^2 S_{z} C_{Dz}
-	  \end{bmatrix}
+	   \resizebox{1\textwidth}{!}{$
+        -\frac{1}{2} \rho 
+        \begin{bmatrix}
+            \operatorname{sgn}(v_x) v_x^2 S_{x} C_{Dx} \\
+            \operatorname{sgn}(v_y) v_y^2 S_{y} C_{Dy} \\
+            \operatorname{sgn}(v_z) v_z^2 S_{z} C_{Dz}
+        \end{bmatrix}
+        +
+        \frac{1}{2}\rho V_a^2 S
+        \begin{bmatrix}
+            -C_D \cos(\alpha)\cos(\beta) - C_Y \cos(\alpha) \sin(\beta) + C_L \sin(\alpha) \\
+            -C_D \sin(\beta) + C_Y \cos(\beta) \\
+            -C_D \sin(\alpha)\cos(\beta) - C_Y \sin(\alpha) \sin(\beta) - C_L \cos(\alpha)
+        \end{bmatrix}
+        $}
 	\label{eq:f_tot}
 \end{equation}
 

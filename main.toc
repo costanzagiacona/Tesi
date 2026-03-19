@@ -7,7 +7,7 @@
 \contentsline {section}{\numberline {2.1}Panoramica sugli UAV VTOL}{3}{section.2.1}%
 \contentsline {subsection}{\numberline {2.1.1}Configurazioni principali}{3}{subsection.2.1.1}%
 \contentsline {subsection}{\numberline {2.1.2}Sfide di modellazione e controllo}{3}{subsection.2.1.2}%
-\contentsline {section}{\numberline {2.2}UAV VTOL con ali indipendentemente inclinabili}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.2}UAV VTOL con ali inclinabili in maniera indipendente}{5}{section.2.2}%
 \contentsline {section}{\numberline {2.3}Modellazione e controllo Backstepping per Quadricotteri}{6}{section.2.3}%
 \contentsline {section}{\numberline {2.4}Smoothed Non-overshooting Sliding Mode}{7}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Modellazione e Controllo Robusto per UAV Coaxial Tilting-Rotor}{8}{section.2.5}%
@@ -71,7 +71,7 @@
 \contentsline {section}{\numberline {6.1}Configurazione di Crociera}{54}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Architettura di Controllo}{55}{section.6.2}%
 \contentsline {subsection}{\numberline {6.2.1}Schema a blocchi dell'architettura di controllo}{56}{subsection.6.2.1}%
-\contentsline {section}{\numberline {6.3}Outer Loop: Controllo di Posizione e Velocità}{57}{section.6.3}%
+\contentsline {section}{\numberline {6.3}\hbox {Outer Loop: Controllo di Posizione e Velocità}}{57}{section.6.3}%
 \contentsline {subsection}{\numberline {6.3.1}Controllo di Quota}{57}{subsection.6.3.1}%
 \contentsline {subsection}{\numberline {6.3.2}Controllo di Velocità}{57}{subsection.6.3.2}%
 \contentsline {subsection}{\numberline {6.3.3}Controllo Laterale}{58}{subsection.6.3.3}%
@@ -90,20 +90,20 @@
 \contentsline {subsection}{\numberline {7.1.3}Sintesi della Legge di Controllo}{70}{subsection.7.1.3}%
 \contentsline {subsection}{\numberline {7.1.4}Analisi di Stabilità e Tempo di Raggiungimento}{71}{subsection.7.1.4}%
 \contentsline {subsection}{\numberline {7.1.5}Mitigazione del Chattering}{73}{subsection.7.1.5}%
-\contentsline {section}{\numberline {7.2}Analisi di stabilità tramite linearizzazione}{75}{section.7.2}%
-\contentsline {subsection}{\numberline {7.2.1}Definizione dello Spazio di Stato}{75}{subsection.7.2.1}%
-\contentsline {subsection}{\numberline {7.2.2}Regolarizzazione del Modello}{75}{subsection.7.2.2}%
-\contentsline {subsection}{\numberline {7.2.3}Metodo delle Differenze Finite Centrali}{76}{subsection.7.2.3}%
-\contentsline {section}{\numberline {7.3}Analisi della Condizione di Hovering}{77}{section.7.3}%
-\contentsline {subsection}{\numberline {7.3.1}Definizione del Punto di Equilibrio}{77}{subsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.3.2}Analisi della Stabilità}{78}{subsection.7.3.2}%
-\contentsline {section}{\numberline {7.4}Analisi della Condizione di Crociera}{79}{section.7.4}%
-\contentsline {subsection}{\numberline {7.4.1}Definizione del Punto di Equilibrio}{79}{subsection.7.4.1}%
-\contentsline {subsection}{\numberline {7.4.2}Analisi della Stabilità}{80}{subsection.7.4.2}%
-\contentsline {chapter}{\numberline {8}Validazione della Robustezza tramite Analisi Monte Carlo}{81}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Obiettivo dell'Analisi}{81}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Definizione delle Condizioni Iniziali}{81}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Scenario 1: Takeoff}{82}{section.8.3}%
-\contentsline {section}{\numberline {8.4}Scenario 2: Hovering}{86}{section.8.4}%
-\contentsline {section}{\numberline {8.5}Scenario 3: Cruise}{89}{section.8.5}%
-\contentsline {section}{\numberline {8.6}Conclusione sulla Robustezza}{93}{section.8.6}%
+\contentsline {section}{\numberline {7.2}Analisi di stabilità tramite linearizzazione}{77}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Definizione dello Spazio di Stato}{77}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Regolarizzazione del Modello}{77}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Metodo delle Differenze Finite Centrali}{78}{subsection.7.2.3}%
+\contentsline {section}{\numberline {7.3}Analisi della Condizione di Hovering}{79}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Definizione del Punto di Equilibrio}{79}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Analisi della Stabilità}{80}{subsection.7.3.2}%
+\contentsline {section}{\numberline {7.4}Analisi della Condizione di Crociera}{81}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Definizione del Punto di Equilibrio}{81}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Analisi della Stabilità}{82}{subsection.7.4.2}%
+\contentsline {chapter}{\numberline {8}Validazione della Robustezza tramite Analisi Monte Carlo}{83}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Obiettivo dell'Analisi}{83}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Definizione delle Condizioni Iniziali}{83}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Scenario 1: Takeoff}{84}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Scenario 2: Hovering}{88}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Scenario 3: Cruise}{91}{section.8.5}%
+\contentsline {section}{\numberline {8.6}Conclusione sulla Robustezza}{95}{section.8.6}%

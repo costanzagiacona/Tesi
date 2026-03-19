@@ -431,31 +431,31 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Sintesi della Dinamica del Sistema}
-    \vspace{-0.2cm}
-    Il modello dello stato $\mathbf{x} \in \mathbb{R}^{26}$ è governato dalle equazioni di Newton-Euler espresse nel \textit{body frame} ($B$) e proiettate nel sistema inerziale ($G$).
+% \begin{frame}{Sintesi della Dinamica del Sistema}
+%     \vspace{-0.2cm}
+%     Il modello dello stato $\mathbf{x} \in \mathbb{R}^{26}$ è governato dalle equazioni di Newton-Euler espresse nel \textit{body frame} ($B$) e proiettate nel sistema inerziale ($G$).
     
-    \begin{block}{Cinematica: Relazione $B \to G$}
-        \centering
-        $\begin{bmatrix} \dot{\mathbf{p}}_g \\ \dot{\boldsymbol{\eta}}_g \end{bmatrix} = 
-        \begin{bmatrix} R_{b \to g}(\boldsymbol{\eta}) & \mathbb{O}_{3\times3} \\ \mathbb{O}_{3\times3} & J_{b \to g}(\boldsymbol{\eta}) \end{bmatrix} 
-        \begin{bmatrix} \mathbf{v}_b \\ \boldsymbol{\omega}_b \end{bmatrix}$
-    \end{block}
+%     \begin{block}{Cinematica: Relazione $B \to G$}
+%         \centering
+%         $\begin{bmatrix} \dot{\mathbf{p}}_g \\ \dot{\boldsymbol{\eta}}_g \end{bmatrix} = 
+%         \begin{bmatrix} R_{b \to g}(\boldsymbol{\eta}) & \mathbb{O}_{3\times3} \\ \mathbb{O}_{3\times3} & J_{b \to g}(\boldsymbol{\eta}) \end{bmatrix} 
+%         \begin{bmatrix} \mathbf{v}_b \\ \boldsymbol{\omega}_b \end{bmatrix}$
+%     \end{block}
 
-    \begin{block}{Dinamica nel Body Frame}
-        \centering
-        $ \dot{\mathbf{v}}_b = \frac{1}{m} \mathbf{F}_{TOT} - \boldsymbol{\omega}_b \times \mathbf{v}_b $ \\
-        $ \dot{\boldsymbol{\omega}}_b = I_B^{-1} \left( \mathbf{M}_{TOT} - \boldsymbol{\omega}_b \times (I_B \boldsymbol{\omega}_b) \right) $
-    \end{block}
+%     \begin{block}{Dinamica nel Body Frame}
+%         \centering
+%         $ \dot{\mathbf{v}}_b = \frac{1}{m} \mathbf{F}_{TOT} - \boldsymbol{\omega}_b \times \mathbf{v}_b $ \\
+%         $ \dot{\boldsymbol{\omega}}_b = I_B^{-1} \left( \mathbf{M}_{TOT} - \boldsymbol{\omega}_b \times (I_B \boldsymbol{\omega}_b) \right) $
+%     \end{block}
 
-    \begin{exampleblock}{Contributi alle Azioni Generalizzate}
-        \small
-        \begin{itemize}
-            \item \textbf{Forze:} $\mathbf{F}_{TH}$ (Thrust motori $x_{21,23,25}$), $\mathbf{F}_{GRAV}(\theta, \phi)$, $\mathbf{F}_{AERO}$ (Drag/Lift).
-            \item \textbf{Momenti:} Bracci motori ($d$), Effetti Giroscopici ($I_{rot} \omega \Omega$), Smorzamenti aerodinamici ($\alpha$) e Coppie di trascinamento ($b \omega^2$).
-        \end{itemize}
-    \end{exampleblock}
-\end{frame}
+%     \begin{exampleblock}{Contributi alle Azioni Generalizzate}
+%         \small
+%         \begin{itemize}
+%             \item \textbf{Forze:} $\mathbf{F}_{TH}$ (Thrust motori $x_{21,23,25}$), $\mathbf{F}_{GRAV}(\theta, \phi)$, $\mathbf{F}_{AERO}$ (Drag/Lift).
+%             \item \textbf{Momenti:} Bracci motori ($d$), Effetti Giroscopici ($I_{rot} \omega \Omega$), Smorzamenti aerodinamici ($\alpha$) e Coppie di trascinamento ($b \omega^2$).
+%         \end{itemize}
+%     \end{exampleblock}
+% \end{frame}
 
 % --- SLIDE 3: DINAMICA ATTUATORI ---
 % Questa è la slide critica. Sostituisce la cinematica standard con la dinamica realistica
@@ -572,7 +572,7 @@
 \begin{frame}{Outer Loop: Controllo di Quota}
 
     \vspace{0.2cm}
-    \textbf{1. Definizioni:}
+    \textbf{Definizioni:}
     \begin{itemize}
         \item Errore: $e_z = z_{des} - z$
         \item Sliding surface: $\sigma_z = \dot{e}_z + \lambda_z e_z$, con $\lambda > 0$
@@ -588,13 +588,15 @@
     \begin{equation}
         F_{z,req} = \frac{m}{\cos(\phi) \cos(\theta)} \left(g - \ddot{z}_{des} - \lambda_z \dot{e}_z - K_z \tanh\left(\frac{\sigma_z}{\Phi}\right) \right) + F_{aero,z}
     \end{equation}
-    
+    con $\phi, \theta \in (-\pi/2, \pi/2)$
 
 \end{frame}
 
 
 % --- SLIDE 1: Fondamenti e Stabilità ---
 \begin{frame}{Analisi di Stabilità per il Controllo di Quota}
+    Per l'analisi teorica della stabilità si considera inizialmente
+    la legge di controllo ideale con funzione segno.
     \begin{block}{Obiettivo del Controllo}
         Forzare lo stato sulla superficie $\sigma = 0$ in \textbf{tempo finito} e garantire la convergenza dell'errore.
     \end{block}
@@ -614,41 +616,83 @@
             \textbf{1. Robustezza} \\
             Garantita se il guadagno soddisfa:
             \begin{equation}
-                k > \Delta_{max}
+                k = \Delta_{max} + \delta
             \end{equation}
         \end{column}
         \begin{column}{0.45\textwidth}
             \textbf{2. Tempo di Raggiungimento} \\
             Integrando la disuguaglianza:
             \begin{equation}
-                t_r \le \frac{|\sigma(0)|}{k - \Delta_{max}}
+                t_r \le \frac{|\sigma(0)|}{\delta}
             \end{equation}
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 2: Regolarizzazione (Chattering) ---
-\begin{frame}{Regolarizzazione e Boundary Layer}
-    \begin{alertblock}{Il Problema del Chattering}
-        La discontinuità di $\operatorname{sgn}(\sigma)$ causa oscillazioni ad alta frequenza dannose per gli attuatori.
-    \end{alertblock}
+% % --- SLIDE 2: Regolarizzazione (Chattering) ---
+% \begin{frame}{Regolarizzazione e Boundary Layer}
+%     \begin{alertblock}{Il Problema del Chattering}
+%         La discontinuità di $\operatorname{sgn}(\sigma)$ causa oscillazioni ad alta frequenza dannose per gli attuatori.
+%     \end{alertblock}
 
-    Si introduce un \textbf{boundary layer} $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$, definendo il controllo:
+%     Si introduce un \textbf{boundary layer} $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$, definendo il controllo:
+%     \begin{equation}
+%         u = -k \tanh\left( \frac{\sigma}{\Phi} \right)
+%     \end{equation}
+
+%     Affinché la regione sia attrattiva, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
+%     \vspace{-0.25cm}
+%     \begin{columns}[T]
+%         \begin{column}{0.65\textwidth}
+%             \begin{equation}
+%             \dot{V} \le -\Phi \left( k \tanh(1) - \Delta_{max} \right) < 0
+%             \implies k > \frac{\Delta_{max}}{\tanh(1)}
+%         \end{equation}
+%         \end{column}
+%         \begin{column}{0.35\textwidth}
+%             \begin{equation}
+%                 t_r \le \frac{|\sigma(0)|}{k\tanh(1)-\Delta_{max}}
+%             \end{equation}          
+%         \end{column}
+%     \end{columns}
+%     \begin{block}{Finite-Time Practical Stability}
+%         Il sistema non converge più esattamente alla sliding surface, ma entra in tempo finito nel \textit{boundary layer} e rimane limitato al suo interno. Si parla di stabilità pratica, perché dipende dal tuning dei parametri $k$ e $\Phi$.
+%     \end{block}
+% \end{frame}
+
+\begin{frame}{Regolarizzazione e Boundary Layer}
+    % Problema e Soluzione in una riga
+    \textbf{Chattering:} La discontinuità di $\operatorname{sgn}(\sigma)$ viene mitigata definendo un \textbf{boundary layer} $B = \{x : |\sigma| \leq \Phi\}$ con controllo continuo:
     \begin{equation}
         u = -k \tanh\left( \frac{\sigma}{\Phi} \right)
     \end{equation}
 
-    Affinché la regione sia attrattiva, deve valere $\dot{V} < 0$ sulla frontiera $|\sigma| = \Phi$:
-    \begin{equation}
-        \dot{V} \le -\Phi \left( k \tanh(1) - \Delta_{max} \right) < 0
-        \implies k > \frac{\Delta_{max}}{\tanh(1)}
-    \end{equation}
-
-    \begin{block}{Finite Time Practical Stability}
-        Il sistema non converge più asintoticamente a zero, ma entra in tempo finito nel \textit{boundary layer}. Si parla di stabilità pratica, perché dipende dal tuning dei parametri $k$ e $\Phi$.
+    % Analisi di Stabilità
+    \begin{block}{Attrattività e Tempo di Reaching}
+        Posto il margine $\eta = k\tanh(1) - \Delta_{max} > 0$, fuori dal layer si ha:
+        \begin{columns}[c]
+            \begin{column}{0.5\textwidth}
+                \centering
+                \begin{equation}
+                    \dot{V} \le -|\sigma| \eta < 0
+                \end{equation}
+                % \footnotesize (Condizione di esistenza)
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                \centering
+                \begin{equation}
+                    t_r \le \frac{|\sigma(0)|}{\eta}
+                \end{equation}
+                % \footnotesize (Raggiungimento in tempo finito)
+            \end{column}
+        \end{columns}
     \end{block}
-\end{frame}
 
+    \vspace{0.2cm}
+
+    % Conclusione
+    \textbf{Stabilità Pratica:} Le traiettorie entrano in $B$ in tempo $t_r$ e vi rimangono confinate. L'errore residuo a regime è proporzionale a $\Phi$ (trade-off tra precisione e chattering).
+\end{frame}
 
 % --- SLIDE 7: INVERSIONE CINEMATICA (IL PONTE) ---
 \begin{frame}{Inversione Cinematica: Dal Loop Esterno all'Interno}
@@ -711,100 +755,87 @@
 \end{frame}
 
 
-\begin{frame}{Motor Mixing Algorithm: Thrust e Imbardata}
-    Inizialmente, si ipotizza di ripartire equamente la spinta $F_{z,req}$ fra i tre motori.
-    \begin{equation}
-        \begin{cases}
-            T_{front} = \frac{2}{3}F_{z,req}\\
-            T_{3} = \frac{F_{z,req}}{3}
-        \end{cases}          
-    \end{equation}
-    con $T_{front} = T_1 + T_2$.\\
-    Successivamente il thrust viene distribuito tra i motori anteriori e posteriore in modo da inseguire l'angolo di pitch.
-
-    \vspace{0.2cm}
-
-    Il controllo dell'imbardata è gestito tramite il tilting differenziale dei rotori anteriori. 
-    \\Si usa la relazione tra momento richiesto e angolo di inclinazione:
-    \begin{equation}
-        M_z = T_{front} d_{my} \sin(\delta)
-    \end{equation}
-    \begin{equation}
-        \delta = \arcsin\left( \frac{M_z}{T_{front} d_{my}} \right)
-        \implies 
-        \begin{cases}
-            \theta_1 = \pi/2 - \delta \\
-            \theta_2 = \pi/2 + \delta
-        \end{cases}
-    \end{equation}
+\begin{frame}{MMA: Bilancio Longitudinale e Imbardata}
+    \begin{columns}[T]
+        \begin{column}{0.45\textwidth}
+            \textbf{Controllo Imbardata} \\
+            Il tilting differenziale dei rotori anteriori genera $M_z$:
+            \begin{equation}
+                M_z = (T_1 + T_2) d_{my} \sin(\delta)
+            \end{equation}
+            \begin{equation}
+                \delta = \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right)
+            \end{equation}
+            \textit{\footnotesize $\delta$ definisce la geometria per i calcoli successivi.}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \textbf{Equilibrio $F_z$ e $M_y$} \\
+            {\footnotesize
+            \begin{equation}              
+                \begin{cases}
+                    T_{front} \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z,req} \\
+                    T_{front} \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_{y,req}
+                \end{cases}
+            \end{equation}
+            }
+            \textbf{Soluzione del sistema:}
+            {\footnotesize
+            \begin{flalign}
+                & T_3 = k \left( \frac{M_y - F_{z} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)} \right)\\&          
+                T_{front} = \frac{F_{z} - T_3 \sin(\theta_3)}{\cos(\delta)}
+            \end{flalign}
+            }
+        \end{column}
+    \end{columns}
+    \begin{block}{Logica di Inversione}
+        Il sistema è risolto sequenzialmente: si determina la geometria ($\delta$) per soddisfare l'imbardata, quindi si ripartisce la spinta tra asse anteriore e coda per garantire sostentamento e beccheggio.
+    \end{block}
 \end{frame}
 
-% --- SLIDE 8: MMA Longitudinale (Condensata) ---
-\begin{frame}{Motor Mixing Algorithm: Quota e Beccheggio}
-    La dinamica longitudinale richiede la risoluzione di un sistema con Spinta ($F_{z,req}$) e Beccheggio ($M_y$).
+\begin{frame}{MMA: Rollio e Comandi Attuatore}
+    Infine, la spinta $T_{front}$ viene ripartita tra i motori 1 e 2 per il controllo del rollio ($M_x$).
     
-    \begin{equation}
-        \begin{cases}
-            (T_1 + T_2) \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z} \\
-            (T_1 + T_2) \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_y
-        \end{cases}
-    \end{equation}
-
-    \vspace{0.3cm}
-    \textbf{1. Calcolo Rotore di Coda ($T_3$):}
-    Dall'equilibrio dei momenti attorno a Y, si isola il contributo della coda:
-    \begin{equation}
-        T_3 = k \left( \frac{M_y - F_{z} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)} \right)
-    \end{equation}
+    \begin{columns}[T]
+        \begin{column}{0.46\textwidth}
+            \textbf{Spinta Differenziale:}
+            \begin{equation}
+                \Delta T = \frac{M_{x,req}}{2 d_{my} \cos(\delta)}
+            \end{equation}
+            \begin{equation}
+                \begin{cases} T_1 = \frac{T_{front}}{2} - \Delta T \\ T_2 = \frac{T_{front}}{2} + \Delta T \end{cases}
+            \end{equation}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \textbf{Mapping Finale ($u_i$):}
+            \footnotesize
+            \begin{gather}
+                u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} - \Delta T \right)}\\
+                u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} + \Delta T \right)}\\
+                u_3 = \omega_3 = \sqrt{\frac{T_3}{k}}\\
+                u_4 = \theta_1 = \pi/2 - \delta\\
+                u_5 = \theta_2 = \pi/2 + \delta\\
+                u_6 = \theta_3 = \theta_{3,eq}\\
+                u_7 = \theta_4 = -\pi/2
+            \end{gather}
+        \end{column}
+    \end{columns}
     
-    \vspace{0.3cm}
-    \textbf{2. Calcolo Rotori Anteriori ($T_{front}$):}
-    Nota la spinta della coda, il resto del sostentamento è affidato ai rotori anteriori:
-    \begin{equation}
-        T_{front} = \frac{F_{z} - T_3 \sin(\theta_3)}{\cos(\delta)}
-    \end{equation}
 \end{frame}
 
-% --- SLIDE 9: MMA Laterale (Condensata) ---
-\begin{frame}{Motor Mixing Algorithm: Rollio}
-    Una volta determinato $T_{front}$, questo viene modulato per controllare il Rollio, che si ottiene tramite spinta differenziale dei rotori anteriori.
-    \\Il sistema da risolvere è:
-    \begin{equation}
-        \begin{cases}
-        T_1 + T_2 = T_{front} \\
-        (T_2 - T_1) \cos(\delta) d_{my} = M_x
-        \end{cases}
-        \implies
-        \begin{cases}
-        T_1 + T_2 = T_{front} \\
-        \Delta T \cos(\delta) d_{my} = M_x
-        \end{cases}
-    \end{equation}
-    Da cui si ottiene il valore differenziale della spinta:
-    \begin{equation}
-        \Delta T = \frac{M_{x,req}}{2 d_{my} \cos(\delta)}
-    \end{equation}
-    I valori di Thrust per i motori anteriori diventano:
-    \begin{equation}
-        \begin{cases}
-            T_{1} = \frac{T_{front}}{2} - \Delta T\\
-            T_{2} = \frac{T_{front}}{2} + \Delta T
-        \end{cases}
-    \end{equation}           
-\end{frame}
 
-\begin{frame}{Ingressi di controllo}
-    I comandi dati agli attuatori sono quindi i seguenti:
-    \begin{gather}
-        u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} - \Delta T \right)}\\
-        u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} + \Delta T \right)}\\
-        u_3 = \omega_3 = \sqrt{\frac{T_3}{k}}\\
-        u_4 = \theta_1 = \pi/2 - \delta\\
-        u_5 = \theta_2 = \pi/2 + \delta\\
-        u_6 = \theta_3 = \theta_{3,eq}\\
-        u_7 = \theta_4 = -\pi/2
-    \end{gather}
-\end{frame}
+
+% \begin{frame}{Ingressi di controllo}
+%     I comandi dati agli attuatori sono quindi i seguenti:
+%     \begin{gather}
+%         u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} - \Delta T \right)}\\
+%         u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{T_{front}}{2} + \Delta T \right)}\\
+%         u_3 = \omega_3 = \sqrt{\frac{T_3}{k}}\\
+%         u_4 = \theta_1 = \pi/2 - \delta\\
+%         u_5 = \theta_2 = \pi/2 + \delta\\
+%         u_6 = \theta_3 = \theta_{3,eq}\\
+%         u_7 = \theta_4 = -\pi/2
+%     \end{gather}
+% \end{frame}
 
 
 
@@ -1050,7 +1081,7 @@
         Per garantire la differenziabilità nel punto di equilibrio $x_{eq}$:
         \begin{itemize}
             \item \textbf{Rimozione saturazioni:} Ipotesi di piccoli segnali ($\delta x$ infinitesimo).
-            \item \textbf{Approssimazione Sliding Mode:} $K \tanh(s/\Phi) \approx \frac{K}{\Phi}s$.
+            \item \textbf{Approssimazione Sliding Mode:} $K \tanh(\sigma/\Phi) \approx \frac{K}{\Phi}\sigma$.
         \end{itemize}
     \end{block}
 

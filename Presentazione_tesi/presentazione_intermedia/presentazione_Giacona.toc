@@ -4,7 +4,7 @@
 \beamer@sectionintoc {2}{Descrizione VTOL}{5}{0}{2}
 \beamer@sectionintoc {3}{Modello Matematico}{7}{0}{3}
 \beamer@sectionintoc {4}{Sistema Dinamico}{14}{0}{4}
-\beamer@sectionintoc {5}{Controllo Volo Verticale}{19}{0}{5}
-\beamer@sectionintoc {6}{Controllo Volo Orizzontale}{32}{0}{6}
-\beamer@sectionintoc {7}{Analisi di Stabilità}{40}{0}{7}
-\beamer@sectionintoc {8}{Validazione Monte Carlo}{43}{0}{8}
+\beamer@sectionintoc {5}{Controllo Volo Verticale}{18}{0}{5}
+\beamer@sectionintoc {6}{Controllo Volo Orizzontale}{29}{0}{6}
+\beamer@sectionintoc {7}{Analisi di Stabilità}{37}{0}{7}
+\beamer@sectionintoc {8}{Validazione Monte Carlo}{40}{0}{8}

@@ -22,7 +22,7 @@ Normalizzando rispetto alla massa, si ottiene la forma affine al controllo:
 \begin{equation}
     \ddot{z} = g + \cos(\phi)\cos(\theta) \left(\frac{F_{\mathrm{aero},z}}{m} - \frac{u}{m} \right) + \Delta(t)
 \end{equation}
-In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: $|\Delta(t)| \le \Delta_{\max}, \forall t \ge 0$.
+In questa formulazione, $\Delta(t) = d(t)/m$ è definita come \textbf{incertezza matched}, in quanto agisce direttamente sullo stesso canale dell'ingresso di controllo $u = F_{\mathrm{thrust},z}$. Si assume che tale disturbo sia limitato superiormente da una costante nota: \hbox{$|\Delta(t)| \le \Delta_{\max}$}, $\forall t \ge 0$.
 
 \subsection{Definizione della \textit{sliding surface}}
 Sia $z_{\mathrm{des}}(t)$ la quota di riferimento desiderata e $e(t) = z_{\mathrm{des}}(t) - z(t)$ l'errore. Per un sistema del secondo ordine, si definisce una \textit{sliding surface} $\sigma(t)$ lineare del primo ordine:
@@ -37,7 +37,8 @@ Per ricavare la legge di controllo, si deriva rispetto al tempo la \textit{slidi
     \dot{\sigma} = \ddot{z}_{\mathrm{des}} - g - \cos(\phi)\cos(\theta)\frac{F_{\mathrm{aero},z}}{m} + \cos(\phi)\cos(\theta)\frac{u}{m} - \Delta(t) + \lambda \dot{e}
 \end{equation}
 
-L'obiettivo del controllo Sliding Mode è garantire che le traiettorie del sistema raggiungano la superficie $\sigma = 0$ in tempo finito, forzando la condizione di \textit{sliding} indipendentemente dalla presenza del disturbo $\Delta(t)$. A tal fine, si adotta l'approccio basato sulla \textbf{reaching law}; si impone che la dinamica:
+L'obiettivo del controllo Sliding Mode è garantire che le traiettorie del sistema raggiungano la superficie $\sigma = 0$ in tempo finito. 
+A tal fine, si adotta l'approccio basato sulla \textbf{reaching law}; si impone che la dinamica:
 \begin{equation}
     \dot{\sigma} = -k \operatorname{sgn}(\sigma)
 \end{equation}
@@ -85,7 +86,11 @@ Applicando la disuguaglianza triangolare e sapendo che il termine incerto è lim
     \dot{V} \le -k|\sigma| + \Delta_{\max}|\sigma| = - (k - \Delta_{\max}) |\sigma|
 \end{equation}
 
-Affinché la derivata sia definita negativa, è necessario imporre come condizione di progetto che il guadagno sia superiore all'incertezza massima, ovvero $k > \Delta_{\max}$. Definendo $\delta = k - \Delta_{\max}$, e ricordando che $|\sigma| = \sqrt{2V}$, possiamo riscrivere la disequazione differenziale direttamente in termini di $V$:
+Definendo $\delta = k - \Delta_{\max}$, e ricordando che $|\sigma| = \sqrt{2V}$, possiamo riscrivere la disequazione differenziale direttamente in termini di $V$:
+\begin{equation}
+        \dot{V} = \sigma\dot{\sigma} \le -(k - \Delta_{\max})|\sigma| = -\delta \sqrt{2V}
+\end{equation}
+da cui ricaviamo che il guadagno deve essere $k = \Delta_{\max} + \delta$ per garantire la robustezza del controllo.
 \begin{equation}
     \frac{dV}{dt} \le -\delta \sqrt{2V}
 \end{equation}
@@ -100,7 +105,7 @@ Integrando ambo i membri tra l'istante iniziale $t=0$ e un generico istante $t$:
     \int_{V(0)}^{V(t)} V^{-\frac{1}{2}} \, dV \le -\delta \sqrt{2} \int_{0}^{t} d\tau
 \end{equation}
 
-Risolvendo analiticamente l'integrale si ottiene:
+Risolvendo l'integrale si ottiene:
 \begin{equation}
     2\sqrt{V(t)} - 2\sqrt{V(0)} \le -\sqrt{2} \, \delta \, t
 \end{equation}
@@ -117,81 +122,125 @@ Da cui si definisce l'evoluzione dell'errore nel tempo:
 
 Il tempo di raggiungimento $t_r$ coincide con il momento in cui le traiettorie intersecano per la prima volta la superficie, condizione per la quale si ha $|\sigma(t_r)| = 0$. Sostituendo questa condizione, si ricava il limite superiore per il tempo di convergenza:
 \begin{equation}
-    t_r \le \frac{|\sigma(0)|}{\delta} = \frac{|\sigma(0)|}{k - \Delta_{\max}}
+    t_r \le \frac{|\sigma(0)|}{\delta}
 \end{equation}
 
 Questa dimostrazione prova che, scegliendo un guadagno $k$ sufficientemente grande per dominare le incertezze del modello, le traiettorie del sistema vengono forzate a raggiungere la \textit{sliding surface} in un tempo strettamente finito. Una volta sulla superficie ($\sigma=0$), il sistema esibisce la dinamica nominale asintoticamente stabile imposta da $\sigma = \dot{e} + \lambda e = 0$.
 
 \subsection{Mitigazione del Chattering}
-La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce una regolarizzazione tramite uno \textbf{boundary layer} di spessore $\Phi$, sostituendo la funzione segno con una funzione continua, in questo caso la tangente iperbolica:
+
+La natura discontinua della funzione $\operatorname{sgn}(\sigma)$ induce oscillazioni ad alta frequenza (chattering) che possono eccitare dinamiche non modellate e danneggiare gli attuatori. Per mitigare tale effetto, si introduce la regolarizzazione tramite un \textbf{boundary layer} di spessore $\Phi$, sostituendo la funzione segno con una funzione continua. In questo lavoro si utilizza la tangente iperbolica:
 \begin{equation}
-    u = -k \tanh \left( \frac{\sigma}{\Phi}\right)
+u = -k \tanh\left(\frac{\sigma}{\Phi}\right)
 \end{equation}
 
-Tramite $\Phi$ si definiscono le curve di livello, che rappresentano i bordi del \textit{boudary layer}:
+Il parametro $\Phi>0$ definisce lo spessore dello strato limite attorno alla superficie di sliding. In particolare, si introducono le curve di livello
 \begin{equation}
-    \begin{matrix}
-        L_{\phi} = \{x: \sigma(x) = \Phi\}\\
-        L_{-\phi} = \{x: \sigma(x) = -\Phi\}
-    \end{matrix}
+\begin{matrix}
+L_{\Phi} = \{x : \sigma(x) = \Phi\} \\
+L_{-\Phi} = \{x : \sigma(x) = -\Phi\}
+\end{matrix}
 \end{equation}
 
-In tal modo si definisce il \textit{boudary layer} come insieme di livello, ovvero come insieme invariante, $B = \{x \in \mathbb{R}^n: |\sigma(x)| \leq \Phi\}$. 
-
-L'introduzione dello strato limite comporta la perdita della stabilità asintotica
-dell'origine. In presenza della regolarizzazione della legge di controllo, il
-sistema non converge esattamente a $s=0$; tuttavia, le traiettorie raggiungono
-in \textit{tempo finito} un intorno della superficie di sliding (boundary layer)
-e rimangono uniformemente limitate al suo interno. Per questo motivo si parla
-di \textbf{stabilità pratica}. In particolare, come riportato in
-\cite{khalil2002nonlinear}, il sistema risulta \textit{ultimately bounded}, con
-un \textit{ultimate bound} la cui ampiezza dipende dal parametro $\Phi$ e dai
-guadagni del controllore. Riducendo opportunamente il valore di $\Phi$, tale
-bound può essere reso arbitrariamente piccolo.
-
-Per garantire che le traiettorie convergano verso lo strato limite, è necessario studiare la derivata della funzione di Lyapunov $V = \frac{1}{2}\sigma^2$ applicando il controllo regolarizzato. Sostituendo la nuova dinamica $\dot{\sigma}$ si ottiene:
+che delimitano il \textit{boundary layer}, definito come l'insieme
 \begin{equation}
-    \dot{V} = \sigma \dot{\sigma} = \sigma \left( -k \tanh\left(\frac{\sigma}{\Phi}\right) - \Delta(t) \right)
+B = \{x \in \mathbb{R}^n : |\sigma(x)| \le \Phi \}.
 \end{equation}
 
-Sfruttando le proprietà della funzione tangente iperbolica e la limitatezza del disturbo $|\Delta(t)| \le \Delta_{\max}$, possiamo maggiorare l'espressione:
+L'introduzione dello strato limite comporta la perdita della stabilità asintotica dell'origine. In presenza della regolarizzazione della legge di controllo, il sistema non converge esattamente alla superficie di sliding $\sigma=0$; tuttavia, le traiettorie raggiungono in \textit{tempo finito} un intorno della superficie di sliding e rimangono limitate al suo interno. Per questo motivo si parla di \textbf{stabilità pratica in tempo finito}. In particolare, come riportato in \cite{khalil2002nonlinear}, il sistema risulta \textit{uniformly ultimately bounded}, con un \textit{ultimate bound} la cui ampiezza dipende dal parametro $\Phi$ e dal guadagno del controllore.
+
+Per dimostrare la convergenza verso lo strato limite, si consideri la funzione di Lyapunov candidata
 \begin{equation}
-    \dot{V} \le -k |\sigma| \tanh\left(\frac{|\sigma|}{\Phi}\right) + |\sigma|\Delta_{\max} = -|\sigma| \left( k \tanh\left(\frac{|\sigma|}{\Phi}\right) - \Delta_{\max} \right)
+V = \frac{1}{2}\sigma^2 .
 \end{equation}
 
-Affinché la derivata sia definita negativa ($\dot{V} < 0$), si deve imporre che il termine in parentesi sia strettamente positivo. Poiché ci troviamo al di fuori dello strato limite, vale la condizione $\frac{|\sigma|}{\Phi} > 1$. Il caso peggiore si verifica al margine del \textit{boundary layer}, ovvero quando $|\sigma| \to \Phi$. Pertanto, la condizione di progetto sul guadagno $k$ diventa:
+Si assuma che la dinamica della variabile di sliding possa essere scritta nella forma
 \begin{equation}
-    k \tanh(1) > \Delta_{\max}
+\dot{\sigma} = -k \tanh\left(\frac{\sigma}{\Phi}\right) - \Delta(t)
 \end{equation}
 
-Essendo $\tanh(1) \approx 0.76$, questa condizione dimostra che imporre semplicemente $k > \Delta_{\max}$ non è sufficiente in presenza di un \textit{boundary layer}: il guadagno deve essere adeguatamente sovradimensionato per compensare l'addolcimento dell'azione di controllo.
-Una volta che le traiettorie entrano nello strato limite, l'argomento della tangente iperbolica è piccolo ($\frac{|\sigma|}{\Phi} \le 1$). In questa regione, il controllo si riduce alla sua approssimazione lineare $\tanh(x) \approx x$. La dinamica della variabile di \textit{sliding} diventa pertanto un sistema lineare del primo ordine perturbato:
+dove $\Delta(t)$ rappresenta disturbi e incertezze limitate tali che $|\Delta(t)| \le \Delta_{\max}$. La derivata della funzione di Lyapunov lungo le traiettorie del sistema risulta
 \begin{equation}
-    \dot{\sigma} \approx -k \frac{\sigma}{\Phi} - \Delta(t)
+\dot{V} = \sigma \dot{\sigma}
 \end{equation}
 
-Quindi, sostituendo la funzione segno con la tangente iperbolica, non si ottiene più la convergenza in tempo finito alla \textit{sliding surface}, ma al \textit{boundary layer}, che rappresenta un intorno dell'origine, modulabile attrvarso i parametri.
+da cui
+\begin{equation}
+\dot{V} = -k \sigma \tanh\left(\frac{\sigma}{\Phi}\right) - \sigma \Delta(t).
+\end{equation}
 
-% Questa è un'equazione differenziale lineare non omogenea. Integrandola a partire da un istante $t_0$ (momento in cui la traiettoria entra nel \textit{boundary layer}), la soluzione nel dominio del tempo è:
-% \begin{equation}
-%     \sigma(t) = \sigma(t_0) e^{-\frac{k}{\Phi}(t-t_0)} - \int_{t_0}^t e^{-\frac{k}{\Phi}(t-\tau)} \Delta(\tau) d\tau
-% \end{equation}
+Utilizzando il bound sul disturbo si ottiene
+\begin{equation}
+\dot{V} \le -k |\sigma| \tanh\left(\frac{|\sigma|}{\Phi}\right) + |\sigma| \Delta_{\max}
+\end{equation}
 
-% Passando ai valori assoluti e applicando la disuguaglianza triangolare, ricordando che il disturbo è limitato da $\Delta_{\max}$, possiamo calcolare l'inviluppo superiore dell'errore:
-% \begin{equation}
-%     |\sigma(t)| \le |\sigma(t_0)| e^{-\frac{k}{\Phi}(t-t_0)} + \Delta_{\max} \int_{t_0}^t e^{-\frac{k}{\Phi}(t-\tau)} d\tau
-% \end{equation}
+ovvero
+\begin{equation}
+\dot{V} \le -|\sigma|\left(k \tanh\left(\frac{|\sigma|}{\Phi}\right) - \Delta_{\max}\right).
+\end{equation}
 
-% Risolvendo l'integrale definito si ottiene:
-% \begin{equation}
-%     |\sigma(t)| \le |\sigma(t_0)| e^{-\frac{k}{\Phi}(t-t_0)} + \frac{\Delta_{\max} \Phi}{k} \left( 1 - e^{-\frac{k}{\Phi}(t-t_0)} \right)
-% \end{equation}
+Al di fuori dello strato limite vale la condizione $|\sigma|>\Phi$, da cui
+\[
+\frac{|\sigma|}{\Phi} > 1.
+\]
 
-% Per valutare la condizione di regime, calcoliamo il limite per $t \to +\infty$. Il termine transitorio decade esponenzialmente a zero, fornendo l'Ultimate Bound teorico:
-% \begin{equation}
-%     \limsup_{t \to +\infty} |\sigma(t)| \le \frac{\Delta_{\max}\Phi}{k}
-% \end{equation}
+Poiché la funzione $\tanh(x)$ è monotona crescente, segue che
+\begin{equation}
+\tanh\left(\frac{|\sigma|}{\Phi}\right) \ge \tanh(1).
+\end{equation}
+dove $\tanh(1)$ rappresenta il valore della funzione sul bordo del \textit{boundary layer}.
 
-% Questa equazione chiude formalmente la dimostrazione. Poiché in sede di progetto abbiamo imposto $k \tanh(1) > \Delta_{\max}$ (e a maggior ragione $k > \Delta_{\max}$), il rapporto $\frac{\Delta_{\max}}{k}$ è strettamente minore di $1$. Da ciò consegue che $\limsup_{t \to +\infty} |\sigma(t)| < \Phi$, dimostrando che le traiettorie, una volta entrate nel \textit{boundary layer}, non possono più uscirne, garantendo la stabilità UUB del sistema.
+Pertanto si ottiene la stima
+\begin{equation}
+\dot{V} \le -|\sigma|\left(k\tanh(1)-\Delta_{\max}\right).
+\end{equation}
+
+Definendo $\eta = k \tanh(1) - \Delta_{\max}$, affinché $\dot{V}<0$ al di fuori dello strato limite è sufficiente imporre la seguente condizione sul guadagno del controllore:
+\begin{equation}
+k = \frac{\Delta_{\max} + \eta}{\tanh(1)}.
+\end{equation}
+
+Questa disuguaglianza garantisce che le traiettorie del sistema vengono attratte verso il \textit{boundary layer}.
+
+Poiché $V=\frac{1}{2}\sigma^2$, si ha
+\begin{equation}
+|\sigma| = \sqrt{2V}.
+\end{equation}
+
+Sostituendo tale relazione nella stima precedente si ottiene
+\begin{equation}
+\dot{V} \le -\eta \sqrt{2V}.
+\end{equation}
+
+Questa disuguaglianza differenziale permette di stimare il tempo necessario affinché le traiettorie entrino nello strato limite. Integrando entrambi i membri si ottiene
+\begin{equation}
+\frac{dV}{\sqrt{V}} \le -\sqrt{2} \eta dt.
+\end{equation}
+
+Integrando tra $V(0)$ e $V(t)$ si ricava
+\begin{equation}
+2(\sqrt{V(t)}-\sqrt{V(0)}) \le -\sqrt{2}\eta t.
+\end{equation}
+
+Da cui si ottiene un limite superiore per il tempo necessario affinché la traiettoria raggiunga lo strato limite:
+\begin{equation}
+t_r \le \frac{|\sigma(0)|}{\eta}.
+\end{equation}
+
+Questo risultato dimostra che il sistema converge in \textit{tempo finito} verso il \textit{boundary layer}, confermando la \textbf{finite-time practical stability}.
+
+Una volta entrate nello strato limite, l'argomento della tangente iperbolica è piccolo ($|\sigma|/\Phi \le 1$) e vale l'approssimazione lineare
+\begin{equation}
+\tanh(x) \approx x.
+\end{equation}
+
+La dinamica della variabile di sliding diventa quindi approssimativamente
+\begin{equation}
+\dot{\sigma} \approx -\frac{k}{\Phi}\sigma - \Delta(t),
+\end{equation}
+
+che rappresenta un sistema lineare stabile perturbato. In questa regione le traiettorie rimangono limitate all'interno dello strato limite, con un errore residuo la cui ampiezza dipende dal parametro $\Phi$ e dall'intensità dei disturbi. Riducendo opportunamente il valore di $\Phi$, tale errore può essere reso arbitrariamente piccolo.
+
+In conclusione, emerge un fondamentale trade-off progettuale legato alla scelta dello spessore $\Phi$: un valore ridotto dello strato limite permette di minimizzare l'errore residuo a regime, avvicinando le prestazioni del sistema a quelle dello Sliding Mode ideale; tuttavia, ciò comporta una minore capacità di filtraggio delle oscillazioni ad alta frequenza. Al contrario, un valore di $\Phi$ più elevato garantisce una superiore mitigazione del chattering e una maggiore protezione degli attuatori, accettando però un degradamento della precisione nella stabilità pratica. La taratura del controllore deve quindi bilanciare la fedeltà all'inseguimento della traiettoria con la necessaria robustezza e integrità meccanica del velivolo.
 
 \clearpage

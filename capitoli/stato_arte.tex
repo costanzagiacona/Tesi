@@ -30,7 +30,7 @@ Di conseguenza, i sistemi di controllo devono essere progettati per garantire ro
 \end{figure}
 
 \clearpage
-\section{UAV VTOL con ali indipendentemente inclinabili}
+\section{UAV VTOL con ali inclinabili in maniera indipendente}
 Un contributo significativo nello sviluppo di configurazioni ibride innovative è stato presentato in \cite{nam2020}, dove viene proposto un UAV VTOL caratterizzato da ali inclinabili in modo indipendente. L'obiettivo primario di tale design è superare i limiti di manovrabilità dei tricotteri classici e mitigare la coppia di reazione tipicamente gestita dal rotore di coda.
 \\Dal punto di vista della modellazione, è stato derivato un modello dinamico a sei gradi di libertà (6-DOF) basato sulla formulazione di Newton-Eulero. Il modello evidenzia come il controllo differenziale dell'angolo di inclinazione (\textit{tilt}) delle due ali generi una differenza di portanza in grado di indurre momenti di rollio, sfruttando le forze propulsive in combinazione con quelle aerodinamiche.
 \\La strategia di controllo implementata si basa su regolatori PID e PI integrati nel firmware Ardupilot, strutturati in base alla fase di volo:

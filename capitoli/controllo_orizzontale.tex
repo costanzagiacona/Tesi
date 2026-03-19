@@ -40,7 +40,7 @@ Per gestire la complessità del sistema e garantire stabilità e prestazioni ele
 % =========================================
 % OUTER LOOP: GUIDA E NAVIGAZIONE
 % =========================================
-\section{Outer Loop: Controllo di Posizione e Velocità}
+\section{\hbox{Outer Loop: Controllo di Posizione e Velocità}}
 Il loop esterno ha il compito di generare i riferimenti di assetto e di spinta necessari a seguire le traiettorie desiderate. In questa architettura, si è scelto di implementare una struttura di controllo basata su algoritmi PID arricchiti da termini di \textit{feedforward} derivati dal modello analitico delle forze aerodinamiche.
 
 Questa scelta è giustificata dalla natura intrinsecamente stabile del velivolo in regime di crociera: a velocità elevate, le superfici portanti generano momenti stabilizzatori che rendono il sistema meno sensibile ai disturbi rispetto alla fase di hovering. L'adozione di un controllo lineare, rispetto a tecniche più aggressive come lo \textit{Sliding Mode Control} (SMC), permette di ridurre drasticamente il fenomeno del \textit{chattering} sugli attuatori, garantendo una maggiore efficienza energetica e preservando l'integrità meccanica dei servocomandi.
@@ -306,3 +306,5 @@ ali a sostenere il peso del drone e lascia che i motori si occupino delle altre 
     \includegraphics[width=1\textwidth]{../img/controllo_orizzontale/tilt_1_2.png}
     \caption{Andamento degli angoli $\theta_1$ e $\theta_2$.}
 \end{figure}
+
+I rotori anteriori mantengono la configurazione a $0^\circ$, mentre trascuriamo i grafici degli angoli di tilt del rotore posteriore, il quale è spento durante questa fase di volo.
