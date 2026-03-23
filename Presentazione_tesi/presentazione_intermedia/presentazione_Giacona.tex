@@ -29,7 +29,7 @@
 \renewcommand{\figurename}{Fig.}
 
 % --- METADATI ---
-\title[Modellazione dinamica e controllo di un VTOL]{Modellazione dinamica e design del controllo per un VTOL innovativo}
+\title[Modellazione dinamica e controllo di un VTOL]{Modellazione dinamica e design del controllo \\per un VTOL innovativo}
 \author{Maria Costanza Giacona}
 % \institute[Università Tor Vergata]{}
 \date{27/03/2026}
@@ -573,24 +573,22 @@
     Si adotta un controllo a cascata per disaccoppiare la dinamica traslazione da quella rotazionale:
 
     \begin{itemize}
-        \item \textbf{Outer Loop (Posizione):} \textcolor{blue}{\textbf{Sliding Mode Control (SMC)}}.
+        \item \textbf{Outer Loop (Posizione):} \textcolor{blue}{\textbf{Sliding Mode Control}}.
         \begin{itemize}
             \item Raggiungimento della quota.
             \item Genera l'assetto desiderato ($\phi_{des}, \theta_{des}$).
         \end{itemize}
         
         \vspace{0.3cm}
-        \item \textbf{Inner Loop (Assetto):} \textcolor{red}{\textbf{Sliding Mode Control (SMC)}}.
+        \item \textbf{Inner Loop (Assetto):} \textcolor{red}{\textbf{Sliding Mode Control}}.
         \begin{itemize}
             \item Stabilizzazione dell'assetto.
         \end{itemize}
     \end{itemize}
-
-    $\lambda_{att} \gg\ \lambda_{pos}$: per garantire che la dinamica d'assetto converga più velocemente di quella di posizione.
    
-    % \vspace{0.5cm}
+    \vspace{0.5cm}
     \begin{block}{Vantaggio dell'Architettura Full SMC}
-        Garantisce prestazioni superiori rispetto al PID classico in presenza di incertezze parametriche e non-linearità.
+        Garantisce prestazioni superiori rispetto al PID classico in presenza di incertezze parametriche e non-linearità e robustezza a fronte di disturbi esterni.
     \end{block}
 \end{frame}
 
@@ -1272,7 +1270,6 @@
         \begin{itemize}
             \item \textbf{Tracking $z$:} Salita fluida $0 \to 10$ m senza sovraelongazioni.
             \item \textbf{Stabilità:} Le derive in $x, y$ vengono neutralizzate in meno di $15$ s.
-            \item \textbf{Controllo:} Il comando SMC mantiene l'autorità nonostante i disturbi al distacco.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -1311,8 +1308,7 @@
     \begin{block}{Analisi}
         \begin{itemize}
             \item \textbf{Assetto:} Stabilizzazione di angoli estremi ($\pm 15^\circ$) in circa $15$ s.
-            \item \textbf{Disaccoppiamento:} Priorità alla quota ($z$) rispetto al rientro laterale ($y$).
-            \item \textbf{Convergenza:} L'errore laterale reietto asintoticamente entro $90$ s.
+            \item \textbf{Posizione:} Priorità alla quota ($z$) rispetto al rientro laterale ($y$).
         \end{itemize}
     \end{block}
 \end{frame}
