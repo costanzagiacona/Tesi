@@ -31,40 +31,75 @@
 % --- METADATI ---
 \title[Modellazione dinamica e controllo di un VTOL]{Modellazione dinamica e design del controllo per un VTOL innovativo}
 \author{Maria Costanza Giacona}
-\institute[Università Tor Vergata]{}
-\date{}
+% \institute[Università Tor Vergata]{}
+\date{27/03/2026}
 
 \begin{document}
 
 % --- SLIDE TITOLO ---
-\begin{frame}
-    \titlepage
+
+
+\begin{frame}[plain]
+    \centering
+
+    % 1. Intestazione Istituzionale (Piccola e discreta)
+    {\scriptsize \scshape Università degli Studi di Roma Tor Vergata} \\
+    {\small Laurea Magistrale in Ingegneria dell'Automazione}
+    
+    \vspace{0.5cm}
+
+    % 2. Logo (Elemento di equilibrio visivo)
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\textwidth]{tor_vergata.png}
+    \end{figure}
+
+    \vspace{0.4cm}
+
+    % 3. IL TITOLO (Il vero protagonista)
+    % Usiamo \Large o \LARGE per farlo risaltare
+    {\Large \color{blue!80!black} \textbf{\inserttitle}} 
+
+
+    \vspace{1cm}
+
+    % 4. Relatore e Candidato (Allineati orizzontalmente)
+    \begin{columns}[t]
+        \begin{column}{0.45\textwidth}
+            \centering
+            \scriptsize \textit{Relatore:}\\
+            \small Prof. Daniele Carnevale
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \centering
+            \scriptsize \textit{Candidata:}\\
+            \small \insertauthor
+        \end{column}
+    \end{columns}
+
     \vfill
-    \large
-    \begin{center}
-        Università degli Studi di Roma Tor Vergata\\
-        \vspace{0.2cm}
-        Dipartimento di Ingegneria
-    \end{center}
-    \vfill
+    
+    % 5. Data
+    {\scriptsize \insertdate}
+
 \end{frame}
 
 % --- INDICE ---
-\begin{frame}{Sommario}
-    \tableofcontents
-\end{frame}
+% \begin{frame}{Sommario}
+%     \tableofcontents
+% \end{frame}
 
 % ============================================================
 % PARTE 0: INTRODUZIONE
 % ============================================================
 \section{Introduzione}
 
-\begin{frame}
-    \vfill
-    \centering
-    {\Huge \textbf{Introduzione}}
-    \vfill
-\end{frame}
+% \begin{frame}
+%     \vfill
+%     \centering
+%     {\Huge \textbf{Introduzione}}
+%     \vfill
+% \end{frame}
 
 \begin{frame}{Introduzione}
     L'interesse per gli UAV è in forte crescita (sorveglianza, agricoltura, ricerca e soccorso).
@@ -105,12 +140,12 @@
 
 \section{Descrizione VTOL}
 
-\begin{frame}
-    \vfill
-    \centering
-    {\Huge \textbf{Descrizione VTOL}}
-    \vfill
-\end{frame}
+% \begin{frame}
+%     \vfill
+%     \centering
+%     {\Huge \textbf{Descrizione VTOL}}
+%     \vfill
+% \end{frame}
 
 \begin{frame}{VTOL tilting-rotor}
     Il tricottero \textit{tilting-rotor} combina i benefici delle due architetture:
@@ -118,8 +153,8 @@
     \begin{columns}
         \column{0.6\textwidth}
         \begin{itemize}
-            \item \textbf{Decollo/Atterraggio:} Verticale (come un elicottero), indipendente da infrastrutture.
-            \item \textbf{Crociera:} Volo aerodinamico (come un aereo) ruotando i propulsori.
+            \item \textbf{Decollo/Atterraggio:} Verticale, indipendente da infrastrutture.
+            \item \textbf{Crociera:} Volo aerodinamico ruotando i propulsori.
         \end{itemize}
         
         Nello specifico, il tricottero in esame presenta i rotori orientabili, ma non ha superfici a geometria variabile.
@@ -193,7 +228,7 @@
 
 % --- SLIDE 2: CONFIGURAZIONE E PROBLEMA ---
 % Focus sull'accoppiamento geometrico
-\begin{frame}{Configurazione Geometrica e Attuazione}
+\begin{frame}{Configurazione Geometrica}
     \begin{columns}[c]
         \begin{column}{0.5\textwidth}
             \centering
@@ -212,14 +247,14 @@
             
 
             \begin{alertblock}{Criticità Dinamica e Mixing}
-                Poiché la spinta totale non è applicata nel $CG$, il bilanciamento del \textit{Pitch} richiede una ripartizione asimmetrica della potenza tra i rotori anteriori e quello posteriore.
+                Poiché la spinta totale non è applicata nel $CG$, il bilanciamento del \textit{Pitch} richiede una ripartizione asimmetrica della spinta tra i rotori anteriori e quello posteriore.
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}{Configurazione dei rotori}
-    Il tricottero dispone di 3 motori con gradi di libertà di tilt:
+    Il tricottero dispone di 3 motori con gradi di libertà di \textit{tilting}:
     
     \vspace{0.5cm}
     \begin{columns}
@@ -265,92 +300,92 @@
     
 \end{frame}
 
-% --- SLIDE 4: FORZE ESTERNE ---
-\begin{frame}{Analisi delle Forze}
-    \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
-            \textbf{1. Spinta Motori} \\
-            Dipende dall'orientamento ($\theta_i$) e velocità ($\omega_i$) dei rotori:
-            \begin{equation}
-                \bm{F}_{\text{TH}} = \sum_{i=1}^3 \mathbf{R}_{rot_i \to b}(\theta_i) \cdot [0, 0, k\omega_i^2]^T
-            \end{equation}
+% % --- SLIDE 4: FORZE ESTERNE ---
+% \begin{frame}{Analisi delle Forze}
+%     \begin{columns}[T]
+%         \begin{column}{0.5\textwidth}
+%             \textbf{1. Spinta Motori} \\
+%             Dipende dall'orientamento ($\theta_i$) e velocità ($\omega_i$) dei rotori:
+%             \begin{equation}
+%                 \bm{F}_{\text{TH}} = \sum_{i=1}^3 \mathbf{R}_{rot_i \to b}(\theta_i) \cdot [0, 0, k\omega_i^2]^T
+%             \end{equation}
             
-            \vspace{0.2cm}
-            \textbf{2. Gravità} \\
-            Proiezione del vettore peso nel body frame:
-            \begin{equation}
-                \bm{F}_{\text{GRAV}} = \mathbf{R}_{g \to b} \cdot [0, 0, mg]^T
-            \end{equation}
-        \end{column}
+%             \vspace{0.2cm}
+%             \textbf{2. Gravità} \\
+%             Proiezione del vettore peso nel body frame:
+%             \begin{equation}
+%                 \bm{F}_{\text{GRAV}} = \mathbf{R}_{g \to b} \cdot [0, 0, mg]^T
+%             \end{equation}
+%         \end{column}
         
-        \begin{column}{0.5\textwidth}
-            \textbf{3. Aerodinamica} \\
-            Modello non-lineare per fusoliera e ali:
-            \begin{equation}
-                \bm{F}_{\text{AERO}} = \bm{F}_{wing} + \bm{D}_{body}
-            \end{equation}
-            \vspace{0.1cm}
-            \centering
-            \includegraphics[width=0.68\linewidth]{forze_x.jpg}
-            \captionof{figure}{Drag e Lift.}
-        \end{column}
-    \end{columns}
-\end{frame}
+%         \begin{column}{0.5\textwidth}
+%             \textbf{3. Aerodinamica} \\
+%             Modello non-lineare per fusoliera e ali:
+%             \begin{equation}
+%                 \bm{F}_{\text{AERO}} = \bm{F}_{wing} + \bm{D}_{body}
+%             \end{equation}
+%             \vspace{0.1cm}
+%             \centering
+%             \includegraphics[width=0.68\linewidth]{forze_x.jpg}
+%             \captionof{figure}{Drag e Lift.}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 
-\begin{frame}{Modellistica dei Momenti: Attivi e Reattivi}
-    \small
-    \vspace{-0.2cm} % Recupera spazio in alto
+% \begin{frame}{Analisi dei Momenti}
+%     \small
+%     \vspace{-0.2cm} % Recupera spazio in alto
     
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Momenti di Controllo (Attivi)}
+%     \begin{columns}[T]
+%         \begin{column}{0.48\textwidth}
+%             \begin{block}{Momenti Attivi}
 
-                \begin{itemize}
-                    \item \textbf{Spinta:} 
-                    \begin{equation}
-                        \bm{M}_{\text{TH}} = \textstyle \sum (\bm{r}_i \times \bm{F}_{th,i})
-                    \end{equation}
-                    \item \textbf{Coppia:} 
-                    \begin{equation}
-                        \bm{M}_{\text{TOR}} = \textstyle \sum (b \omega_i^2 + I_{r} \dot{\omega}_i) \hat{e}_{i}
-                    \end{equation}
-                \end{itemize}
-            \end{block}
-        \end{column}
+%                 \begin{itemize}
+%                     \item \textbf{Spinta:} 
+%                     \begin{equation}
+%                         \bm{M}_{\text{TH}} = \textstyle \sum (\bm{r}_i \times \bm{F}_{th,i})
+%                     \end{equation}
+%                     \item \textbf{Coppia:} 
+%                     \begin{equation}
+%                         \bm{M}_{\text{TOR}} = \textstyle \sum (b \omega_i^2 + I_{r} \dot{\omega}_i) \hat{e}_{i}
+%                     \end{equation}
+%                 \end{itemize}
+%             \end{block}
+%         \end{column}
 
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Dinamica Veloce (Reattivi)}
+%         \begin{column}{0.48\textwidth}
+%             \begin{block}{Momenti Reattivi}
 
-                \begin{itemize}
-                    \item \textbf{Giroscopico Rotori:}
-                    \begin{equation}
-                        \bm{M}_{\text{GIRO}} = \textstyle \sum \bm{\omega}_{t,i} \times (J_r \bm{\omega}_{r,i})
-                    \end{equation}
-                    \item \textbf{Giroscopico Body:}
-                    \begin{equation}
-                        \bm{M}_{body} = \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)
-                    \end{equation}
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
+%                 \begin{itemize}
+%                     \item \textbf{Giroscopico Rotori:}
+%                     \begin{equation}
+%                         \bm{M}_{\text{GIRO}} = \textstyle \sum \bm{\omega}_{t,i} \times (J_r \bm{\omega}_{r,i})
+%                     \end{equation}
+%                     \item \textbf{Giroscopico Body:}
+%                     \begin{equation}
+%                         \bm{M}_{body} = \bm{\Omega}_b \times (\mathbf{I}_b \bm{\Omega}_b)
+%                     \end{equation}
+%                 \end{itemize}
+%             \end{block}
+%         \end{column}
+%     \end{columns}
 
-    \vspace{0.1cm} % Spazio ridotto tra le righe
+%     \vspace{0.1cm} % Spazio ridotto tra le righe
 
-    % Blocco Pinna: usiamo minipage per un controllo totale dell'altezza
-    \begin{center}
-        \begin{minipage}{0.9\textwidth}
-            \begin{exampleblock}{Stabilizzazione Passiva: Momento Pinna ($M_{z,p}$)}
+%     % Blocco Pinna: usiamo minipage per un controllo totale dell'altezza
+%     \begin{center}
+%         \begin{minipage}{0.9\textwidth}
+%             \begin{exampleblock}{Stabilizzazione Passiva: Momento Pinna}
 
-                Il piano verticale smorza l'imbardata in base alla velocità laterale $v_y$:
-                \begin{equation}
-                    M_{z,p} = -r(\alpha_{0z} + \alpha_{1z}v_y^2)
-                \end{equation}
-            \end{exampleblock}
-        \end{minipage}
-    \end{center}
-\end{frame}
+%                 Il piano verticale smorza l'imbardata in base alla velocità laterale $v_y$:
+%                 \begin{equation}
+%                     M_{z,p} = -r(\alpha_{0z} + \alpha_{1z}v_y^2)
+%                 \end{equation}
+%             \end{exampleblock}
+%         \end{minipage}
+%     \end{center}
+% \end{frame}
 
 
 % ==========================================================
@@ -386,8 +421,8 @@
         \begin{array}{l}
             \left. \begin{matrix} \text{Posizione Inerziale } [x,y,z] \\ \text{Velocità Body } [u,v,w] \end{matrix} \right\} \text{\textbf{Traslazione}} \\[1em]
             \left. \begin{matrix} \text{Assetto Eulero } [\phi,\theta,\psi] \\ \text{Velocità Angolari } [p,q,r] \end{matrix} \right\} \text{\textbf{Rotazione}} \\[1em]
-            \left. \begin{matrix} \text{Posizione Servi} \\ \text{Velocità Servi} \end{matrix} \right\} \text{\textbf{Dinamica Servi}} \\[1em]
-            \left. \begin{matrix} \text{Velocità Rotori} \\ \text{Accel. Rotori} \end{matrix} \right\} \text{\textbf{Propulsione}}
+            \left. \begin{matrix} \text{Posizione Servomotori} \\ \text{Velocità Servomotori} \end{matrix} \right\} \text{\textbf{Dinamica Servomotori}} \\[1em]
+            \left. \begin{matrix} \text{Velocità Rotori} \\ \text{Accelerazione Rotori} \end{matrix} \right\} \text{\textbf{Propulsione}}
         \end{array}
     \end{equation}
 \end{frame}
@@ -459,34 +494,34 @@
 
 % --- SLIDE 3: DINAMICA ATTUATORI ---
 % Questa è la slide critica. Sostituisce la cinematica standard con la dinamica realistica
-\begin{frame}{Dinamica degli Attuatori}
-    La modellazione include la dinamica del \textbf{secondo ordine} per descrivere la risposta fisica dei servomotori e dei motori dei rotori.
+% \begin{frame}{Dinamica degli Attuatori}
+%     La modellazione include la dinamica del \textbf{secondo ordine} per descrivere la risposta fisica dei servomotori e dei motori dei rotori.
 
-    \begin{columns}[t]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Servomotori di Tilting}
-            Gestiscono l'orientamento dei rotori ($x_{13} \dots x_{20}$):
-            \begin{equation}
-                \begin{cases} 
-                \dot{x}_{i} = x_{i+1} \\ 
-                \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
-                \end{cases}
-            \end{equation}
-            \end{block}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Motori dei Rotori}
-            Gestiscono la velocità di rotazione ($x_{21} \dots x_{26}$):
-            \begin{equation}
-                \begin{cases} 
-                \dot{x}_{i} = x_{i+1} \\ 
-                \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
-                \end{cases}
-            \end{equation}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
+%     \begin{columns}[t]
+%         \begin{column}{0.48\textwidth}
+%             \begin{block}{Servomotori di Tilting}
+%             Gestiscono l'orientamento dei rotori ($x_{13} \dots x_{20}$):
+%             \begin{equation}
+%                 \begin{cases} 
+%                 \dot{x}_{i} = x_{i+1} \\ 
+%                 \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
+%                 \end{cases}
+%             \end{equation}
+%             \end{block}
+%         \end{column}
+%         \begin{column}{0.48\textwidth}
+%             \begin{block}{Motori dei Rotori}
+%             Gestiscono la velocità di rotazione ($x_{21} \dots x_{26}$):
+%             \begin{equation}
+%                 \begin{cases} 
+%                 \dot{x}_{i} = x_{i+1} \\ 
+%                 \dot{x}_{i+1} = -2\zeta_j \omega_{n,j} x_{i+1} + \omega_{n,j}^2 (u_k - x_i)
+%                 \end{cases}
+%             \end{equation}
+%             \end{block}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 
 % ============================================================
@@ -502,8 +537,8 @@
 \end{frame}
 
 % --- SLIDE 1: CONFIGURAZIONE & EQUILIBRIO (UNIFICATE) ---
-\begin{frame}{Configurazione di Hovering}
-    In fase di decollo, i rotori anteriori sono verticali ($\theta_{1,2} = \pi/2$).
+\begin{frame}{Configurazione di Decollo e Hovering}
+    Durante questa fase, i rotori anteriori sono verticali ($\theta_{1,2} = \pi/2$).
     
     \vspace{0.3cm}
     \begin{columns}[c]
@@ -550,15 +585,18 @@
             \item Stabilizzazione dell'assetto.
         \end{itemize}
     \end{itemize}
-    
-    \vspace{0.5cm}
+
+    $\lambda_{att} \gg\ \lambda_{pos}$: per garantire che la dinamica d'assetto converga più velocemente di quella di posizione.
+   
+    % \vspace{0.5cm}
     \begin{block}{Vantaggio dell'Architettura Full SMC}
         Garantisce prestazioni superiori rispetto al PID classico in presenza di incertezze parametriche e non-linearità.
     \end{block}
 \end{frame}
 
+
 % --- SLIDE 3: SCHEMA A BLOCCHI (Il tuo TikZ originale) ---
-\begin{frame}{Schema a Blocchi: Hovering}
+\begin{frame}{Schema a Blocchi: Controllo Verticale}
     \begin{figure}
         \centering
         \resizebox{0.68\textwidth}{!}{
@@ -582,7 +620,7 @@
     \begin{equation}
         m\ddot{z} = mg - \cos(\phi)\cos(\theta) F_{z,req} + \cos(\phi)\cos(\theta) F_{aero,z}
     \end{equation}
-    Imponendo la \textit{reaching law}: $\dot{\sigma} = -k \tanh\left( \frac{\sigma_z}{\Phi} \right)$.
+    \textbf{Reaching Law}: $\dot{\sigma_z} = -k \tanh\left( \frac{\sigma_z}{\Phi} \right)$.
     \vspace{0.1cm}
     \\Genera la richiesta di Thrust ($F_{z,req}$) per portare il drone in quota e mantenerlo in hovering:
     \begin{equation}
@@ -662,19 +700,23 @@
 
 \begin{frame}{Regolarizzazione e Boundary Layer}
     % Problema e Soluzione in una riga
-    \textbf{Chattering:} La discontinuità di $\operatorname{sgn}(\sigma)$ viene mitigata definendo un \textbf{boundary layer} $B = \{x : |\sigma| \leq \Phi\}$ con controllo continuo:
+    \textbf{Chattering:} La discontinuità di $\operatorname{sgn}(\sigma)$ viene mitigata definendo un \textbf{boundary layer} $B = \{x \in \mathbb{R}^n: |\sigma| \leq \Phi\}$, con $\Phi >  0$  e con il controllo:
     \begin{equation}
         u = -k \tanh\left( \frac{\sigma}{\Phi} \right)
     \end{equation}
-
+    \vspace{-0.5cm}
     % Analisi di Stabilità
-    \begin{block}{Attrattività e Tempo di Reaching}
-        Posto il margine $\eta = k\tanh(1) - \Delta_{max} > 0$, fuori dal layer si ha:
+    \begin{block}{Attrattività e Tempo di Raggiungimento}
+        \begin{equation}
+            \dot{V} \le - \left( k \tanh(1) - \Delta_{max} \right) |\sigma| = - \eta \sqrt{2V} < 0
+        \end{equation}
+        % Posto $\eta = k\tanh(1) - \Delta_{max} > 0$, si ha:
+        \vspace{-0.5cm}
         \begin{columns}[c]
             \begin{column}{0.5\textwidth}
                 \centering
                 \begin{equation}
-                    \dot{V} \le -|\sigma| \eta < 0
+                    k = \frac{\Delta_{\max} + \eta}{\tanh(1)}
                 \end{equation}
                 % \footnotesize (Condizione di esistenza)
             \end{column}
@@ -691,7 +733,7 @@
     \vspace{0.2cm}
 
     % Conclusione
-    \textbf{Stabilità Pratica:} Le traiettorie entrano in $B$ in tempo $t_r$ e vi rimangono confinate. L'errore residuo a regime è proporzionale a $\Phi$ (trade-off tra precisione e chattering).
+    \textbf{Finite-Time Pratical Stability:} Le traiettorie entrano in $B$ in tempo $t_r$ e vi rimangono confinate. L'errore residuo a regime è proporzionale a $\Phi$ (trade-off tra precisione e chattering).
 \end{frame}
 
 % --- SLIDE 7: INVERSIONE CINEMATICA (IL PONTE) ---
@@ -725,27 +767,17 @@
         \end{column}
     \end{columns}
     
-    \vspace{0.4cm}
-    \begin{itemize}
-        \item \textbf{Input:} Forze $F_{req}$ (SMC esterno).
-        \item \textbf{Output:} Riferimenti angolari $\mathbf{A}_{des}$ per l'SMC interno.
-    \end{itemize}
+
 \end{frame}
 
 % --- SLIDE 8: INNER LOOP SMC (IL MOTORE DELLA STABILITÀ) ---
 
 \begin{frame}{Inner Loop: Controllo d'Assetto}
-    L'obiettivo è forzare l'errore d'assetto sulla \textbf{sliding surface}, dove il disturbo viene annullato dalla commutazione del controllo.
-    \begin{itemize}
-    \item Definiamo la \textit{sliding surface}:
-    \begin{equation*}
-        \sigma = \dot{e} + \lambda e \quad \longrightarrow \quad \text{se } \sigma=0, \text{ l'errore decade esponenzialmente.}
-    \end{equation*}
 
-    \item Attraverso lo SMC vengono generati dei momenti lungo gli assi $x, y, z$ 
+
+    Attraverso lo SMC vengono generati dei momenti lungo gli assi $x, y, z$ 
     con i quali si raggiungono gli angoli desiderati.
 
-    \end{itemize}
     \begin{align}
         M_{x,req} = I_{xx} \left[ \ddot{\phi}_{des} + \lambda_{\phi} \dot{e}_\phi + K_{\phi} \tanh\left( \frac{\sigma_\phi}{\Phi_{\phi}} \right) \right] - (I_{yy} - I_{zz})qr \\
         M_{y,req} = I_{yy} \left[ \ddot{\theta}_{des} + \lambda_{\theta} \dot{e}_\theta + K_{\theta} \tanh\left( \frac{\sigma_\theta}{\Phi_{\theta}} \right) \right] - (I_{zz} - I_{xx})pr\\
@@ -757,53 +789,74 @@
 
 \begin{frame}{MMA: Bilancio Longitudinale e Imbardata}
     \begin{columns}[T]
-        \begin{column}{0.45\textwidth}
-            \textbf{Controllo Imbardata} \\
-            Il tilting differenziale dei rotori anteriori genera $M_z$:
+        \begin{column}{0.43\textwidth}
+            \begin{itemize}
+                \item \textbf{Thrust}\\
+            Ripartizione della spinta fra i tre motori
+            \begin{equation}
+                \begin{cases}
+                    T_{front} = \frac{2}{3}F_{z,req}\\
+                    T_{3} = \frac{F_{z,req}}{3}
+                \end{cases} 
+            \end{equation}
+
+            \item \textbf{Imbardata}\\
+            Tilting differenziale dei rotori anteriori
+            {\small
             \begin{equation}
                 M_z = (T_1 + T_2) d_{my} \sin(\delta)
             \end{equation}
             \begin{equation}
                 \delta = \arcsin\left( \frac{M_{z,req}}{T_{front} d_{my}} \right)
             \end{equation}
-            \textit{\footnotesize $\delta$ definisce la geometria per i calcoli successivi.}
+            }
+            \end{itemize}
         \end{column}
-        \begin{column}{0.55\textwidth}
-            \textbf{Equilibrio $F_z$ e $M_y$} \\
-            {\footnotesize
+        \begin{column}{0.58\textwidth}
+            \begin{itemize}
+            \item \textbf{Beccheggio}\\
+            Ripartizione della spinta tra i propulsori
+            {\small
             \begin{equation}              
                 \begin{cases}
-                    T_{front} \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z,req} \\
-                    T_{front} \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_{y,req}
+                    T_{f} \cos(\delta) + T_3 \sin(\theta_{3}) = F_{z,req} \\
+                    T_{f} \cos(\delta) d_{mx} + T_3 \sin(\theta_{3}) d_{tx} + M_{TOR,3} = M_{y,req}
                 \end{cases}
             \end{equation}
             }
-            \textbf{Soluzione del sistema:}
-            {\footnotesize
+            {\small
+            \textbf{Soluzione del sistema:}}
+            {\small
             \begin{flalign}
-                & T_3 = k \left( \frac{M_y - F_{z} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)} \right)\\&          
-                T_{front} = \frac{F_{z} - T_3 \sin(\theta_3)}{\cos(\delta)}
+                & T_3 = k \left( \frac{M_{y,req} - F_{z,req} d_{mx}}{k \sin(\theta_3) (d_{mx} - d_{tx}) - b \cos(\theta_3)\sin(\theta_4)} \right)\\&          
+                T_{front} = \frac{F_{z,req} - T_3 \sin(\theta_3)}{\cos(\delta)}
             \end{flalign}
             }
+        \end{itemize}
         \end{column}
     \end{columns}
-    \begin{block}{Logica di Inversione}
-        Il sistema è risolto sequenzialmente: si determina la geometria ($\delta$) per soddisfare l'imbardata, quindi si ripartisce la spinta tra asse anteriore e coda per garantire sostentamento e beccheggio.
-    \end{block}
+    % \begin{block}{Logica di Inversione}
+    %     Il sistema è risolto sequenzialmente: si determina la geometria ($\delta$) per soddisfare l'imbardata, quindi si ripartisce la spinta tra asse anteriore e coda per garantire sostentamento e beccheggio.
+    % \end{block}
 \end{frame}
 
-\begin{frame}{MMA: Rollio e Comandi Attuatore}
-    Infine, la spinta $T_{front}$ viene ripartita tra i motori 1 e 2 per il controllo del rollio ($M_x$).
-    
+
+\begin{frame}{MMA: Rollio e Comandi Attuatore}    
     \begin{columns}[T]
         \begin{column}{0.46\textwidth}
-            \textbf{Spinta Differenziale:}
+            \begin{itemize}
+            \item \textbf{Rollio}\\
+            Spinta differenziale dei rotori anteriori
+            \begin{equation}
+                M_x = (T_2 - T_1) \cos(\delta) d_{my}
+            \end{equation}
             \begin{equation}
                 \Delta T = \frac{M_{x,req}}{2 d_{my} \cos(\delta)}
             \end{equation}
-            \begin{equation}
-                \begin{cases} T_1 = \frac{T_{front}}{2} - \Delta T \\ T_2 = \frac{T_{front}}{2} + \Delta T \end{cases}
-            \end{equation}
+            % \begin{equation}
+            %     \begin{cases} T_1 = \frac{T_{front}}{2} - \Delta T \\ T_2 = \frac{T_{front}}{2} + \Delta T \end{cases}
+            % \end{equation}
+            \end{itemize}
         \end{column}
         \begin{column}{0.50\textwidth}
             \textbf{Mapping Finale ($u_i$):}
@@ -817,6 +870,7 @@
                 u_6 = \theta_3 = \theta_{3,eq}\\
                 u_7 = \theta_4 = -\pi/2
             \end{gather}
+        
         \end{column}
     \end{columns}
     
@@ -901,10 +955,10 @@
     \end{block}
 \end{frame}
 
-\begin{frame}{Schema a Blocchi: Crociera}
+\begin{frame}{Schema a Blocchi: Controllo Orizzontale}
     \begin{figure}
         \centering
-        \resizebox{0.75\textwidth}{!}{
+        \resizebox{0.68\textwidth}{!}{
             \includegraphics{controllo_orizzontale/schema_blocchi_H.png}
         }
         \caption{Schema a blocchi del controllo orizzontale.}
@@ -976,7 +1030,7 @@
                     \item Ruota il vettore spinta su/giù.
                 \end{itemize}
                 \begin{equation}
-                    M_y = K_{P_\theta} e_\theta - K_{D_\theta} \dot{e}_{\theta}
+                    M_{y,req} = K_{P_\theta} e_\theta + K_{D_\theta} \dot{e}_{\theta}
                 \end{equation}
                 
             \end{alertblock}
@@ -992,7 +1046,7 @@
                     \item Crea coppia torcente sull'asse $X$.
                 \end{itemize}
                 \begin{equation}
-                    M_x = K_{P_\phi} e_\phi - K_{D_\phi} \dot{e}_{\phi}
+                    M_{x,req} = K_{P_\phi} e_\phi + K_{D_\phi} \dot{e}_{\phi}
                 \end{equation}
             \end{block}
         \end{column}
@@ -1007,7 +1061,7 @@
                     \item Crea coppia torcente sull'asse $Z$.
                 \end{itemize}
                 \begin{equation}
-                    M_z = K_{P_\psi} e_\psi - K_{D_\psi} \dot{e}_{\psi}
+                    M_{z,req} = K_{P_\psi} e_\psi + K_{D_\psi} \dot{e}_{\psi}
                 \end{equation}
             \end{exampleblock}
         \end{column}
@@ -1039,7 +1093,7 @@
         \item \textbf{Imbardata:} si definisce la spinta differenziale $\Delta T = T_2 - T_1$
             \begin{equation}
                 M_z = d_{my} (T_2 - T_1)
-                \implies \Delta T = \frac{M_z}{d_{my}}
+                \implies \Delta T = \frac{M_{z,req}}{d_{my}}
             \end{equation}
     \end{itemize}
 \end{frame}
@@ -1047,8 +1101,8 @@
 \begin{frame}{Ingressi di controllo}
     I comandi dati agli attuatori sono quindi i seguenti:
 \begin{gather}
-    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \frac{\Delta T}{2} \right)}\\
-    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \frac{\Delta T}{2} \right)}\\
+    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \Delta T \right)}\\
+    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \Delta T \right)}\\
     u_3 = \omega_3 = 0\\
     u_4 = \theta_1 = \alpha - \delta\\
     u_5 = \theta_2 = \alpha + \delta\\
@@ -1070,67 +1124,72 @@
     \vfill
 \end{frame}
 
-% SLIDE 1: METODOLOGIA
-\begin{frame}{Metodologia di Linearizzazione}
+% % SLIDE 1: METODOLOGIA
+% \begin{frame}{Metodologia di Linearizzazione}
+%     L'analisi della stabilità locale è condotta tramite la \textbf{linearizzazione numerica differenziale} del sistema ad anello chiuso:
+%     \begin{equation}
+%         \dot{x} = f_{cl}(x) = f(x, u(x))
+%     \end{equation}
+
+%     \begin{block}{Regolarizzazione del Modello ($f_{cl} \in C^1$)}
+%         Per garantire la differenziabilità nel punto di equilibrio $x_{eq}$:
+%         \begin{itemize}
+%             \item \textbf{Rimozione saturazioni:} Ipotesi di piccoli segnali ($\delta x$ infinitesimo).
+%             \item \textbf{Approssimazione Sliding Mode:} $K \tanh(\sigma/\Phi) \approx \frac{K}{\Phi}\sigma$.
+%         \end{itemize}
+%     \end{block}
+
+%     \begin{block}{Differenze Finite Centrali}
+%         Calcolo dello Jacobiano $A_{cl}$ con accuratezza $\mathcal{O}(h^2)$ e passo $h=10^{-6}$:
+%         \begin{equation}
+%             A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
+%         \end{equation}
+%     \end{block}
+% \end{frame}
+
+
+\begin{frame}{Analisi di Stabilità Locale: Hovering vs Crociera}
+    \small
     L'analisi della stabilità locale è condotta tramite la \textbf{linearizzazione numerica differenziale} del sistema ad anello chiuso:
     \begin{equation}
         \dot{x} = f_{cl}(x) = f(x, u(x))
     \end{equation}
+    Confronto dei sistemi linearizzati agli equilibri di missione tramite lo studio degli autovalori $\lambda(A_{cl})$.
 
-    \begin{block}{Regolarizzazione del Modello ($f_{cl} \in C^1$)}
-        Per garantire la differenziabilità nel punto di equilibrio $x_{eq}$:
-        \begin{itemize}
-            \item \textbf{Rimozione saturazioni:} Ipotesi di piccoli segnali ($\delta x$ infinitesimo).
-            \item \textbf{Approssimazione Sliding Mode:} $K \tanh(\sigma/\Phi) \approx \frac{K}{\Phi}\sigma$.
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{Differenze Finite Centrali}
-        Calcolo dello Jacobiano $A_{cl}$ con accuratezza $\mathcal{O}(h^2)$ e passo $h=10^{-6}$:
-        \begin{equation}
-            A_{ij} = \frac{\partial f_i}{\partial x_j} \approx \frac{f_i(x_{eq} + h e_j) - f_i(x_{eq} - h e_j)}{2h}
-        \end{equation}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}{Confronto Dinamico: Hovering vs Crociera}
+    \vspace{0.3cm}
     \begin{columns}[t]
         % COLONNA HOVERING
-        \begin{column}{0.47\textwidth}
+        \begin{column}{0.48\textwidth}
             \centering
-            \textbf{\alert{Hovering ($n=26$ stati)}}
+            \textbf{\textcolor{blue}{Hovering ($n=26$ states)}}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \textbf{P. di Equilibrio:} $z = -10$ m, $v = 0$.
-                \item \textbf{Controllo:} Sliding Mode (comportamento PD). Nessuno stato aggiuntivo.
-                \item \textbf{Stabilità:} \textbf{Asintotica}.\\
-                $\text{Re}(\lambda_i) < 0 \quad \forall i$.
-                \item \textbf{Polo Critico:} $\lambda = -0.3358$.
+                \item \textbf{P. di Equilibrio:} $z = -10m, v = 0m/s, \phi = 0.0014 rad$
+                \item \textbf{Controllo:} Sliding Mode (regolarizzato).
+                \item \textbf{Stabilità:} \textbf{Asintotica}.
+                % \item Tutte le radici sono a parte reale negativa: $\text{Re}(\lambda_i) < 0$.
             \end{itemize}
         \end{column}
 
-        \vrule{} % Linea di separazione verticale
+        \vrule{} 
 
         % COLONNA CROCIERA
-        \begin{column}{0.51\textwidth}
+        \begin{column}{0.48\textwidth}
             \centering
-            \textbf{\alert{Crociera ($n=28$ stati)}}
+            \textbf{\textcolor{blue}{Crociera ($n=28$ states)}}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \textbf{P. di Equilibrio:} $v_x = 25$ m/s, $z = -10$ m.
-                \item \textbf{Controllo:} PID con azione integrale su $v_x$ e $z$.
-                \item \textbf{Stabilità:} \textbf{Semplice}.\\
-                Presenza di $\lambda = 0$.
-                \item Autovettore $v_{\lambda=0}$ associato solo a $x_1$.
+                \item \textbf{P. di Equilibrio:} $z = -10m, v_x = 25m/s$
+                \item \textbf{Controllo:} PID con integratori su $v_x, z$.
+                \item \textbf{Stabilità:} \textbf{Asintotica} rispetto alle variabili di missione.
             \end{itemize}
         \end{column}
     \end{columns}
 
-    \vspace{0.4cm}
-    \begin{block}{Sintesi Critica}
-        Entrambe le fasi sono asintoticamente stabili rispetto alle variabili di missione (assetto e velocità).
-    \end{block}
+    % \vspace{0.4cm}
+    % \begin{exampleblock}{Analisi degli stati aggiuntivi ($n=26 \to 28$)}
+    %     L'aumento dell'ordine del sistema in crociera è dovuto all'introduzione delle \textbf{variabili ausiliarie} dei controllori PID (azioni integrali), necessarie per l'annullamento dell'errore a regime in presenza di disturbi aerodinamici.
+    % \end{exampleblock}
 \end{frame}
 
 % ===========================================================
@@ -1147,7 +1206,7 @@
 
 \begin{frame}{Metodologia di Validazione: Analisi Monte Carlo}
     \begin{block}{Obiettivo della Campagna Statistica}
-        Validazione formale della robustezza e della stabilità del sistema a ciclo chiuso a fronte di incertezze sulle stime di navigazione.
+        Validazione formale della robustezza e della stabilità del sistema a ciclo chiuso a fronte di incertezze sulle condizioni iniziali.
     \end{block}
 
     \vspace{0.2cm}
@@ -1192,80 +1251,24 @@
     \end{table}
 \end{frame}
 
-% % --- SLIDE 2: SMC TAKEOFF ---
-% \begin{frame}{Scenario 1: Decollo con SMC}
-%     \textbf{Obiettivo:} Transizione stabile dal suolo alla quota desiderata.
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_p_v.png}
-%         \captionof{figure}{Posizione e velocità durante il Takeoff.}
-%     \end{center}       
-% \end{frame}
-
-% \begin{frame}{Scenario 1: Decollo con SMC}
-%     \textbf{Obiettivo:} Stabilizzazione dell'assetto.
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/takeoff_eulero.png}
-%         \captionof{figure}{Assetto e velocità angolari durante il Takeoff.}
-%     \end{center}
-% \end{frame}
-
-% % --- SLIDE 3: SMC RECOVERY ---
-% \begin{frame}{Scenario 2: Recovery con SMC}
-%     \textbf{Obiettivo:} Mantenimento della posizione e delle velocità.
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/recovery_p_v.png}
-%         \captionof{figure}{Posizione e velocità in Hovering.}
-%     \end{center}  
-% \end{frame}
-
-% \begin{frame}{Scenario 2: Recovery con SMC}
-%     \textbf{Obiettivo:} Stabilizzazione da assetti estremi ($\pm 15^\circ$).
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/recovery_eulero.png}
-%         \captionof{figure}{Assetto e velocità angolari in Hovering.}
-%     \end{center}  
-% \end{frame}
-
-% % --- SLIDE 4: PID CRUISE ---
-% \begin{frame}{Scenario 3: Crociera con PID}
-%     \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/cruise_p_v.png}
-%         \captionof{figure}{Posizione e velocità in Crociera.}
-%     \end{center} 
-% \end{frame}
-
-% \begin{frame}{Scenario 3: Crociera con PID}
-%     \textbf{Analisi:} Valutazione delle performance del controllo lineare in volo traslato.
-%     \vspace{0.2cm}
-%     \begin{center}
-%         \includegraphics[width=0.8\linewidth]{montecarlo/cruise_eulero.png}
-%         \captionof{figure}{Assetto e velocità angolari in Crociera.}
-%     \end{center} 
-% \end{frame}
 
 % --- SCENARIO 1: TAKEOFF ---
 \begin{frame}{Scenario 1: Analisi del Takeoff (SMC)}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/pos.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/pos_G.png}
             \captionof{figure}{Posizioni durante il decollo.}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/assetto.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/takeoff/assetto_G.png}
             \captionof{figure}{Angoli di Eulero.}
         \end{column}
     \end{columns}
 
     \vspace{0.05cm}
-    \begin{block}{Analisi Critica}
+    \begin{block}{Analisi}
         \begin{itemize}
             \item \textbf{Tracking $z$:} Salita fluida $0 \to 10$ m senza sovraelongazioni.
             \item \textbf{Stabilità:} Le derive in $x, y$ vengono neutralizzate in meno di $15$ s.
@@ -1278,12 +1281,12 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=1\linewidth]{montecarlo/takeoff/thrust.png}
+            \includegraphics[width=1\linewidth]{montecarlo/takeoff/thrust_G.png}
             \captionof{figure}{Spinta Rotori}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=1\linewidth]{montecarlo/takeoff/tilt.png}
+            \includegraphics[width=1\linewidth]{montecarlo/takeoff/tilt_G.png}
             \captionof{figure}{Angoli di Tilt}
         \end{column}
     \end{columns}
@@ -1294,18 +1297,18 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/pos.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/pos_G.png}
             \captionof{figure}{Posizioni in hovering.}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/assetto.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/hovering/assetto_G.png}
             \captionof{figure}{Angoli di Eulero.}
         \end{column}
     \end{columns}
 
     \vspace{0.05cm}
-    \begin{block}{Analisi della Robustezza}
+    \begin{block}{Analisi}
         \begin{itemize}
             \item \textbf{Assetto:} Stabilizzazione di angoli estremi ($\pm 15^\circ$) in circa $15$ s.
             \item \textbf{Disaccoppiamento:} Priorità alla quota ($z$) rispetto al rientro laterale ($y$).
@@ -1336,18 +1339,18 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/pos.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/pos_G.png}
             \captionof{figure}{Posizioni in fase di crociera.}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/vel.png}
+            \includegraphics[width=0.95\linewidth]{montecarlo/cruise/vel_G.png}
             \captionof{figure}{Velocità lineari in fase di crociera.}
         \end{column}
     \end{columns}
 
     \vspace{0.2cm}
-    \begin{block}{Comportamento in Regime di Crociera}
+    \begin{block}{Analisi}
         \begin{itemize}
             \item \textbf{Posizioni:} Sono mantenuti la quota e l'heading del velivolo.
             \item \textbf{Performance:} Riconvergenza al target di $25$ m/s in circa $20$ secondi.
@@ -1368,6 +1371,31 @@
             \captionof{figure}{Angoli di Tilt}
         \end{column}
     \end{columns}
+\end{frame}
+
+\begin{frame}{Conclusioni e Validazione}
+    \begin{itemize}
+        \item \textbf{Strategia di Controllo:}
+        \begin{itemize}
+            \item \textbf{Volo Verticale (SMC):} Massima robustezza alle non-linearità.
+            \item \textbf{Volo Orizzontale (PID):} Efficienza e stabilità aerodinamica.
+        \end{itemize}
+
+        \vspace{0.4cm}
+
+        \item \textbf{Risultati della Validazione:}
+        \begin{itemize}
+            \item \textbf{Stabilità Locale:} Verificata analiticamente via autovalori.
+            \item \textbf{Affidabilità:} 100\% successo su 600 test Monte Carlo.
+            \item \textbf{Robustezza:} Recupero completo da assetti critici ($\pm 15^\circ$).
+        \end{itemize}
+    \end{itemize}
+
+    \vspace{0.4cm}
+
+    \begin{block}{Conclusione}
+        L'architettura proposta garantisce stabilità e precisione in ogni fase della missione, dal decollo alla crociera ad alta velocità.
+    \end{block}
 \end{frame}
 
 % ============================================================

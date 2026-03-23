@@ -6,10 +6,10 @@ files = {'Results1_Recovery Hover.mat', ...
 
 files = {'Results1_Cruise Flight.mat'};
 % files = {'Results1_Takeoff Ground.mat'};
-% files = {'Results2_Recovery Hover.mat'};
+% files = {'Results1_Recovery Hover.mat'};
 
 % Impostazioni grafiche per la leggibilità accademica
-set(0, 'DefaultAxesFontSize', 15);       
+set(0, 'DefaultAxesFontSize', 20);       
 set(0, 'DefaultLineLineWidth', 1.0);     
 set(0, 'DefaultAxesLineWidth', 1.4);     
 set(0, 'DefaultLegendFontSize', 12);
@@ -71,7 +71,7 @@ function Plot_State_Overview(cfg, risultati, label)
     for i = 1:N
         if risultati(i).converged
             t = risultati(i).t;
-            % t = 40;
+            t = 25;
             X = risultati(i).x; 
             
             % Posizione
@@ -107,6 +107,7 @@ function Plot_State_Overview(cfg, risultati, label)
             
             % Attuatori: Thrust Singoli
             set(0, 'CurrentFigure', figs(6));
+            num_rotors = 2;
             for r = 1:num_rotors
                 subplot(num_rotors, 1, r); hold on;
                 thrust_r = k_thrust * (X(:, idx_rotors(r)).^2);
@@ -133,9 +134,9 @@ function Plot_State_Overview(cfg, risultati, label)
     
     % Fig 3: Assetto
     set(0, 'CurrentFigure', figs(3));
-    subplot(3,1,1); grid on; ylabel('\phi (Roll) [deg]'); title([label, ' - Assetto']);
-    subplot(3,1,2); grid on; ylabel('\theta (Pitch) [deg]');
-    subplot(3,1,3); grid on; ylabel('\psi (Yaw) [deg]'); xlabel('Tempo [s]');
+    subplot(3,1,1); grid on; ylabel('\phi [deg]'); title([label, ' - Assetto']);
+    subplot(3,1,2); grid on; ylabel('\theta [deg]');
+    subplot(3,1,3); grid on; ylabel('\psi [deg]'); xlabel('Tempo [s]');
     
     % Fig 4: Ratei
     set(0, 'CurrentFigure', figs(4));

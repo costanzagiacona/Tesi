@@ -108,9 +108,9 @@ Dati gli errori di assetto definiti come:
 
 i momenti di comando nel sistema di riferimento \textit{Body} sono definiti come:
 \begin{align}
-    M_x &= K_{P_\phi} e_\phi - K_{D_\phi} \dot{e}_{\phi} \\
-    M_y &= K_{P_\theta} e_\theta - K_{D_\theta} \dot{e}_{\theta} \\
-    M_z &= K_{P_\psi} e_\psi - K_{D_\psi} \dot{e}_{\psi}
+    M_x &= K_{P_\phi} e_\phi + K_{D_\phi} \dot{e}_{\phi} \\
+    M_y &= K_{P_\theta} e_\theta + K_{D_\theta} \dot{e}_{\theta} \\
+    M_z &= K_{P_\psi} e_\psi + K_{D_\psi} \dot{e}_{\psi}
 \end{align}
 
 Affinché l'architettura a cascata sia stabile, i guadagni $K_{P_{\phi,\theta,\psi}}$ sono stati tarati per garantire una banda passante superiore rispetto ai loop di posizione. Questo permette di considerare la dinamica dell'assetto come istantanea dal punto di vista dell'Outer Loop, semplificando il problema della sintesi dei controllori di navigazione.
@@ -231,8 +231,8 @@ Data la struttura matematica del mixer, emerge una criticità: l'autorità di co
 \subsection{Comandi di controllo}
 I comandi dati agli attuatori sono quindi i seguenti:
 \begin{gather}
-    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \frac{\Delta T}{2} \right)}\\
-    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \frac{\Delta T}{2} \right)}\\
+    u_1 = \omega_1 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} - \Delta T \right)}\\
+    u_2 = \omega_2 = \sqrt{\frac{1}{k} \left(\frac{F_{x,req}}{2} + \Delta T \right)}\\
     u_3 = \omega_3 = 0\\
     u_4 = \theta_1 = \alpha - \delta\\
     u_5 = \theta_2 = \alpha + \delta\\

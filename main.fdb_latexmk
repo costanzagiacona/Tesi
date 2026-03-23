@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1773917434.02042 "main.aux" "main.bbl" "main" 1773917976.584 0
+["bibtex main"] 1773917434.02042 "main.aux" "main.bbl" "main" 1774026035.39962 0
   "./bibliografia.bib" 1772709787 3068 f0a7f9e76217b5363cfbc53d83baef30 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1773917975 30364 5b851af287054023b8e10071d5821660 "pdflatex"
+  "main.aux" 1774026034 30364 5b851af287054023b8e10071d5821660 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1773917966.02404 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1773917976.58561 0
+["pdflatex"] 1774026026.88161 "c:/Users/costa/Documents/GitHub/Tesi/main.tex" "main.pdf" "main" 1774026035.40049 0
   "C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1771685046 82686 2381c3433487640bf26aa76a10db7eb2 ""
   "C:/Users/costa/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1765881967 13333512 e46186c88fb090a5c1a10263e8b85603 ""
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1256929440 2375 baa924870cfb487815765f9094cf3728 ""
@@ -238,7 +238,7 @@
   "C:/Users/costa/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "c:/Users/costa/Documents/GitHub/Tesi/main.tex" 1773852227 4803 cdf3bb23aae58b949ecfe0688fe55872 ""
   "capitoli/analisi_stabilita.tex" 1773916903 11961 1b7ab1a8cc38e82d8e3b306905303ff0 ""
-  "capitoli/controllo_orizzontale.tex" 1773917626 20478 15cfbaa134e2568c5028c010e18bc7da ""
+  "capitoli/controllo_orizzontale.tex" 1774026026 20458 f55d13b9e642fbb32ccd155fa1fab801 ""
   "capitoli/controllo_verticale.tex" 1773332455 35517 a36e7e8a04edde1921da25062c3127ac ""
   "capitoli/dimostrazione_SMC.tex" 1773854081 14872 bb8f1dff7c8a6accac3ead9a010a692b ""
   "capitoli/introduzione.tex" 1772964569 2872 92a293208533b13cd284984ebe189ec0 ""
@@ -259,7 +259,7 @@
   "img/coaxial.png" 1768555921 66686 ab3b88c701116b77c7429fda20f3d465 ""
   "img/config_orizzontale.png" 1770544796 336484 ff4ae3898f5de5ac24ba1c32b7632910 ""
   "img/controllo_orizzontale/posizioni.png" 1772123287 64057 8cf3427ac1b45691aa10a7a4485119ad ""
-  "img/controllo_orizzontale/schema_blocchi_H.png" 1772984296 218549 8b8ddf5345d3a65d3252a9a39f580ee6 ""
+  "img/controllo_orizzontale/schema_blocchi_H.png" 1773943136 345246 984966325ec84b66250a224901fa4bfc ""
   "img/controllo_verticale/schema_blocchi_V.png" 1772116990 352837 634436f10cda3f5e7ecba41fb0e1867c ""
   "img/dragonfly.png" 1769677600 133343 ebc5ce23384ded5fbdd5509df34bf809 ""
   "img/fixed_wing.png" 1769340167 2619757 85488331d3e7e63436e3512f685bed87 ""
@@ -292,13 +292,13 @@
   "img/tor_vergata.png" 1772536972 26377 b9c5e94d79d9aa6ec27f5b28d2315b67 ""
   "img/tricopter_2D.png" 1769597444 108737 d2b6b6a008aaa1821da6517e89ab949e ""
   "img/wind_frame.png" 1772966815 83778 188d6a3d7020b037155e2e98b255f15c ""
-  "main.aux" 1773917975 30364 5b851af287054023b8e10071d5821660 "pdflatex"
+  "main.aux" 1774026034 30364 5b851af287054023b8e10071d5821660 "pdflatex"
   "main.bbl" 1773917434 1800 50aed23f7d94977042d9e9e6f84194e9 "bibtex main"
-  "main.lof" 1773917975 5262 3605f16166d229de07b71c541373a12e "pdflatex"
-  "main.lot" 1773917975 887 a738c77eccfa30c6bd31f54b9f1fae03 "pdflatex"
-  "main.out" 1773917975 21989 68500403e48984184e833f5e9ae857db "pdflatex"
+  "main.lof" 1774026034 5262 3605f16166d229de07b71c541373a12e "pdflatex"
+  "main.lot" 1774026034 887 a738c77eccfa30c6bd31f54b9f1fae03 "pdflatex"
+  "main.out" 1774026034 21989 68500403e48984184e833f5e9ae857db "pdflatex"
   "main.tex" 1773852227 4803 cdf3bb23aae58b949ecfe0688fe55872 ""
-  "main.toc" 1773917975 10210 bb885d7a94e531f50296165fdba0e1e3 "pdflatex"
+  "main.toc" 1774026034 10210 bb885d7a94e531f50296165fdba0e1e3 "pdflatex"
   (generated)
   "main.aux"
   "main.lof"

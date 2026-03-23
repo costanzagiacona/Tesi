@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  18 MAR 2026 16:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.16)  23 MAR 2026 16:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -954,363 +954,359 @@ LaTeX Info: Redefining \it@ccap on input line 37.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 Package translations Info: no dictionary file `translations-basic-dictionary-italian.trsl' found. on input line 37.
- (presentazione_Giacona.nav) [1
+ (presentazione_Giacona.nav)
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 85.
+ (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
 
-{C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] (presentazione_Giacona.toc) [2
+LaTeX Font Warning: Font shape `T1/lmss/m/sc' in size <8> not available
+(Font)              Font shape `T1/lmr/m/sc' tried instead on input line 85.
 
-] [3
+<../../img/tor_vergata.png, id=46, 379.4175pt x 97.11281pt>
+File: ../../img/tor_vergata.png Graphic file (type png)
+<use ../../img/tor_vergata.png>
+Package pdftex.def Info: ../../img/tor_vergata.png  used on input line 85.
+(pdftex.def)             Requested size: 173.33496pt x 44.36569pt.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 85.
+[1
 
-]
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 104.
+{C:/Users/costa/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc} <../../img/tor_vergata.png>]
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmss.fd
 File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 104.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 104.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 104.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 104.
+(Font)              <10.95> on input line 139.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 104.
+(Font)              <8> on input line 139.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 104.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 104.
+(Font)              <6> on input line 139.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 104.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 104.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 104.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 139.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 104.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 104.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 139.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 139.
  (C:\Users\costa\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 104.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 139.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 104.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 139.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 104.
-<../../img/multicopter.png, id=102, 1498.59875pt x 839.135pt>
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 139.
+<../../img/multicopter.png, id=61, 1498.59875pt x 839.135pt>
 File: ../../img/multicopter.png Graphic file (type png)
 <use ../../img/multicopter.png>
-Package pdftex.def Info: ../../img/multicopter.png  used on input line 104.
+Package pdftex.def Info: ../../img/multicopter.png  used on input line 139.
 (pdftex.def)             Requested size: 124.80322pt x 69.87225pt.
-<../../img/fixed_wing.png, id=103, 1606.0pt x 903.375pt>
+<../../img/fixed_wing.png, id=62, 1606.0pt x 903.375pt>
 File: ../../img/fixed_wing.png Graphic file (type png)
 <use ../../img/fixed_wing.png>
-Package pdftex.def Info: ../../img/fixed_wing.png  used on input line 104.
+Package pdftex.def Info: ../../img/fixed_wing.png  used on input line 139.
 (pdftex.def)             Requested size: 124.80322pt x 70.19003pt.
- [4
+ [2
 
-{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc} <../../img/multicopter.png (PNG copy)> <../../img/fixed_wing.png (PNG copy)>] [5
-
-]
-<../../img/dragonfly.png, id=135, 490.08093pt x 366.61969pt>
+{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc} <../../img/multicopter.png (PNG copy)> <../../img/fixed_wing.png (PNG copy)>]
+<../../img/dragonfly.png, id=89, 490.08093pt x 366.61969pt>
 File: ../../img/dragonfly.png Graphic file (type png)
 <use ../../img/dragonfly.png>
-Package pdftex.def Info: ../../img/dragonfly.png  used on input line 140.
+Package pdftex.def Info: ../../img/dragonfly.png  used on input line 175.
 (pdftex.def)             Requested size: 173.33496pt x 129.66699pt.
- [6
+ [3
 
- <../../img/dragonfly.png>] [7
+ <../../img/dragonfly.png>] [4
 
 ]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 192.
+(Font)              <10> on input line 227.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 192.
+(Font)              <7> on input line 227.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 192.
+(Font)              <5> on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <7> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <5> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 192.
-<../../img/sist_rif_global.png, id=153, 187.45032pt x 298.86656pt>
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 227.
+<../../img/sist_rif_global.png, id=106, 187.45032pt x 298.86656pt>
 File: ../../img/sist_rif_global.png Graphic file (type png)
 <use ../../img/sist_rif_global.png>
-Package pdftex.def Info: ../../img/sist_rif_global.png  used on input line 192.
+Package pdftex.def Info: ../../img/sist_rif_global.png  used on input line 227.
 (pdftex.def)             Requested size: 53.53543pt x 85.35826pt.
-<../../img/sist_rif_body.jpg, id=154, 1438.37375pt x 1063.975pt>
+<../../img/sist_rif_body.jpg, id=107, 1438.37375pt x 1063.975pt>
 File: ../../img/sist_rif_body.jpg Graphic file (type jpg)
 <use ../../img/sist_rif_body.jpg>
-Package pdftex.def Info: ../../img/sist_rif_body.jpg  used on input line 192.
+Package pdftex.def Info: ../../img/sist_rif_body.jpg  used on input line 227.
 (pdftex.def)             Requested size: 115.37952pt x 85.35826pt.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <7> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 227.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <5> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 192.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 227.
 
-Overfull \vbox (1.53175pt too high) detected at line 192
+Overfull \vbox (1.53175pt too high) detected at line 227
  []
 
-[8
+[5
 
 {C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc} <../../img/sist_rif_global.png> <../../img/sist_rif_body.jpg>]
-<../../img/tricopter_2D.png, id=170, 420.82219pt x 207.02344pt>
+<../../img/tricopter_2D.png, id=122, 420.82219pt x 207.02344pt>
 File: ../../img/tricopter_2D.png Graphic file (type png)
 <use ../../img/tricopter_2D.png>
-Package pdftex.def Info: ../../img/tricopter_2D.png  used on input line 219.
+Package pdftex.def Info: ../../img/tricopter_2D.png  used on input line 254.
 (pdftex.def)             Requested size: 195.00348pt x 95.93321pt.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 219.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 254.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 219.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 254.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 219.
- [9
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 254.
+ [6
 
  <../../img/tricopter_2D.png>]
-<../../img/rotori_1_2.png, id=194, 525.46312pt x 421.575pt>
+<../../img/rotori_1_2.png, id=146, 525.46312pt x 421.575pt>
 File: ../../img/rotori_1_2.png Graphic file (type png)
 <use ../../img/rotori_1_2.png>
-Package pdftex.def Info: ../../img/rotori_1_2.png  used on input line 241.
+Package pdftex.def Info: ../../img/rotori_1_2.png  used on input line 276.
 (pdftex.def)             Requested size: 151.66974pt x 121.6811pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 241.
+(Font)              <9> on input line 276.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 241.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 276.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <9> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 241.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 276.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <9> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 241.
-<../../img/rotore_3.png, id=195, 461.47406pt x 356.0803pt>
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 276.
+<../../img/rotore_3.png, id=147, 461.47406pt x 356.0803pt>
 File: ../../img/rotore_3.png Graphic file (type png)
 <use ../../img/rotore_3.png>
-Package pdftex.def Info: ../../img/rotore_3.png  used on input line 241.
+Package pdftex.def Info: ../../img/rotore_3.png  used on input line 276.
 (pdftex.def)             Requested size: 151.66974pt x 117.02872pt.
- [10
+ [7
 
- <../../img/rotori_1_2.png> <../../img/rotore_3.png>] [11
+ <../../img/rotori_1_2.png> <../../img/rotore_3.png>] [8
+
+] [9
+
+] [10
 
 ]
-<../../img/forze_x.jpg, id=226, 1525.7pt x 973.6375pt>
-File: ../../img/forze_x.jpg Graphic file (type jpg)
-<use ../../img/forze_x.jpg>
-Package pdftex.def Info: ../../img/forze_x.jpg  used on input line 298.
-(pdftex.def)             Requested size: 147.33537pt x 94.01189pt.
- [12
-
- <../../img/forze_x.jpg>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 353.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 353.
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 353.
-LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <12> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 353.
+(Font)              <14.4> on input line 467.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <14.4> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 467.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <14.4> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 467.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <14.4> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 467.
+ [11
+
+] [12
+
+]
+File: ../../img/rotore_3.png Graphic file (type png)
+<use ../../img/rotore_3.png>
+Package pdftex.def Info: ../../img/rotore_3.png  used on input line 569.
+(pdftex.def)             Requested size: 138.66849pt x 106.99878pt.
  [13
 
 ] [14
 
-] [15
-
 ]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 432.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <14.4> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 432.
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <14.4> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 432.
-LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <14.4> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 432.
- [16
+<../../img/controllo_verticale/schema_blocchi_V.png, id=251, 1027.84pt x 668.4975pt>
+File: ../../img/controllo_verticale/schema_blocchi_V.png Graphic file (type png)
+<use ../../img/controllo_verticale/schema_blocchi_V.png>
+Package pdftex.def Info: ../../img/controllo_verticale/schema_blocchi_V.png  used on input line 607.
+(pdftex.def)             Requested size: 1027.8375pt x 668.49586pt.
+
+Overfull \vbox (12.30042pt too high) detected at line 607
+ []
+
+[15
+
+ <../../img/controllo_verticale/schema_blocchi_V.png (PNG copy)>] [16
 
 ] [17
 
 ] [18
 
 ]
-File: ../../img/rotore_3.png Graphic file (type png)
-<use ../../img/rotore_3.png>
-Package pdftex.def Info: ../../img/rotore_3.png  used on input line 534.
-(pdftex.def)             Requested size: 138.66849pt x 106.99878pt.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 771.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 771.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 771.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 771.
  [19
 
 ] [20
 
-]
-<../../img/controllo_verticale/schema_blocchi_V.png, id=386, 1027.84pt x 668.4975pt>
-File: ../../img/controllo_verticale/schema_blocchi_V.png Graphic file (type png)
-<use ../../img/controllo_verticale/schema_blocchi_V.png>
-Package pdftex.def Info: ../../img/controllo_verticale/schema_blocchi_V.png  used on input line 569.
-(pdftex.def)             Requested size: 1027.8375pt x 668.49586pt.
+] [21
 
-Overfull \vbox (12.30042pt too high) detected at line 569
- []
-
-[21
-
- <../../img/controllo_verticale/schema_blocchi_V.png (PNG copy)>] [22
+] [22
 
 ] [23
 
-] [24
+]
+<../../img/config_orizzontale.png, id=379, 1341.01pt x 775.89874pt>
+File: ../../img/config_orizzontale.png Graphic file (type png)
+<use ../../img/config_orizzontale.png>
+Package pdftex.def Info: ../../img/config_orizzontale.png  used on input line 934.
+(pdftex.def)             Requested size: 156.0004pt x 90.25056pt.
+ [24
 
-] [25
+ <../../img/config_orizzontale.png (PNG copy)>] [25
 
-] [26
+]
+<../../img/controllo_orizzontale/schema_blocchi_H.png, id=408, 1436.36626pt x 928.46875pt>
+File: ../../img/controllo_orizzontale/schema_blocchi_H.png Graphic file (type png)
+<use ../../img/controllo_orizzontale/schema_blocchi_H.png>
+Package pdftex.def Info: ../../img/controllo_orizzontale/schema_blocchi_H.png  used on input line 966.
+(pdftex.def)             Requested size: 1436.36276pt x 928.46649pt.
 
-] [27
+Overfull \vbox (11.50252pt too high) detected at line 966
+ []
+
+[26
+
+ <../../img/controllo_orizzontale/schema_blocchi_H.png (PNG copy)>] [27
 
 ] [28
 
 ] [29
 
-]
-<../../img/config_orizzontale.png, id=524, 1341.01pt x 775.89874pt>
-File: ../../img/config_orizzontale.png Graphic file (type png)
-<use ../../img/config_orizzontale.png>
-Package pdftex.def Info: ../../img/config_orizzontale.png  used on input line 880.
-(pdftex.def)             Requested size: 156.0004pt x 90.25056pt.
- [30
+] [30
 
- <../../img/config_orizzontale.png (PNG copy)>] [31
+] [31
 
-]
-<../../img/controllo_orizzontale/schema_blocchi_H.png, id=552, 806.26219pt x 472.76625pt>
-File: ../../img/controllo_orizzontale/schema_blocchi_H.png Graphic file (type png)
-<use ../../img/controllo_orizzontale/schema_blocchi_H.png>
-Package pdftex.def Info: ../../img/controllo_orizzontale/schema_blocchi_H.png  used on input line 912.
-(pdftex.def)             Requested size: 806.26022pt x 472.76509pt.
+] [32
 
-Overfull \vbox (10.86615pt too high) detected at line 912
- []
-
-[32
-
- <../../img/controllo_orizzontale/schema_blocchi_H.png>] [33
+] [33
 
 ] [34
 
-] [35
-
-] [36
-
-] [37
-
-] [38
-
-] [39
-
-] [40
-
-] [41
-
 ]
-<../../img/montecarlo/takeoff/pos.png, id=744, 1236.87094pt x 680.5425pt>
-File: ../../img/montecarlo/takeoff/pos.png Graphic file (type png)
-<use ../../img/montecarlo/takeoff/pos.png>
-Package pdftex.def Info: ../../img/montecarlo/takeoff/pos.png  used on input line 1275.
-(pdftex.def)             Requested size: 205.83774pt x 113.2504pt.
-<../../img/montecarlo/takeoff/assetto.png, id=745, 1222.5675pt x 685.8122pt>
-File: ../../img/montecarlo/takeoff/assetto.png Graphic file (type png)
-<use ../../img/montecarlo/takeoff/assetto.png>
-Package pdftex.def Info: ../../img/montecarlo/takeoff/assetto.png  used on input line 1275.
-(pdftex.def)             Requested size: 205.83774pt x 115.46681pt.
+<../../img/montecarlo/takeoff/pos_G.png, id=560, 1239.88219pt x 688.82344pt>
+File: ../../img/montecarlo/takeoff/pos_G.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff/pos_G.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff/pos_G.png  used on input line 1278.
+(pdftex.def)             Requested size: 205.83774pt x 114.34465pt.
+<../../img/montecarlo/takeoff/assetto_G.png, id=561, 1253.43282pt x 691.08188pt>
+File: ../../img/montecarlo/takeoff/assetto_G.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff/assetto_G.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff/assetto_G.png  used on input line 1278.
+(pdftex.def)             Requested size: 205.83774pt x 113.48578pt.
 
-Overfull \vbox (3.55782pt too high) detected at line 1275
+Overfull \vbox (2.43565pt too high) detected at line 1278
  []
 
-[42
+[35
 
- <../../img/montecarlo/takeoff/pos.png> <../../img/montecarlo/takeoff/assetto.png>]
-<../../img/montecarlo/takeoff/thrust.png, id=767, 1249.66875pt x 682.04813pt>
-File: ../../img/montecarlo/takeoff/thrust.png Graphic file (type png)
-<use ../../img/montecarlo/takeoff/thrust.png>
-Package pdftex.def Info: ../../img/montecarlo/takeoff/thrust.png  used on input line 1290.
-(pdftex.def)             Requested size: 216.67201pt x 118.24663pt.
-<../../img/montecarlo/takeoff/tilt.png, id=768, 1245.15187pt x 683.55376pt>
-File: ../../img/montecarlo/takeoff/tilt.png Graphic file (type png)
-<use ../../img/montecarlo/takeoff/tilt.png>
-Package pdftex.def Info: ../../img/montecarlo/takeoff/tilt.png  used on input line 1290.
-(pdftex.def)             Requested size: 216.67201pt x 118.94574pt.
- [43
+ <../../img/montecarlo/takeoff/pos_G.png> <../../img/montecarlo/takeoff/assetto_G.png>]
+<../../img/montecarlo/takeoff/thrust_G.png, id=583, 1254.18562pt x 688.07062pt>
+File: ../../img/montecarlo/takeoff/thrust_G.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff/thrust_G.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff/thrust_G.png  used on input line 1293.
+(pdftex.def)             Requested size: 216.67201pt x 118.87079pt.
+<../../img/montecarlo/takeoff/tilt_G.png, id=584, 1254.93843pt x 689.57625pt>
+File: ../../img/montecarlo/takeoff/tilt_G.png Graphic file (type png)
+<use ../../img/montecarlo/takeoff/tilt_G.png>
+Package pdftex.def Info: ../../img/montecarlo/takeoff/tilt_G.png  used on input line 1293.
+(pdftex.def)             Requested size: 216.67201pt x 119.05725pt.
+ [36
 
- <../../img/montecarlo/takeoff/thrust.png> <../../img/montecarlo/takeoff/tilt.png>]
-<../../img/montecarlo/hovering/pos.png, id=779, 1238.37656pt x 680.5425pt>
-File: ../../img/montecarlo/hovering/pos.png Graphic file (type png)
-<use ../../img/montecarlo/hovering/pos.png>
-Package pdftex.def Info: ../../img/montecarlo/hovering/pos.png  used on input line 1315.
-(pdftex.def)             Requested size: 205.83774pt x 113.1154pt.
-<../../img/montecarlo/hovering/assetto.png, id=780, 1236.11812pt x 678.28406pt>
-File: ../../img/montecarlo/hovering/assetto.png Graphic file (type png)
-<use ../../img/montecarlo/hovering/assetto.png>
-Package pdftex.def Info: ../../img/montecarlo/hovering/assetto.png  used on input line 1315.
-(pdftex.def)             Requested size: 205.83774pt x 112.947pt.
+ <../../img/montecarlo/takeoff/thrust_G.png> <../../img/montecarlo/takeoff/tilt_G.png>]
+<../../img/montecarlo/hovering/pos_G.png, id=594, 1236.87094pt x 687.31781pt>
+File: ../../img/montecarlo/hovering/pos_G.png Graphic file (type png)
+<use ../../img/montecarlo/hovering/pos_G.png>
+Package pdftex.def Info: ../../img/montecarlo/hovering/pos_G.png  used on input line 1318.
+(pdftex.def)             Requested size: 205.83774pt x 114.37788pt.
+<../../img/montecarlo/hovering/assetto_G.png, id=595, 1248.16313pt x 688.07062pt>
+File: ../../img/montecarlo/hovering/assetto_G.png Graphic file (type png)
+<use ../../img/montecarlo/hovering/assetto_G.png>
+Package pdftex.def Info: ../../img/montecarlo/hovering/assetto_G.png  used on input line 1318.
+(pdftex.def)             Requested size: 205.83774pt x 113.46376pt.
 
-Overfull \vbox (3.79597pt too high) detected at line 1315
+Overfull \vbox (5.05846pt too high) detected at line 1318
  []
 
-[44
+[37
 
- <../../img/montecarlo/hovering/pos.png> <../../img/montecarlo/hovering/assetto.png>]
-<../../img/montecarlo/hovering/thrust.png, id=802, 1260.96094pt x 684.30656pt>
+ <../../img/montecarlo/hovering/pos_G.png> <../../img/montecarlo/hovering/assetto_G.png>]
+<../../img/montecarlo/hovering/thrust.png, id=618, 1260.96094pt x 684.30656pt>
 File: ../../img/montecarlo/hovering/thrust.png Graphic file (type png)
 <use ../../img/montecarlo/hovering/thrust.png>
-Package pdftex.def Info: ../../img/montecarlo/hovering/thrust.png  used on input line 1330.
+Package pdftex.def Info: ../../img/montecarlo/hovering/thrust.png  used on input line 1333.
 (pdftex.def)             Requested size: 216.67201pt x 117.58357pt.
-<../../img/montecarlo/hovering/tilt.png, id=803, 1236.11812pt x 676.02562pt>
+<../../img/montecarlo/hovering/tilt.png, id=619, 1236.11812pt x 676.02562pt>
 File: ../../img/montecarlo/hovering/tilt.png Graphic file (type png)
 <use ../../img/montecarlo/hovering/tilt.png>
-Package pdftex.def Info: ../../img/montecarlo/hovering/tilt.png  used on input line 1330.
+Package pdftex.def Info: ../../img/montecarlo/hovering/tilt.png  used on input line 1333.
 (pdftex.def)             Requested size: 216.67201pt x 118.49193pt.
- [45
+ [38
 
  <../../img/montecarlo/hovering/thrust.png> <../../img/montecarlo/hovering/tilt.png>]
-<../../img/montecarlo/cruise/pos.png, id=813, 1207.51125pt x 684.30656pt>
-File: ../../img/montecarlo/cruise/pos.png Graphic file (type png)
-<use ../../img/montecarlo/cruise/pos.png>
-Package pdftex.def Info: ../../img/montecarlo/cruise/pos.png  used on input line 1356.
-(pdftex.def)             Requested size: 205.83774pt x 116.64381pt.
-<../../img/montecarlo/cruise/vel.png, id=814, 1216.545pt x 678.28406pt>
-File: ../../img/montecarlo/cruise/vel.png Graphic file (type png)
-<use ../../img/montecarlo/cruise/vel.png>
-Package pdftex.def Info: ../../img/montecarlo/cruise/vel.png  used on input line 1356.
-(pdftex.def)             Requested size: 205.83774pt x 114.75822pt.
- [46
+<../../img/montecarlo/cruise/pos_G.png, id=629, 1262.46657pt x 690.32906pt>
+File: ../../img/montecarlo/cruise/pos_G.png Graphic file (type png)
+<use ../../img/montecarlo/cruise/pos_G.png>
+Package pdftex.def Info: ../../img/montecarlo/cruise/pos_G.png  used on input line 1359.
+(pdftex.def)             Requested size: 205.83774pt x 112.55109pt.
+<../../img/montecarlo/cruise/vel_G.png, id=630, 1231.60126pt x 694.09312pt>
+File: ../../img/montecarlo/cruise/vel_G.png Graphic file (type png)
+<use ../../img/montecarlo/cruise/vel_G.png>
+Package pdftex.def Info: ../../img/montecarlo/cruise/vel_G.png  used on input line 1359.
+(pdftex.def)             Requested size: 205.83774pt x 116.00316pt.
+ [39
 
- <../../img/montecarlo/cruise/pos.png> <../../img/montecarlo/cruise/vel.png>]
-<../../img/montecarlo/cruise/thrust.png, id=836, 1233.10687pt x 680.5425pt>
+ <../../img/montecarlo/cruise/pos_G.png> <../../img/montecarlo/cruise/vel_G.png>]
+<../../img/montecarlo/cruise/thrust.png, id=652, 1233.10687pt x 680.5425pt>
 File: ../../img/montecarlo/cruise/thrust.png Graphic file (type png)
 <use ../../img/montecarlo/cruise/thrust.png>
-Package pdftex.def Info: ../../img/montecarlo/cruise/thrust.png  used on input line 1371.
+Package pdftex.def Info: ../../img/montecarlo/cruise/thrust.png  used on input line 1374.
 (pdftex.def)             Requested size: 216.67201pt x 119.57439pt.
-<../../img/montecarlo/cruise/tilt.png, id=837, 1215.79219pt x 685.8122pt>
+<../../img/montecarlo/cruise/tilt.png, id=653, 1215.79219pt x 685.8122pt>
 File: ../../img/montecarlo/cruise/tilt.png Graphic file (type png)
 <use ../../img/montecarlo/cruise/tilt.png>
-Package pdftex.def Info: ../../img/montecarlo/cruise/tilt.png  used on input line 1371.
+Package pdftex.def Info: ../../img/montecarlo/cruise/tilt.png  used on input line 1374.
 (pdftex.def)             Requested size: 216.67201pt x 122.2165pt.
- [47
+ [40
 
- <../../img/montecarlo/cruise/thrust.png> <../../img/montecarlo/cruise/tilt.png>] [48
+ <../../img/montecarlo/cruise/thrust.png> <../../img/montecarlo/cruise/tilt.png>] [41
+
+] [42
 
 ]
 \tf@nav=\write6
@@ -1331,17 +1327,17 @@ Package rerunfilecheck Info: File `presentazione_Giacona.out' has not changed.
 (rerunfilecheck)             Checksum: BC4A09E5D5387487353DEDBF7A6927EA;1155.
  ) 
 Here is how much of TeX's memory you used:
- 33665 strings out of 467871
- 721319 string characters out of 5418375
- 1064791 words of memory out of 5000000
- 61796 multiletter control sequences out of 15000+600000
- 805259 words of font info for 157 fonts, out of 8000000 for 9000
+ 33511 strings out of 467871
+ 716793 string characters out of 5418375
+ 1064788 words of memory out of 5000000
+ 61652 multiletter control sequences out of 15000+600000
+ 808054 words of font info for 158 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,19n,123p,477b,1049s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbo10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on presentazione_Giacona.pdf (48 pages, 7240620 bytes).
+<C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbo10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy7.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/costa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on presentazione_Giacona.pdf (42 pages, 7370163 bytes).
 PDF statistics:
- 991 PDF objects out of 1000 (max. 8388607)
- 105 named destinations out of 1000 (max. 500000)
- 1385 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 829 PDF objects out of 1000 (max. 8388607)
+ 93 named destinations out of 1000 (max. 500000)
+ 1049 words of extra memory for PDF output out of 10000 (max. 10000000)
 
